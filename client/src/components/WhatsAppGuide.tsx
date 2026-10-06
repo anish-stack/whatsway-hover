@@ -110,18 +110,18 @@ const WhatsAppGuide = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-6">
-            <BookOpen className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-6">
+            <BookOpen className="w-8 h-8 text-[var(--brand)]" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6">
             {t("whatsappGuide.hero.title")}
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               {t("whatsappGuide.hero.titleHighlight")}
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto">
             {t("whatsappGuide.hero.subtitle")}
           </p>
         </div>
@@ -133,8 +133,8 @@ const WhatsAppGuide = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Sidebar Navigation */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <div className="sticky top-24 bg-[var(--canvas)] rounded-xl p-6">
+                <h3 className="text-lg font-bold text-[var(--ink)] mb-4">
                   {t("whatsappGuide.sidebarTitle")}
                 </h3>
                 <nav className="space-y-2">
@@ -146,8 +146,8 @@ const WhatsAppGuide = () => {
                         onClick={() => setActiveSection(section.id)}
                         className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all ${
                           activeSection === section.id
-                            ? "bg-green-500 text-white shadow-lg"
-                            : "text-gray-700 hover:bg-white hover:shadow-md"
+                            ? "bg-[var(--brand)] text-white shadow-lg"
+                            : "text-[var(--ink-700)] hover:bg-white hover:shadow-md"
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -162,7 +162,7 @@ const WhatsAppGuide = () => {
             {/* Main Content */}
             <div className="lg:col-span-3">
               <div className="bg-white">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                <h2 className="text-3xl font-bold text-[var(--ink)] mb-8">
                   {currentContent.title}
                 </h2>
 
@@ -171,23 +171,23 @@ const WhatsAppGuide = () => {
                     currentContent.items.map((item, index) => (
                       <div
                         key={index}
-                        className="border-l-4 border-green-500 pl-6"
+                        className="border-l-4 border-[var(--brand)] pl-6"
                       >
-                        <h3 className="text-xl font-bold text-gray-900 mb-3">
+                        <h3 className="text-xl font-bold text-[var(--ink)] mb-3">
                           {item.title}
                         </h3>
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-[var(--ink-500)] leading-relaxed">
                           {item.text}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500">No content available</p>
+                    <p className="text-[var(--ink-500)]">No content available</p>
                   )}
                 </div>
 
                 {/* Navigation */}
-                <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+                <div className="flex justify-between items-center mt-12 pt-8 border-t border-[var(--mist)]">
                   <button
                     onClick={() => {
                       const currentIndex = sections.findIndex(
@@ -200,7 +200,7 @@ const WhatsAppGuide = () => {
                     disabled={
                       sections.findIndex((s) => s.id === activeSection) === 0
                     }
-                    className="flex items-center space-x-2 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="flex items-center space-x-2 px-6 py-3 border border-[var(--mist)] rounded-lg hover:bg-[var(--canvas)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     <span>{t("whatsappGuide.navigation.previous")}</span>
                   </button>
@@ -218,7 +218,7 @@ const WhatsAppGuide = () => {
                       sections.findIndex((s) => s.id === activeSection) ===
                       sections.length - 1
                     }
-                    className="flex items-center space-x-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="flex items-center space-x-2 px-6 py-3 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     <span>{t("whatsappGuide.navigation.next")}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -231,13 +231,13 @@ const WhatsAppGuide = () => {
       </section>
 
       {/* Quick Tips */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               {t("whatsappGuide.quickTips.heading")}
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               {t("whatsappGuide.quickTips.subtitle")}
             </p>
           </div>
@@ -250,13 +250,13 @@ const WhatsAppGuide = () => {
                   key={index}
                   className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  <div className="bg-green-100 p-3 rounded-lg w-fit mb-4">
-                    <Icon className="w-6 h-6 text-green-600" />
+                  <div className="bg-[var(--brand-100)] p-3 rounded-lg w-fit mb-4">
+                    <Icon className="w-6 h-6 text-[var(--brand)]" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg font-bold text-[var(--ink)] mb-2">
                     {tip.title}
                   </h3>
-                  <p className="text-gray-600">{tip.tip}</p>
+                  <p className="text-[var(--ink-500)]">{tip.tip}</p>
                 </div>
               );
             })}
@@ -265,7 +265,7 @@ const WhatsAppGuide = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             {t("whatsappGuide.cta.heading")}
@@ -273,7 +273,7 @@ const WhatsAppGuide = () => {
           <p className="text-xl text-white/90 mb-8">
             {t("whatsappGuide.cta.subtitle")}
           </p>
-          <button className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl">
+          <button className="bg-white text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--canvas)] transition-all transform hover:scale-105 shadow-xl">
             {t("whatsappGuide.cta.button")}
           </button>
         </div>

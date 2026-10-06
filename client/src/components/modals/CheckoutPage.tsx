@@ -307,7 +307,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       case "razorpay":
         return <SiRazorpay className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />;
       case "stripe":
-        return <FaCcStripe className="w-6 h-6 sm:w-7 sm:h-7 text-purple-600" />;
+        return <FaCcStripe className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--brand)]" />;
       case "paypal":
         return <FaPaypal className="w-6 h-6 sm:w-7 sm:h-7 text-[#003087]" />;
       case "paystack":
@@ -315,7 +315,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       case "mercadopago":
         return <SiMercadopago className="w-6 h-6 sm:w-7 sm:h-7 text-[#009ee3]" />;
       default:
-        return <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-gray-600" />;
+        return <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-muted-foreground" />;
     }
   };
 
@@ -330,9 +330,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         };
       case "stripe":
         return {
-          border: "border-purple-500",
-          bg: "bg-purple-50",
-          check: "text-purple-600",
+          border: "border-[var(--brand)]",
+          bg: "bg-[var(--brand-100)]",
+          check: "text-[var(--brand)]",
         };
       case "paypal":
         return {
@@ -355,8 +355,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       default:
         return {
           border: "border-gray-500",
-          bg: "bg-gray-50",
-          check: "text-gray-600",
+          bg: "bg-muted",
+          check: "text-muted-foreground",
         };
     }
   };
@@ -593,7 +593,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
           <div className="p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-foreground">
                 Complete Payment
               </h2>
               <Button variant="ghost" size="sm" onClick={handleBack}>
@@ -639,52 +639,52 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         </DialogHeader>
 
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">
             Order Summary
           </h2>
 
-          <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-[var(--brand-100)] rounded-lg border border-blue-200">
             <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-              <div className="p-1.5 sm:p-2 bg-white rounded-lg flex-shrink-0">
-                <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+              <div className="p-1.5 sm:p-2 bg-background rounded-lg flex-shrink-0">
+                <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 truncate">
+                <h3 className="text-base sm:text-lg font-bold text-foreground truncate">
                   {plan.name}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                   {plan.description}
                 </p>
               </div>
             </div>
             <div className="flex items-center justify-between text-xs sm:text-sm pt-2 sm:pt-3 border-t border-blue-200">
-              <span className="text-gray-600">Billing Period:</span>
-              <span className="font-semibold text-gray-900">
+              <span className="text-muted-foreground">Billing Period:</span>
+              <span className="font-semibold text-foreground">
                 {isAnnual ? "Annual" : "Monthly"}
               </span>
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">
+            <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2 sm:mb-3">
               Included Features:
             </h3>
             <ul className="space-y-1.5 sm:space-y-2">
               {plan.permissions && (
                 <>
-                  <li className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                  <li className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
                     <span className="truncate">
                       {plan.permissions.contacts} contacts
                     </span>
                   </li>
-                  <li className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                  <li className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
                     <span className="truncate">
                       {plan.permissions.channel} WhatsApp channels
                     </span>
                   </li>
-                  <li className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                  <li className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
                     <span className="truncate">
                       {plan.permissions.automation} automation
@@ -697,19 +697,19 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
           <div className="space-y-2 sm:space-y-2.5 pt-3 sm:pt-4">
             <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium text-gray-900">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="font-medium text-foreground">
                 {activeCurrencySymbol}
                 {price.toFixed(2)}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-base sm:text-lg font-bold pt-2 sm:pt-3 border-t">
-              <span className="text-gray-900">Total</span>
+              <span className="text-foreground">Total</span>
               <span className="text-blue-600">
                 {activeCurrencySymbol}
                 {total.toFixed(2)}
-                <span className="text-sm font-normal text-gray-500">
+                <span className="text-sm font-normal text-muted-foreground">
                   /{isAnnual ? "year" : "month"}
                 </span>
               </span>
@@ -717,7 +717,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
 
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">
+            <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2 sm:mb-3">
               Select Payment Method:
             </h3>
 
@@ -761,13 +761,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         onClick={() => setSelectedProvider(provider)}
                         className={`p-3 sm:p-4 border-2 rounded-lg sm:rounded-xl transition-all ${isSelected
                           ? `${colors.border} ${colors.bg}`
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-border hover:border-border"
                           }`}
                       >
                         <div className="flex flex-col items-center gap-1.5 sm:gap-2">
                           {getProviderIcon(provider.providerKey)}
                           <div className="text-center">
-                            <span className="text-[10px] sm:text-xs font-medium text-gray-900 block">
+                            <span className="text-[10px] sm:text-xs font-medium text-foreground block">
                               {provider.name}
                             </span>
                             <div className="flex items-center gap-1 justify-center mt-0.5">
@@ -817,7 +817,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             )}
           </Button>
 
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
             <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
             <span>30-day money-back guarantee</span>
           </div>

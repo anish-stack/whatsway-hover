@@ -62,8 +62,8 @@ export default function ForgotPasswordEmail({ onEmailSent, onBack }: Props) {
         <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
           <Mail className="h-6 w-6 text-green-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">Forgot Password?</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className="text-xl font-semibold text-foreground">Forgot Password?</h2>
+        <p className="text-sm text-muted-foreground">
           No worries! Enter your email address and we'll send you a verification code.
         </p>
       </div>
@@ -75,16 +75,16 @@ export default function ForgotPasswordEmail({ onEmailSent, onBack }: Props) {
       )}
 
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-700">Email Address</label>
+        <label className="text-sm font-medium text-muted-foreground">Email Address</label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
             autoFocus
           />
         </div>
@@ -109,7 +109,7 @@ export default function ForgotPasswordEmail({ onEmailSent, onBack }: Props) {
         <button
           type="button"
           onClick={onBack}
-          className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-green-600 transition-colors"
+          className="w-full flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-green-600 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Login

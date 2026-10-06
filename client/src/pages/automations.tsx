@@ -238,29 +238,29 @@ export default function Automations() {
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="h-7 w-48 bg-gray-200 rounded animate-pulse mb-2" />
-            <div className="h-4 w-72 bg-gray-100 rounded animate-pulse" />
+            <div className="h-7 w-48 bg-border rounded animate-pulse mb-2" />
+            <div className="h-4 w-72 bg-muted rounded animate-pulse" />
           </div>
-          <div className="h-10 w-36 bg-gray-200 rounded-lg animate-pulse" />
+          <div className="h-10 w-36 bg-border rounded-lg animate-pulse" />
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 animate-pulse">
-              <div className="h-4 w-20 bg-gray-100 rounded mb-2" />
-              <div className="h-6 w-10 bg-gray-200 rounded" />
+            <div key={i} className="bg-background border border-border rounded-lg p-4 animate-pulse">
+              <div className="h-4 w-20 bg-muted rounded mb-2" />
+              <div className="h-6 w-10 bg-border rounded" />
             </div>
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-lg p-5 animate-pulse">
-              <div className="h-5 w-40 bg-gray-200 rounded mb-3" />
-              <div className="h-4 w-full bg-gray-100 rounded mb-2" />
-              <div className="h-4 w-2/3 bg-gray-100 rounded mb-4" />
-              <div className="flex gap-2 pt-3 border-t border-gray-100">
-                <div className="h-8 flex-1 bg-gray-100 rounded" />
-                <div className="h-8 flex-1 bg-gray-100 rounded" />
-                <div className="h-8 flex-1 bg-gray-100 rounded" />
+            <div key={i} className="bg-background border border-border rounded-lg p-5 animate-pulse">
+              <div className="h-5 w-40 bg-border rounded mb-3" />
+              <div className="h-4 w-full bg-muted rounded mb-2" />
+              <div className="h-4 w-2/3 bg-muted rounded mb-4" />
+              <div className="flex gap-2 pt-3 border-t border-border">
+                <div className="h-8 flex-1 bg-muted rounded" />
+                <div className="h-8 flex-1 bg-muted rounded" />
+                <div className="h-8 flex-1 bg-muted rounded" />
               </div>
             </div>
           ))}
@@ -273,8 +273,8 @@ export default function Automations() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Automation Flows</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Create and manage conversation flows with drag-and-drop visual builder</p>
+          <h1 className="text-xl font-semibold text-foreground">Automation Flows</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Create and manage conversation flows with drag-and-drop visual builder</p>
         </div>
         <div className="flex items-center gap-2">
           {automations.length === 0 && (
@@ -303,38 +303,38 @@ export default function Automations() {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-3">
+        <div className="bg-background border border-border rounded-lg p-4 flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-blue-50 flex items-center justify-center">
             <Layers className="h-4 w-4 text-blue-600" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Total Flows</p>
-            <p className="text-lg font-semibold text-gray-900">{automations.length}</p>
+            <p className="text-xs text-muted-foreground">Total Flows</p>
+            <p className="text-lg font-semibold text-foreground">{automations.length}</p>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-3">
+        <div className="bg-background border border-border rounded-lg p-4 flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-green-50 flex items-center justify-center">
             <Activity className="h-4 w-4 text-green-600" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Active Flows</p>
-            <p className="text-lg font-semibold text-gray-900">{activeCount}</p>
+            <p className="text-xs text-muted-foreground">Active Flows</p>
+            <p className="text-lg font-semibold text-foreground">{activeCount}</p>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-purple-50 flex items-center justify-center">
-            <BarChart3 className="h-4 w-4 text-purple-600" />
+        <div className="bg-background border border-border rounded-lg p-4 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-[var(--brand-100)] flex items-center justify-center">
+            <BarChart3 className="h-4 w-4 text-[var(--brand)]" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Total Executions</p>
-            <p className="text-lg font-semibold text-gray-900">{totalExecutions}</p>
+            <p className="text-xs text-muted-foreground">Total Executions</p>
+            <p className="text-lg font-semibold text-foreground">{totalExecutions}</p>
           </div>
         </div>
       </div>
 
       {drafts.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
             <FileEdit className="h-4 w-4 text-amber-500" />
             Unsaved Drafts ({drafts.length})
           </h2>
@@ -347,7 +347,7 @@ export default function Automations() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <FileEdit className="h-4 w-4 text-amber-500 shrink-0" />
-                    <h3 className="text-sm font-medium text-gray-900 truncate">
+                    <h3 className="text-sm font-medium text-foreground truncate">
                       {draft.name || "Untitled Draft"}
                     </h3>
                   </div>
@@ -355,7 +355,7 @@ export default function Automations() {
                     Draft
                   </Badge>
                 </div>
-                <p className="text-[11px] text-gray-500 mb-3">
+                <p className="text-[11px] text-muted-foreground mb-3">
                   Saved {format(new Date(draft.savedAt), "MMM d, h:mm a")}
                 </p>
                 <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function Automations() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500 hover:bg-red-50"
                     onClick={() => handleDeleteDraft(draft.id)}
                   >
                     <X className="h-3.5 w-3.5" />
@@ -383,14 +383,14 @@ export default function Automations() {
       )}
 
       {automations.length === 0 && drafts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-white border border-gray-200 rounded-lg">
-          <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <Workflow className="h-7 w-7 text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-16 bg-background border border-border rounded-lg">
+          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+            <Workflow className="h-7 w-7 text-muted-foreground" />
           </div>
-          <h3 className="text-base font-semibold text-gray-900 mb-1">
+          <h3 className="text-base font-semibold text-foreground mb-1">
             {t("automations.empityAuto.title")}
           </h3>
-          <p className="text-sm text-gray-500 max-w-sm text-center mb-5">
+          <p className="text-sm text-muted-foreground max-w-sm text-center mb-5">
             {t("automations.empityAuto.Subtitle")}
           </p>
           <Button
@@ -412,7 +412,7 @@ export default function Automations() {
             return (
               <div
                 key={automation.id}
-                className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200"
+                className="bg-background border border-border rounded-lg hover:border-border hover:shadow-sm transition-all duration-200"
                 data-testid={`card-automation-${automation.id}`}
               >
                 <div className="p-4 pb-3">
@@ -420,7 +420,7 @@ export default function Automations() {
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${isActive ? "bg-green-500" : "bg-gray-300"}`} />
                       <h3
-                        className="font-medium text-sm text-gray-900 truncate"
+                        className="font-medium text-sm text-foreground truncate"
                         data-testid={`text-name-${automation.id}`}
                       >
                         {automation.name}
@@ -439,31 +439,31 @@ export default function Automations() {
                 <div className="px-4 pb-3">
                   {automation.description ? (
                     <p
-                      className="text-xs text-gray-500 line-clamp-2 mb-3"
+                      className="text-xs text-muted-foreground line-clamp-2 mb-3"
                       data-testid={`text-description-${automation.id}`}
                     >
                       {automation.description}
                     </p>
                   ) : (
-                    <p className="text-xs text-gray-400 italic mb-3">
+                    <p className="text-xs text-muted-foreground italic mb-3">
                       No description
                     </p>
                   )}
 
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded">
                       <Zap className="h-3 w-3" />
                       {automation.trigger || "New Chat"}
                     </span>
                     <Badge
                       variant={isActive ? "default" : "secondary"}
-                      className={`text-[10px] px-1.5 py-0 rounded font-medium ${isActive ? "bg-green-100 text-green-700 hover:bg-green-100 border-0" : "bg-gray-100 text-gray-500 hover:bg-gray-100 border-0"}`}
+                      className={`text-[10px] px-1.5 py-0 rounded font-medium ${isActive ? "bg-green-100 text-green-700 hover:bg-green-100 border-0" : "bg-muted text-muted-foreground hover:bg-muted border-0"}`}
                     >
                       {isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 text-[11px] text-gray-400">
+                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
                     <span className="inline-flex items-center gap-1">
                       <GitBranch className="h-3 w-3" />
                       {nodeCount} nodes
@@ -479,11 +479,11 @@ export default function Automations() {
                   </div>
                 </div>
 
-                <div className="flex items-center border-t border-gray-100">
+                <div className="flex items-center border-t border-border">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex-1 text-xs h-9 text-gray-600 hover:text-blue-600 hover:bg-blue-50/50 rounded-none font-medium"
+                    className="flex-1 text-xs h-9 text-muted-foreground hover:text-blue-600 hover:bg-blue-50/50 rounded-none font-medium"
                     onClick={() => handleEdit(automation)}
                     data-testid={`button-edit-${automation.id}`}
                     disabled={user?.username === "demouser"}
@@ -491,11 +491,11 @@ export default function Automations() {
                     <Edit className="h-3.5 w-3.5 mr-1" />
                     Edit
                   </Button>
-                  <div className="w-px h-5 bg-gray-100" />
+                  <div className="w-px h-5 bg-muted" />
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex-1 text-xs h-9 text-gray-600 hover:text-red-600 hover:bg-red-50/50 rounded-none font-medium"
+                    className="flex-1 text-xs h-9 text-muted-foreground hover:text-red-600 hover:bg-red-50/50 rounded-none font-medium"
                     onClick={() => {
                       if (
                         confirm(

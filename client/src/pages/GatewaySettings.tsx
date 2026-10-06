@@ -286,10 +286,10 @@ export default function GatewaySettings() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {t("gateway.stats.activeProvider")}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 capitalize">
+                  <p className="text-2xl font-bold text-foreground capitalize">
                     {paymentProviders?.data?.find(
                       (p: PaymentProvider) => p.isActive
                     )?.name || t("gateway.stats.none")}
@@ -306,24 +306,24 @@ export default function GatewaySettings() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {t("gateway.stats.provider")}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 capitalize">
+                  <p className="text-2xl font-bold text-foreground capitalize">
                     {paymentForm.watch("provider")}
                   </p>
                 </div>
-                <div className="p-3 bg-purple-100 rounded-lg">
+                <div className="p-3 bg-[var(--brand-100)] rounded-lg">
                   {paymentForm.watch("provider") === "razorpay" ? (
-                    <SiRazorpay className="w-6 h-6 text-purple-600" />
+                    <SiRazorpay className="w-6 h-6 text-[var(--brand)]" />
                   ) : paymentForm.watch("provider") === "paypal" ? (
-                    <FaPaypal className="w-6 h-6 text-purple-600" />
+                    <FaPaypal className="w-6 h-6 text-[var(--brand)]" />
                   ) : paymentForm.watch("provider") === "mercadopago" ? (
-                    <SiMercadopago className="w-6 h-6 text-purple-600" />
+                    <SiMercadopago className="w-6 h-6 text-[var(--brand)]" />
                   ) : paymentForm.watch("provider") === "paystack" ? (
-                    <CreditCard className="w-6 h-6 text-purple-600" />
+                    <CreditCard className="w-6 h-6 text-[var(--brand)]" />
                   ) : (
-                    <FaCcStripe className="w-6 h-6 text-purple-600" />
+                    <FaCcStripe className="w-6 h-6 text-[var(--brand)]" />
                   )}
                 </div>
               </div>
@@ -334,10 +334,10 @@ export default function GatewaySettings() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {t("gateway.stats.environment")}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-foreground">
                     {paymentForm.watch("isLive")
                       ? t("gateway.stats.live")
                       : t("gateway.stats.test")}
@@ -357,7 +357,7 @@ export default function GatewaySettings() {
                         : "bg-orange-500"
                     } flex items-center justify-center`}
                   >
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                    <div className="w-2 h-2 bg-background rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -368,10 +368,10 @@ export default function GatewaySettings() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {t("gateway.stats.status")}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-foreground">
                     {paymentForm.watch("isActive")
                       ? t("gateway.stats.active")
                       : t("gateway.stats.inactive")}
@@ -504,7 +504,7 @@ export default function GatewaySettings() {
                     </div>
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {paymentForm.watch("isLive")
                     ? t("gateway.form.liveModeWarning")
                     : t("gateway.form.testModeSafe")}
@@ -548,7 +548,7 @@ export default function GatewaySettings() {
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         onClick={() => !isDemoUser(user?.username) && setShowApiKeyTest(!showApiKeyTest)}
                         disabled={isDemoUser(user?.username)}
                       >
@@ -582,7 +582,7 @@ export default function GatewaySettings() {
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         onClick={() => !isDemoUser(user?.username) && setShowApiSecretTest(!showApiSecretTest)}
                         disabled={isDemoUser(user?.username)}
                       >
@@ -708,11 +708,11 @@ export default function GatewaySettings() {
 )}
 
               {/* Supported Currencies multi-select */}
-              <div className="space-y-2 p-4 border rounded-lg bg-gray-50">
+              <div className="space-y-2 p-4 border rounded-lg bg-muted">
                 <Label className="font-medium">
                   Supported Currencies
                 </Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Select which currencies this gateway should be offered for
                   on the plan upgrade page. Leave at least one checked or this
                   gateway will not appear to customers.
@@ -730,7 +730,7 @@ export default function GatewaySettings() {
                         className={`flex items-center gap-2 px-3 py-2 rounded border cursor-pointer text-sm ${
                           checked
                             ? "bg-blue-50 border-blue-400 text-blue-900"
-                            : "bg-white border-gray-200 text-gray-700"
+                            : "bg-background border-border text-muted-foreground"
                         }`}
                       >
                         <input
@@ -766,12 +766,12 @@ export default function GatewaySettings() {
 
               {/* Active Toggle */}
               
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg border">
                 <div>
                   <Label htmlFor="isActive" className="font-medium">
                     {t("gateway.form.enableGateway")}
                   </Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {t("gateway.form.enableGatewayDesc")}
                   </p>
                 </div>
@@ -827,33 +827,33 @@ export default function GatewaySettings() {
               )}
 
               {paymentForm.watch("provider") === "stripe" && (
-                <div className="p-4 border rounded-lg bg-purple-50">
+                <div className="p-4 border rounded-lg bg-[var(--brand-100)]">
                   <div className="space-y-2">
-                    <h4 className="font-medium text-purple-900 flex items-center gap-2">
+                    <h4 className="font-medium text-[var(--brand)] flex items-center gap-2">
                       <FaCcStripe className="w-4 h-4" />
                       {t("gateway.stripe.title")}
                     </h4>
-                    <p className="text-sm text-purple-800">
+                    <p className="text-sm text-[var(--brand)]">
                       {t("gateway.stripe.description")}
                     </p>
-                    <ul className="text-sm text-purple-800 space-y-1 mt-2">
+                    <ul className="text-sm text-[var(--brand)] space-y-1 mt-2">
                       <li>
                         • {t("gateway.stripe.testKeyInfo")}{" "}
-                        <code className="bg-purple-100 px-1 rounded">
+                        <code className="bg-[var(--brand-100)] px-1 rounded">
                           pk_test_
                         </code>{" "}
                         {t("gateway.stripe.testKeyInfoOr")}{" "}
-                        <code className="bg-purple-100 px-1 rounded">
+                        <code className="bg-[var(--brand-100)] px-1 rounded">
                           sk_test_
                         </code>
                       </li>
                       <li>
                         • {t("gateway.stripe.liveKeyInfo")}{" "}
-                        <code className="bg-purple-100 px-1 rounded">
+                        <code className="bg-[var(--brand-100)] px-1 rounded">
                           pk_live_
                         </code>{" "}
                         {t("gateway.stripe.liveKeyInfoOr")}{" "}
-                        <code className="bg-purple-100 px-1 rounded">
+                        <code className="bg-[var(--brand-100)] px-1 rounded">
                           sk_live_
                         </code>
                       </li>
@@ -862,7 +862,7 @@ export default function GatewaySettings() {
                       href="https://dashboard.stripe.com/apikeys"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-purple-600 hover:underline inline-block mt-2"
+                      className="text-sm text-[var(--brand)] hover:underline inline-block mt-2"
                     >
                       {t("gateway.stripe.getKeys")}
                     </a>

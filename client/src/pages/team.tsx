@@ -363,7 +363,7 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                 {isLoading ? (
                   <div className="text-center py-12">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-4"></div>
-                    <p className="text-gray-600">Loading team members...</p>
+                    <p className="text-muted-foreground">Loading team members...</p>
                   </div>
                 ) : !teamMembers || teamMembers.length === 0 ? (
                   <StateDisplay
@@ -571,12 +571,12 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                                   />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-gray-900 truncate">
+                                  <h3 className="font-semibold text-foreground truncate">
                                     {isDemoUser(user?.username)
                                       ? maskName(`${member.firstName || ""} ${member.lastName || ""}`.trim() || member.username)
                                       : (`${member.firstName || ""} ${member.lastName || ""}`.trim() || member.username)}
                                   </h3>
-                                  <p className="text-sm text-gray-600 truncate">
+                                  <p className="text-sm text-muted-foreground truncate">
                                     {isDemoUser(user?.username)
                                       ? maskEmail(member.email || "")
                                       : member.email}
@@ -653,8 +653,8 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                             </div>
 
                             {/* Last Active */}
-                            <div className="flex items-center gap-2 text-sm text-gray-600 pt-3 border-t">
-                              <Clock className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground pt-3 border-t">
+                              <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                               <span>
                                 Last active:{" "}
                                 {member.lastLogin
@@ -682,7 +682,7 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                             <ChevronLeft className="h-4 w-4 mr-2" />
                             Previous
                           </Button>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-muted-foreground">
                             Page{" "}
                             <span className="font-medium">
                               {teamUserRes.page}
@@ -709,7 +709,7 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
 
                         {/* Mobile Pagination */}
                         <div className="sm:hidden space-y-3">
-                          <div className="text-center text-sm text-gray-600 bg-gray-50 py-2 rounded-lg">
+                          <div className="text-center text-sm text-muted-foreground bg-muted py-2 rounded-lg">
                             Page{" "}
                             <span className="font-medium">
                               {teamUserRes.page}
@@ -718,7 +718,7 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                             <span className="font-medium">
                               {teamUserRes.totalPages}
                             </span>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-muted-foreground mt-1">
                               {teamUserRes.total} total members
                             </div>
                           </div>
@@ -825,7 +825,7 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
                     (activityLogs as any[]).map((log) => (
                       <div
                         key={log.id}
-                        className="bg-white border rounded-lg p-4 shadow-sm space-y-3"
+                        className="bg-background border rounded-lg p-4 shadow-sm space-y-3"
                       >
                         {/* Member */}
                         <div className="flex items-center justify-between">
@@ -1275,7 +1275,7 @@ function TeamMemberDialog({
             <button
               type="button"
               onClick={() => toggleSection(group.title)}
-              className="p-1 hover:bg-gray-100 rounded"
+              className="p-1 hover:bg-muted rounded"
             >
               {isExpanded ? (
                 <ChevronDown className="w-4 h-4" />
@@ -1294,7 +1294,7 @@ function TeamMemberDialog({
         </div>
 
         {isExpanded && (
-          <div className="mt-3 ml-6 pl-4 border-l-2 border-gray-200">
+          <div className="mt-3 ml-6 pl-4 border-l-2 border-border">
             <div className="grid grid-cols-3 gap-x-4 gap-y-2">
               {group.permissions.map((perm) => (
                 <div key={perm.key} className="flex items-center space-x-2">
@@ -1308,7 +1308,7 @@ function TeamMemberDialog({
                   />
                   <Label
                     htmlFor={perm.key}
-                    className="text-xs text-gray-600 cursor-pointer"
+                    className="text-xs text-muted-foreground cursor-pointer"
                   >
                     {perm.label}
                   </Label>

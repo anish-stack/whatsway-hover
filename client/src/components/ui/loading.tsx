@@ -34,8 +34,8 @@ export function Loading({ className, size = "md", text }: LoadingProps) {
   return (
     <div className={cn("flex items-center justify-center", className)}>
       <div className="flex flex-col items-center space-y-2">
-        <Loader2 className={cn("animate-spin text-gray-400", sizeClasses[size])} />
-        {text && <p className="text-sm text-gray-500">{text}</p>}
+        <Loader2 className={cn("animate-spin text-muted-foreground", sizeClasses[size])} />
+        {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     </div>
   );
@@ -43,7 +43,7 @@ export function Loading({ className, size = "md", text }: LoadingProps) {
 
 export function LoadingSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("animate-pulse bg-gray-200 rounded", className)} />
+    <div className={cn("animate-pulse bg-border rounded", className)} />
   );
 }
 

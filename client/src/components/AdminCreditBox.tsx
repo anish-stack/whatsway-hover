@@ -56,7 +56,7 @@ export function AdminCreditBox() {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 animate-pulse h-28" />
+      <div className="rounded-lg border border-border bg-muted p-3 animate-pulse h-28" />
     );
   }
 
@@ -71,14 +71,14 @@ export function AdminCreditBox() {
   return (
     <div
       onClick={handleClick}
-      className="rounded-lg border border-gray-200 bg-gradient-to-br from-blue-50/50 to-purple-50/50 p-3 shadow-sm hover:shadow-md hover:border-green-300 transition-all cursor-pointer"
+      className="rounded-lg border border-border bg-gradient-to-br from-blue-50/50 to-[var(--brand-100)]/50 p-3 shadow-sm hover:shadow-md hover:border-green-300 transition-all cursor-pointer"
     >
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-1.5">
           <div className="p-1 bg-yellow-100 rounded">
             <Crown className="h-3 w-3 text-yellow-600" />
           </div>
-          <span className="text-xs font-semibold text-gray-800">Plan</span>
+          <span className="text-xs font-semibold text-foreground">Plan</span>
         </div>
 
         {hasActivePlan ? (
@@ -100,17 +100,17 @@ export function AdminCreditBox() {
               <div key={key} className="flex items-center gap-1.5">
                 <Check
                   className={`w-2.5 h-2.5 flex-shrink-0 ${
-                    idx % 2 === 0 ? "text-blue-600" : "text-purple-600"
+                    idx % 2 === 0 ? "text-blue-600" : "text-[var(--brand)]"
                   }`}
                 />
-                <span className="text-[10px] text-gray-700">
+                <span className="text-[10px] text-muted-foreground">
                   <span className="font-semibold">{value}</span>{" "}
-                  <span className="text-gray-500 capitalize">{key}</span>
+                  <span className="text-muted-foreground capitalize">{key}</span>
                 </span>
               </div>
             ))
         ) : (
-          <p className="text-[10px] text-gray-500 text-center py-2">
+          <p className="text-[10px] text-muted-foreground text-center py-2">
             No active plan
           </p>
         )}

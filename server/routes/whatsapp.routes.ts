@@ -870,67 +870,180 @@ app.post(
 );
 
   // Test WhatsApp connection
-  app.post("/api/whatsapp/channels/:id/test", requireAuth, async (req, res) => {
-    try {
-      const channel = await storage.getChannel(req.params.id);
-      if (!channel) {
-        return res.status(404).json({ message: "Channel not found" });
-      }
-      
-      if (!channel.phoneNumberId || !channel.accessToken) {
-        return res.status(400).json({ message: "Channel is not configured for WhatsApp" });
-      }
+app.post("/api/whatsapp/channels/:id/test", requireAuth, async (req, res) => {
+  try {
+    const channel = await storage.getChannel(req.params.id);
 
-      let testPhone = (req.body.phoneNumber || "919310797700").replace(/\D/g, '');
-      const testMessage = req.body.message || "Hello! This is a test message from WhatsWay.";
+    if (!channel) {
+      return res.status(404).json({
+        success: false,
+        message: "Channel not found",
+      });
+    }
 
-      
+    if (!channel.phoneNumberId || !channel.accessToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Channel is not configured for WhatsApp",
+      });
+    }
 
-      const requestBody = {
+    // -------------------------------------------------------
+    // PHONE NUMBER
+    // -------------------------------------------------------
+    let testPhone = String(
+      req.body.phoneNumber || "919310797700"
+    ).replace(/\D/g, "");
+
+    // Agar user 10 digit Indian number bhej raha hai
+    if (testPhone.length === 10) {
+      testPhone = `91${testPhone}`;
+    }
+
+    if (testPhone.length < 11 || testPhone.length > 15) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid phone number. Use country code, e.g. 919310797700",
+      });
+    }
+
+    // -------------------------------------------------------
+    // MESSAGE TYPE
+    // App Review / Meta Test Number ke liye template recommended
+    // -------------------------------------------------------
+    const messageType = "template";
+
+    let requestBody;
+
+    if (messageType === "text") {
+      const testMessage =
+        req.body.message ||
+        "Hello! This is a test message from WhatsWay.";
+
+      requestBody = {
         messaging_product: "whatsapp",
+        recipient_type: "individual",
         to: testPhone,
         type: "text",
-        text: { body: testMessage },
+        text: {
+          preview_url: false,
+          body: testMessage,
+        },
       };
-
-      const startTime = Date.now();
-      const response = await fetch(
-        `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${channel.phoneNumberId}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${channel.accessToken}`,
-            "Content-Type": "application/json",
+    } else {
+      // Meta default test template
+      requestBody = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: testPhone,
+        type: "template",
+        template: {
+          name:  "test",
+          language: {
+            code: req.body.languageCode || "en_US",
           },
-          body: JSON.stringify(requestBody),
-        }
-      );
+        },
+      };
+    }
 
-      const result = await response.json();
-      const duration = Date.now() - startTime;
+    const endpoint = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${channel.phoneNumberId}/messages`;
 
+    console.log("========================================");
+    console.log("WhatsApp Test Message");
+    console.log("Endpoint:", endpoint);
+    console.log("Phone:", testPhone);
+    console.log("Phone Number ID:", channel.phoneNumberId);
+    console.log(
+      "Request Body:",
+      JSON.stringify(requestBody, null, 2)
+    );
+    console.log("========================================");
+
+    const startTime = Date.now();
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${channel.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    const result = await response.json();
+    const duration = Date.now() - startTime;
+
+    console.log("Meta response status:", response.status);
+    console.log(
+      "Meta response:",
+      JSON.stringify(result, null, 2)
+    );
+
+    // -------------------------------------------------------
+    // API LOG
+    // -------------------------------------------------------
+    try {
       await storage.createApiLog({
         channelId: channel.id,
         requestType: "test_connection",
-        endpoint: `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${channel.phoneNumberId}/messages`,
+        endpoint,
         method: "POST",
         requestBody,
         responseStatus: response.status,
         responseBody: result,
         duration,
       });
-
-      if (!response.ok) {
-        const errorMsg = result.error?.error_user_msg || result.error?.message || "Failed to send test message";
-        return res.status(response.status).json({ message: errorMsg });
-      }
-
-      res.json({ success: true, message: "Test message sent successfully", result });
-    } catch (error: any) {
-      console.error("Error testing WhatsApp connection:", error);
-      res.status(500).json({ message: error.message || "Failed to test WhatsApp connection" });
+    } catch (logError) {
+      console.error("Unable to create WhatsApp API log:", logError);
     }
-  });
+
+    // -------------------------------------------------------
+    // META ERROR
+    // -------------------------------------------------------
+    if (!response.ok) {
+      const errorMsg =
+        result?.error?.error_user_msg ||
+        result?.error?.error_user_title ||
+        result?.error?.message ||
+        "Failed to send WhatsApp test message";
+
+      return res.status(response.status).json({
+        success: false,
+        message: errorMsg,
+        metaError: result?.error || result,
+      });
+    }
+
+    // -------------------------------------------------------
+    // SUCCESS
+    // Note: Accepted != Delivered
+    // -------------------------------------------------------
+    const wamid = result?.messages?.[0]?.id || null;
+
+    return res.json({
+      success: true,
+      message:
+        "Message accepted by WhatsApp Cloud API. Check webhook for delivery status.",
+      data: {
+        phoneNumber: testPhone,
+        messageType,
+        messageId: wamid,
+        messagingProduct: result?.messaging_product,
+        contacts: result?.contacts || [],
+      },
+      result,
+    });
+  } catch (error) {
+    console.error("Error testing WhatsApp connection:", error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        error?.message || "Failed to test WhatsApp connection",
+    });
+  }
+});
 
   // Get WhatsApp channel health
   // app.get("/api/whatsapp/channels/:id/health", async (req, res) => {

@@ -43,7 +43,7 @@ const DemoPage = () => {
             WhatsWay experience with no restrictions.
           </span>
           <br />
-          <span className="mt-1 block text-xs text-gray-500">
+          <span className="mt-1 block text-xs text-muted-foreground">
             Demo data resets daily. No real messages or charges are generated.
           </span>
         </>

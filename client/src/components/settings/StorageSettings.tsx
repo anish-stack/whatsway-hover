@@ -181,7 +181,7 @@ export default function StorageSettings(): JSX.Element {
         <Card>
           <CardContent className="p-6 flex flex-col items-center justify-center py-8">
             <Loading />
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               {t("settings.storage_setting.loadingText")}
             </p>
           </CardContent>
@@ -287,7 +287,7 @@ export default function StorageSettings(): JSX.Element {
           )} */}
 
           {/* Storage Info Section */}
-          <div className="border border-gray-200 rounded-lg p-6">
+          <div className="border border-border rounded-lg p-6">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-2">
               {/* Left: title + badge */}
               <div className="flex items-center space-x-3 min-w-0">
@@ -297,7 +297,7 @@ export default function StorageSettings(): JSX.Element {
 
                 <Badge
                   variant={displayData.isActive ? "outline" : "secondary"}
-                  className={`text-xs inline-flex items-center whitespace-nowrap ${displayData.isActive ? "text-green-600" : "text-gray-500"
+                  className={`text-xs inline-flex items-center whitespace-nowrap ${displayData.isActive ? "text-green-600" : "text-muted-foreground"
                     }`}
                   aria-label={
                     displayData.isActive
@@ -318,7 +318,7 @@ export default function StorageSettings(): JSX.Element {
 
               {/* Right: timestamp */}
               {displayData.updatedAt && (
-                <div className="mt-1 sm:mt-0 flex items-center text-sm text-gray-500">
+                <div className="mt-1 sm:mt-0 flex items-center text-sm text-muted-foreground">
                   <Clock className="w-4 h-4 mr-1 flex-shrink-0" />
                   <span className="whitespace-nowrap">
                     {formatLastUpdated(displayData.updatedAt)}
@@ -336,8 +336,8 @@ export default function StorageSettings(): JSX.Element {
                     {t("settings.storage_setting.spaceName")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm font-medium text-foreground">
                     {displayData.spaceName ||
                       t("settings.storage_setting.spaceNamePlaceholder")}
                   </p>
@@ -352,8 +352,8 @@ export default function StorageSettings(): JSX.Element {
                     {t("settings.storage_setting.endpoint")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700 break-all">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground break-all">
                     {displayData.endpoint ||
                       t("settings.storage_setting.endpointPlaceholder")}
                   </p>
@@ -363,13 +363,13 @@ export default function StorageSettings(): JSX.Element {
               {/* Region */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-purple-500" />
+                  <MapPin className="w-4 h-4 text-[var(--brand)]" />
                   <Label className="font-medium">
                     {t("settings.storage_setting.region")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.region ||
                       t("settings.storage_setting.regionPlaceholder")}
                   </p>
@@ -384,8 +384,8 @@ export default function StorageSettings(): JSX.Element {
                     {t("settings.storage_setting.accessKey")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.accessKey
                       ? t("settings.storage_setting.accessKeyMasked")
                       : t("settings.storage_setting.accessKeyPlaceholder")}
@@ -401,8 +401,8 @@ export default function StorageSettings(): JSX.Element {
                     {t("settings.storage_setting.secretKey")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.secretKey
                       ? t("settings.storage_setting.secretKeyMasked")
                       : t("settings.storage_setting.secretKeyPlaceholder")}
@@ -412,7 +412,7 @@ export default function StorageSettings(): JSX.Element {
             </div>
 
             {/* Configuration Status */}
-            <div className="mt-6 pt-4 border-t border-gray-100">
+            <div className="mt-6 pt-4 border-t border-border">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
                   <div
@@ -425,7 +425,7 @@ export default function StorageSettings(): JSX.Element {
                         : "bg-red-500"
                       }`}
                   />
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("settings.storage_setting.configurationStatusLabel")}{" "}
                     {displayData.spaceName &&
                       displayData.endpoint &&
@@ -441,7 +441,7 @@ export default function StorageSettings(): JSX.Element {
                   </span>
                 </div>
                 {displayData.updatedAt && !isUsingStaticData && (
-                  <span className="text-gray-500">
+                  <span className="text-muted-foreground">
                     {t("settings.storage_setting.lastUpdated")}:{" "}
                     {new Date(displayData.updatedAt).toLocaleDateString()}
                   </span>

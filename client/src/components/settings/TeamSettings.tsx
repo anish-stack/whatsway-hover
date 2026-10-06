@@ -174,8 +174,8 @@ export function TeamSettings() {
           <Loading />
         ) : teamMembers.length === 0 ? (
           <div className="text-center py-12">
-            <Users className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-500 mb-4">No team members yet</p>
+            <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <p className="text-muted-foreground mb-4">No team members yet</p>
             <Button onClick={() => setShowAddMember(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Add Your First Team Member
@@ -186,12 +186,12 @@ export function TeamSettings() {
             {teamMembers.map((member) => (
               <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-border rounded-full flex items-center justify-center">
                     {getRoleIcon(member.role)}
                   </div>
                   <div>
                     <p className="font-medium">{member.name || member.email}</p>
-                    <p className="text-sm text-gray-500">{member.email}</p>
+                    <p className="text-sm text-muted-foreground">{member.email}</p>
                   </div>
                   <Badge variant={getRoleBadgeVariant(member.role)}>
                     {member.role}
@@ -248,7 +248,7 @@ export function TeamSettings() {
 
         {/* Add Member Form */}
         {showAddMember && (
-          <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+          <div className="mt-6 p-4 border rounded-lg bg-muted">
             <h4 className="font-medium mb-4">Add New Team Member</h4>
             <div className="space-y-4">
               <div>

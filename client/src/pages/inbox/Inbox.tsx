@@ -1219,7 +1219,7 @@ useEffect(() => {
   title={t("inbox.title")}
 />
 
-      <div className="flex-1 flex bg-gray-50 overflow-hidden">
+      <div className="flex-1 flex bg-muted overflow-hidden">
         <ConversationList
           conversations={filteredConversations}
           conversationsLoading={conversationsLoading}
@@ -1268,13 +1268,13 @@ useEffect(() => {
             onTogglePin={handleTogglePin}
           />
         ) : (
-          <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50">
+          <div className="hidden md:flex flex-1 items-center justify-center bg-muted">
             <div className="text-center">
-              <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Select a conversation
               </h3>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 Choose a conversation from the list to start messaging
               </p>
             </div>
@@ -1285,12 +1285,12 @@ useEffect(() => {
 
       {showMediaPreview && (
   <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
-    <div className="bg-white rounded-xl p-4 w-[500px] max-w-[95vw]">
+    <div className="bg-background rounded-xl p-4 w-[500px] max-w-[95vw]">
       
       <img
         src={mediaPreviewUrl}
         alt="preview"
-        className="w-full h-[350px] object-contain rounded-xl bg-gray-100"
+        className="w-full h-[350px] object-contain rounded-xl bg-muted"
       />
 
       {/* <textarea
@@ -1309,7 +1309,7 @@ useEffect(() => {
   className="
     w-full
     border
-    border-gray-300
+    border-border
     rounded-xl
     p-3
     mt-4

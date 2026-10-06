@@ -110,25 +110,25 @@ const BestPractices = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-6">
-            <Star className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-6">
+            <Star className="w-8 h-8 text-[var(--brand)]" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6">
             {t("bestPractices.hero.title")}
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               {t("bestPractices.hero.titleHighlight")}
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto">
             {t("bestPractices.hero.subtitle")}
           </p>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white border-b border-[var(--mist)]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => {
@@ -139,8 +139,8 @@ const BestPractices = () => {
                   onClick={() => setActiveCategory(category.id)}
                   className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
                     activeCategory === category.id
-                      ? "bg-green-500 text-white shadow-lg transform scale-105"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-[var(--brand)] text-white shadow-lg transform scale-105"
+                      : "bg-[var(--canvas)] text-[var(--ink-700)] hover:bg-[var(--mist)]"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -153,7 +153,7 @@ const BestPractices = () => {
       </section>
 
       {/* Best Practices Content */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="space-y-8">
             {currentPractices.map((practice, index) => (
@@ -163,15 +163,15 @@ const BestPractices = () => {
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-2xl font-bold text-[var(--ink)] mb-3">
                       {practice.title}
                     </h3>
-                    <p className="text-gray-600 text-lg">
+                    <p className="text-[var(--ink-500)] text-lg">
                       {practice.description}
                     </p>
                   </div>
-                  <div className="bg-green-100 px-4 py-2 rounded-full ml-6">
-                    <span className="text-green-800 font-semibold text-sm">
+                  <div className="bg-[var(--brand-100)] px-4 py-2 rounded-full ml-6">
+                    <span className="text-[var(--brand)] font-semibold text-sm">
                       {practice.impact}
                     </span>
                   </div>
@@ -179,7 +179,7 @@ const BestPractices = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
+                    <h4 className="font-semibold text-[var(--ink)] mb-3">
                       {t("bestPractices.implementationTips")}
                     </h4>
                     <ul className="space-y-2">
@@ -188,21 +188,21 @@ const BestPractices = () => {
                           key={tipIndex}
                           className="flex items-start space-x-3"
                         >
-                          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{tip}</span>
+                          <CheckCircle className="w-5 h-5 text-[var(--brand)] mt-0.5 flex-shrink-0" />
+                          <span className="text-[var(--ink-700)]">{tip}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-xl">
+                  <div className="bg-gradient-to-br from-blue-50 to-[var(--brand-100)] p-6 rounded-xl">
                     <div className="flex items-center space-x-3 mb-4">
                       <TrendingUp className="w-6 h-6 text-blue-600" />
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-[var(--ink)]">
                         {t("bestPractices.expectedImpact")}
                       </h4>
                     </div>
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-[var(--ink-700)] mb-4">
                       {t("bestPractices.expectedImpactDesc")}
                     </p>
                     <div className="bg-white p-3 rounded-lg">
@@ -222,10 +222,10 @@ const BestPractices = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               {t("bestPractices.quickTips.heading")}
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               {t("bestPractices.quickTips.subtitle")}
             </p>
           </div>
@@ -236,15 +236,15 @@ const BestPractices = () => {
               return (
                 <div
                   key={index}
-                  className="bg-gray-50 p-6 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="bg-[var(--canvas)] p-6 rounded-xl hover:bg-[var(--canvas)] transition-colors"
                 >
-                  <div className="bg-green-100 p-3 rounded-lg w-fit mb-4">
-                    <Icon className="w-6 h-6 text-green-600" />
+                  <div className="bg-[var(--brand-100)] p-3 rounded-lg w-fit mb-4">
+                    <Icon className="w-6 h-6 text-[var(--brand)]" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg font-bold text-[var(--ink)] mb-2">
                     {tip.title}
                   </h3>
-                  <p className="text-gray-600">{tip.tip}</p>
+                  <p className="text-[var(--ink-500)]">{tip.tip}</p>
                 </div>
               );
             })}
@@ -259,13 +259,13 @@ const BestPractices = () => {
             <div className="flex items-start space-x-4">
               <AlertTriangle className="w-8 h-8 text-red-500 mt-1" />
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-[var(--ink)] mb-3">
                   {t("bestPractices.warning.heading")}
                 </h3>
-                <p className="text-gray-700 mb-4">
+                <p className="text-[var(--ink-700)] mb-4">
                   {t("bestPractices.warning.description")}
                 </p>
-                <ul className="space-y-2 text-gray-600">
+                <ul className="space-y-2 text-[var(--ink-500)]">
                   {(
                     t("bestPractices.warning.points", {
                       returnObjects: true,
@@ -281,7 +281,7 @@ const BestPractices = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             {t("bestPractices.cta.heading")}
@@ -293,7 +293,7 @@ const BestPractices = () => {
           </p>
           <Link
             href="/contact"
-            className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl"
+            className="bg-white text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--canvas)] transition-all transform hover:scale-105 shadow-xl"
           >
             {t("bestPractices.cta.button")}
           </Link>

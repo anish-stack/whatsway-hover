@@ -75,14 +75,14 @@ export function TemplateMessageDialog({
         </DialogHeader>
         <div className="flex-1 overflow-y-auto space-y-4 py-4 px-1">
           {activeChannel && (
-            <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
+            <div className="p-3 bg-muted rounded-md border border-border">
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-gray-600" />
+                <Phone className="w-4 h-4 text-muted-foreground" />
                 <div className="text-sm">
                   <span className="font-medium">
                     {t("contacts.sendMessage.activeChannel")}
                   </span>{" "}
-                  <span className="text-gray-700">{activeChannel.name}</span>
+                  <span className="text-muted-foreground">{activeChannel.name}</span>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@ export function TemplateMessageDialog({
           )}
 
           <div className="flex flex-col items-center gap-3 py-4">
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               Select a template to send to this contact
             </p>
             <TemplatePickerDialog

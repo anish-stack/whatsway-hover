@@ -94,11 +94,11 @@ const CookiePolicy = () => {
         <div className="space-y-6">
           {/* Essential Cookies */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.typesOfCookies.essential.title")}
             </h3>
             <p>{t("cookiePolicy.sections.typesOfCookies.essential.text")}</p>
-            <div className="bg-gray-50 p-4 rounded-lg mt-3">
+            <div className="bg-[var(--canvas)] p-4 rounded-lg mt-3">
               <p>
                 <strong>Examples:</strong>{" "}
                 {t("cookiePolicy.sections.typesOfCookies.essential.examples")}
@@ -108,11 +108,11 @@ const CookiePolicy = () => {
 
           {/* Performance Cookies */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.typesOfCookies.performance.title")}
             </h3>
             <p>{t("cookiePolicy.sections.typesOfCookies.performance.text")}</p>
-            <div className="bg-gray-50 p-4 rounded-lg mt-3">
+            <div className="bg-[var(--canvas)] p-4 rounded-lg mt-3">
               <p>
                 <strong>Examples:</strong>{" "}
                 {t("cookiePolicy.sections.typesOfCookies.performance.examples")}
@@ -122,11 +122,11 @@ const CookiePolicy = () => {
 
           {/* Functional Cookies */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.typesOfCookies.functional.title")}
             </h3>
             <p>{t("cookiePolicy.sections.typesOfCookies.functional.text")}</p>
-            <div className="bg-gray-50 p-4 rounded-lg mt-3">
+            <div className="bg-[var(--canvas)] p-4 rounded-lg mt-3">
               <p>
                 <strong>Examples:</strong>{" "}
                 {t("cookiePolicy.sections.typesOfCookies.functional.examples")}
@@ -136,11 +136,11 @@ const CookiePolicy = () => {
 
           {/* Marketing Cookies */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.typesOfCookies.marketing.title")}
             </h3>
             <p>{t("cookiePolicy.sections.typesOfCookies.marketing.text")}</p>
-            <div className="bg-gray-50 p-4 rounded-lg mt-3">
+            <div className="bg-[var(--canvas)] p-4 rounded-lg mt-3">
               <p>
                 <strong>Examples:</strong>{" "}
                 {t("cookiePolicy.sections.typesOfCookies.marketing.examples")}
@@ -179,7 +179,7 @@ const CookiePolicy = () => {
         <div className="space-y-4">
           {/* Browser Settings */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.managingCookies.browserSettings.title")}
             </h3>
             <p>
@@ -194,7 +194,7 @@ const CookiePolicy = () => {
 
           {/* Cookie Consent Manager */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.managingCookies.consentManager.title")}
             </h3>
             <p>
@@ -204,7 +204,7 @@ const CookiePolicy = () => {
 
           {/* Opt-Out Links */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
               {t("cookiePolicy.sections.managingCookies.optOutLinks.title")}
             </h3>
             <p>
@@ -216,7 +216,7 @@ const CookiePolicy = () => {
                   <strong>{link.label}</strong>{" "}
                   <a
                     href={link.href}
-                    className="text-green-600 hover:underline"
+                    className="text-[var(--brand)] hover:underline"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -249,12 +249,12 @@ const CookiePolicy = () => {
       {/* Contact Us */}
       <PolicySection title={t("cookiePolicy.sections.contact.title")}>
         <p>{t("cookiePolicy.sections.contact.intro")}</p>
-        <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="bg-[var(--canvas)] p-4 rounded-lg">
           <p>
             <strong>{t("cookiePolicy.sections.contact.emailLabel")}</strong>{" "}
             <a
               href={`mailto:${t("cookiePolicy.sections.contact.email")}`}
-              className="text-green-600 hover:underline"
+              className="text-[var(--brand)] hover:underline"
             >
               {t("cookiePolicy.sections.contact.email", {
                 suportEmail,

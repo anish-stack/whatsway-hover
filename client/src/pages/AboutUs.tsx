@@ -65,8 +65,8 @@ const AboutUs: React.FC = () => {
   const valueColors = ["green", "blue", "purple", "orange"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-500 to-cyan-600 text-white py-28 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--canvas)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--brand)] via-[var(--brand-600)] to-[var(--brand-700)] text-white py-28 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
         <div className="absolute top-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/3 translate-y-1/3" />
@@ -79,7 +79,7 @@ const AboutUs: React.FC = () => {
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight">
             {t("aboutUs.hero.title")}
-            <span className="block mt-2 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-white to-[var(--brand-100)] bg-clip-text text-transparent">
               {t("aboutUs.hero.titleHighlight")}
             </span>
           </h1>
@@ -93,39 +93,39 @@ const AboutUs: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-flex items-center bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-emerald-100">
+              <div className="inline-flex items-center bg-[var(--brand-100)] text-[var(--brand)] px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-[var(--mist)]">
                 <Target className="w-4 h-4 mr-2" />
                 {t("aboutUs.mission.badge")}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--ink)] mb-6 leading-tight">
                 {t("aboutUs.mission.title")}
-                <span className="text-emerald-600">
+                <span className="text-[var(--brand)]">
                   {" "}
                   {t("aboutUs.mission.titleHighlight")}
                 </span>
               </h2>
-              <p className="text-gray-600 mb-5 leading-relaxed text-lg">
+              <p className="text-[var(--ink-500)] mb-5 leading-relaxed text-lg">
                 {t("aboutUs.mission.description1")}
               </p>
-              <p className="text-gray-600 mb-10 leading-relaxed text-lg">
+              <p className="text-[var(--ink-500)] mb-10 leading-relaxed text-lg">
                 {t("aboutUs.mission.description2", {
                   appName,
                 })}
               </p>
               <div className="grid grid-cols-2 gap-5">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="text-3xl font-extrabold text-emerald-600 mb-1">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-extrabold text-[var(--brand)] mb-1">
                     {t("aboutUs.mission.stats.businesses")}
                   </div>
-                  <div className="text-sm text-gray-500 font-medium">
+                  <div className="text-sm text-[var(--ink-500)] font-medium">
                     {t("aboutUs.mission.stats.businessesLabel")}
                   </div>
                 </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="text-3xl font-extrabold text-emerald-600 mb-1">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-extrabold text-[var(--brand)] mb-1">
                     {t("aboutUs.mission.stats.messages")}
                   </div>
-                  <div className="text-sm text-gray-500 font-medium">
+                  <div className="text-sm text-[var(--ink-500)] font-medium">
                     {t("aboutUs.mission.stats.messagesLabel")}
                   </div>
                 </div>
@@ -133,25 +133,25 @@ const AboutUs: React.FC = () => {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-emerald-50 to-cyan-50 rounded-3xl p-10 h-[500px] flex items-center justify-center border border-emerald-100/50">
-                <MessageCircle className="w-64 h-64 text-emerald-400 opacity-10" />
+              <div className="bg-gradient-to-br from-[var(--brand-50)] to-[var(--brand-100)] rounded-3xl p-10 h-[500px] flex items-center justify-center border border-[var(--mist)]">
+                <MessageCircle className="w-64 h-64 text-[var(--brand)] opacity-10" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl max-w-sm border border-white">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    <h3 className="text-2xl font-bold text-[var(--ink)] mb-4">
                       {t("aboutUs.mission.card.title")}
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-[var(--ink-500)] mb-6 leading-relaxed">
                       {t("aboutUs.mission.card.description", {
                         appName,
                       })}
                     </p>
                     <div className="flex items-center space-x-4">
                       <div className="flex -space-x-2">
-                        <div className="w-10 h-10 rounded-full bg-emerald-500 ring-2 ring-white"></div>
-                        <div className="w-10 h-10 rounded-full bg-teal-500 ring-2 ring-white"></div>
-                        <div className="w-10 h-10 rounded-full bg-cyan-500 ring-2 ring-white"></div>
+                        <div className="w-10 h-10 rounded-full bg-[var(--brand)] ring-2 ring-white"></div>
+                        <div className="w-10 h-10 rounded-full bg-[var(--brand)] ring-2 ring-white"></div>
+                        <div className="w-10 h-10 rounded-full bg-[var(--brand)] ring-2 ring-white"></div>
                       </div>
-                      <div className="text-sm text-gray-500 font-medium">
+                      <div className="text-sm text-[var(--ink-500)] font-medium">
                         {t("aboutUs.mission.card.count")}
                       </div>
                     </div>
@@ -167,22 +167,22 @@ const AboutUs: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative order-2 lg:order-1">
-              <div className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-3xl p-10 border border-cyan-100/50">
+              <div className="bg-gradient-to-br from-[var(--brand-50)] to-[var(--brand-100)] rounded-3xl p-10 border border-[var(--mist)]">
                 <div className="flex items-center space-x-3 mb-8">
-                  <Users className="w-6 h-6 text-teal-600" />
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <Users className="w-6 h-6 text-[var(--brand)]" />
+                  <h3 className="text-xl font-bold text-[var(--ink)]">
                     {t("aboutUs.story.journey.title")}
                   </h3>
                 </div>
                 <div className="relative space-y-0">
-                  <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-emerald-300 via-teal-300 to-cyan-300" />
+                  <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-[var(--brand)] via-[var(--brand-600)] to-[var(--brand-700)]" />
                   {journeyMilestones.map((milestone, index) => {
                     const icons = [Zap, TrendingUp, Award];
                     const Icon = icons[index];
                     const bgColors = [
-                      "bg-emerald-500",
-                      "bg-teal-500",
-                      "bg-cyan-500",
+                      "bg-[var(--brand)]",
+                      "bg-[var(--brand)]",
+                      "bg-[var(--brand)]",
                     ];
 
                     return (
@@ -196,10 +196,10 @@ const AboutUs: React.FC = () => {
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div className="pt-1">
-                          <div className="font-bold text-gray-900 text-lg">
+                          <div className="font-bold text-[var(--ink)] text-lg">
                             {milestone.year}
                           </div>
-                          <div className="text-gray-500 mt-0.5">
+                          <div className="text-[var(--ink-500)] mt-0.5">
                             {milestone.label}
                           </div>
                         </div>
@@ -211,39 +211,39 @@ const AboutUs: React.FC = () => {
             </div>
 
             <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center bg-cyan-50 text-cyan-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-cyan-100">
+              <div className="inline-flex items-center bg-[var(--brand-100)] text-[var(--brand)] px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-[var(--mist)]">
                 <Heart className="w-4 h-4 mr-2" />
                 {t("aboutUs.story.badge")}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--ink)] mb-6 leading-tight">
                 {t("aboutUs.story.title")}
-                <span className="text-emerald-600">
+                <span className="text-[var(--brand)]">
                   {" "}
                   {t("aboutUs.story.titleHighlight")}
                 </span>
               </h2>
-              <p className="text-gray-600 mb-5 leading-relaxed text-lg">
+              <p className="text-[var(--ink-500)] mb-5 leading-relaxed text-lg">
                 {t("aboutUs.story.description1", {
                   appName,
                 })}
               </p>
-              <p className="text-gray-600 mb-5 leading-relaxed text-lg">
+              <p className="text-[var(--ink-500)] mb-5 leading-relaxed text-lg">
                 {t("aboutUs.story.description2", {
                   appName,
                 })}
               </p>
-              <p className="text-gray-600 mb-10 leading-relaxed text-lg">
+              <p className="text-[var(--ink-500)] mb-10 leading-relaxed text-lg">
                 {t("aboutUs.story.description3")}
               </p>
-              <div className="flex items-center space-x-4 bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
-                <div className="bg-emerald-100 p-3 rounded-xl">
-                  <Globe className="w-7 h-7 text-emerald-600" />
+              <div className="flex items-center space-x-4 bg-[var(--brand-100)] p-5 rounded-2xl border border-[var(--mist)]">
+                <div className="bg-[var(--brand-100)] p-3 rounded-xl">
+                  <Globe className="w-7 h-7 text-[var(--brand)]" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">
+                  <div className="font-semibold text-[var(--ink)]">
                     {t("aboutUs.story.globalPresence")}
                   </div>
-                  <div className="text-gray-500 text-sm">
+                  <div className="text-[var(--ink-500)] text-sm">
                     {t("aboutUs.story.globalPresenceDesc")}
                   </div>
                 </div>
@@ -256,13 +256,13 @@ const AboutUs: React.FC = () => {
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-purple-100">
+            <div className="inline-flex items-center bg-[var(--brand-100)] text-[var(--brand)] px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-[var(--mist)]">
               <Shield className="w-4 h-4 mr-2" />
               {t("aboutUs.values.badge")}
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--ink)] leading-tight">
               {t("aboutUs.values.title")}
-              <span className="text-emerald-600">
+              <span className="text-[var(--brand)]">
                 {" "}
                 {t("aboutUs.values.titleHighlight")}
               </span>
@@ -275,20 +275,20 @@ const AboutUs: React.FC = () => {
               const borderColors = [
                 "border-l-emerald-500",
                 "border-l-blue-500",
-                "border-l-purple-500",
+                "border-l-[var(--brand)]",
                 "border-l-orange-500",
               ];
               const iconBgColors = [
-                "bg-emerald-50 text-emerald-600",
+                "bg-[var(--brand-100)] text-[var(--brand)]",
                 "bg-blue-50 text-blue-600",
-                "bg-purple-50 text-purple-600",
+                "bg-[var(--brand-100)] text-[var(--brand)]",
                 "bg-orange-50 text-orange-600",
               ];
 
               return (
                 <div
                   key={index}
-                  className={`bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 ${borderColors[index]} hover:shadow-md transition-all duration-200`}
+                  className={`bg-white p-6 rounded-xl shadow-sm border border-[var(--mist)] border-l-4 ${borderColors[index]} hover:shadow-md transition-all duration-200`}
                 >
                   <div className="flex items-start space-x-4">
                     <div
@@ -297,10 +297,10 @@ const AboutUs: React.FC = () => {
                       <Icon className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-1.5">
+                      <h3 className="text-lg font-bold text-[var(--ink)] mb-1.5">
                         {value.title}
                       </h3>
-                      <p className="text-gray-500 leading-relaxed">
+                      <p className="text-[var(--ink-500)] leading-relaxed">
                         {value.description}
                       </p>
                     </div>
@@ -315,15 +315,15 @@ const AboutUs: React.FC = () => {
               const icons = [Award, TrendingUp, Globe];
               const Icon = icons[index];
               const gradients = [
-                "from-emerald-500 to-teal-600",
-                "from-teal-500 to-cyan-600",
-                "from-cyan-500 to-blue-600",
+                "from-[var(--brand)] to-[var(--brand-700)]",
+                "from-[var(--brand)] to-[var(--brand-700)]",
+                "from-[var(--brand)] to-blue-600",
               ];
 
               return (
                 <div
                   key={index}
-                  className="relative bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 group overflow-hidden"
+                  className="relative bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-lg transition-all duration-300 group overflow-hidden"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
                   <div
@@ -331,10 +331,10 @@ const AboutUs: React.FC = () => {
                   >
                     <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <div className="font-extrabold text-xl text-gray-900 mb-1">
+                  <div className="font-extrabold text-xl text-[var(--ink)] mb-1">
                     {achievement.title}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-[var(--ink-500)]">
                     {achievement.subtitle}
                   </div>
                 </div>
@@ -344,14 +344,14 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-600 via-teal-500 to-cyan-600">
+      <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand)] via-[var(--brand-600)] to-[var(--brand-700)]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full translate-x-1/3 -translate-y-1/3" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/3 translate-y-1/3" />
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
             {t("aboutUs.cta.title")}
-            <span className="block mt-2 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-white to-[var(--brand-100)] bg-clip-text text-transparent">
               {t("aboutUs.cta.titleHighlight")}
             </span>
           </h2>
@@ -362,7 +362,7 @@ const AboutUs: React.FC = () => {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center bg-white text-emerald-600 px-10 py-4 rounded-2xl font-bold hover:bg-emerald-50 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg"
+            className="inline-flex items-center bg-white text-[var(--brand)] px-10 py-4 rounded-2xl font-bold hover:bg-[var(--brand-100)] transition-all duration-200 transform hover:scale-105 shadow-xl text-lg"
           >
             {t("aboutUs.cta.button")}
           </Link>

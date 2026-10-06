@@ -80,12 +80,12 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+      <div className="bg-background shadow-md rounded-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-4">
           Verify Your Email
         </h2>
-        <p className="text-gray-600 text-center mb-6">
+        <p className="text-muted-foreground text-center mb-6">
           A 6-digit code was sent to: <br />
           <span className="font-semibold">{email}</span>
         </p>

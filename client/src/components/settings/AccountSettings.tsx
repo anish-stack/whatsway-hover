@@ -210,12 +210,12 @@ export function AccountSettings() {
                 <Shield className="w-4 h-4 mr-2" />
                 {t("settings.account.labels.role")}
               </Label>
-              <Input value={user?.role} disabled className="bg-gray-50" />
+              <Input value={user?.role} disabled className="bg-muted" />
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t">
-            <div className="text-sm text-gray-500 flex items-center">
+            <div className="text-sm text-muted-foreground flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
               {t("settings.account.labels.memberSince", { date: user?.createdAt ? new Date(user.createdAt).toLocaleString() : "N/A" })}
             </div>
@@ -266,7 +266,7 @@ export function AccountSettings() {
           <div className="flex items-center justify-between">
             <div>
               <h4 className="font-medium">{t("settings.account.security.changePassword")}</h4>
-              <p className="text-sm text-gray-500">{t("settings.account.security.changePasswordDesc")}</p>
+              <p className="text-sm text-muted-foreground">{t("settings.account.security.changePasswordDesc")}</p>
             </div>
             <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
               {t("settings.account.buttons.change")}
@@ -345,7 +345,7 @@ export function AccountSettings() {
         <div className="flex items-center justify-between">
           <div>
             <h4 className="font-medium">{t("settings.account.dangerZone.deleteAccount")}</h4>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               {t("settings.account.dangerZone.deleteDesc")}
             </p>
           </div>

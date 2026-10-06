@@ -118,7 +118,7 @@ const MultiNumber = () => {
       case 'active': return 'text-green-600 bg-green-100';
       case 'pending': return 'text-yellow-600 bg-yellow-100';
       case 'inactive': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      default: return 'text-muted-foreground bg-muted';
     }
   };
 
@@ -127,7 +127,7 @@ const MultiNumber = () => {
       case 'healthy': return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'warning': return <AlertCircle className="w-5 h-5 text-yellow-500" />;
       case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
-      default: return <AlertCircle className="w-5 h-5 text-gray-500" />;
+      default: return <AlertCircle className="w-5 h-5 text-muted-foreground" />;
     }
   };
 
@@ -136,7 +136,7 @@ const MultiNumber = () => {
       case 'High': return 'text-green-600';
       case 'Medium': return 'text-yellow-600';
       case 'Low': return 'text-red-600';
-      default: return 'text-gray-600';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -165,17 +165,17 @@ const MultiNumber = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-background shadow-sm border-b">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+              <h1 className="text-2xl font-bold text-foreground flex items-center">
                 <Phone className="w-8 h-8 text-blue-600 mr-3" />
                 Multi-Number Management
               </h1>
-              <p className="text-gray-600 mt-1">Manage multiple WhatsApp Business numbers from one dashboard</p>
+              <p className="text-muted-foreground mt-1">Manage multiple WhatsApp Business numbers from one dashboard</p>
             </div>
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
               <Plus className="w-5 h-5 mr-2" />
@@ -188,19 +188,19 @@ const MultiNumber = () => {
       <div className="p-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Numbers</p>
-                <p className="text-2xl font-bold text-gray-900">{numbers.length}</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Numbers</p>
+                <p className="text-2xl font-bold text-foreground">{numbers.length}</p>
               </div>
               <Smartphone className="w-8 h-8 text-blue-600" />
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Numbers</p>
+                <p className="text-sm font-medium text-muted-foreground">Active Numbers</p>
                 <p className="text-2xl font-bold text-green-600">
                   {numbers.filter(n => n.status === 'active').length}
                 </p>
@@ -208,22 +208,22 @@ const MultiNumber = () => {
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Messages</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-muted-foreground">Total Messages</p>
+                <p className="text-2xl font-bold text-foreground">
                   {numbers.reduce((sum, n) => sum + n.messagesCount, 0).toLocaleString()}
                 </p>
               </div>
-              <MessageSquare className="w-8 h-8 text-purple-600" />
+              <MessageSquare className="w-8 h-8 text-[var(--brand)]" />
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Contacts</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-muted-foreground">Total Contacts</p>
+                <p className="text-2xl font-bold text-foreground">
                   {numbers.reduce((sum, n) => sum + n.contactsCount, 0).toLocaleString()}
                 </p>
               </div>
@@ -233,23 +233,23 @@ const MultiNumber = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <div className="bg-background p-4 rounded-lg shadow-sm mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search numbers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -258,11 +258,11 @@ const MultiNumber = () => {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+              <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted flex items-center">
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+              <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted flex items-center">
                 <Upload className="w-4 h-4 mr-2" />
                 Import
               </button>
@@ -289,7 +289,7 @@ const MultiNumber = () => {
                 </button>
                 <button 
                   onClick={() => setSelectedNumbers([])}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   Clear
                 </button>
@@ -301,7 +301,7 @@ const MultiNumber = () => {
         {/* Numbers List */}
         <div className="space-y-4">
           {filteredNumbers.map((number) => (
-            <div key={number.id} className="bg-white rounded-lg shadow-sm border">
+            <div key={number.id} className="bg-background rounded-lg shadow-sm border">
               <div className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
@@ -309,25 +309,25 @@ const MultiNumber = () => {
                       type="checkbox"
                       checked={selectedNumbers.includes(number.id)}
                       onChange={() => handleSelectNumber(number.id)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                      className="w-4 h-4 text-blue-600 border-border rounded focus:ring-blue-500 mt-1"
                     />
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Phone className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
                       <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{number.displayName}</h3>
+                        <h3 className="text-lg font-semibold text-foreground">{number.displayName}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(number.status)}`}>
                           {number.status.charAt(0).toUpperCase() + number.status.slice(1)}
                         </span>
                         <div className="flex items-center space-x-1">
                           {getHealthIcon(number.health)}
-                          <span className="text-sm text-gray-600">Health</span>
+                          <span className="text-sm text-muted-foreground">Health</span>
                         </div>
                       </div>
-                      <p className="text-gray-600 font-mono text-sm">{number.phoneNumber}</p>
-                      <p className="text-gray-500 text-sm">{number.businessName} • {number.country}</p>
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                      <p className="text-muted-foreground font-mono text-sm">{number.phoneNumber}</p>
+                      <p className="text-muted-foreground text-sm">{number.businessName} • {number.country}</p>
+                      <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
                         <span>Created: {number.createdAt}</span>
                         <span>•</span>
                         <span>Last active: {number.lastActivity}</span>
@@ -336,13 +336,13 @@ const MultiNumber = () => {
                   </div>
                   
                   <div className="flex items-center space-x-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600">
+                    <button className="p-2 text-muted-foreground hover:text-muted-foreground">
                       <RefreshCw className="w-5 h-5" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600">
+                    <button className="p-2 text-muted-foreground hover:text-muted-foreground">
                       <Edit className="w-5 h-5" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600">
+                    <button className="p-2 text-muted-foreground hover:text-muted-foreground">
                       <Settings className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-red-400 hover:text-red-600">
@@ -353,30 +353,30 @@ const MultiNumber = () => {
 
                 {/* Number Details */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-muted p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Messages Sent</p>
-                        <p className="text-xl font-bold text-gray-900">{number.messagesCount.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Messages Sent</p>
+                        <p className="text-xl font-bold text-foreground">{number.messagesCount.toLocaleString()}</p>
                       </div>
                       <MessageSquare className="w-6 h-6 text-blue-600" />
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-muted p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Contacts</p>
-                        <p className="text-xl font-bold text-gray-900">{number.contactsCount.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Contacts</p>
+                        <p className="text-xl font-bold text-foreground">{number.contactsCount.toLocaleString()}</p>
                       </div>
-                      <Users className="w-6 h-6 text-purple-600" />
+                      <Users className="w-6 h-6 text-[var(--brand)]" />
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-muted p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Quality Rating</p>
+                        <p className="text-sm font-medium text-muted-foreground">Quality Rating</p>
                         <p className={`text-xl font-bold ${getQualityColor(number.qualityRating)}`}>
                           {number.qualityRating}
                         </p>
@@ -385,12 +385,12 @@ const MultiNumber = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-muted p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Rate Limit</p>
-                        <p className="text-sm text-gray-900">{number.rateLimit}</p>
-                        <p className="text-xs text-gray-600">Used: {number.messagesUsed}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Rate Limit</p>
+                        <p className="text-sm text-foreground">{number.rateLimit}</p>
+                        <p className="text-xs text-muted-foreground">Used: {number.messagesUsed}</p>
                       </div>
                       <Activity className="w-6 h-6 text-orange-600" />
                     </div>
@@ -402,10 +402,10 @@ const MultiNumber = () => {
         </div>
 
         {filteredNumbers.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <Phone className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No numbers found</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-background rounded-lg shadow-sm p-12 text-center">
+            <Phone className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No numbers found</h3>
+            <p className="text-muted-foreground mb-6">
               {searchTerm || filterStatus !== 'all' 
                 ? 'Try adjusting your search or filter criteria.'
                 : 'Get started by adding your first WhatsApp Business number.'

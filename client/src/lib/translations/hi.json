@@ -93,7 +93,14 @@
         "documentation": "दस्तावेज़ीकरण",
         "app_update": "ऐप अपडेट",
         "languages": "भाषाएँ",
-        "plans": "योजनाएं"
+        "plans": "योजनाएं",
+        "wallet": "वॉलेट",
+        "messagePricing": "मैसेज प्राइसिंग",
+        "sendingCaps": "सेंडिंग कैप",
+        "partner": "पार्टनर पैनल",
+        "resellers": "रीसेलर",
+        "greenTick": "ग्रीन टिक",
+        "greenTickReview": "ग्रीन टिक समीक्षा"
     },
     "widget": {
         "title": "विजेट बिल्डर",

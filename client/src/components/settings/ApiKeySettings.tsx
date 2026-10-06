@@ -259,8 +259,8 @@ export function ApiKeySettings() {
             <Loading />
           ) : apiKeys.length === 0 ? (
             <div className="text-center py-12">
-              <Key className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500 mb-4">
+              <Key className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground mb-4">
                 {t("settings.api_key_setting.noApiKeys")}
               </p>
               <Button onClick={() => setShowCreateDialog(true)}>

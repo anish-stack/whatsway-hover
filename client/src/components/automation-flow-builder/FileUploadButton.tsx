@@ -53,7 +53,7 @@ export function FileUploadButton({
       <button
         type="button"
         onClick={handleClick}
-        className={`flex items-center gap-2 px-3 py-2 border rounded-md hover:bg-gray-50 ${className}`}
+        className={`flex items-center gap-2 px-3 py-2 border rounded-md hover:bg-muted ${className}`}
       >
         {children}
       </button>

@@ -69,13 +69,13 @@ const GroupSkeleton = () => (
     <CardContent className="p-4">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div className="flex-1 space-y-3">
-          <div className="h-5 bg-gray-200 rounded w-3/4" />
-          <div className="h-4 bg-gray-200 rounded w-full" />
-          <div className="h-3 bg-gray-200 rounded w-1/3" />
+          <div className="h-5 bg-border rounded w-3/4" />
+          <div className="h-4 bg-border rounded w-full" />
+          <div className="h-3 bg-border rounded w-1/3" />
         </div>
         <div className="flex gap-2 self-end sm:self-center">
-          <div className="h-9 w-20 bg-gray-200 rounded" />
-          <div className="h-9 w-24 bg-gray-200 rounded" />
+          <div className="h-9 w-20 bg-border rounded" />
+          <div className="h-9 w-24 bg-border rounded" />
         </div>
       </div>
     </CardContent>
@@ -83,15 +83,15 @@ const GroupSkeleton = () => (
 );
 
 const EmptyState = ({ onCreateClick }: { onCreateClick: () => void }) => (
-  <Card className="border-dashed border-2 border-gray-300">
+  <Card className="border-dashed border-2 border-border">
     <CardContent className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      <div className="rounded-full bg-gray-100 p-6 mb-4">
-        <Users className="h-12 w-12 text-gray-400" />
+      <div className="rounded-full bg-muted p-6 mb-4">
+        <Users className="h-12 w-12 text-muted-foreground" />
       </div>
-      <h3 className="text-xl font-semibold mb-2 text-gray-900">
+      <h3 className="text-xl font-semibold mb-2 text-foreground">
         No groups yet
       </h3>
-      <p className="text-gray-500 mb-6 max-w-sm">
+      <p className="text-muted-foreground mb-6 max-w-sm">
         Get started by creating your first group to organize your contacts and
         campaigns effectively.
       </p>
@@ -400,7 +400,7 @@ export default function GroupsUI() {
         {(groups.length > 0 || search) && !loading && (
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search groups by name or description"
                 value={search}
@@ -436,7 +436,7 @@ export default function GroupsUI() {
             <EmptyState onCreateClick={openCreateDialog} />
           ) : visibleGroups.length === 0 ? (
             <Card>
-              <CardContent className="py-10 text-center text-gray-500 text-sm">
+              <CardContent className="py-10 text-center text-muted-foreground text-sm">
                 No groups match "{search}".
               </CardContent>
             </Card>
@@ -454,13 +454,13 @@ export default function GroupsUI() {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+                            <h3 className="text-lg sm:text-xl font-semibold text-foreground truncate">
                               {group.name}
                             </h3>
-                            <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
+                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-muted-foreground transition-colors" />
                           </div>
                           {group.description && (
-                            <p className="text-sm sm:text-base text-gray-600 mt-1 line-clamp-2">
+                            <p className="text-sm sm:text-base text-muted-foreground mt-1 line-clamp-2">
                               {group.description}
                             </p>
                           )}
@@ -469,7 +469,7 @@ export default function GroupsUI() {
                               <Users size={12} />
                               {count} contact{count !== 1 ? "s" : ""}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-muted-foreground">
                               Created{" "}
                               {new Date(group.createdAt).toLocaleDateString(
                                 "en-US",
@@ -558,7 +558,7 @@ export default function GroupsUI() {
 
           <div className="space-y-4 mt-4">
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label className="text-sm font-medium text-muted-foreground block mb-1.5">
                 Group Name <span className="text-red-500">*</span>
               </label>
               <Input
@@ -571,7 +571,7 @@ export default function GroupsUI() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">
+              <label className="text-sm font-medium text-muted-foreground block mb-1.5">
                 Description
               </label>
               <Textarea

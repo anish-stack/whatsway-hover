@@ -91,9 +91,9 @@ function getNotificationIcon(type: string) {
     case "channel_health_warning":
       return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
     case "ticket_reply":
-      return <LifeBuoy className="w-5 h-5 text-indigo-500" />;
+      return <LifeBuoy className="w-5 h-5 text-[var(--brand)]" />;
     default:
-      return <Bell className="w-5 h-5 text-gray-500" />;
+      return <Bell className="w-5 h-5 text-muted-foreground" />;
   }
 }
 
@@ -112,9 +112,9 @@ function getNotificationBg(type: string) {
     case "channel_health_warning":
       return "bg-yellow-50";
     case "ticket_reply":
-      return "bg-indigo-50";
+      return "bg-[var(--brand-100)]";
     default:
-      return "bg-gray-50";
+      return "bg-muted";
   }
 }
 
@@ -267,7 +267,7 @@ export default function UserNotifications() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-500" />
+              <Filter className="w-4 h-4 text-muted-foreground" />
               <Select value={filterType} onValueChange={setFilterType}>
                 <SelectTrigger className="w-[180px] h-9 text-sm">
                   <SelectValue placeholder="Filter by type" />
@@ -312,16 +312,16 @@ export default function UserNotifications() {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-gray-400 animate-spin mb-3" />
-            <p className="text-sm text-gray-500">Loading notifications...</p>
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin mb-3" />
+            <p className="text-sm text-muted-foreground">Loading notifications...</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <BellOff className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+              <BellOff className="w-8 h-8 text-muted-foreground" />
             </div>
-            <p className="text-base font-medium text-gray-700 mb-1">No notifications</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-base font-medium text-muted-foreground mb-1">No notifications</p>
+            <p className="text-sm text-muted-foreground">
               {filterType !== "all" || filterRead !== "all"
                 ? "Try adjusting your filters"
                 : "You're all caught up!"}
@@ -331,14 +331,14 @@ export default function UserNotifications() {
           <div className="space-y-6">
             {Object.entries(groupedByDate).map(([dateLabel, items]) => (
               <div key={dateLabel}>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-1">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
                   {dateLabel}
                 </h3>
-                <Card className="overflow-hidden divide-y divide-gray-100">
+                <Card className="overflow-hidden divide-y divide-border">
                   {items.map((n) => (
                     <div
                       key={n.id}
-                      className={`flex items-start gap-4 p-4 cursor-pointer transition-colors hover:bg-gray-50 ${
+                      className={`flex items-start gap-4 p-4 cursor-pointer transition-colors hover:bg-muted ${
                         !n.isRead ? "bg-blue-50/40" : ""
                       }`}
                       onClick={() => handleNotificationClick(n)}
@@ -350,19 +350,19 @@ export default function UserNotifications() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <p className={`text-sm leading-snug ${!n.isRead ? "font-semibold text-gray-900" : "font-medium text-gray-700"}`}>
+                              <p className={`text-sm leading-snug ${!n.isRead ? "font-semibold text-foreground" : "font-medium text-muted-foreground"}`}>
                                 {n.title}
                               </p>
                               {!n.isRead && (
                                 <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
                               )}
                             </div>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-1.5">
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-1.5">
                               {n.message}
                             </p>
                             <div className="flex items-center gap-3">
-                              <span className="text-xs text-gray-400">{formatTime(n.createdAt)}</span>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${getNotificationBg(n.type)} font-medium text-gray-600`}>
+                              <span className="text-xs text-muted-foreground">{formatTime(n.createdAt)}</span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${getNotificationBg(n.type)} font-medium text-muted-foreground`}>
                                 {getTypeLabel(n.type)}
                               </span>
                               {getNotificationLink(n.type) && (
@@ -385,7 +385,7 @@ export default function UserNotifications() {
                                   markOneRead.mutate(n.id);
                                 }}
                               >
-                                <Check className="w-4 h-4 text-gray-400" />
+                                <Check className="w-4 h-4 text-muted-foreground" />
                               </Button>
                             )}
                             <Button
@@ -398,7 +398,7 @@ export default function UserNotifications() {
                                 deleteNotification.mutate(n.id);
                               }}
                             >
-                              <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                              <Trash2 className="w-4 h-4 text-muted-foreground hover:text-red-500" />
                             </Button>
                           </div>
                         </div>

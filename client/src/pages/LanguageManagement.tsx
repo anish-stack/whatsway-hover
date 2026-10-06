@@ -265,7 +265,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin h-8 w-8 border-4 border-violet-500 rounded-full border-t-transparent" />
+        <div className="animate-spin h-8 w-8 border-4 border-[var(--brand)] rounded-full border-t-transparent" />
       </div>
     );
   }
@@ -276,7 +276,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
         {!embedded && (
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Globe className="h-6 w-6 text-violet-500" />
+              <Globe className="h-6 w-6 text-[var(--brand)]" />
               {t("settings.language.title")}
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -293,7 +293,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
         )}
 
 
-        <Button onClick={() => setShowAddDialog(true)} className="bg-violet-600 hover:bg-violet-700">
+        <Button onClick={() => setShowAddDialog(true)} className="bg-[var(--brand)] hover:bg-[var(--brand)]">
           <Plus className="h-4 w-4 mr-2" /> {t("settings.language.addLanguage")}
         </Button>
       </div>
@@ -336,7 +336,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
                         <span>{stat?.translated || 0} / {stat?.total || 0} {t("settings.language.keys")}</span>
                         <span>{pct}%</span>
                       </div>
-                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-border rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${pct === 100 ? "bg-emerald-500" : pct >= 70 ? "bg-blue-500" : pct >= 40 ? "bg-amber-500" : "bg-red-500"}`}
                           style={{ width: `${pct}%` }}
@@ -456,7 +456,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
                   <Button
                     onClick={handleSaveTranslations}
                     disabled={!hasChanges || updateTranslationsMutation.isPending || isDemo}
-                    className="bg-violet-600 hover:bg-violet-700"
+                    className="bg-[var(--brand)] hover:bg-[var(--brand)]"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {updateTranslationsMutation.isPending ? t("settings.language.saving") : t("settings.language.saveChanges")}
@@ -583,7 +583,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
                 copyFromCode: newLang.copyFromCode === "none" ? "" : newLang.copyFromCode,
               })}
               disabled={!newLang.code || !newLang.name || !newLang.nativeName || createMutation.isPending || isDemo}
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-[var(--brand)] hover:bg-[var(--brand)]"
             >
               {createMutation.isPending ? t("settings.language.dialog.creating") : t("settings.language.dialog.create")}
             </Button>
@@ -630,7 +630,7 @@ export default function LanguageManagement({ embedded = false }: { embedded?: bo
             <Button
               onClick={() => selectedLang && updateMutation.mutate({ id: selectedLang.id, data: editLang })}
               disabled={updateMutation.isPending || isDemo}
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-[var(--brand)] hover:bg-[var(--brand)]"
             >
               {updateMutation.isPending ? t("settings.language.saving") : t("settings.language.dialog.save")}
             </Button>

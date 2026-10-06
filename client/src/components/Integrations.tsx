@@ -344,28 +344,28 @@ const Integrations = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-6">
-            <Workflow className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-6">
+            <Workflow className="w-8 h-8 text-[var(--brand)]" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6">
             Connect Everything with
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               Our API & Integrations
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto mb-8">
             Seamlessly integrate WPSaaS with your existing tools and workflows.
             Connect with 1000+ applications or build custom integrations with
             our powerful API.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-green-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-600 transition-all transform hover:scale-105 shadow-xl">
+            <button className="bg-[var(--brand)] text-white px-8 py-4 rounded-xl font-bold hover:bg-[var(--brand)] transition-all transform hover:scale-105 shadow-xl">
               Explore API
             </button>
-            <button className="border-2 border-green-500 text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-green-50 transition-all">
+            <button className="border-2 border-[var(--brand)] text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--brand-100)] transition-all">
               View Integrations
             </button>
           </div>
@@ -376,10 +376,10 @@ const Integrations = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Powerful API Features
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Everything you need to build amazing integrations
             </p>
           </div>
@@ -387,13 +387,13 @@ const Integrations = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {apiFeatures.map((feature, index) => (
               <div key={index} className="text-center">
-                <div className="bg-green-100 p-4 rounded-xl w-fit mx-auto mb-4">
-                  <feature.icon className="w-8 h-8 text-green-600" />
+                <div className="bg-[var(--brand-100)] p-4 rounded-xl w-fit mx-auto mb-4">
+                  <feature.icon className="w-8 h-8 text-[var(--brand)]" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                <h3 className="text-lg font-bold text-[var(--ink)] mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <p className="text-[var(--ink-500)]">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -401,13 +401,13 @@ const Integrations = () => {
       </section>
 
       {/* Integration Categories */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Popular Integrations
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Connect with your favorite tools and platforms
             </p>
           </div>
@@ -420,8 +420,8 @@ const Integrations = () => {
                 onClick={() => setActiveCategory(category.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
                   activeCategory === category.id
-                    ? "bg-green-500 text-white shadow-lg transform scale-105"
-                    : "bg-white text-gray-700 hover:bg-gray-100 shadow-md"
+                    ? "bg-[var(--brand)] text-white shadow-lg transform scale-105"
+                    : "bg-white text-[var(--ink-700)] hover:bg-[var(--canvas)] shadow-md"
                 }`}
               >
                 <category.icon className="w-5 h-5" />
@@ -446,22 +446,22 @@ const Integrations = () => {
                     />
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-bold text-gray-900">
+                        <h3 className="font-bold text-[var(--ink)]">
                           {integration.name}
                         </h3>
                         {integration.popular && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                          <span className="bg-[var(--brand-100)] text-[var(--brand)] text-xs px-2 py-1 rounded-full font-medium">
                             Popular
                           </span>
                         )}
                       </div>
-                      <span className="text-sm text-green-600 font-medium">
+                      <span className="text-sm text-[var(--brand)] font-medium">
                         {integration.category}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-gray-600 mb-4 text-sm">
+                  <p className="text-[var(--ink-500)] mb-4 text-sm">
                     {integration.description}
                   </p>
 
@@ -473,15 +473,15 @@ const Integrations = () => {
                           key={featureIndex}
                           className="flex items-center space-x-2"
                         >
-                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-600">
+                          <CheckCircle className="w-4 h-4 text-[var(--brand)] flex-shrink-0" />
+                          <span className="text-sm text-[var(--ink-500)]">
                             {feature}
                           </span>
                         </div>
                       ))}
                   </div>
 
-                  <button className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                  <button className="w-full bg-[var(--canvas)] text-[var(--ink-700)] py-2 rounded-lg hover:bg-[var(--mist)] transition-colors text-sm font-medium">
                     Connect Now
                   </button>
                 </div>
@@ -496,13 +496,13 @@ const Integrations = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="bg-purple-100 p-3 rounded-lg w-fit mb-6">
-                <Zap className="w-8 h-8 text-purple-600" />
+              <div className="bg-[var(--brand-100)] p-3 rounded-lg w-fit mb-6">
+                <Zap className="w-8 h-8 text-[var(--brand)]" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl font-bold text-[var(--ink)] mb-6">
                 Supercharge with Make.com
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-[var(--ink-500)] mb-6">
                 Create powerful automation workflows without coding. Connect
                 {appName} with 1000+ apps using Make.com's visual workflow
                 builder and transform your business processes.
@@ -517,20 +517,20 @@ const Integrations = () => {
                   "Pre-built templates for common workflows",
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-gray-700">{feature}</span>
+                    <CheckCircle className="w-5 h-5 text-[var(--brand)]" />
+                    <span className="text-[var(--ink-700)]">{feature}</span>
                   </div>
                 ))}
               </div>
 
-              <button className="bg-purple-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-600 transition-all flex items-center group">
+              <button className="bg-[var(--brand)] text-white px-8 py-4 rounded-xl font-bold hover:bg-[var(--brand)] transition-all flex items-center group">
                 Start with Make.com
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">
+            <div className="bg-gradient-to-br from-[var(--brand-50)] to-blue-50 p-8 rounded-2xl">
+              <h3 className="text-xl font-bold text-[var(--ink)] mb-6">
                 Popular Workflow Examples
               </h3>
               <div className="space-y-4">
@@ -556,12 +556,12 @@ const Integrations = () => {
                     className="bg-white p-4 rounded-lg shadow-sm"
                   >
                     <div className="flex items-center space-x-3">
-                      <workflow.icon className="w-5 h-5 text-purple-600" />
+                      <workflow.icon className="w-5 h-5 text-[var(--brand)]" />
                       <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-[var(--ink)]">
                           {workflow.trigger}
                         </div>
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-[var(--ink-500)]">
                           → {workflow.action}
                         </div>
                       </div>
@@ -575,7 +575,7 @@ const Integrations = () => {
       </section>
 
       {/* Custom Integration CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Need a Custom Integration?
@@ -585,10 +585,10 @@ const Integrations = () => {
             our comprehensive documentation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl">
+            <button className="bg-white text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--canvas)] transition-all transform hover:scale-105 shadow-xl">
               View API Documentation
             </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-green-600 transition-all">
+            <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-[var(--brand)] transition-all">
               Contact Integration Team
             </button>
           </div>

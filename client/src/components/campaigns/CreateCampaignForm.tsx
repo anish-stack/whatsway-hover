@@ -269,9 +269,9 @@ export function CreateCampaignForm({
                 <div className="text-xs text-muted-foreground">{selectedTemplate.footerText}</div>
               )}
               {templateConfig && (
-                <div className="mt-2 pt-2 border-t border-gray-200 space-y-1">
+                <div className="mt-2 pt-2 border-t border-border space-y-1">
                   {templateConfig.variables.length > 0 && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {templateConfig.variables.length} variable(s) configured
                     </p>
                   )}
@@ -279,7 +279,7 @@ export function CreateCampaignForm({
                     <p className="text-xs text-green-600">Header media uploaded</p>
                   )}
                   {templateConfig.buttonParameters && templateConfig.buttonParameters.length > 0 && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {templateConfig.buttonParameters.length} button parameter(s) set
                     </p>
                   )}

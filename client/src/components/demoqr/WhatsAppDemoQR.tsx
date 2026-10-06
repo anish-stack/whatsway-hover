@@ -33,7 +33,7 @@ export function WhatsAppDemoQR({
 
       <QRCodeCanvas value={waLink} size={180} />
 
-      <p className="text-sm text-gray-600 text-center">
+      <p className="text-sm text-muted-foreground text-center">
         Scan this QR to chat on WhatsApp
       </p>
 

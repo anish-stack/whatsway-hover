@@ -135,18 +135,18 @@ export default function Account() {
       case "failed":
         return <XCircle className="w-4 h-4 text-red-600" />;
       case "sent":
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
       case "pending":
         return <Clock className="w-4 h-4 text-yellow-600" />;
       default:
-        return <MessageSquare className="w-4 h-4 text-gray-600" />;
+        return <MessageSquare className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: string, messageType: string) => {
     // For received messages (inbound), use black/white
     if (messageType === "received") {
-      return "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300";
+      return "bg-muted text-foreground dark:bg-gray-800 dark:text-gray-100 border-border";
     }
 
     // For sent messages (outbound), use status-specific colors
@@ -159,9 +159,9 @@ export default function Account() {
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-300";
       case "sent":
       case "pending":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 border-gray-300";
+        return "bg-muted text-foreground dark:bg-gray-800 dark:text-gray-200 border-border";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 border-gray-300";
+        return "bg-muted text-foreground dark:bg-gray-800 dark:text-gray-200 border-border";
     }
   };
 

@@ -59,7 +59,7 @@ function getLanguageLabel(code: string): string {
 }
 
 const categoryStyles: Record<string, { label: string; className: string; icon: any }> = {
-  MARKETING: { label: "Marketing", className: "bg-purple-50 text-purple-700 border-purple-200", icon: Megaphone },
+  MARKETING: { label: "Marketing", className: "bg-[var(--brand-100)] text-[var(--brand)] border-[var(--mist)]", icon: Megaphone },
   UTILITY: { label: "Utility", className: "bg-blue-50 text-blue-700 border-blue-200", icon: Wrench },
   AUTHENTICATION: { label: "Authentication", className: "bg-amber-50 text-amber-700 border-amber-200", icon: ShieldCheck },
 };
@@ -363,6 +363,53 @@ export default function Templates() {
     },
   });
 
+
+  // Seed templates mutation
+const seedTemplateMutation = useMutation({
+  mutationFn: async () => {
+    if (!activeChannel?.id) {
+      throw new Error("No active channel");
+    }
+
+    const response = await apiRequest(
+      "POST",
+      "/api/templates/seed",
+      {
+        channelId: activeChannel.id,
+      }
+    );
+
+    return await response.json();
+  },
+
+  onSuccess: (data: any) => {
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.templates.all(),
+    });
+
+    toast({
+      title: "Templates seeded",
+      description:
+        data?.message ||
+        `${data?.createdCount || data?.count || 0} templates created successfully.`,
+    });
+  },
+
+  onError: (error: any) => {
+    const message =
+      error?.response?.data?.message ||
+      error?.data?.message ||
+      error?.message ||
+      "Failed to seed templates.";
+
+    toast({
+      title: "Seed failed",
+      description: message,
+      variant: "destructive",
+    });
+  },
+});
+
   const handleCreateTemplate = () => {
     setEditingTemplate(null);
     setActiveDraft(null);
@@ -392,8 +439,8 @@ export default function Templates() {
         <main className="p-6">
           <Card>
             <CardContent className="py-12 text-center">
-              <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">
+              <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">
                 {t("templates.emptyState.noChannel")}
               </p>
               <Button
@@ -426,6 +473,20 @@ export default function Templates() {
               {userRole !== "superadmin" && (
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <Button
+  variant="outline"
+  size="sm"
+  onClick={() => seedTemplateMutation.mutate()}
+  disabled={seedTemplateMutation.isPending || !activeChannel?.id}
+  className="w-full sm:w-auto"
+>
+  <RefreshCw
+    className={`w-4 h-4 mr-2 ${
+      seedTemplateMutation.isPending ? "animate-spin" : ""
+    }`}
+  />
+  {seedTemplateMutation.isPending ? "Seeding..." : "Seed Templates"}
+</Button>
+                  <Button
                     variant="outline"
                     size="sm"
                     onClick={handleSyncTemplates}
@@ -438,6 +499,7 @@ export default function Templates() {
                     />
                     {t("templates.sync")}
                   </Button>
+
                   <Button
                     onClick={handleCreateTemplate}
                     className="w-full sm:w-auto"
@@ -462,18 +524,18 @@ export default function Templates() {
                   {drafts.map((draft) => (
                     <div
                       key={draft.id}
-                      className="flex items-center justify-between bg-white rounded-md border border-amber-100 px-3 py-2"
+                      className="flex items-center justify-between bg-background rounded-md border border-amber-100 px-3 py-2"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm text-gray-900 truncate">
+                          <span className="font-medium text-sm text-foreground truncate">
                             {draft.data.name || t("templates.drafts.untitled")}
                           </span>
                           <span className="text-xs bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">
                             {draft.data.category || "MARKETING"}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5 truncate">
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">
                           {draft.data.body
                             ? draft.data.body.substring(0, 80) + (draft.data.body.length > 80 ? "..." : "")
                             : t("templates.drafts.noBodyText")}
@@ -516,36 +578,36 @@ export default function Templates() {
                 {userRole === "superadmin" ? (
                   <>
                     <div className="hidden lg:block overflow-x-auto">
-                      <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+                        <thead className="bg-muted">
                           <tr>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.name")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.createdBy")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.category")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.status")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.language")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.body")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.buttons")}
                             </th>
-                            <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                            <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                               {t("templates.table.createdAt")}
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-border">
                           {templatesData?.data.map((template) => {
                             const cat = categoryStyles[template.category] || categoryStyles.MARKETING;
                             const CatIcon = cat.icon;
@@ -554,15 +616,15 @@ export default function Templates() {
                             return (
                               <tr
                                 key={template.id}
-                                className="hover:bg-gray-50 transition-colors"
+                                className="hover:bg-muted transition-colors"
                               >
-                                <td className="py-3 px-4 text-sm text-gray-900 font-medium">
+                                <td className="py-3 px-4 text-sm text-foreground font-medium">
                                   <div className="flex items-center gap-1.5">
-                                    {MediaIcon && <MediaIcon className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />}
+                                    {MediaIcon && <MediaIcon className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                                     <span className="truncate max-w-[200px]">{template.name}</span>
                                   </div>
                                 </td>
-                                <td className="py-3 px-4 text-sm text-gray-700">
+                                <td className="py-3 px-4 text-sm text-muted-foreground">
                                   {template?.createdByName?.trim() || "-"}
                                 </td>
                                 <td className="py-3 px-4 text-sm">
@@ -583,13 +645,13 @@ export default function Templates() {
                                     {template.status.toUpperCase()}
                                   </Badge>
                                 </td>
-                                <td className="py-3 px-4 text-sm text-gray-600">
+                                <td className="py-3 px-4 text-sm text-muted-foreground">
                                   <span className="inline-flex items-center text-xs">
-                                    <Globe className="w-3 h-3 mr-1 text-gray-400" />
+                                    <Globe className="w-3 h-3 mr-1 text-muted-foreground" />
                                     {getLanguageLabel(template.language)}
                                   </span>
                                 </td>
-                                <td className="py-3 px-4 text-sm text-gray-700 max-w-xs truncate">
+                                <td className="py-3 px-4 text-sm text-muted-foreground max-w-xs truncate">
                                   {template.body}
                                 </td>
                                 <td className="py-3 px-4">
@@ -598,7 +660,7 @@ export default function Templates() {
                                       {buttons.map((btn, idx) => {
                                         const BtnIcon = btnTypeIcons[btn.type] || MousePointerClick;
                                         return (
-                                          <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0 bg-gray-50 text-gray-600 border-gray-200">
+                                          <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground border-border">
                                             <BtnIcon className="w-2.5 h-2.5 mr-0.5" />
                                             {btn.text || btn.type}
                                           </Badge>
@@ -606,10 +668,10 @@ export default function Templates() {
                                       })}
                                     </div>
                                   ) : (
-                                    <span className="text-xs text-gray-400">-</span>
+                                    <span className="text-xs text-muted-foreground">-</span>
                                   )}
                                 </td>
-                                <td className="py-3 px-4 text-sm text-gray-600">
+                                <td className="py-3 px-4 text-sm text-muted-foreground">
                                   {new Date(template.createdAt).toLocaleDateString()}
                                 </td>
                               </tr>
@@ -631,10 +693,10 @@ export default function Templates() {
                             <CardContent className="p-4">
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-gray-900 mb-1 truncate">
+                                  <h3 className="font-semibold text-foreground mb-1 truncate">
                                     {template.name}
                                   </h3>
-                                  <p className="text-sm text-gray-600">
+                                  <p className="text-sm text-muted-foreground">
                                     {template?.createdByName?.trim() || t("templates.table.unknown")}
                                   </p>
                                 </div>
@@ -654,19 +716,19 @@ export default function Templates() {
                                   <CatIcon className="w-3 h-3 mr-1" />
                                   {t(`templates.categories.${(cat.label || "marketing").toLowerCase()}`)}
                                 </Badge>
-                                <span className="inline-flex items-center text-[11px] text-gray-500">
+                                <span className="inline-flex items-center text-[11px] text-muted-foreground">
                                   <Globe className="w-3 h-3 mr-0.5" />
                                   {getLanguageLabel(template.language)}
                                 </span>
                                 {MediaIcon && (
-                                  <span className="inline-flex items-center text-[11px] text-gray-500">
+                                  <span className="inline-flex items-center text-[11px] text-muted-foreground">
                                     <MediaIcon className="w-3 h-3 mr-0.5" />
                                     {template.mediaType}
                                   </span>
                                 )}
                               </div>
                               <div className="mb-3">
-                                <p className="text-sm text-gray-700 line-clamp-3">
+                                <p className="text-sm text-muted-foreground line-clamp-3">
                                   {template.body}
                                 </p>
                               </div>
@@ -675,7 +737,7 @@ export default function Templates() {
                                   {buttons.map((btn, idx) => {
                                     const BtnIcon = btnTypeIcons[btn.type] || MousePointerClick;
                                     return (
-                                      <Badge key={idx} variant="outline" className="text-[11px] px-1.5 py-0.5 bg-gray-50 text-gray-600 border-gray-200">
+                                      <Badge key={idx} variant="outline" className="text-[11px] px-1.5 py-0.5 bg-muted text-muted-foreground border-border">
                                         <BtnIcon className="w-3 h-3 mr-1" />
                                         {btn.text || btn.type}
                                       </Badge>
@@ -683,7 +745,7 @@ export default function Templates() {
                                   })}
                                 </div>
                               )}
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-muted-foreground">
                                 {new Date(template.createdAt).toLocaleDateString()}
                               </div>
                             </CardContent>
@@ -696,7 +758,7 @@ export default function Templates() {
                     {templatesData?.pagination && (
                       <div className="w-full mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <span className="text-sm text-gray-700">
+                          <span className="text-sm text-muted-foreground">
                             {t("templates.pagination.showing", {
                               start: (page - 1) * limit + 1,
                               end: Math.min(page * limit, templatesData.pagination.total),

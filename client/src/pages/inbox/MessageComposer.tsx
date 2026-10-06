@@ -59,7 +59,7 @@ const MessageComposer = ({
   fileInputRef,
 }: MessageComposerProps) => {
   return (
-    <div className="bg-white border-t border-gray-200 p-3 md:p-4">
+    <div className="bg-background border-t border-border p-3 md:p-4">
       {is24HourWindowExpired &&
         selectedConversation.type === "whatsapp" && (
           <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -144,7 +144,7 @@ const MessageComposer = ({
             selectedConversation.type === "whatsapp"
           }
           rows={1}
-          className="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ minHeight: "36px", maxHeight: "120px" }}
         />
 

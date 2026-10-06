@@ -155,26 +155,26 @@ const ConversationList = ({
   return (
     <div
       className={cn(
-        "bg-white border-r border-gray-200 flex flex-col shadow-[2px_0_8px_-2px_rgba(0,0,0,0.06)]",
+        "bg-background border-r border-border flex flex-col shadow-[2px_0_8px_-2px_rgba(0,0,0,0.06)]",
         selectedConversation
           ? "hidden md:flex md:w-[340px] lg:w-[400px]"
           : "w-full md:w-[340px] lg:w-[400px]"
       )}
     >
-      <div className="p-2 sm:p-3 md:p-4 border-b border-gray-200 bg-white">
+      <div className="p-2 sm:p-3 md:p-4 border-b border-border bg-background">
         <div className="relative mb-2 sm:mb-3">
-          <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground pointer-events-none" />
           <Input
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-7 sm:pl-9 pr-2 sm:pr-3 bg-gray-50 text-xs sm:text-sm w-full h-8 sm:h-10 rounded-lg"
+            className="pl-7 sm:pl-9 pr-2 sm:pr-3 bg-muted text-xs sm:text-sm w-full h-8 sm:h-10 rounded-lg"
           />
         </div>
 
         <Tabs value={filterTab} onValueChange={onFilterTabChange}>
           <div className="overflow-x-auto -mx-2 sm:-mx-3 md:-mx-4 px-2 sm:px-3 md:px-4 [&::-webkit-scrollbar]:h-[2px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
-            <TabsList className="inline-flex w-auto h-7 sm:h-9 md:h-10 gap-1 sm:gap-1.5 md:gap-2 bg-gray-100 p-0.5 sm:p-1 rounded-lg">
+            <TabsList className="inline-flex w-auto h-7 sm:h-9 md:h-10 gap-1 sm:gap-1.5 md:gap-2 bg-muted p-0.5 sm:p-1 rounded-lg">
               <TabsTrigger value="all" className="text-[11px] sm:text-xs md:text-sm whitespace-nowrap px-2 sm:px-3 md:px-4 h-full rounded-md">All</TabsTrigger>
               <TabsTrigger value="whatsapp" className="text-[11px] sm:text-xs md:text-sm whitespace-nowrap px-2 sm:px-3 md:px-4 h-full rounded-md">WA</TabsTrigger>
               <TabsTrigger value="chatbot" className="text-[11px] sm:text-xs md:text-sm whitespace-nowrap px-2 sm:px-3 md:px-4 h-full rounded-md">Widget</TabsTrigger>
@@ -193,7 +193,7 @@ const ConversationList = ({
             <Loading />
           </div>
         ) : conversations.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             No conversations found
           </div>
         ) : (
@@ -202,21 +202,21 @@ const ConversationList = ({
             if (items.length === 0) return null;
             const isCollapsed = collapsed[key];
             return (
-              <div key={key} className="border-b border-gray-100 last:border-b-0">
+              <div key={key} className="border-b border-border last:border-b-0">
                 <button
                   type="button"
                   onClick={() => toggleSection(key)}
                   aria-expanded={!isCollapsed}
-                  className="w-full sticky top-0 z-10 bg-gray-50/95 backdrop-blur-sm px-4 py-2 flex items-center justify-between text-left hover:bg-gray-100 transition"
+                  className="w-full sticky top-0 z-10 bg-muted/95 backdrop-blur-sm px-4 py-2 flex items-center justify-between text-left hover:bg-muted transition"
                 >
-                  <span className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-600 uppercase tracking-wide">
+                  <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                     {isCollapsed ? (
                       <ChevronRight className="w-3.5 h-3.5" />
                     ) : (
                       <ChevronDown className="w-3.5 h-3.5" />
                     )}
                     {sectionTitles[key]}
-                    <span className="ml-1 text-gray-400 normal-case font-medium">
+                    <span className="ml-1 text-muted-foreground normal-case font-medium">
                       ({items.length})
                     </span>
                   </span>

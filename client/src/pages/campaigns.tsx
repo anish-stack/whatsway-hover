@@ -414,7 +414,7 @@ export default function Campaigns() {
 
             <div className="w-full mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               {/* LEFT → Showing + Limit */}
-              <div className="flex items-center gap-2 text-sm text-gray-700">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>
                   Showing {(page - 1) * limit + 1} to{" "}
                   {Math.min(page * limit, total)} of {total} campaigns
@@ -441,7 +441,7 @@ export default function Campaigns() {
                 <button
                   onClick={() => setPage(Math.max(page - 1, 1))}
                   disabled={page === 1}
-                  className="px-3 py-1 border rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 transition"
+                  className="px-3 py-1 border rounded-md bg-background hover:bg-muted disabled:opacity-50 transition"
                 >
                   Previous
                 </button>
@@ -455,7 +455,7 @@ export default function Campaigns() {
                       className={`px-3 py-1 border rounded-md ${
                         pageNumber === page
                           ? "bg-green-600 text-white"
-                          : "bg-white hover:bg-gray-50"
+                          : "bg-background hover:bg-muted"
                       } transition`}
                     >
                       {pageNumber}
@@ -466,7 +466,7 @@ export default function Campaigns() {
                 <button
                   onClick={() => setPage(Math.min(page + 1, totalPages))}
                   disabled={page === totalPages}
-                  className="px-3 py-1 border rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 transition"
+                  className="px-3 py-1 border rounded-md bg-background hover:bg-muted disabled:opacity-50 transition"
                 >
                   Next
                 </button>

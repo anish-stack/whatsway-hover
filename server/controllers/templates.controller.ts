@@ -157,8 +157,8 @@ export const createTemplate = asyncHandler(
     const placeholderPattern = /\{\{(\d+)\}\}/g;
     const placeholders = bodyText
       ? Array.from(bodyText.matchAll(placeholderPattern))
-          .map((m: any) => parseInt(m[1], 10))
-          .sort((a: number, b: number) => a - b)
+        .map((m: any) => parseInt(m[1], 10))
+        .sort((a: number, b: number) => a - b)
       : [];
 
     for (let i = 0; i < placeholders.length; i++) {
@@ -267,7 +267,7 @@ export const createTemplate = asyncHandler(
               fileBuffer, mediaFile.mimetype, mediaFile.originalname
             );
           } finally {
-            try { fs.unlinkSync(mediaFile.path); } catch {}
+            try { fs.unlinkSync(mediaFile.path); } catch { }
           }
 
           components.push({
@@ -367,7 +367,7 @@ export const createTemplate = asyncHandler(
                   // enabling future sends without re-fetching from Meta on every campaign.
                   carouselCards[idx] = { ...card, mediaUrl: cardHandle };
                 } finally {
-                  try { fs.unlinkSync(cardMediaFile.path); } catch {}
+                  try { fs.unlinkSync(cardMediaFile.path); } catch { }
                 }
               }
 
@@ -767,8 +767,8 @@ export const updateTemplate = asyncHandler(
                 btn.type === "URL"
                   ? "URL"
                   : btn.type === "PHONE_NUMBER"
-                  ? "PHONE_NUMBER"
-                  : "QUICK_REPLY";
+                    ? "PHONE_NUMBER"
+                    : "QUICK_REPLY";
 
               const obj: any = { type, text: btn.text };
               if (type === "URL") obj.url = btn.url;
@@ -824,7 +824,7 @@ export const updateTemplate = asyncHandler(
       let result: any;
 
       if (hasWhatsappTemplate && existingTemplate.whatsappTemplateId) {
-        
+
         try {
           const editPayload: any = { category, components };
           if (templatePayload.degrees_of_freedom_spec) {
@@ -1129,8 +1129,8 @@ export const updateTemplate4JANNN2026 = asyncHandler(
                 btn.type === "URL"
                   ? "URL"
                   : btn.type === "PHONE_NUMBER"
-                  ? "PHONE_NUMBER"
-                  : "QUICK_REPLY";
+                    ? "PHONE_NUMBER"
+                    : "QUICK_REPLY";
 
               const obj: any = { type, text: btn.text };
               if (type === "URL") obj.url = btn.url;
@@ -1252,7 +1252,7 @@ export const syncTemplates30DECCE = asyncHandler(
       // Try to find existing template - STRICT matching
       let existing = existingByWhatsappId.get(waId);
       let matchMethod = "NONE";
-      
+
       if (existing) {
         matchMethod = "BY_WHATSAPP_ID";
       } else {
@@ -1266,7 +1266,7 @@ export const syncTemplates30DECCE = asyncHandler(
       if (existing) {
         // ✅ Template exists - update status if needed
         if (existing.status !== waStatus) {
-          
+
           try {
             await storage.updateTemplate(existing.id, {
               status: waStatus,
@@ -1298,7 +1298,7 @@ export const syncTemplates30DECCE = asyncHandler(
               whatsappTemplateId: waId
             });
           }
-          
+
           detailedResults.push({
             id: existing.id,
             name: waName,
@@ -1310,25 +1310,25 @@ export const syncTemplates30DECCE = asyncHandler(
         }
       } else {
         // ⚠️ NEW template - create it in database
-        
+
         try {
           // Extract components from WhatsApp template
           const components = waTemplate.components || [];
-          
+
           // Extract body text from BODY component
           const bodyComponent = components.find((c: any) => c.type === "BODY");
           const bodyText = bodyComponent?.text || "";
-          
+
           // Extract body variables (count {{1}}, {{2}}, etc.)
           const bodyVariableMatches = bodyText.match(/\{\{(\d+)\}\}/g) || [];
-          const bodyVariables = bodyVariableMatches.map((match: string) => 
+          const bodyVariables = bodyVariableMatches.map((match: string) =>
             match.replace(/\{\{|\}\}/g, "")
           );
-          
+
           // Determine header type
           const headerComponent = components.find((c: any) => c.type === "HEADER");
           let headerType = "NONE";
-          
+
           if (headerComponent) {
             if (headerComponent.format === "TEXT") {
               headerType = "TEXT";
@@ -1386,7 +1386,7 @@ export const syncTemplates30DECCE = asyncHandler(
 
 
     res.json({
-      success: true, 
+      success: true,
       message: "Templates synced successfully",
       totalFromWhatsApp: whatsappTemplates.length,
       totalInDatabase: existingTemplates.length,
@@ -1394,7 +1394,7 @@ export const syncTemplates30DECCE = asyncHandler(
       createdCount,
       skippedCount,
       detailedResults,
-      note: createdCount > 0 
+      note: createdCount > 0
         ? `${createdCount} new templates were automatically created from WhatsApp`
         : "All templates are in sync"
     });
@@ -1713,12 +1713,12 @@ export const syncTemplates = asyncHandler(
       const waStatus = normalizeWaStatus(waTemplate.status);
 
       console.log("[Meta Template Raw]", {
-  name: waTemplate.name,
-  language: waTemplate.language,
-  category: waTemplate.category,
-  status: waTemplate.status,
-  id: waTemplate.id,
-});
+        name: waTemplate.name,
+        language: waTemplate.language,
+        category: waTemplate.category,
+        status: waTemplate.status,
+        id: waTemplate.id,
+      });
 
       const existing =
         existingByWhatsappId.get(waId) ||
@@ -1765,13 +1765,29 @@ export const syncTemplates = asyncHandler(
 
     if (whatsappTemplates.length > 0) {
       for (const dbTemplate of existingTemplates) {
+        // Local-only templates / drafts / seeded templates ko delete mat karo
+        if (!dbTemplate.whatsappTemplateId) {
+          console.log(
+            `[Template Sync] Keeping local template "${dbTemplate.name}" - not submitted to Meta yet`
+          );
+          skippedCount++;
+          continue;
+        }
+
+        // Meta template tha, lekin ab Meta par nahi mila
         if (!syncedDbIds.has(dbTemplate.id)) {
           try {
             await storage.deleteTemplate(dbTemplate.id);
             deletedCount++;
-            console.log(`[Template Sync] Removed stale template "${dbTemplate.name}" (not found on Meta)`);
+
+            console.log(
+              `[Template Sync] Removed stale Meta template "${dbTemplate.name}" (${dbTemplate.whatsappTemplateId})`
+            );
           } catch (err: any) {
-            console.error(`[Template Sync] Failed to remove stale template "${dbTemplate.name}":`, err.message);
+            console.error(
+              `[Template Sync] Failed to remove stale template "${dbTemplate.name}":`,
+              err.message
+            );
           }
         }
       }
@@ -1779,7 +1795,7 @@ export const syncTemplates = asyncHandler(
 
     if (whatsappTemplates.length === 0) {
       console.log(`[Template Sync] No templates found on WABA ${channel.whatsappBusinessAccountId}, auto-creating starter templates...`);
-      
+
       const starterTemplates = getStarterTemplates();
       let autoCreatedCount = 0;
       const autoCreateResults: Array<{ name: string; status: string; error?: string }> = [];
@@ -1787,7 +1803,7 @@ export const syncTemplates = asyncHandler(
       for (const starter of starterTemplates) {
         try {
           const result = await whatsappApi.createTemplate(starter.metaPayload);
-          
+
           if (!result?.id) {
             throw new Error("WhatsApp API did not return a template ID");
           }
@@ -1834,6 +1850,7 @@ export const syncTemplates = asyncHandler(
       totalFromWhatsApp: whatsappTemplates.length,
       createdCount,
       updatedCount,
+      skippedCount,
       deletedCount,
     });
   }
@@ -1975,7 +1992,7 @@ export const syncTemplatesAKKKK = asyncHandler(
 
 export const seedTemplates = asyncHandler(async (req: RequestWithChannel, res: Response) => {
   const channelId = req.query.channelId as string | undefined;
-  
+
   // If no channelId in query, get active channel
   let finalChannelId = channelId;
   if (!finalChannelId) {
@@ -1986,32 +2003,32 @@ export const seedTemplates = asyncHandler(async (req: RequestWithChannel, res: R
       throw new AppError(400, 'No active channel found. Please configure a channel first.');
     }
   }
-  
+
   const templates = [
     {
       name: "hello_world",
       body: "Hello {{1}}! Welcome to our WhatsApp Business platform.",
-      category: "utility" as const,
-      language: "en",
-      status: "pending",
-      channelId: finalChannelId
+      category: "UTILITY" as const,
+      language: "en_US",
+      status: "APPROVED",
+      channelId: finalChannelId,
     },
     {
       name: "order_confirmation",
       body: "Hi {{1}}, your order #{{2}} has been confirmed and will be delivered by {{3}}.",
-      category: "utility" as const,
-      language: "en",
-      status: "pending",
-      channelId: finalChannelId
+      category: "UTILITY" as const,
+      language: "en_US",
+      status: "APPROVED",
+      channelId: finalChannelId,
     },
     {
       name: "appointment_reminder",
       body: "Hello {{1}}, this is a reminder about your appointment on {{2}} at {{3}}. Reply YES to confirm.",
-      category: "utility" as const,
-      language: "en",
-      status: "pending",
-      channelId: finalChannelId
-    }
+      category: "UTILITY" as const,
+      language: "en_US",
+      status: "APPROVED",
+      channelId: finalChannelId,
+    },
   ];
 
   const createdTemplates = await Promise.all(

@@ -953,7 +953,7 @@ export default function ApiDocs() {
                             ? "border-red-300 text-red-700 dark:text-red-400"
                             : err.code >= 400
                               ? "border-amber-300 text-amber-700 dark:text-amber-400"
-                              : "border-gray-300"
+                              : "border-border"
                         }`}
                       >
                         {err.code}

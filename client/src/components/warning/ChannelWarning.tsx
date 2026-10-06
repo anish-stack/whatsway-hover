@@ -57,7 +57,7 @@ const ChannelWarning: React.FC<ChannelWarningProps> = ({ userId }) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+      <div className="bg-background p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
         <h3 className="text-lg font-semibold mb-2">⚠️ Warning</h3>
         <p className="mb-4">You don’t have any channels yet. Please create a channel first.</p>
         <button

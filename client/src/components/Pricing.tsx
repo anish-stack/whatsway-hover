@@ -172,7 +172,7 @@ const Pricing = () => {
       return (
         <div className="text-center py-20">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
-          <p className="text-gray-600 font-medium">
+          <p className="text-[var(--ink-500)] font-medium">
             {t("Landing.pricingSec.loading")}
           </p>
         </div>
@@ -181,12 +181,12 @@ const Pricing = () => {
 
     if (plans.length === 0) {
       return (
-        <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="text-center py-20 bg-[var(--canvas)] rounded-2xl">
+          <AlertCircle className="w-16 h-16 text-[var(--ink-300)] mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[var(--ink)] mb-2">
             {t("Landing.pricingSec.noPlans.title")}
           </h3>
-          <p className="text-gray-600">
+          <p className="text-[var(--ink-500)]">
             {t("Landing.pricingSec.noPlans.description")}
           </p>
         </div>
@@ -198,7 +198,7 @@ const Pricing = () => {
       return priceA - priceB;
     });
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 mb-16">
+      <div className="mb-16 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {sortedPlans.map((plan, index) => {
           const IconComponent = iconMap[plan.icon] || Zap;
           const isPopular = plan.popular;
@@ -206,39 +206,41 @@ const Pricing = () => {
           return (
             <div
               key={plan.id}
-              className={`bg-white p-8 rounded-2xl shadow-lg border-2 ${
-                isPopular ? "relative transform scale-105" : ""
-              } hover:shadow-xl transition-all flex flex-col h-full`}
-              style={{ borderColor: plan.color || '#e5e7eb' }}
+              className={`relative flex h-full flex-col rounded-2xl border bg-background p-7 transition-shadow ${
+                isPopular
+                  ? "border-[var(--brand)] shadow-[0_18px_44px_-24px_rgba(8,169,87,0.6)]"
+                  : "border-[var(--mist)] hover:shadow-[0_14px_34px_-24px_rgba(22,18,46,0.55)]"
+              }`}
+              style={{ borderColor: plan.color || undefined }}
             >
               {/* Popular Badge */}
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                  <span className="rounded-full bg-[var(--flare)] px-4 py-1.5 text-xs font-semibold text-[#3d2409]">
                     {plan.badge}
                   </span>
                 </div>
               )}
 
-              <div className="text-center mb-8 flex-shrink-0">
+              <div className="mb-7 flex-shrink-0">
                 {/* Icon */}
-                <div className="bg-gray-100 p-3 rounded-xl w-fit mx-auto mb-4">
-                  <IconComponent className="w-8 h-8 text-gray-700" />
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--brand-100)]">
+                  <IconComponent className="h-5 w-5 text-[var(--brand)]" />
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-[-0.03em] text-[var(--ink)]">
                   {plan.name}
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-600 text-sm mb-4 min-h-[40px]">
+                <p className="mb-5 mt-1.5 min-h-[40px] text-sm leading-relaxed text-[var(--ink-500)]">
                   {plan.description}
                 </p>
 
                 {/* Price */}
-                <div className="flex items-baseline justify-center mb-2">
-                  <span className="text-4xl font-bold text-gray-900">
+                <div className="mb-3 flex items-baseline">
+                  <span className="font-[family-name:var(--font-display)] text-4xl font-bold tracking-[-0.04em] text-[var(--ink)]">
                     {(() => {
                       let monthlyPrice = plan.monthlyPrice;
                       let annualPrice = plan.annualPrice;
@@ -258,7 +260,7 @@ const Pricing = () => {
                       );
                     })()}
                   </span>
-                  <span className="text-gray-600 ml-2">
+                  <span className="ml-1.5 text-sm text-[var(--ink-500)]">
                     /
                     {isAnnual
                       ? t("Landing.pricingSec.pricing.year")
@@ -269,17 +271,17 @@ const Pricing = () => {
                 {/* Permissions */}
                 {plan.permissions && (
                   <div className="space-y-1">
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-sm text-[var(--ink-500)]">
                       {t("Landing.pricingSec.pricing.upTo")}{" "}
                       {plan.permissions.contacts}{" "}
                       {t("Landing.pricingSec.pricing.contacts")}
                     </div>
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-sm text-[var(--ink-500)]">
                       {plan.permissions.channel}{" "}
                       {t("Landing.pricingSec.pricing.channels")}
                     </div>
                     {plan.permissions.automation && (
-                      <div className="text-gray-600 text-sm">
+                      <div className="text-sm text-[var(--ink-500)]">
                         {plan.permissions.automation}{" "}
                         {t("Landing.pricingSec.pricing.automation")}
                       </div>
@@ -297,13 +299,13 @@ const Pricing = () => {
                       className="flex items-start space-x-3"
                     >
                       {feature.included ? (
-                        <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
                       ) : (
-                        <X className="w-5 h-5 text-gray-300 mt-0.5 flex-shrink-0" />
+                        <X className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ink-300)]" />
                       )}
                       <span
                         className={`text-sm ${
-                          feature.included ? "text-gray-700" : "text-gray-400"
+                          feature.included ? "text-[var(--ink-700)]" : "text-[var(--ink-300)]"
                         }`}
                       >
                         {feature.name}
@@ -313,22 +315,22 @@ const Pricing = () => {
                 ) : (
                   <>
                     <li className="flex items-start space-x-3">
-                      <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">
+                      <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
+                      <span className="text-sm text-[var(--ink-700)]">
                         {plan.permissions.contacts}{" "}
                         {t("Landing.pricingSec.pricing.contacts")}
                       </span>
                     </li>
                     <li className="flex items-start space-x-3">
-                      <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">
+                      <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
+                      <span className="text-sm text-[var(--ink-700)]">
                         {plan.permissions.channel}{" "}
                         {t("Landing.pricingSec.pricing.channels")}
                       </span>
                     </li>
                     <li className="flex items-start space-x-3">
-                      <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">
+                      <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
+                      <span className="text-sm text-[var(--ink-700)]">
                         {plan.permissions.automation}{" "}
                         {t("Landing.pricingSec.pricing.automation")}
                       </span>
@@ -340,8 +342,12 @@ const Pricing = () => {
               {/* CTA Button - Always at bottom */}
               <button
                 onClick={() => handleSelectPlan(plan)}
-                className="w-full py-3 rounded-xl font-semibold transition-all transform hover:scale-105 text-white flex-shrink-0 hover:opacity-90"
-                style={{ backgroundColor: plan.buttonColor || '#10b981' }}
+                className="btn btn-brand w-full flex-shrink-0"
+                style={
+                  plan.buttonColor
+                    ? { backgroundColor: plan.buttonColor }
+                    : undefined
+                }
               >
                 {Number.parseFloat(plan.monthlyPrice) === 0
                   ? t("Landing.pricingSec.planCTA.freeButton")
@@ -362,37 +368,35 @@ const Pricing = () => {
 
   return (
     <>
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section id="pricing" className="band bg-background">
+        <div className="shell">
           {/* Header Section */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Crown className="w-4 h-4 mr-2" />
+          <div className="mb-12">
+            <span className="chip">
+              <Crown className="h-3.5 w-3.5" />
               {t("Landing.pricingSec.introTagline")}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            </span>
+            <h2 className="display-lg mt-5 text-[var(--ink)]">
               {t("Landing.pricingSec.headlinePre")}{" "}
-              <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                {t("Landing.pricingSec.headlineHighlight")}
-              </span>
+              {t("Landing.pricingSec.headlineHighlight")}
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            <p className="lede mt-5">
               {t("Landing.pricingSec.subHeadline")}
             </p>
 
             {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-12 flex-wrap gap-4">
+            <div className="mt-8 flex flex-wrap items-center gap-4">
               <span
-                className={`font-medium ${
-                  isAnnual ? "text-gray-500" : "text-gray-900"
+                className={`text-sm font-semibold ${
+                  isAnnual ? "text-[var(--ink-500)]" : "text-[var(--ink)]"
                 }`}
               >
                 {t("Landing.pricingSec.billingToggle.monthly")}
               </span>
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
-                className={`relative w-14 h-7 rounded-full transition-colors ${
-                  isAnnual ? "bg-green-500" : "bg-gray-300"
+                className={`relative h-7 w-14 rounded-full transition-colors ${
+                  isAnnual ? "bg-[var(--brand)]" : "bg-[var(--mist)]"
                 }`}
               >
                 <div
@@ -402,14 +406,14 @@ const Pricing = () => {
                 ></div>
               </button>
               <span
-                className={`font-medium ${
-                  isAnnual ? "text-gray-900" : "text-gray-500"
+                className={`text-sm font-semibold ${
+                  isAnnual ? "text-[var(--ink)]" : "text-[var(--ink-500)]"
                 }`}
               >
                 {t("Landing.pricingSec.billingToggle.annual")}
               </span>
               {isAnnual && (
-                <span className="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">
+                <span className="chip chip-flare">
                   {t("Landing.pricingSec.billingToggle.saveLabel")}
                 </span>
               )}
@@ -417,7 +421,7 @@ const Pricing = () => {
                 <select
                   value={selectedCurrency}
                   onChange={(e) => setSelectedCurrency(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer"
+                  className="cursor-pointer rounded-xl border border-[var(--mist)] bg-background px-3 py-2 text-sm font-medium outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-[var(--brand-100)]"
                 >
                   {displayedCurrencies.map((cur) => (
                     <option key={cur} value={cur}>
@@ -433,37 +437,38 @@ const Pricing = () => {
           {renderPlansContent()}
 
           {/* FAQ Section */}
-          <div className="bg-gray-50 p-8 rounded-2xl">
-            <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+          <div>
+            <h3 className="display-md text-[var(--ink)]">
               {t("Landing.pricingSec.faq.title")}
             </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <div className="mt-6 grid gap-px overflow-hidden rounded-2xl border border-[var(--mist)] bg-[var(--mist)] lg:grid-cols-2">
               {faqData.map((faq, index) => (
-                <div
-                  key={`${faq.q}-${index}`}
-                  className="bg-white p-6 rounded-xl"
-                >
-                  <h4 className="font-semibold text-gray-900 mb-2">{faq.q}</h4>
-                  <p className="text-gray-600 text-sm">{faq.a}</p>
+                <div key={`${faq.q}-${index}`} className="bg-background p-6">
+                  <h4 className="font-semibold text-[var(--ink)]">{faq.q}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink-500)]">
+                    {faq.a}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Enterprise CTA */}
-          <div className="mt-16 bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-2xl text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              {t("Landing.pricingSec.enterprise.title")}
-            </h3>
-            <p className="text-gray-300 mb-6">
-              {t("Landing.pricingSec.enterprise.description")}
-            </p>
+          <div className="mt-16 flex flex-col items-start gap-6 rounded-2xl bg-[var(--ink)] p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+            <div>
+              <h3 className="display-md text-white">
+                {t("Landing.pricingSec.enterprise.title")}
+              </h3>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/60">
+                {t("Landing.pricingSec.enterprise.description")}
+              </p>
+            </div>
             <Link
               href="/contact"
-              className="bg-white text-gray-900 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all flex items-center mx-auto group w-fit"
+              className="btn btn-flare group shrink-0"
             >
               {t("Landing.pricingSec.enterprise.button")}
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>

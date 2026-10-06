@@ -100,14 +100,14 @@ export function SignupPopupHandler() {
   if (isSubmitted) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in duration-300">
+        <div className="bg-background rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in duration-300">
           <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-foreground mb-2">
             Welcome to {appName}!
           </h3>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Redirecting you to complete your registration...
           </p>
         </div>
@@ -118,14 +118,14 @@ export function SignupPopupHandler() {
   // Main popup
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90dvh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90dvh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="flex justify-end p-2 flex-shrink-0">
           <button
             onClick={handleClose}
             aria-label="Close"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -171,16 +171,16 @@ export function SignupPopupHandler() {
 
             {/* Right Side - Form */}
             <div className="p-5 sm:p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-foreground mb-2">
                 Get Started Free
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-muted-foreground mb-6">
                 No credit card required. Start sending campaigns in minutes.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Work Email
                   </label>
                   <input
@@ -188,7 +188,7 @@ export function SignupPopupHandler() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your work email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -203,7 +203,7 @@ export function SignupPopupHandler() {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   By signing up, you agree to our{" "}
                   <a href="/terms" className="text-green-600 hover:underline">
                     Terms of Service
@@ -218,8 +218,8 @@ export function SignupPopupHandler() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
+              <div className="mt-6 pt-6 border-t border-border">
+                <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     <span>No setup fees</span>

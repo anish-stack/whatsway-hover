@@ -169,15 +169,15 @@ const CaseStudies = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 inline-flex gap-2">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6 inline-flex gap-2">
             {t("caseStudies.hero.title")}
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               {t("caseStudies.hero.titleHighlight")}
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto">
             {t("caseStudies.hero.subtitle")}
           </p>
         </div>
@@ -199,26 +199,26 @@ const CaseStudies = () => {
                     className="w-full h-64 object-cover"
                   />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-[var(--ink-700)]">
                       {study.industry}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 right-4 bg-green-500 p-2 rounded-lg">
+                  <div className="absolute bottom-4 right-4 bg-[var(--brand)] p-2 rounded-lg">
                     <study.icon className="w-6 h-6 text-white" />
                   </div>
                 </div>
 
                 <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-2xl font-bold text-[var(--ink)] mb-4">
                     {study.title}
                   </h3>
-                  <p className="text-gray-600 mb-6">{study.challenge}</p>
+                  <p className="text-[var(--ink-500)] mb-6">{study.challenge}</p>
 
-                  <div className="bg-green-50 p-4 rounded-lg mb-6">
-                    <div className="text-2xl font-bold text-green-600 mb-1">
+                  <div className="bg-[var(--brand-100)] p-4 rounded-lg mb-6">
+                    <div className="text-2xl font-bold text-[var(--brand)] mb-1">
                       {study.results.primary}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-[var(--ink-500)]">
                       {t("caseStudies.modal.primaryResult")}
                     </div>
                   </div>
@@ -236,7 +236,7 @@ const CaseStudies = () => {
 
                   <button
                     onClick={() => setSelectedStudy(study)}
-                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center group"
+                    className="w-full bg-gradient-to-r from-[var(--brand)] to-[var(--brand-700)] text-white py-3 rounded-lg hover:from-[var(--brand)] hover:to-[var(--brand-700)] transition-all flex items-center justify-center group"
                   >
                     {t("caseStudies.cta.buttonText")}
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -269,10 +269,10 @@ const CaseStudies = () => {
             <div className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-3xl font-bold text-[var(--ink)] mb-2">
                     {selectedStudy.title}
                   </h2>
-                  <div className="flex items-center space-x-4 text-gray-600">
+                  <div className="flex items-center space-x-4 text-[var(--ink-500)]">
                     <span>{selectedStudy.company}</span>
                     <span>•</span>
                     <span>{selectedStudy.industry}</span>
@@ -284,36 +284,36 @@ const CaseStudies = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-xl font-bold text-[var(--ink)] mb-4">
                     {t("caseStudies.modal.challenge")}
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-[var(--ink-500)] mb-6">
                     {selectedStudy.challenge}
                   </p>
 
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-xl font-bold text-[var(--ink)] mb-4">
                     {t("caseStudies.modal.solution")}
                   </h3>
-                  <p className="text-gray-600">{selectedStudy.solution}</p>
+                  <p className="text-[var(--ink-500)]">{selectedStudy.solution}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-xl font-bold text-[var(--ink)] mb-4">
                     {t("caseStudies.modal.keyResults")}
                   </h3>
                   <div className="space-y-4">
                     {selectedStudy.results.metrics.map(
                       (metric: any, index: number) => (
-                        <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                        <div key={index} className="bg-[var(--canvas)] p-4 rounded-lg">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-gray-700 font-medium">
+                            <span className="text-[var(--ink-700)] font-medium">
                               {metric.label}
                             </span>
-                            <span className="text-green-600 font-bold">
+                            <span className="text-[var(--brand)] font-bold">
                               {metric.increase}
                             </span>
                           </div>
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className="text-2xl font-bold text-[var(--ink)]">
                             {metric.value}
                           </div>
                         </div>
@@ -324,19 +324,19 @@ const CaseStudies = () => {
               </div>
 
               <div className="bg-blue-50 p-6 rounded-lg mb-8">
-                <blockquote className="text-lg text-gray-700 italic mb-4">
+                <blockquote className="text-lg text-[var(--ink-700)] italic mb-4">
                   "{selectedStudy.testimonial.quote}"
                 </blockquote>
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                    <FaUserCircle className="text-gray-700 text-3xl" />
+                    <FaUserCircle className="text-[var(--ink-700)] text-3xl" />
                   </div>
 
                   <div>
-                    <div className="font-semibold text-gray-900">
+                    <div className="font-semibold text-[var(--ink)]">
                       {selectedStudy.testimonial.author}
                     </div>
-                    <div className="text-gray-600">
+                    <div className="text-[var(--ink-500)]">
                       {selectedStudy.testimonial.role}
                     </div>
                   </div>
@@ -344,10 +344,10 @@ const CaseStudies = () => {
               </div>
               {/* 
               <div className="flex space-x-4">
-                <button className="flex-1 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors">
+                <button className="flex-1 bg-[var(--brand)] text-white py-3 rounded-lg hover:bg-[var(--brand)] transition-colors">
                   {t("caseStudies.cta.modalButtons.startStory")}
                 </button>
-                <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+                <button className="px-6 py-3 border border-[var(--mist)] rounded-lg hover:bg-[var(--canvas)] transition-colors flex items-center">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   {t("caseStudies.cta.modalButtons.share")}
                 </button>
@@ -358,19 +358,19 @@ const CaseStudies = () => {
       )}
 
       {/* Stats Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">
+          <h2 className="text-3xl font-bold text-[var(--ink)] mb-12">
             {t("caseStudies.stats.heading")}
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+                <div className="text-3xl font-bold text-[var(--brand)] mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-[var(--ink-500)]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -378,7 +378,7 @@ const CaseStudies = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             {t("caseStudies.ctaBanner.heading")}
@@ -391,7 +391,7 @@ const CaseStudies = () => {
           <Link
             href="/contact"
             className="w-fit
-             bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl"
+             bg-white text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--canvas)] transition-all transform hover:scale-105 shadow-xl"
           >
             {t("caseStudies.ctaBanner.button")}
           </Link>

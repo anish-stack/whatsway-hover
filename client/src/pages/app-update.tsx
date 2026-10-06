@@ -368,7 +368,7 @@ export default function AppUpdate() {
     if (event.status === "done") return <CheckCircle className="w-4 h-4 text-green-500" />;
     if (event.status === "error") return <XCircle className="w-4 h-4 text-red-500" />;
     if (event.status === "warning") return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-    return <Package className="w-4 h-4 text-gray-400" />;
+    return <Package className="w-4 h-4 text-muted-foreground" />;
   };
 
   const latestProgress = displayLogs.filter((l) => l.progress !== undefined).slice(-1)[0]?.progress || 0;
@@ -385,8 +385,8 @@ export default function AppUpdate() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Application Update</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Application Update</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Upload and apply new versions of the application
           </p>
         </div>
@@ -399,32 +399,32 @@ export default function AppUpdate() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="bg-background border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
               <Package className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Current Version</h3>
+              <h3 className="text-sm font-semibold text-foreground">Current Version</h3>
               <p className="text-lg font-bold text-blue-600">v{status?.currentVersion || "unknown"}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="bg-background border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${status?.backup.exists ? "bg-green-50" : "bg-gray-50"}`}>
-              <Shield className={`w-5 h-5 ${status?.backup.exists ? "text-green-600" : "text-gray-400"}`} />
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${status?.backup.exists ? "bg-green-50" : "bg-muted"}`}>
+              <Shield className={`w-5 h-5 ${status?.backup.exists ? "text-green-600" : "text-muted-foreground"}`} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Backup Status</h3>
+              <h3 className="text-sm font-semibold text-foreground">Backup Status</h3>
               {status?.backup.exists ? (
                 <p className="text-sm text-green-600">
                   v{status.backup.version} &middot;{" "}
                   {new Date(status.backup.timestamp!).toLocaleDateString()}
                 </p>
               ) : (
-                <p className="text-sm text-gray-400">No backup available</p>
+                <p className="text-sm text-muted-foreground">No backup available</p>
               )}
             </div>
           </div>
@@ -450,7 +450,7 @@ export default function AppUpdate() {
           className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
             dragOver
               ? "border-green-400 bg-green-50"
-              : "border-gray-300 bg-gray-50 hover:border-gray-400"
+              : "border-border bg-muted hover:border-gray-400"
           }`}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
@@ -466,34 +466,34 @@ export default function AppUpdate() {
           {uploading ? (
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-10 h-10 animate-spin text-green-500" />
-              <p className="text-sm text-gray-600">Uploading and validating...</p>
+              <p className="text-sm text-muted-foreground">Uploading and validating...</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <div className="w-14 h-14 bg-white border border-gray-200 rounded-xl flex items-center justify-center">
-                <Upload className="w-7 h-7 text-gray-400" />
+              <div className="w-14 h-14 bg-background border border-border rounded-xl flex items-center justify-center">
+                <Upload className="w-7 h-7 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-muted-foreground">
                   Drag and drop your update ZIP file here
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   or click to browse &middot; Max 500MB
                 </p>
-                <p className="text-[11px] text-gray-400 mt-2 max-w-md">
+                <p className="text-[11px] text-muted-foreground mt-2 max-w-md">
                   Tip: produce the ZIP with{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">
                     npm run build:prod-zip
                   </code>
                   . GitHub&apos;s &quot;Download ZIP&quot; is not supported.
                 </p>
-                <p className="text-[11px] text-gray-400 mt-1 max-w-md">
+                <p className="text-[11px] text-muted-foreground mt-1 max-w-md">
                   Package without{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">node_modules/</code>,{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">.git/</code>,{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">.cache/</code>,{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">.update-backups/</code>, or{" "}
-                  <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-600">dist/</code>{" "}
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">node_modules/</code>,{" "}
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">.git/</code>,{" "}
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">.cache/</code>,{" "}
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">.update-backups/</code>, or{" "}
+                  <code className="px-1 py-0.5 bg-muted rounded text-muted-foreground">dist/</code>{" "}
                   — the server reinstalls dependencies.
                 </p>
               </div>
@@ -509,15 +509,15 @@ export default function AppUpdate() {
       )}
 
       {uploadResult && !updating && (
-        <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4" data-testid="update-preview">
+        <div className="bg-background border border-border rounded-xl p-5 space-y-4" data-testid="update-preview">
           <div className="flex items-center gap-3">
             <FileArchive className="w-5 h-5 text-green-600" />
-            <h3 className="text-sm font-semibold text-gray-900">Update Package Preview</h3>
+            <h3 className="text-sm font-semibold text-foreground">Update Package Preview</h3>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-lg p-3">
-              <p className="text-xs text-gray-500">Current Version</p>
-              <p className="text-sm font-semibold text-gray-900">v{uploadResult.currentVersion}</p>
+            <div className="bg-muted rounded-lg p-3">
+              <p className="text-xs text-muted-foreground">Current Version</p>
+              <p className="text-sm font-semibold text-foreground">v{uploadResult.currentVersion}</p>
             </div>
             <div className="bg-green-50 rounded-lg p-3">
               <p className="text-xs text-green-600">New Version</p>
@@ -528,34 +528,34 @@ export default function AppUpdate() {
           {uploadResult.preview && (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-500">Files</p>
-                  <p className="text-sm font-semibold text-gray-900" data-testid="preview-file-count">
+                <div className="bg-muted rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Files</p>
+                  <p className="text-sm font-semibold text-foreground" data-testid="preview-file-count">
                     {uploadResult.preview.fileCount.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-500">Directories</p>
-                  <p className="text-sm font-semibold text-gray-900">
+                <div className="bg-muted rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Directories</p>
+                  <p className="text-sm font-semibold text-foreground">
                     {uploadResult.preview.dirCount.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-500">Total Size</p>
-                  <p className="text-sm font-semibold text-gray-900">
+                <div className="bg-muted rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Total Size</p>
+                  <p className="text-sm font-semibold text-foreground">
                     {formatBytes(uploadResult.preview.totalSize)}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-500">Top-level Items</p>
-                  <p className="text-sm font-semibold text-gray-900">
+                <div className="bg-muted rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Top-level Items</p>
+                  <p className="text-sm font-semibold text-foreground">
                     {uploadResult.preview.topLevel.length}
                   </p>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs font-medium text-gray-700 mb-2">Key directories</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Key directories</p>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { label: "package.json", present: uploadResult.preview.hasPackageJson },
@@ -567,7 +567,7 @@ export default function AppUpdate() {
                       className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono rounded-md border ${
                         present
                           ? "bg-green-50 text-green-700 border-green-200"
-                          : "bg-gray-100 text-gray-400 border-gray-200"
+                          : "bg-muted text-muted-foreground border-border"
                       }`}
                     >
                       {present ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
@@ -578,12 +578,12 @@ export default function AppUpdate() {
               </div>
 
               <div>
-                <p className="text-xs font-medium text-gray-700 mb-2">Top-level layout</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Top-level layout</p>
                 <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
                   {uploadResult.preview.topLevel.map((entry) => (
                     <span
                       key={entry}
-                      className="inline-flex items-center px-2 py-0.5 text-xs font-mono bg-gray-100 text-gray-600 rounded"
+                      className="inline-flex items-center px-2 py-0.5 text-xs font-mono bg-muted text-muted-foreground rounded"
                     >
                       {entry}
                     </span>
@@ -672,13 +672,13 @@ export default function AppUpdate() {
                   : "Update log"}
               </span>
               {historicalRunId && !updating && latestRun?.run?.id === historicalRunId && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-muted-foreground">
                   &middot; {new Date(latestRun.run.startedAt).toLocaleString()}
                 </span>
               )}
             </div>
             {latestProgress > 0 && (
-              <span className="text-xs text-gray-400">{latestProgress}%</span>
+              <span className="text-xs text-muted-foreground">{latestProgress}%</span>
             )}
           </div>
 
@@ -706,7 +706,7 @@ export default function AppUpdate() {
                       ? "text-yellow-400"
                       : event.status === "done"
                       ? "text-green-400"
-                      : "text-gray-300"
+                      : "text-muted-foreground"
                   }`}
                 >
                   {event.message}
@@ -718,30 +718,30 @@ export default function AppUpdate() {
       )}
 
       {runsList && runsList.runs.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
+        <div className="bg-background border border-border rounded-xl p-5">
           <button
             type="button"
             onClick={() => setShowHistory((v) => !v)}
             className="w-full flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-gray-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
+              <History className="w-4 h-4 text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-foreground">
                 Update History
               </h3>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 ({runsList.runs.length})
               </span>
             </div>
             {showHistory ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
             )}
           </button>
 
           {showHistory && (
-            <div className="mt-3 divide-y divide-gray-100">
+            <div className="mt-3 divide-y divide-border">
               {runsList.runs.map((run) => {
                 const isActive = historicalRunId === run.id;
                 const statusBadge =
@@ -752,7 +752,7 @@ export default function AppUpdate() {
                     : run.status === "rolled_back"
                     ? "bg-yellow-50 text-yellow-700 border-yellow-200"
                     : run.status === "interrupted"
-                    ? "bg-gray-50 text-gray-700 border-gray-200"
+                    ? "bg-muted text-muted-foreground border-border"
                     : "bg-red-50 text-red-700 border-red-200";
                 return (
                   <button
@@ -760,18 +760,18 @@ export default function AppUpdate() {
                     type="button"
                     onClick={() => loadHistoricalRun(run.id)}
                     disabled={updating}
-                    className={`w-full text-left py-3 px-2 -mx-2 rounded-md hover:bg-gray-50 disabled:opacity-50 ${
-                      isActive ? "bg-gray-50" : ""
+                    className={`w-full text-left py-3 px-2 -mx-2 rounded-md hover:bg-muted disabled:opacity-50 ${
+                      isActive ? "bg-muted" : ""
                     }`}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2 min-w-0">
-                        <Clock className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                        <span className="text-sm text-gray-700 truncate">
+                        <Clock className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground truncate">
                           {new Date(run.startedAt).toLocaleString()}
                         </span>
                         {run.fromVersion && run.toVersion && (
-                          <span className="text-xs text-gray-500 truncate">
+                          <span className="text-xs text-muted-foreground truncate">
                             v{run.fromVersion} &rarr; v{run.toVersion}
                           </span>
                         )}
@@ -783,12 +783,12 @@ export default function AppUpdate() {
                       </span>
                     </div>
                     {run.triggeredByUsername && (
-                      <p className="text-xs text-gray-500 mt-1 ml-5">
+                      <p className="text-xs text-muted-foreground mt-1 ml-5">
                         by {run.triggeredByUsername}
                       </p>
                     )}
                     {run.finalMessage && (
-                      <p className="text-xs text-gray-500 mt-1 ml-5 line-clamp-2">
+                      <p className="text-xs text-muted-foreground mt-1 ml-5 line-clamp-2">
                         {run.finalMessage}
                       </p>
                     )}
@@ -800,16 +800,16 @@ export default function AppUpdate() {
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Protected Paths</h3>
-        <p className="text-xs text-gray-500 mb-3">
+      <div className="bg-background border border-border rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Protected Paths</h3>
+        <p className="text-xs text-muted-foreground mb-3">
           These files and directories are never modified during an update:
         </p>
         <div className="flex flex-wrap gap-2">
           {[".env", "uploads/", "node_modules/", ".git/", ".update-backups/"].map((p) => (
             <span
               key={p}
-              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono bg-gray-100 text-gray-600 rounded-md"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono bg-muted text-muted-foreground rounded-md"
             >
               <Shield className="w-3 h-3" />
               {p}

@@ -150,14 +150,28 @@ export default function AISettingsModal({
             <div className="space-y-2">
               <Label>Provider</Label>
               <Select
-                onValueChange={(v) => setValue("provider", v)}
+                onValueChange={(v) => {
+                  setValue("provider", v);
+                  // keep the endpoint pointed at the vendor that was picked,
+                  // otherwise an OpenAI URL gets sent a Hugging Face model
+                  setValue(
+                    "endpoint",
+                    v === "huggingface"
+                      ? "https://router.huggingface.co/v1"
+                      : "https://api.openai.com/v1"
+                  );
+                  setValue("model", "");
+                }}
                 defaultValue={watch("provider")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select provider" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="openai">OpenAI</SelectItem>
+                  <SelectItem value="openai">OpenAI (paid)</SelectItem>
+                  <SelectItem value="huggingface">
+                    Hugging Face (free tier)
+                  </SelectItem>
                   {/* <SelectItem value="anthropic">Anthropic</SelectItem>
                   <SelectItem value="google">Google Gemini</SelectItem>
                   <SelectItem value="azure">Azure OpenAI</SelectItem> */}
@@ -193,6 +207,26 @@ export default function AISettingsModal({
                       <SelectItem value="gpt-4o">GPT-4o</SelectItem>
                       <SelectItem value="gpt-3.5-turbo">
                         GPT-3.5 Turbo
+                      </SelectItem>
+                    </>
+                  )}
+
+                  {form.provider === "huggingface" && (
+                    <>
+                      <SelectItem value="meta-llama/Llama-3.2-3B-Instruct">
+                        Llama 3.2 3B Instruct
+                      </SelectItem>
+                      <SelectItem value="meta-llama/Llama-3.1-8B-Instruct">
+                        Llama 3.1 8B Instruct
+                      </SelectItem>
+                      <SelectItem value="mistralai/Mistral-7B-Instruct-v0.3">
+                        Mistral 7B Instruct
+                      </SelectItem>
+                      <SelectItem value="Qwen/Qwen2.5-7B-Instruct">
+                        Qwen 2.5 7B Instruct
+                      </SelectItem>
+                      <SelectItem value="HuggingFaceH4/zephyr-7b-beta">
+                        Zephyr 7B Beta
                       </SelectItem>
                     </>
                   )}
@@ -264,7 +298,7 @@ export default function AISettingsModal({
           {/* Trigger Words - full width */}
           <div className="space-y-2">
             <Label>Trigger Words</Label>
-            <p className="text-xs text-gray-500 mb-1">
+            <p className="text-xs text-muted-foreground mb-1">
               Enter comma-separated trigger words or phrases (e.g. "hello,
               start, ai").
             </p>

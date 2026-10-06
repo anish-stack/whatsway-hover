@@ -676,7 +676,7 @@ export default function ContactsManagements() {
           <CardContent className="p-6">
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex-1 min-w-64 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder={`${t("contacts.searchContacts")}`}
                   value={searchQuery}
@@ -695,20 +695,20 @@ export default function ContactsManagements() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus(null)}
-                    className={!selectedStatus ? "bg-gray-100" : ""}
+                    className={!selectedStatus ? "bg-muted" : ""}
                   >
                     {t("contacts.allStatuses")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus("active")}
-                    className={selectedStatus === "active" ? "bg-gray-100" : ""}
+                    className={selectedStatus === "active" ? "bg-muted" : ""}
                   >
                     {t("contacts.active")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus("blocked")}
                     className={
-                      selectedStatus === "blocked" ? "bg-gray-100" : ""
+                      selectedStatus === "blocked" ? "bg-muted" : ""
                     }
                   >
                     {t("contacts.blocked")}
@@ -731,26 +731,26 @@ export default function ContactsManagements() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
-                <p className="text-2xl font-bold text-gray-900">{contactStats.total.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-1">{t("contacts.stats.totalContacts")}</p>
+                <p className="text-2xl font-bold text-foreground">{contactStats.total.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("contacts.stats.totalContacts")}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-bold text-blue-600">{contactStats.uniquePhones.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-1">{t("contacts.stats.uniquePhones")}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("contacts.stats.uniquePhones")}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-bold text-green-600">{contactStats.activeCount.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-1">{t("contacts.active")}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("contacts.active")}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-bold text-red-600">{contactStats.blockedCount.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-1">{t("contacts.blocked")}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("contacts.blocked")}</p>
               </CardContent>
             </Card>
           </div>
@@ -821,70 +821,70 @@ export default function ContactsManagements() {
                 {/* Desktop Table View */}
                 <div className="hidden lg:block overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-muted">
                       <tr>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           <input
                             type="checkbox"
-                            className="rounded border-gray-300"
+                            className="rounded border-border"
                             checked={allSelected}
                             onChange={toggleSelectAll}
                           />
                         </th>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t("contacts.contact")}
                         </th>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t("contacts.phone")}
                         </th>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t("contacts.stats.createdBy")}
                         </th>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t("contacts.status")}
                         </th>
-                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left px-4 xl:px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t("contacts.lastContact")}
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-background divide-y divide-border">
                       {contacts.map((contact: Contact) => (
                         <tr
                           key={contact.id}
-                          className="hover:bg-gray-50 transition-colors"
+                          className="hover:bg-muted transition-colors"
                         >
                           <td className="px-4 xl:px-6 py-4">
                             <input
                               type="checkbox"
-                              className="rounded border-gray-300"
+                              className="rounded border-border"
                               checked={selectedContactIds.includes(contact.id)}
                               onChange={() => toggleSelectOne(contact.id)}
                             />
                           </td>
                           <td className="px-4 xl:px-6 py-4">
                             <div className="flex items-center">
-                              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span className="text-sm font-medium text-gray-600">
+                              <div className="w-10 h-10 bg-border rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-sm font-medium text-muted-foreground">
                                   {isDemoUser(user?.username) ? "*" : contact.name.charAt(0).toUpperCase()}
                                 </span>
                               </div>
                               <div className="ml-3 xl:ml-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-foreground">
                                   {isDemoUser(user?.username) ? maskName(contact.name) : contact.name}
                                 </div>
                                 {contact.email && (
-                                  <div className="text-sm text-gray-500">
+                                  <div className="text-sm text-muted-foreground">
                                     {isDemoUser(user?.username) ? maskEmail(contact.email) : contact.email}
                                   </div>
                                 )}
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 xl:px-6 py-4 text-sm text-gray-900">
+                          <td className="px-4 xl:px-6 py-4 text-sm text-foreground">
                             {isDemoUser(user?.username) ? maskPhone(contact.phone) : contact.phone}
                           </td>
-                          <td className="px-4 xl:px-6 py-4 text-sm text-gray-900">
+                          <td className="px-4 xl:px-6 py-4 text-sm text-foreground">
                             {isDemoUser(user?.username) ? maskName(contact?.createdByName?.trim() || "-") : (contact?.createdByName?.trim() || "-")}
                           </td>
                           <td className="px-4 xl:px-6 py-4">
@@ -903,7 +903,7 @@ export default function ContactsManagements() {
                               {contact.status === "active" ? t("contacts.active") : contact.status === "blocked" ? t("contacts.blocked") : (contact.status?.toUpperCase() || "N/A")}
                             </Badge>
                           </td>
-                          <td className="px-4 xl:px-6 py-4 text-sm text-gray-900">
+                          <td className="px-4 xl:px-6 py-4 text-sm text-foreground">
                             {contact.lastContact
                               ? new Date(
                                   contact.lastContact
@@ -917,20 +917,20 @@ export default function ContactsManagements() {
                 </div>
 
                 {/* Mobile/Tablet Card View */}
-                <div className="lg:hidden divide-y divide-gray-200">
+                <div className="lg:hidden divide-y divide-border">
                   {/* Select All Bar */}
-                  <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <div className="bg-muted px-4 py-3 flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                       <input
                         type="checkbox"
-                        className="rounded border-gray-300"
+                        className="rounded border-border"
                         checked={allSelected}
                         onChange={toggleSelectAll}
                       />
                       {t("contacts.selectAll")}
                     </label>
                     {selectedContactIds.length > 0 && (
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         {selectedContactIds.length} {t("contacts.selected")}
                       </span>
                     )}
@@ -938,19 +938,19 @@ export default function ContactsManagements() {
 
                   {/* Contact Cards */}
                   {contacts.map((contact: Contact) => (
-                    <div key={contact.id} className="bg-white p-4">
+                    <div key={contact.id} className="bg-background p-4">
                       <div className="flex items-start gap-3">
                         {/* Checkbox */}
                         <input
                           type="checkbox"
-                          className="rounded border-gray-300 mt-1"
+                          className="rounded border-border mt-1"
                           checked={selectedContactIds.includes(contact.id)}
                           onChange={() => toggleSelectOne(contact.id)}
                         />
 
                         {/* Avatar */}
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-base font-medium text-gray-600">
+                        <div className="w-12 h-12 bg-border rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-base font-medium text-muted-foreground">
                             {isDemoUser(user?.username) ? "*" : contact.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -959,11 +959,11 @@ export default function ContactsManagements() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="text-base font-semibold text-gray-900 truncate">
+                              <h3 className="text-base font-semibold text-foreground truncate">
                                 {isDemoUser(user?.username) ? maskName(contact.name) : contact.name}
                               </h3>
                               {contact.email && (
-                                <p className="text-sm text-gray-500 truncate">
+                                <p className="text-sm text-muted-foreground truncate">
                                   {isDemoUser(user?.username) ? maskEmail(contact.email) : contact.email}
                                 </p>
                               )}
@@ -987,22 +987,22 @@ export default function ContactsManagements() {
                           {/* Contact Details Grid */}
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-500">{t("contacts.phoneLabel")}</span>
-                              <span className="text-gray-900 font-medium">
+                              <span className="text-muted-foreground">{t("contacts.phoneLabel")}</span>
+                              <span className="text-foreground font-medium">
                                 {isDemoUser(user?.username) ? maskPhone(contact.phone) : contact.phone}
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-500">{t("contacts.stats.createdBy")}:</span>
-                              <span className="text-gray-900">
+                              <span className="text-muted-foreground">{t("contacts.stats.createdBy")}:</span>
+                              <span className="text-foreground">
                                 {isDemoUser(user?.username) ? maskName(contact?.createdByName?.trim() || "-") : (contact?.createdByName?.trim() || "-")}
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-500">
+                              <span className="text-muted-foreground">
                                 {t("contacts.lastContactLabel")}
                               </span>
-                              <span className="text-gray-900">
+                              <span className="text-foreground">
                                 {contact.lastContact
                                   ? new Date(
                                       contact.lastContact
@@ -1021,11 +1021,11 @@ export default function ContactsManagements() {
 
             {/* Enhanced Pagination - Responsive */}
             {contacts.length > 0 && (
-              <div className="bg-gray-50 border-t border-gray-200">
+              <div className="bg-muted border-t border-border">
                 {/* Desktop Pagination */}
                 <div className="hidden md:flex items-center justify-between px-4 xl:px-6 py-3">
                   <div className="flex items-center gap-4">
-                    <div className="text-sm text-gray-700">
+                    <div className="text-sm text-muted-foreground">
                       {t("contacts.showing", {
                         from: (page - 1) * limit + 1,
                         to: Math.min((page - 1) * limit + limit, total),
@@ -1092,7 +1092,7 @@ export default function ContactsManagements() {
                 {/* Mobile Pagination */}
                 <div className="md:hidden px-4 py-3 space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-700">
+                    <span className="text-muted-foreground">
                       <span className="font-medium">
                         {(page - 1) * limit + 1}
                       </span>{" "}

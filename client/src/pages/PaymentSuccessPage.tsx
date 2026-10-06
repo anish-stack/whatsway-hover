@@ -108,12 +108,12 @@ export default function PaymentSuccessPage() {
 
   if (verifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-[var(--brand-100)] p-4">
         <Card className="w-full max-w-md shadow-2xl overflow-hidden">
           <CardContent className="p-8 text-center">
             <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment</h2>
-            <p className="text-gray-600">Please wait while we confirm your payment...</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Verifying Payment</h2>
+            <p className="text-muted-foreground">Please wait while we confirm your payment...</p>
           </CardContent>
         </Card>
       </div>
@@ -128,8 +128,8 @@ export default function PaymentSuccessPage() {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="w-10 h-10 text-red-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h2>
-            <p className="text-gray-600 mb-6">{verificationError}</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Verification Failed</h2>
+            <p className="text-muted-foreground mb-6">{verificationError}</p>
             <div className="flex flex-col gap-3">
               <Button onClick={() => setLocation("/plans")} className="w-full">
                 Back to Plans
@@ -145,11 +145,11 @@ export default function PaymentSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-[var(--brand-100)] p-4">
       <Card className="w-full max-w-2xl shadow-2xl overflow-hidden">
         {/* Success Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 text-white text-center">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+          <div className="w-20 h-20 bg-background rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">
@@ -185,21 +185,21 @@ export default function PaymentSuccessPage() {
           {/* Payment Details */}
           <div className="space-y-6 mb-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Payment Details
               </h3>
               <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
-                  <span className="text-gray-600">Status</span>
+                <div className="flex justify-between items-center pb-3 border-b border-border">
+                  <span className="text-muted-foreground">Status</span>
                   <span className="font-semibold text-green-600 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4" />
                     Confirmed
                   </span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm text-gray-500">Transaction ID</span>
+                  <span className="text-sm text-muted-foreground">Transaction ID</span>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 bg-white px-3 py-2 rounded-lg text-xs font-mono text-gray-700 border break-all">
+                    <code className="flex-1 bg-background px-3 py-2 rounded-lg text-xs font-mono text-muted-foreground border break-all">
                       {transactionId}
                     </code>
                     <Button
@@ -218,7 +218,7 @@ export default function PaymentSuccessPage() {
 
             {/* Features Unlocked */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 ✨ Features Unlocked
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -232,10 +232,10 @@ export default function PaymentSuccessPage() {
                 ].map((feature, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-white p-3 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                    className="flex items-center gap-2 bg-background p-3 rounded-lg border border-border hover:shadow-md transition-shadow"
                   >
                     <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{feature}</span>
+                    <span className="text-sm text-muted-foreground">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -243,7 +243,7 @@ export default function PaymentSuccessPage() {
           </div>
 
           {/* Confirmation Message */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <div className="bg-gradient-to-r from-blue-50 to-[var(--brand-100)] border border-blue-200 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
               <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div>
@@ -290,7 +290,7 @@ export default function PaymentSuccessPage() {
           </div>
 
           {/* Footer Note */}
-          <p className="text-center text-xs text-gray-500 mt-6">
+          <p className="text-center text-xs text-muted-foreground mt-6">
             Need help?{" "}
             <a
               href="/support"

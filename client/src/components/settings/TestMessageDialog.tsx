@@ -110,7 +110,7 @@ export function TestMessageDialog({ open, onOpenChange, channelId }: TestMessage
               value={testPhoneNumber}
               onChange={(e) => setTestPhoneNumber(e.target.value)}
             />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Enter without + or spaces (e.g., 919310797700)
             </p>
           </div>

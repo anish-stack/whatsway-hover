@@ -1,22 +1,5 @@
-/**
- * ============================================================
- * © 2025 Diploy — a brand of Bisht Technologies Private Limited
- * Original Author: BTPL Engineering Team
- * Website: https://diploy.in
- * Contact: cs@diploy.in
- *
- * Distributed under the Envato / CodeCanyon License Agreement.
- * Licensed to the purchaser for use as defined by the
- * Envato Market (CodeCanyon) Regular or Extended License.
- *
- * You are NOT permitted to redistribute, resell, sublicense,
- * or share this source code, in whole or in part.
- * Respect the author's rights and Envato licensing terms.
- * ============================================================
- */
-
 import { useEffect, useState } from "react";
-import { ArrowRight, Play, Users, TrendingUp, Zap } from "lucide-react";
+import { ArrowRight, Users, TrendingUp, Zap } from "lucide-react";
 import LoadingAnimation from "./LoadingAnimation";
 import { useTranslation } from "@/lib/i18n";
 import { Link } from "wouter";
@@ -70,24 +53,18 @@ const Hero = () => {
       value: 50000,
       label: t("Landing.heroSec.stats.0.label"),
       suffix: "+",
-      color: "text-blue-600",
-      bg: "bg-blue-50",
     },
     {
       icon: TrendingUp,
       value: 98,
       label: t("Landing.heroSec.stats.1.label"),
       suffix: t("Landing.heroSec.stats.1.suffix"),
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
     },
     {
       icon: Zap,
       value: 5,
       label: t("Landing.heroSec.stats.2.label"),
       suffix: t("Landing.heroSec.stats.2.suffix"),
-      color: "text-violet-600",
-      bg: "bg-violet-50",
     },
   ];
 
@@ -129,116 +106,134 @@ const Hero = () => {
     }, 2000);
   };
 
+  const statValue = (index: number) =>
+    index === 0
+      ? animatedNumbers.users.toLocaleString()
+      : index === 1
+      ? animatedNumbers.delivery
+      : animatedNumbers.engagement;
+
   return (
-    <section className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-[pulse_6s_ease-in-out_infinite]"></div>
-        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-[pulse_8s_ease-in-out_infinite_2s]"></div>
-        <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-[600px] h-[600px] bg-violet-50 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-[pulse_10s_ease-in-out_infinite_4s]"></div>
-      </div>
+    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-20 canvas-bg">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] grid-bg opacity-60" />
+      <div
+        className="pointer-events-none absolute -right-24 top-10 h-[420px] w-[420px] rounded-full blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in srgb, var(--brand) 28%, transparent), transparent 70%)",
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto relative">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-emerald-200/60 animate-[fadeInDown_0.6s_ease-out]">
-            <Zap className="w-4 h-4 mr-2" />
-            {t("Landing.heroSec.animatedBgGreenText")}
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-[1.1] tracking-tight animate-[fadeIn_0.7s_ease-out]">
-            {t("Landing.heroSec.headline")}{" "}
-            <span className="block bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent mt-2 pb-4">
-              {displayText}
-              <span className="inline-block w-[3px] h-[0.8em] bg-emerald-500 ml-1 align-middle animate-[blink_1s_step-end_infinite]"></span>
+      <div className="shell relative">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
+          {/* ---------------- copy ---------------- */}
+          <div className="lg:col-span-7 rise">
+            <span className="chip">
+              <Zap className="h-3.5 w-3.5" />
+              {t("Landing.heroSec.animatedBgGreenText")}
             </span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-500 max-w-3xl mx-auto mb-12 leading-relaxed animate-[fadeIn_0.8s_ease-out]">
-            {t("Landing.heroSec.subHeadline")}
-          </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-[fadeInUp_0.9s_ease-out]">
-            <Link
-              href="/contact"
-              className="bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-8 py-3.5 rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-600 transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 flex items-center group min-w-[180px] justify-center"
-            >
-              {startTrialLoading ? (
-                <LoadingAnimation size="md" color="white" />
-              ) : (
-                <>
-                  {t("Landing.heroSec.startTrialButton")}
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
-                </>
-              )}
-            </Link>
-          </div>
+            <h1 className="display-xl mt-6 text-[var(--ink)]">
+              {t("Landing.heroSec.headline")}{" "}
+              <span className="text-[var(--brand)]">
+                {displayText}
+                <span
+                  className="ml-1 inline-block h-[0.78em] w-[3px] align-middle bg-[var(--flare)]"
+                  style={{ animation: "pulseGentle 1s steps(2) infinite" }}
+                />
+              </span>
+            </h1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 max-w-3xl mx-auto">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className={`bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-[fadeInUp_0.6s_ease-out] ${
-                  currentStat === index
-                    ? "ring-1 ring-emerald-400/50 shadow-md border-emerald-100"
-                    : ""
-                }`}
-                style={{ animationDelay: `${index * 0.1}s`, animationFillMode: "both" }}
+            <p className="lede mt-6">{t("Landing.heroSec.subHeadline")}</p>
+
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                href="/contact"
+                onClick={handleStartTrial}
+                className="btn btn-brand group w-full justify-center sm:w-auto"
               >
-                <div
-                  className={`${stat.bg} p-3 rounded-xl w-fit mx-auto mb-3`}
-                >
-                  <stat.icon
-                    className={`w-5 h-5 lg:w-6 lg:h-6 ${stat.color}`}
-                  />
-                </div>
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1 tracking-tight">
-                  {index === 0
-                    ? animatedNumbers.users.toLocaleString()
-                    : index === 1
-                    ? animatedNumbers.delivery
-                    : animatedNumbers.engagement}
-                  {stat.suffix || ""}
-                </h3>
-                <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+                {startTrialLoading ? (
+                  <LoadingAnimation size="md" color="white" />
+                ) : (
+                  <>
+                    {t("Landing.heroSec.startTrialButton")}
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </>
+                )}
+              </Link>
+              <a
+                href="#how-it-works"
+                className="btn btn-quiet w-full justify-center sm:w-auto"
+              >
+                {t("Landing.howItWorksSec.introTagline")}
+              </a>
+            </div>
 
-        <div className="text-center animate-[fadeIn_1s_ease-out]">
-          <p className="text-sm text-gray-400 mb-6 font-medium uppercase tracking-wider">
-            {t("Landing.heroSec.trustedByText")}
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-6">
-            {["Shopify", "WooCommerce", "Salesforce", "HubSpot", "Zapier"].map(
-              (brand, index) => (
+            {/* stat rail — a single ruled row, not three identical cards */}
+            <div className="mt-12 grid grid-cols-1 divide-y divide-[var(--mist)] border-y border-[var(--mist)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+              {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-400 bg-gray-50 border border-gray-100 transition-colors duration-200 hover:text-gray-500 hover:border-gray-200"
+                  className={`flex items-center gap-3 py-5 transition-colors sm:px-5 sm:first:pl-0 ${
+                    currentStat === index ? "rule-flare pl-4 sm:pl-5" : ""
+                  }`}
                 >
-                  {brand}
+                  <stat.icon
+                    className={`h-5 w-5 shrink-0 ${
+                      currentStat === index
+                        ? "text-[var(--flare)]"
+                        : "text-[var(--ink-300)]"
+                    }`}
+                  />
+                  <div>
+                    <div className="stat-figure">
+                      {statValue(index)}
+                      {stat.suffix || ""}
+                    </div>
+                    <div className="stat-label">{stat.label}</div>
+                  </div>
                 </div>
-              )
-            )}
+              ))}
+            </div>
+          </div>
+
+          {/* ---------------- phone mockup panel ---------------- */}
+          <div className="lg:col-span-5">
+            <div
+              className="relative mx-auto max-w-[420px] rise"
+              style={{ animationDelay: "0.12s" }}
+            >
+              <img
+                src="/assets/hero-whatsapp-phone.png"
+                alt="WhatsApp business chat automation preview"
+                className="w-full h-auto select-none pointer-events-none"
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* trusted-by: one quiet line */}
+        <div className="mt-16 border-t border-[var(--mist)] pt-8">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
+            <p className="text-sm text-[var(--ink-500)]">
+              {t("Landing.heroSec.trustedByText")}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
+              {["Shopify", "WooCommerce", "Salesforce", "HubSpot", "Zapier"].map(
+                (brand) => (
+                  <span
+                    key={brand}
+                    className="text-sm font-semibold text-[var(--ink-300)] transition-colors hover:text-[var(--ink)]"
+                  >
+                    {brand}
+                  </span>
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes fadeInDown {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes blink {
-          50% { opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 };

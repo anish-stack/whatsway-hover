@@ -201,7 +201,7 @@ export default function NotificationPreferences() {
         <CardContent className="p-6">
           <div className="flex flex-col items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-gray-500 mt-4">
+            <p className="text-sm text-muted-foreground mt-4">
               Loading your notification preferences...
             </p>
           </div>
@@ -268,11 +268,11 @@ export default function NotificationPreferences() {
                 >
                   <div className="flex flex-col gap-4">
                     <div>
-                      <h4 className="font-medium text-gray-900">
+                      <h4 className="font-medium text-foreground">
                         {template.label}
                       </h4>
                       {template.description && (
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           {template.description}
                         </p>
                       )}
@@ -280,7 +280,7 @@ export default function NotificationPreferences() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* In-App Toggle */}
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-3 py-2.5">
+                      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-3 py-2.5">
                         <Switch
                           checked={prefs?.inAppEnabled ?? false}
                           onCheckedChange={() =>
@@ -292,13 +292,13 @@ export default function NotificationPreferences() {
                           <Bell className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
                           <div>
                             <Label className="text-sm font-medium leading-none">In-App</Label>
-                            <p className="text-[11px] text-gray-500 mt-0.5">Shows in bell icon</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Shows in bell icon</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Email Toggle */}
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-3 py-2.5">
+                      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-3 py-2.5">
                         <Switch
                           checked={prefs?.emailEnabled ?? false}
                           onCheckedChange={() =>
@@ -310,13 +310,13 @@ export default function NotificationPreferences() {
                           <Mail className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                           <div>
                             <Label className="text-sm font-medium leading-none">Email</Label>
-                            <p className="text-[11px] text-gray-500 mt-0.5">Sends to your email</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Sends to your email</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Sound Toggle */}
-                      <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-3 py-2.5">
+                      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-3 py-2.5">
                         <Switch
                           checked={prefs?.soundEnabled ?? false}
                           onCheckedChange={() =>
@@ -328,7 +328,7 @@ export default function NotificationPreferences() {
                           <Volume2 className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
                           <div>
                             <Label className="text-sm font-medium leading-none">Sound</Label>
-                            <p className="text-[11px] text-gray-500 mt-0.5">Plays alert sound</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Plays alert sound</p>
                           </div>
                         </div>
                       </div>

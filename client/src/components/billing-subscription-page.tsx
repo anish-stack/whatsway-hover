@@ -99,7 +99,7 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
 
   if (isLoading) {
     return (
-      <div className={embedded ? "flex items-center justify-center p-4" : "flex-1 min-h-screen flex items-center justify-center p-4 bg-white text-gray-700"}>
+      <div className={embedded ? "flex items-center justify-center p-4" : "flex-1 min-h-screen flex items-center justify-center p-4 bg-background text-muted-foreground"}>
         <p>{t("billing_subscription.loading")}</p>
       </div>
     );
@@ -107,17 +107,17 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
 
 
   return (
-    <div className={embedded ? "" : "flex-1 bg-white text-gray-900 dots-bg"}>
-      <div className="p-6 pb-0 bg-white border">
+    <div className={embedded ? "" : "flex-1 bg-background text-foreground dots-bg"}>
+      <div className="p-6 pb-0 bg-background border">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-green-100 rounded-lg">
             <Crown className="w-6 h-6 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-foreground">
             Active Plan Details
           </h2>
         </div>
-        <p className="text-gray-500 text-sm ml-14 pb-2">
+        <p className="text-muted-foreground text-sm ml-14 pb-2">
           View and manage your current subscription plans
         </p>
       </div>
@@ -126,10 +126,10 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
         !activeplandata?.success ||
         !Array.isArray(activeplandata.data) ||
         activeplandata.data.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
-            <div className="p-4 bg-gray-100 rounded-full">
+          <div className="col-span-full flex flex-col items-center justify-center py-16 bg-background rounded-2xl border border-border shadow-sm">
+            <div className="p-4 bg-muted rounded-full">
               <svg
-                className="w-10 h-10 text-gray-500"
+                className="w-10 h-10 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -143,10 +143,10 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
               </svg>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-800">
+            <h3 className="mt-4 text-lg font-semibold text-foreground">
               {t("billing_subscription.noSubscription.title")}
             </h3>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {t("billing_subscription.noSubscription.description")}
             </p>
 
@@ -208,7 +208,7 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
             return (
               <div
                 key={subscription.id}
-                className="bg-white rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full max-w-sm"
+                className="bg-background rounded-xl shadow-lg border border-border hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full max-w-sm"
               >
                 {/* Header with gradient */}
                 <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 relative">
@@ -238,37 +238,37 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div className="bg-blue-50 rounded-lg p-2 text-center">
                       <Calendar className="w-3.5 h-3.5 text-blue-600 mx-auto mb-1" />
-                      <p className="text-gray-500 text-[10px] mb-0.5">
+                      <p className="text-muted-foreground text-[10px] mb-0.5">
                         {t("billing_subscription.card.billing")}
                       </p>
-                      <p className="font-semibold text-gray-800 capitalize truncate">
+                      <p className="font-semibold text-foreground capitalize truncate">
                         {subscription.billingCycle}
                       </p>
                     </div>
                     <div className="bg-green-50 rounded-lg p-2 text-center">
                       <Calendar className="w-3.5 h-3.5 text-green-600 mx-auto mb-1" />
-                      <p className="text-gray-500 text-[10px] mb-0.5">
+                      <p className="text-muted-foreground text-[10px] mb-0.5">
                         {t("billing_subscription.card.starts")}
                       </p>
-                      <p className="font-semibold text-gray-800 text-[10px]">
+                      <p className="font-semibold text-foreground text-[10px]">
                         {startDate}
                       </p>
                     </div>
-                    <div className="bg-purple-50 rounded-lg p-2 text-center">
-                      <Calendar className="w-3.5 h-3.5 text-purple-600 mx-auto mb-1" />
-                      <p className="text-gray-500 text-[10px] mb-0.5">
+                    <div className="bg-[var(--brand-100)] rounded-lg p-2 text-center">
+                      <Calendar className="w-3.5 h-3.5 text-[var(--brand)] mx-auto mb-1" />
+                      <p className="text-muted-foreground text-[10px] mb-0.5">
                         {t("billing_subscription.card.renews")}
                       </p>
-                      <p className="font-semibold text-gray-800 text-[10px]">
+                      <p className="font-semibold text-foreground text-[10px]">
                         {renewsDate}
                       </p>
                     </div>
                   </div>
 
                   {/* Pricing Section - Simplified to only show purchased price */}
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 shadow-inner">
+                  <div className="bg-muted rounded-xl p-4 border border-border shadow-inner">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         {t("billing_subscription.card.pricing")}
                       </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">
@@ -276,10 +276,10 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                       </span>
                     </div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-bold text-gray-900">
+                      <span className="text-2xl font-bold text-foreground">
                         {currentCurrencySymbol}{transaction?.amount ? Number(transaction.amount).toFixed(2) : (isMonthly ? displayMonthly : displayAnnual)}
                       </span>
-                      <span className="text-gray-500 text-xs font-medium">
+                      <span className="text-muted-foreground text-xs font-medium">
                         / {isMonthly ? t("billing_subscription.card.monthly") : t("billing_subscription.card.annual")}
                       </span>
                     </div>
@@ -288,7 +288,7 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                   {/* Permissions */}
                   {planPermissions && (
                     <div>
-                      <h3 className="text-xs font-semibold text-gray-700 mb-2">
+                      <h3 className="text-xs font-semibold text-muted-foreground mb-2">
                         {t("billing_subscription.card.details")}
                       </h3>
                       <div className="flex flex-wrap gap-1.5">
@@ -296,10 +296,10 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                           ([key, value]) => (
                             <div
                               key={key}
-                              className="flex items-center gap-1 text-[10px] bg-gray-100 rounded-md px-2 py-1"
+                              className="flex items-center gap-1 text-[10px] bg-muted rounded-md px-2 py-1"
                             >
                               <Check className="w-3 h-3 text-green-600" />
-                              <span className="text-gray-700 capitalize">
+                              <span className="text-muted-foreground capitalize">
                                 {value} {key}
                               </span>
                             </div>
@@ -311,7 +311,7 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
 
                   {/* Features - Scrollable */}
                   <div className="flex-grow">
-                    <h3 className="text-xs font-semibold text-gray-700 mb-2">
+                    <h3 className="text-xs font-semibold text-muted-foreground mb-2">
                       {t("billing_subscription.card.features")}
                     </h3>
                     <ul className="space-y-1.5 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
@@ -329,14 +329,14 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                             key={idx}
                             className={`flex items-start gap-1.5 text-xs ${
                               featureIncluded
-                                ? "text-gray-700"
-                                : "text-gray-400 line-through"
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground line-through"
                             }`}
                           >
                             {featureIncluded ? (
                               <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />
                             ) : (
-                              <X className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
+                              <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                             )}
                             <span className="leading-tight">{featureName}</span>
                           </li>
@@ -347,7 +347,7 @@ export default function BillingSubscriptionPage({ embedded = false }: { embedded
                 </div>
 
                 {subscription.status === "active" && (
-                  <div className="p-4 pt-2 space-y-2 border-t border-gray-100">
+                  <div className="p-4 pt-2 space-y-2 border-t border-border">
                     <Button
                       variant="outline"
                       className="w-full"

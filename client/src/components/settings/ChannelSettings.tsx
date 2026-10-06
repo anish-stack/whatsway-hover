@@ -545,8 +545,8 @@ export function ChannelSettings() {
             <Loading />
           ) : channels.length === 0 ? (
             <div className="text-center py-12">
-              <Smartphone className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500 mb-4">
+              <Smartphone className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground mb-4">
                 {t("settings.channel_setting.noChannels")}
               </p>
               <Button onClick={openConnectionChooser}>
@@ -565,7 +565,7 @@ export function ChannelSettings() {
               })().map((channel: any) => (
                 <div
                   key={channel.id}
-                  className="border border-gray-200 rounded-lg p-3 sm:p-4"
+                  className="border border-border rounded-lg p-3 sm:p-4"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                     <div className="flex-1 min-w-0">
@@ -581,7 +581,7 @@ export function ChannelSettings() {
                               {(channel as any).healthDetails?.verified_name ? (
                                 <span>
                                   {(channel as any).healthDetails.verified_name}
-                                  <span className="text-sm font-normal text-gray-500 ml-2">({channel.phoneNumber || channel.name})</span>
+                                  <span className="text-sm font-normal text-muted-foreground ml-2">({channel.phoneNumber || channel.name})</span>
                                 </span>
                               ) : (
                                 channel.name
@@ -656,9 +656,9 @@ export function ChannelSettings() {
                         </div>
                       )}
 
-                      <div className="space-y-2 text-xs sm:text-sm text-gray-600 mb-4">
+                      <div className="space-y-2 text-xs sm:text-sm text-muted-foreground mb-4">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-muted-foreground">
                             Channel ID
                           </span>
                           <span className="font-mono break-all select-all">
@@ -680,7 +680,7 @@ export function ChannelSettings() {
                           )}
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-muted-foreground">
                             Meta App ID
                           </span>
                           <span className="font-mono break-all">
@@ -692,7 +692,7 @@ export function ChannelSettings() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-muted-foreground">
                             {t("settings.channel_setting.phone")}
                           </span>
                           <span className="font-mono">
@@ -706,7 +706,7 @@ export function ChannelSettings() {
                           </span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-muted-foreground">
                             {t("settings.channel_setting.phoneNumberId")}
                           </span>
                           <span className="font-mono break-all">
@@ -719,7 +719,7 @@ export function ChannelSettings() {
                           </span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-muted-foreground">
                             {t("settings.channel_setting.businessAccountId")}
                           </span>
                           <span className="font-mono break-all">
@@ -735,11 +735,11 @@ export function ChannelSettings() {
                       </div>
 
                       {/* Channel Health Section */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="mt-4 pt-4 border-t border-border">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                           <div className="flex items-center space-x-2">
-                            <Shield className="w-5 h-5 text-gray-600 flex-shrink-0" />
-                            <span className="font-semibold text-gray-700">
+                            <Shield className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                            <span className="font-semibold text-muted-foreground">
                               {t("settings.channel_setting.channelHealth")}
                             </span>
                           </div>
@@ -796,7 +796,7 @@ export function ChannelSettings() {
                                               : "text-yellow-600"
                                           }`}
                                         />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.accountMode"
                                           )}
@@ -839,7 +839,7 @@ export function ChannelSettings() {
                                               : "text-red-600"
                                           }`}
                                         />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.qualityRating"
                                           )}
@@ -865,7 +865,7 @@ export function ChannelSettings() {
                                     <div className="p-2.5 sm:p-3 rounded-lg border bg-blue-50 border-blue-200">
                                       <div className="flex items-center space-x-2 mb-1">
                                         <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 text-blue-600" />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.messagingLimit"
                                           )}
@@ -888,7 +888,7 @@ export function ChannelSettings() {
                                           : channel.healthDetails.messaging_limit}
                                       </p>
                                       {channel.lastHealthCheck && (
-                                        <p className="text-[10px] text-gray-400 mt-1">
+                                        <p className="text-[10px] text-muted-foreground mt-1">
                                           Last checked{" "}
                                           {formatDistanceToNow(new Date(channel.lastHealthCheck), { addSuffix: true })}
                                         </p>
@@ -897,16 +897,16 @@ export function ChannelSettings() {
                                   )}
 
                                   {channel.healthDetails.throughput_level && (
-                                    <div className="p-2.5 sm:p-3 rounded-lg border bg-purple-50 border-purple-200">
+                                    <div className="p-2.5 sm:p-3 rounded-lg border bg-[var(--brand-100)] border-[var(--mist)]">
                                       <div className="flex items-center space-x-2 mb-1">
-                                        <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 text-purple-600" />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 text-[var(--brand)]" />
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.throughput"
                                           )}
                                         </span>
                                       </div>
-                                      <p className="font-semibold text-sm sm:text-base text-purple-700 capitalize">
+                                      <p className="font-semibold text-sm sm:text-base text-[var(--brand)] capitalize">
                                         {channel.healthDetails.throughput_level}
                                       </p>
                                     </div>
@@ -919,7 +919,7 @@ export function ChannelSettings() {
                                         channel.healthDetails
                                           .verification_status === "VERIFIED"
                                           ? "bg-teal-50 border-teal-200"
-                                          : "bg-gray-50 border-gray-200"
+                                          : "bg-muted border-border"
                                       }`}
                                     >
                                       <div className="flex items-center space-x-2 mb-1">
@@ -929,10 +929,10 @@ export function ChannelSettings() {
                                               .verification_status ===
                                             "VERIFIED"
                                               ? "text-teal-600"
-                                              : "text-gray-600"
+                                              : "text-muted-foreground"
                                           }`}
                                         />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.verification"
                                           )}
@@ -943,7 +943,7 @@ export function ChannelSettings() {
                                           channel.healthDetails
                                             .verification_status === "VERIFIED"
                                             ? "text-teal-700"
-                                            : "text-gray-700"
+                                            : "text-muted-foreground"
                                         }`}
                                       >
                                         {channel.healthDetails.verification_status.replace(
@@ -959,7 +959,7 @@ export function ChannelSettings() {
                                       className={`p-2.5 sm:p-3 rounded-lg border ${
                                         channel.healthDetails.name_status ===
                                         "APPROVED"
-                                          ? "bg-indigo-50 border-indigo-200"
+                                          ? "bg-[var(--brand-100)] border-[var(--mist)]"
                                           : "bg-orange-50 border-orange-200"
                                       }`}
                                     >
@@ -968,11 +968,11 @@ export function ChannelSettings() {
                                           className={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 ${
                                             channel.healthDetails
                                               .name_status === "APPROVED"
-                                              ? "text-indigo-600"
+                                              ? "text-[var(--brand)]"
                                               : "text-orange-600"
                                           }`}
                                         />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           {t(
                                             "settings.channel_setting.healthDetails.nameStatus"
                                           )}
@@ -982,7 +982,7 @@ export function ChannelSettings() {
                                         className={`font-semibold text-sm sm:text-base ${
                                           channel.healthDetails.name_status ===
                                           "APPROVED"
-                                            ? "text-indigo-700"
+                                            ? "text-[var(--brand)]"
                                             : "text-orange-700"
                                         }`}
                                       >
@@ -1011,7 +1011,7 @@ export function ChannelSettings() {
                                               : "text-red-600"
                                           }`}
                                         />
-                                        <span className="text-[10px] sm:text-xs font-medium text-gray-600">
+                                        <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                                           Messaging Availability
                                         </span>
                                       </div>
@@ -1028,7 +1028,7 @@ export function ChannelSettings() {
                                       </p>
                                       {Array.isArray(channel.healthDetails.health_status.entities) &&
                                         channel.healthDetails.health_status.entities.length > 0 && (
-                                        <p className="text-[10px] text-gray-500 mt-1">
+                                        <p className="text-[10px] text-muted-foreground mt-1">
                                           {channel.healthDetails.health_status.entities
                                             .map((e: any) => e.entity_type || e.type || '')
                                             .filter(Boolean)
@@ -1040,8 +1040,8 @@ export function ChannelSettings() {
                                 </div>
                               )}
 
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-3 pt-3 border-t border-gray-100">
-                                <p className="text-[10px] sm:text-xs text-gray-500">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-3 pt-3 border-t border-border">
+                                <p className="text-[10px] sm:text-xs text-muted-foreground">
                                   {channel.lastHealthCheck ? (
                                     <>
                                       {t("settings.channel_setting.lastChecked")}{" "}
@@ -1068,11 +1068,11 @@ export function ChannelSettings() {
                       </div>
 
                       {/* Webhook Subscription Section */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="mt-4 pt-4 border-t border-border">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <Radio className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                            <span className="font-semibold text-gray-700 text-sm">Delivery Webhooks</span>
+                            <Radio className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                            <span className="font-semibold text-muted-foreground text-sm">Delivery Webhooks</span>
                             {webhookSubStatus[channel.id] === "loading" && (
                               <Badge variant="secondary" className="text-xs flex items-center gap-1">
                                 <Loader2 className="w-3 h-3 animate-spin" /> Checking...
@@ -1089,7 +1089,7 @@ export function ChannelSettings() {
                               </Badge>
                             )}
                             {(webhookSubStatus[channel.id] === "unknown" || !webhookSubStatus[channel.id]) && (
-                              <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-gray-50 text-gray-600 border-gray-200">
+                              <Badge variant="secondary" className="text-xs flex items-center gap-1 bg-muted text-muted-foreground border-border">
                                 <AlertTriangle className="w-3 h-3" /> Unknown
                               </Badge>
                             )}
@@ -1131,7 +1131,7 @@ export function ChannelSettings() {
                           </p>
                         )}
                         {(webhookSubStatus[channel.id] === "unknown" || !webhookSubStatus[channel.id]) && (
-                          <p className="text-xs text-gray-500 mt-2">
+                          <p className="text-xs text-muted-foreground mt-2">
                             Click Re-subscribe if campaign delivery and read rates are showing 0%. This registers your channel with Meta to receive delivery receipts.
                           </p>
                         )}
@@ -1295,7 +1295,7 @@ export function ChannelSettings() {
                 {/* Coexistence Option */}
                 <button
                   onClick={() => startConnection(true)}
-                  className="w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50/50 transition-all group"
+                  className="w-full text-left p-4 border-2 border-border rounded-lg hover:border-blue-400 hover:bg-blue-50/50 transition-all group"
                 >
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
@@ -1303,26 +1303,26 @@ export function ChannelSettings() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">Connect Existing WhatsApp Business App</h3>
+                        <h3 className="font-semibold text-foreground">Connect Existing WhatsApp Business App</h3>
                         <Badge className="text-[10px] bg-blue-100 text-blue-700 border-blue-200">Coexistence</Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-muted-foreground mb-2">
                         Keep using your WhatsApp Business App on your phone while also using this platform for automation, campaigns, and bulk messaging.
                       </p>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> Keep mobile app access</span>
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> Sync chat history</span>
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> Same phone number</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors mt-1" />
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-blue-500 transition-colors mt-1" />
                   </div>
                 </button>
 
                 {/* Standard Option */}
                 <button
                   onClick={() => startConnection(false)}
-                  className="w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-green-400 hover:bg-green-50/50 transition-all group"
+                  className="w-full text-left p-4 border-2 border-border rounded-lg hover:border-green-400 hover:bg-green-50/50 transition-all group"
                 >
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
@@ -1330,19 +1330,19 @@ export function ChannelSettings() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">Register New Number</h3>
+                        <h3 className="font-semibold text-foreground">Register New Number</h3>
                         <Badge className="text-[10px] bg-green-100 text-green-700 border-green-200">Standard</Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-muted-foreground mb-2">
                         Register a new or existing phone number exclusively for Cloud API use. The number will only work through this platform.
                       </p>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> Full API features</span>
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> No app required</span>
                         <span className="flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> Dedicated number</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-500 transition-colors mt-1" />
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-green-500 transition-colors mt-1" />
                   </div>
                 </button>
               </div>
@@ -1363,35 +1363,35 @@ export function ChannelSettings() {
 
               <div className="space-y-4 mt-2">
                 <div className="space-y-2.5">
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Smartphone className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                    <Smartphone className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">WhatsApp Business App v2.24.17+</p>
-                      <p className="text-xs text-gray-500">Update your app to the latest version from your app store.</p>
+                      <p className="text-sm font-medium text-foreground">WhatsApp Business App v2.24.17+</p>
+                      <p className="text-xs text-muted-foreground">Update your app to the latest version from your app store.</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Clock className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                    <Clock className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Active for at least 7 days</p>
-                      <p className="text-xs text-gray-500">Your WhatsApp Business App should have been actively used for at least 7 days (ideally 1-2 months).</p>
+                      <p className="text-sm font-medium text-foreground">Active for at least 7 days</p>
+                      <p className="text-xs text-muted-foreground">Your WhatsApp Business App should have been actively used for at least 7 days (ideally 1-2 months).</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Globe className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                    <Globe className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Supported country</p>
-                      <p className="text-xs text-gray-500">Nigeria and South Africa are currently not supported for coexistence.</p>
+                      <p className="text-sm font-medium text-foreground">Supported country</p>
+                      <p className="text-xs text-muted-foreground">Nigeria and South Africa are currently not supported for coexistence.</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Shield className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                    <Shield className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Meta Business Account</p>
-                      <p className="text-xs text-gray-500">You need a valid Meta Business Account to complete the connection.</p>
+                      <p className="text-sm font-medium text-foreground">Meta Business Account</p>
+                      <p className="text-xs text-muted-foreground">You need a valid Meta Business Account to complete the connection.</p>
                     </div>
                   </div>
                 </div>
@@ -1442,7 +1442,7 @@ export function ChannelSettings() {
 
           {lastConnectedCoexistence ? (
             <div className="space-y-3 mt-2">
-              <p className="text-sm text-gray-700 font-medium">Important things to know:</p>
+              <p className="text-sm text-muted-foreground font-medium">Important things to know:</p>
               <div className="space-y-2">
                 <div className="flex items-start gap-2.5 p-2.5 bg-blue-50 rounded-lg">
                   <Clock className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
@@ -1476,21 +1476,21 @@ export function ChannelSettings() {
             </div>
           ) : (
             <div className="space-y-3 mt-2">
-              <p className="text-sm text-gray-700">Your channel is ready! You can now:</p>
+              <p className="text-sm text-muted-foreground">Your channel is ready! You can now:</p>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Send and receive messages through the platform</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Create and send template messages</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Set up automation workflows</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Check className="w-4 h-4 text-green-500" />
                   <span>Launch bulk messaging campaigns</span>
                 </div>

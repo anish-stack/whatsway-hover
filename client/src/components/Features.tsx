@@ -26,11 +26,8 @@ import {
   Globe,
   Target,
   Send,
-  ArrowRight,
   CheckCircle,
   Smartphone,
-  Play,
-  Sparkles,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -43,9 +40,6 @@ const Features = () => {
       icon: MessageSquare,
       title: t("Landing.featuresSec.featureTabs.0.title"),
       description: t("Landing.featuresSec.featureTabs.0.description"),
-      color: "from-green-500 to-emerald-600",
-      lightBg: "bg-green-50",
-      lightColor: "text-green-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.0.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.0.demo.stats"),
@@ -59,9 +53,6 @@ const Features = () => {
       icon: Workflow,
       title: t("Landing.featuresSec.featureTabs.1.title"),
       description: t("Landing.featuresSec.featureTabs.1.description"),
-      color: "from-blue-500 to-blue-600",
-      lightBg: "bg-blue-50",
-      lightColor: "text-blue-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.1.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.1.demo.stats"),
@@ -75,9 +66,6 @@ const Features = () => {
       icon: BarChart3,
       title: t("Landing.featuresSec.featureTabs.2.title"),
       description: t("Landing.featuresSec.featureTabs.2.description"),
-      color: "from-purple-500 to-purple-600",
-      lightBg: "bg-purple-50",
-      lightColor: "text-purple-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.2.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.2.demo.stats"),
@@ -91,9 +79,6 @@ const Features = () => {
       icon: Users,
       title: t("Landing.featuresSec.featureTabs.3.title"),
       description: t("Landing.featuresSec.featureTabs.3.description"),
-      color: "from-orange-500 to-orange-600",
-      lightBg: "bg-orange-50",
-      lightColor: "text-orange-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.3.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.3.demo.stats"),
@@ -107,9 +92,6 @@ const Features = () => {
       icon: Bot,
       title: t("Landing.featuresSec.featureTabs.4.title"),
       description: t("Landing.featuresSec.featureTabs.4.description"),
-      color: "from-indigo-500 to-indigo-600",
-      lightBg: "bg-indigo-50",
-      lightColor: "text-indigo-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.4.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.4.demo.stats"),
@@ -123,9 +105,6 @@ const Features = () => {
       icon: Calendar,
       title: t("Landing.featuresSec.featureTabs.5.title"),
       description: t("Landing.featuresSec.featureTabs.5.description"),
-      color: "from-pink-500 to-pink-600",
-      lightBg: "bg-pink-50",
-      lightColor: "text-pink-600",
       demo: {
         title: t("Landing.featuresSec.featureTabs.5.demo.title"),
         stats: t("Landing.featuresSec.featureTabs.5.demo.stats"),
@@ -145,128 +124,129 @@ const Features = () => {
   );
 
   const additionalIcons = [Globe, Target, Send];
+  const active = features[activeTab];
+  const activeList = Array.isArray(active.demo.features)
+    ? (active.demo.features as string[])
+    : [];
 
   return (
-    <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-gray-50/50 to-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-emerald-100">
-            <Smartphone className="w-4 h-4 mr-2" />
+    <section id="features" className="band bg-background">
+      <div className="shell">
+        <div className="max-w-3xl">
+          <span className="chip">
+            <Smartphone className="h-3.5 w-3.5" />
             {t("Landing.featuresSec.introTagline")}
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            {t("Landing.featuresSec.headlinePre")}
-            <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              {t("Landing.featuresSec.headlineHighlight")}
-            </span>
+          </span>
+          <h2 className="display-lg mt-5 text-[var(--ink)]">
+            {t("Landing.featuresSec.headlinePre")}{" "}
+            {t("Landing.featuresSec.headlineHighlight")}
           </h2>
-          <p className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed">
-            {t("Landing.featuresSec.subHeadline")}
-          </p>
+          <p className="lede mt-5">{t("Landing.featuresSec.subHeadline")}</p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {features.map((feature, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                activeTab === index
-                  ? `bg-gradient-to-r ${feature.color} text-white shadow-lg shadow-gray-200`
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:shadow-sm"
-              }`}
-            >
-              <feature.icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{feature.title}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
-            <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${features[activeTab].color} mb-5`}>
-              {React.createElement(features[activeTab].icon, {
-                className: "w-6 h-6 text-white",
+        <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:gap-12">
+          {/* rail */}
+          <div className="lg:col-span-4">
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0">
+              {features.map((feature, index) => {
+                const isActive = activeTab === index;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setActiveTab(index)}
+                    className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition-colors lg:w-full lg:shrink lg:rounded-none lg:border-b lg:border-[var(--mist)] lg:px-4 lg:py-4 ${
+                      isActive
+                        ? "bg-[var(--brand-100)] text-[var(--brand-700)] lg:bg-transparent lg:rule-flare lg:text-[var(--ink)]"
+                        : "text-[var(--ink-500)] hover:text-[var(--ink)] lg:border-l-[3px] lg:border-l-transparent"
+                    }`}
+                  >
+                    <feature.icon
+                      className={`h-4 w-4 shrink-0 ${
+                        isActive ? "text-[var(--flare)]" : "text-[var(--ink-300)]"
+                      }`}
+                    />
+                    <span className="whitespace-nowrap lg:whitespace-normal">
+                      {feature.title}
+                    </span>
+                  </button>
+                );
               })}
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
-              {features[activeTab].title}
-            </h3>
-            <p className="text-gray-500 leading-relaxed mb-6">
-              {features[activeTab].description}
-            </p>
-
-            {features[activeTab].demo.features && Array.isArray(features[activeTab].demo.features) && (
-              <div className="space-y-3">
-                {(features[activeTab].demo.features as string[]).map((feat: string, idx: number) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <div className={`mt-0.5 p-1 rounded-full ${features[activeTab].lightBg}`}>
-                      <CheckCircle className={`w-3.5 h-3.5 ${features[activeTab].lightColor}`} />
-                    </div>
-                    <span className="text-sm text-gray-600">{feat}</span>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
-          <div className="lg:col-span-3">
-            <div className="bg-gray-950 p-6 rounded-3xl shadow-2xl">
-              <div className="flex items-center space-x-2 mb-5">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-gray-500 text-xs ml-3 font-medium tracking-wide uppercase">
-                  {t("Landing.featuresSec.whatsAppAPI")}
-                </span>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div
-                    className={`p-2.5 rounded-lg bg-gradient-to-r ${features[activeTab].color}`}
-                  >
-                    {React.createElement(features[activeTab].icon, {
-                      className: "w-5 h-5 text-white",
-                    })}
+          {/* panel */}
+          <div className="lg:col-span-8">
+            <div className="plate overflow-hidden">
+              <div className="border-b border-[var(--mist)] p-6 sm:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--brand)] text-white">
+                    {React.createElement(active.icon, { className: "h-5 w-5" })}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">
-                      {features[activeTab].demo.title}
-                    </h4>
-                    <p className="text-sm text-gray-500">
-                      {features[activeTab].demo.stats}
+                    <h3 className="display-md text-[var(--ink)]">
+                      {active.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--ink-500)]">
+                      {active.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {features[activeTab].demo.features && Array.isArray(features[activeTab].demo.features) &&
-                    (features[activeTab].demo.features as string[]).slice(0, 3).map((feat: string, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${features[activeTab].color}`}></div>
-                          <span className="text-sm text-gray-700">{feat}</span>
-                        </div>
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
+                {activeList.length > 0 && (
+                  <div className="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+                    {activeList.map((feat: string, idx: number) => (
+                      <div key={idx} className="flex items-start gap-2.5">
+                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ok)]" />
+                        <span className="text-sm text-[var(--ink-700)]">
+                          {feat}
+                        </span>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-[var(--canvas)] p-6 sm:p-8">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs text-[var(--ink-500)]">
+                      {t("Landing.featuresSec.whatsAppAPI")}
+                    </p>
+                    <p className="mt-1 text-base font-semibold text-[var(--ink)]">
+                      {active.demo.title}
+                    </p>
+                  </div>
+                  <span className="chip chip-flare">{active.demo.stats}</span>
                 </div>
 
-                <div className="mt-6 bg-gray-50 p-4 rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">
+                <div className="mt-5 space-y-2">
+                  {activeList.slice(0, 3).map((feat: string, idx: number) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-[var(--mist)] bg-background px-4 py-3"
+                    >
+                      <span className="text-sm text-[var(--ink-700)]">
+                        {feat}
+                      </span>
+                      <CheckCircle className="h-4 w-4 shrink-0 text-[var(--ok)]" />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-[var(--ink-500)]">
                       {t("Landing.featuresSec.campaign_progress")}
                     </span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="font-semibold text-[var(--ink)]">
                       {Math.round((activeTab + 1) * 16.67)}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--mist)]">
                     <div
-                      className={`bg-gradient-to-r ${features[activeTab].color} h-2 rounded-full transition-all duration-1000`}
+                      className="h-full rounded-full bg-[var(--brand)] transition-all duration-700"
                       style={{ width: `${(activeTab + 1) * 16.67}%` }}
-                    ></div>
+                    />
                   </div>
                 </div>
               </div>
@@ -274,22 +254,20 @@ const Features = () => {
           </div>
         </div>
 
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* supporting capabilities — ruled list, not card kit */}
+        <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-[var(--mist)] bg-[var(--mist)] sm:grid-cols-2 lg:grid-cols-3">
           {additionalFeatures.map(
             (item: { title: string; desc: string }, index: number) => (
-              <div
-                key={index}
-                className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {React.createElement(additionalIcons[index] || Globe, {
-                    className: "w-6 h-6 text-emerald-600",
-                  })}
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <div key={index} className="bg-background p-6 sm:p-7">
+                {React.createElement(additionalIcons[index] || Globe, {
+                  className: "h-5 w-5 text-[var(--brand)]",
+                })}
+                <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em] text-[var(--ink)]">
                   {item.title}
                 </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--ink-500)]">
+                  {item.desc}
+                </p>
               </div>
             )
           )}

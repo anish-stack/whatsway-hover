@@ -153,7 +153,7 @@ export function GeneralSettings(): JSX.Element {
           <CardContent className="p-6">
             <div className="flex flex-col items-center justify-center py-8">
               <Loading />
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 {t("settings.general_setting.loadingText")}
               </p>
             </div>
@@ -271,7 +271,7 @@ export function GeneralSettings(): JSX.Element {
             </div>
           )} */}
 
-          <div className="border border-gray-200 rounded-lg p-6">
+          <div className="border border-border rounded-lg p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
               {/* Left block: title + badge */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
@@ -298,7 +298,7 @@ export function GeneralSettings(): JSX.Element {
               {/* Timestamp: below on small screens, right-aligned on sm+ */}
               {displayData.updatedAt && (
                 <div
-                  className="mt-2 sm:mt-0 flex items-center text-sm text-gray-500"
+                  className="mt-2 sm:mt-0 flex items-center text-sm text-muted-foreground"
                   aria-label={`${t(
                     "settings.general_setting.lastUpdated"
                   )} ${formatLastUpdated(displayData.updatedAt)}`}
@@ -318,13 +318,13 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.applicationTitle")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm font-medium text-foreground">
                     {displayData.title ||
                       t("settings.general_setting.notConfigured")}
                   </p>
                   {!displayData.title && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {t("settings.general_setting.applicationTitleHelper")}
                     </p>
                   )}
@@ -339,13 +339,13 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.tagline")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.tagline ||
                       t("settings.general_setting.notConfigured")}
                   </p>
                   {!displayData.tagline && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {t("settings.general_setting.taglineHelper")}
                     </p>
                   )}
@@ -355,38 +355,38 @@ export function GeneralSettings(): JSX.Element {
               {/* Logo */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Image className="w-4 h-4 text-purple-500" />
+                  <Image className="w-4 h-4 text-[var(--brand)]" />
                   <Label className="font-medium">
                     {t("settings.general_setting.logo")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
+                <div className="p-4 bg-muted rounded-lg border">
                   {displayData.logo ? (
                     <div className="flex items-center space-x-3">
                       <img
                         src={displayData.logo}
                         alt={t("settings.general_setting.logoAlt")}
-                        className="w-12 h-12 object-contain rounded border bg-white"
+                        className="w-12 h-12 object-contain rounded border bg-background"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-muted-foreground">
                           {t("settings.general_setting.logoUploaded")}
                         </span>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {t("settings.general_setting.logoHelper")}
                         </p>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <Image className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">
+                      <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">
                         {t("settings.general_setting.logoMissing")}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {t("settings.general_setting.logoMissingHelper")}
                       </p>
                     </div>
@@ -398,34 +398,34 @@ export function GeneralSettings(): JSX.Element {
               {/* Logo 2 */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Image className="w-4 h-4 text-purple-500" />
+                  <Image className="w-4 h-4 text-[var(--brand)]" />
                   <Label className="font-medium">{t("settings.general_setting.logo2")}</Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
+                <div className="p-4 bg-muted rounded-lg border">
                   {displayData.logo2 ? (
                     <div className="flex items-center space-x-3">
                       <img
                         src={displayData.logo2}
                         alt={t("settings.general_setting.logo2Alt")}
-                        className="w-12 h-12 object-contain rounded border bg-white"
+                        className="w-12 h-12 object-contain rounded border bg-background"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-muted-foreground">
                           {t("settings.general_setting.logo2Uploaded")}
                         </span>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {t("settings.general_setting.logo2Helper")}
                         </p>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <Image className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">{t("settings.general_setting.logo2Missing")}</p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <Image className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">{t("settings.general_setting.logo2Missing")}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
                         {t("settings.general_setting.logo2MissingHelper")}
                       </p>
                     </div>
@@ -442,33 +442,33 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.favicon")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
+                <div className="p-4 bg-muted rounded-lg border">
                   {displayData.favicon ? (
                     <div className="flex items-center space-x-3">
                       <img
                         src={displayData.favicon}
                         alt={t("settings.general_setting.faviconAlt")}
-                        className="w-8 h-8 object-contain rounded border bg-white"
+                        className="w-8 h-8 object-contain rounded border bg-background"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-muted-foreground">
                           {t("settings.general_setting.faviconUploaded")}
                         </span>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {t("settings.general_setting.faviconHelper")}
                         </p>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <Globe className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">
+                      <Globe className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">
                         {t("settings.general_setting.faviconMissing")}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {t("settings.general_setting.faviconMissingHelper")}
                       </p>
                     </div>
@@ -484,13 +484,13 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.country")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.country ||
                       t("settings.general_setting.notConfigured")}
                   </p>
                   {!displayData.country && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {t("settings.general_setting.countryHelper")}
                     </p>
                   )}
@@ -505,13 +505,13 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.currency")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.currency ||
                       t("settings.general_setting.notConfigured")}
                   </p>
                   {!displayData.currency && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {t("settings.general_setting.currencyHelper")}
                     </p>
                   )}
@@ -526,13 +526,13 @@ export function GeneralSettings(): JSX.Element {
                     {t("settings.general_setting.supportEmail")}
                   </Label>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
+                <div className="p-4 bg-muted rounded-lg border">
+                  <p className="text-sm text-muted-foreground">
                     {displayData.supportEmail ||
                       t("settings.general_setting.notConfigured")}
                   </p>
                   {!displayData.supportEmail && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {t("settings.general_setting.supportEmailHelper")}
                     </p>
                   )}
@@ -541,7 +541,7 @@ export function GeneralSettings(): JSX.Element {
             </div>
 
             {/* Configuration Status */}
-            <div className="mt-6 pt-4 border-t border-gray-100">
+            <div className="mt-6 pt-4 border-t border-border">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
                   <div
@@ -553,7 +553,7 @@ export function GeneralSettings(): JSX.Element {
                         : "bg-red-500"
                     }`}
                   />
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("settings.general_setting.configurationStatusLabel")}{" "}
                     {displayData.title && displayData.logo
                       ? t(
@@ -567,7 +567,7 @@ export function GeneralSettings(): JSX.Element {
                   </span>
                 </div>
                 {displayData.updatedAt && !isUsingStaticData && (
-                  <span className="text-gray-500">
+                  <span className="text-muted-foreground">
                     {t("settings.general_setting.lastUpdated")}:{" "}
                     {new Date(displayData.updatedAt).toLocaleDateString()}
                   </span>
@@ -591,7 +591,7 @@ export function GeneralSettings(): JSX.Element {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center space-x-4 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+            <div className="flex items-center space-x-4 p-6 border border-border rounded-lg bg-background shadow-sm">
               {displayData.logo && (
                 <img
                   src={displayData.logo}
@@ -615,11 +615,11 @@ export function GeneralSettings(): JSX.Element {
 )}
 
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">
+                <h3 className="text-2xl font-bold text-foreground">
                   {displayData.title}
                 </h3>
                 {displayData.tagline && (
-                  <p className="text-gray-600 text-base mt-1">
+                  <p className="text-muted-foreground text-base mt-1">
                     {displayData.tagline}
                   </p>
                 )}

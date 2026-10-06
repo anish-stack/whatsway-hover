@@ -125,8 +125,8 @@ export default function Campaigns({ userId }: CampaignsProps) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+        <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+          <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="py-3 px-4 border-b">{t("users.campaigns.name")}</th>
               <th className="py-3 px-4 border-b">{t("users.campaigns.type")}</th>
@@ -139,7 +139,7 @@ export default function Campaigns({ userId }: CampaignsProps) {
             {campaigns.map((campaign) => (
               <tr
                 key={campaign.id}
-                className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                className="hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <td className="py-3 px-4 border-b">{campaign.name}</td>
                 <td className="py-3 px-4 border-b">{campaign.type}</td>
@@ -176,7 +176,7 @@ export default function Campaigns({ userId }: CampaignsProps) {
       <div className="w-full mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* LEFT SIDE → Showing Results + Per Page */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-muted-foreground">
             {t("users.campaigns.showing")} {(page - 1) * limit + 1} {t("users.campaigns.to")} {Math.min(page * limit, total)}{" "}
             {t("users.campaigns.of")} {total} {t("users.campaigns.campaignsCount")}
           </span>

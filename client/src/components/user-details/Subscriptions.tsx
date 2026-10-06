@@ -113,8 +113,8 @@ export default function Subscriptions({ userId }: SubscriptionsProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-        <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+      <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+        <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
           <tr>
             <th className="py-3 px-4 border-b">{t("users.subscriptions.username")}</th>
             <th className="py-3 px-4 border-b">{t("users.subscriptions.plan")}</th>
@@ -130,7 +130,7 @@ export default function Subscriptions({ userId }: SubscriptionsProps) {
           {subscriptions.map(({ subscription, user }) => (
             <tr
               key={subscription.id}
-              className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+              className="hover:bg-muted transition-colors text-sm text-muted-foreground"
             >
               <td className="py-3 px-4 border-b">{user.username}</td>
               <td className="py-3 px-4 border-b">
@@ -153,7 +153,7 @@ export default function Subscriptions({ userId }: SubscriptionsProps) {
                     {subscription.status}
                   </span>
                 ) : subscription.status === "cancelled" ? (
-                  <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
+                  <span className="px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
                     {subscription.status}
                   </span>
                 ) : (

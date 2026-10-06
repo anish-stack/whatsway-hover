@@ -283,10 +283,10 @@ export default function Notifications() {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">
                 {notifications.length}
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {t("notifications.stats.allNotifications")}
               </p>
             </CardContent>
@@ -302,10 +302,10 @@ export default function Notifications() {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">
                 {notifications.filter((n) => n.targetType === "users").length}
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {t("notifications.stats.usersOnly")}
               </p>
             </CardContent>
@@ -314,21 +314,21 @@ export default function Notifications() {
           <Card className="hover:shadow-lg transition-shadow sm:col-span-2 lg:col-span-1">
             <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6 pt-4 sm:pt-6">
               <CardTitle className="text-sm sm:text-base flex items-center gap-2">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[var(--brand-100)] rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--brand)]" />
                 </div>
                 {t("notifications.stats.adminTeam")}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">
                 {
                   notifications.filter(
                     (n) => n.targetType === "admins" || n.targetType === "team"
                   ).length
                 }
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {t("notifications.stats.staffNotifications")}
               </p>
             </CardContent>
@@ -336,19 +336,19 @@ export default function Notifications() {
         </div>
 
         <Card className="shadow-sm mt-4">
-          <CardHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <CardHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b border-border">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <CardTitle className="text-base sm:text-lg">
                 {t("notifications.table.title")}
               </CardTitle>
-              <div className="text-xs sm:text-sm text-gray-500">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 {totalItems} {t("notifications.table.total")}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3 mt-3">
               <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">Filters:</span>
+                <Filter className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Filters:</span>
               </div>
               <Select
                 value={statusFilter}
@@ -380,7 +380,7 @@ export default function Notifications() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs text-gray-500 h-9"
+                  className="text-xs text-muted-foreground h-9"
                   onClick={() => { setStatusFilter("all"); setTargetFilter("all"); setCurrentPage(1); }}
                 >
                   Clear filters
@@ -392,19 +392,19 @@ export default function Notifications() {
             {isLoading ? (
               <div className="flex flex-col items-center justify-center h-48 sm:h-64 px-4">
                 <Loader2 className="animate-spin w-8 h-8 sm:w-10 sm:h-10 text-green-600 mb-4" />
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   {t("notifications.loading")}
                 </p>
               </div>
             ) : paginatedNotifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <AlertCircle className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <AlertCircle className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground" />
                 </div>
-                <p className="text-sm sm:text-base font-medium text-gray-900 mb-2">
+                <p className="text-sm sm:text-base font-medium text-foreground mb-2">
                   {t("notifications.empty.title")}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-500 mb-4">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                   {t("notifications.empty.description")}
                 </p>
                 <Button
@@ -421,46 +421,46 @@ export default function Notifications() {
                 <div className="hidden sm:block overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50">
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                      <TableRow className="bg-muted">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.id")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.titleColumn")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.message")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.target")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.status")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.sentAt")}
                         </TableHead>
-                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-gray-600 uppercase">
+                        <TableHead className="w-[100px] px-3 lg:px-6 py-3 text-xs font-semibold text-muted-foreground uppercase">
                           {t("notifications.table.action")}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {paginatedNotifications.map((n) => (
-                        <TableRow key={n.id} className="hover:bg-gray-50">
-                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-gray-600">
+                        <TableRow key={n.id} className="hover:bg-muted">
+                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-muted-foreground">
                             {String(n.id).slice(0, 8)}
                           </TableCell>
-                          <TableCell className="px-3 lg:px-6 py-3 text-sm font-medium text-gray-900">
+                          <TableCell className="px-3 lg:px-6 py-3 text-sm font-medium text-foreground">
                             {_demo ? maskContent(n.title) : n.title}
                           </TableCell>
                           <TableCell className="max-w-xs truncate text-sm text-muted-foreground">
                             {_demo ? maskContent(n.message) : n.message}
                           </TableCell>
-                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-gray-600">
+                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-muted-foreground">
                             <StatusBadge status={n.targetType} variant="info" />
                           </TableCell>
-                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-gray-600">
+                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-muted-foreground">
                             <StatusBadge
                               status={n.status || "sent"}
                               variant={
@@ -468,14 +468,14 @@ export default function Notifications() {
                               }
                             />
                           </TableCell>
-                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-gray-600">
+                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-muted-foreground">
                             {n.sentAt
                               ? new Date(n.sentAt).toLocaleString()
                               : n.createdAt
                               ? new Date(n.createdAt).toLocaleString()
                               : "-"}
                           </TableCell>
-                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-gray-600">
+                          <TableCell className="px-3 lg:px-6 py-3 font-mono text-xs text-muted-foreground">
                             {n.status !== "sent" ? (
                               <Button
                                 size="sm"
@@ -505,30 +505,30 @@ export default function Notifications() {
                   {paginatedNotifications.map((n) => (
                     <div
                       key={n.id}
-                      className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                      className="bg-background border border-border rounded-lg p-4 shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-3 gap-2">
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2">
+                          <h3 className="text-sm font-semibold text-foreground mb-1 line-clamp-2">
                             {_demo ? maskContent(n.title) : n.title}
                           </h3>
-                          <p className="text-xs font-mono text-gray-500">
+                          <p className="text-xs font-mono text-muted-foreground">
                             {String(n.id).slice(0, 8)}
                           </p>
                         </div>
                         <StatusBadge status={n.targetType} variant="info" />
                       </div>
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <span className="text-xs text-gray-500">
+                      <div className="flex items-center justify-between pt-3 border-t border-border">
+                        <span className="text-xs text-muted-foreground">
                           {t("notifications.card.sentAt")}
                         </span>
                         <div className="text-right">
                           {n.sentAt ? (
                             <>
-                              <div className="text-xs text-gray-900 font-medium">
+                              <div className="text-xs text-foreground font-medium">
                                 {new Date(n.sentAt).toLocaleDateString()}
                               </div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-muted-foreground">
                                 {new Date(n.sentAt).toLocaleTimeString([], {
                                   hour: "2-digit",
                                   minute: "2-digit",

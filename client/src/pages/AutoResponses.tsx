@@ -130,7 +130,7 @@ const AutoResponses = () => {
       value: "87%",
       change: "+5%",
       icon: Target,
-      color: "text-purple-600",
+      color: "text-[var(--brand)]",
     },
   ];
 
@@ -152,9 +152,9 @@ const AutoResponses = () => {
       case "paused":
         return "bg-yellow-100 text-yellow-800";
       case "draft":
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -163,13 +163,13 @@ const AutoResponses = () => {
       case "greeting":
         return "bg-blue-100 text-blue-800";
       case "sales":
-        return "bg-purple-100 text-purple-800";
+        return "bg-[var(--brand-100)] text-[var(--brand)]";
       case "support":
         return "bg-orange-100 text-orange-800";
       case "info":
         return "bg-teal-100 text-teal-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -178,16 +178,16 @@ const AutoResponses = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-background border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
             <div className="min-w-0">
-              <h1 className="truncate text-xl sm:text-2xl font-bold text-gray-900">
+              <h1 className="truncate text-xl sm:text-2xl font-bold text-foreground">
                 Auto Responses
               </h1>
-              <p className="hidden sm:block text-sm text-gray-600 mt-1">
+              <p className="hidden sm:block text-sm text-muted-foreground mt-1">
                 Manage automated message responses and triggers
               </p>
             </div>
@@ -211,19 +211,19 @@ const AutoResponses = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200"
+              className="bg-background p-4 sm:p-6 rounded-lg shadow-sm border border-border"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {stat.label}
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-xl sm:text-2xl font-bold text-foreground mt-1">
                     {stat.value}
                   </p>
                   <p className="text-sm text-green-600 mt-1">{stat.change}</p>
                 </div>
-                <div className="p-2 sm:p-3 rounded-lg bg-gray-50">
+                <div className="p-2 sm:p-3 rounded-lg bg-muted">
                   <stat.icon
                     className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`}
                   />
@@ -234,17 +234,17 @@ const AutoResponses = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
+        <div className="bg-background p-4 sm:p-6 rounded-lg shadow-sm border border-border mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search auto responses..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -252,7 +252,7 @@ const AutoResponses = () => {
               <select
                 value={selectedFilter}
                 onChange={(e) => setSelectedFilter(e.target.value)}
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">All Types</option>
                 <option value="greeting">Greeting</option>
@@ -262,7 +262,7 @@ const AutoResponses = () => {
                 <option value="active">Active</option>
                 <option value="paused">Paused</option>
               </select>
-              <button className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-sm sm:text-base">
+              <button className="px-3 sm:px-4 py-2 border border-border rounded-lg hover:bg-muted flex items-center gap-2 text-sm sm:text-base">
                 <Filter className="w-4 h-4" />
                 <span className="hidden sm:inline">Filter</span>
               </button>
@@ -275,12 +275,12 @@ const AutoResponses = () => {
           {filteredResponses.map((response) => (
             <div
               key={response.id}
-              className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+              className="bg-background p-4 sm:p-6 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">
                       {response.name}
                     </h3>
                     <span
@@ -300,15 +300,15 @@ const AutoResponses = () => {
                   </div>
 
                   <div className="mb-3">
-                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                       <strong>Triggers:</strong> {response.trigger}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-800 bg-gray-50 p-2 sm:p-3 rounded-lg break-words">
+                    <p className="text-xs sm:text-sm text-foreground bg-muted p-2 sm:p-3 rounded-lg break-words">
                       {response.message}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="whitespace-nowrap">
@@ -357,14 +357,14 @@ const AutoResponses = () => {
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                     title="Copy"
                     aria-label="Copy"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                   <button
-                    className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                     title="Settings"
                     aria-label="Settings"
                   >
@@ -383,7 +383,7 @@ const AutoResponses = () => {
                 <div className="relative lg:hidden flex-shrink-0">
                   <button
                     onClick={() => toggleDropdown(response.id)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                     aria-label="More actions"
                     aria-expanded={openDropdown === response.id}
                   >
@@ -399,7 +399,7 @@ const AutoResponses = () => {
                       />
 
                       {/* Dropdown Menu */}
-                      <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-background rounded-lg shadow-lg border border-border py-1 z-20">
                         {response.status === "active" ? (
                           <button
                             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-yellow-600 hover:bg-yellow-50 transition-colors"
@@ -425,20 +425,20 @@ const AutoResponses = () => {
                           Edit
                         </button>
                         <button
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                           onClick={() => setOpenDropdown(null)}
                         >
                           <Copy className="w-4 h-4" />
                           Copy
                         </button>
                         <button
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                           onClick={() => setOpenDropdown(null)}
                         >
                           <Settings className="w-4 h-4" />
                           Settings
                         </button>
-                        <div className="border-t border-gray-200 my-1"></div>
+                        <div className="border-t border-border my-1"></div>
                         <button
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                           onClick={() => setOpenDropdown(null)}
@@ -456,12 +456,12 @@ const AutoResponses = () => {
         </div>
 
         {filteredResponses.length === 0 && (
-          <div className="bg-white p-8 sm:p-12 rounded-lg shadow-sm border border-gray-200 text-center">
-            <Bot className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-background p-8 sm:p-12 rounded-lg shadow-sm border border-border text-center">
+            <Bot className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
               No auto responses found
             </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-4">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4">
               {searchTerm || selectedFilter !== "all"
                 ? "Try adjusting your search or filter criteria"
                 : "Create your first auto response to get started"}

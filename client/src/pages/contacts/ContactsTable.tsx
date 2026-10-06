@@ -161,46 +161,46 @@ export function ContactsTable({
           <>
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-muted">
                   <tr>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       <input
                         type="checkbox"
-                        className="rounded border-gray-300"
+                        className="rounded border-border"
                         checked={allSelected}
                         onChange={toggleSelectAll}
                       />
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t("contacts.contact")}
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t("contacts.phone")}
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                       {t("contacts.groups")}
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t("contacts.status")}
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden xl:table-cell">
                       {t("contacts.lastContact")}
                     </th>
-                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left px-3 lg:px-6 py-3 lg:py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t("contacts.actions")}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-background divide-y divide-border">
                   {contacts.map((contact: Contact) => (
                     <tr
                       key={contact.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-muted transition-colors"
                     >
                       <td className="px-3 lg:px-6 py-3 lg:py-4">
                         <input
                           type="checkbox"
-                          className="rounded border-gray-300"
+                          className="rounded border-border"
                           checked={selectedContactIds.includes(contact.id)}
                           onChange={() => toggleSelectOne(contact.id)}
                         />
@@ -213,7 +213,7 @@ export function ContactsTable({
                             </span>
                           </div>
                           <div className="ml-2 lg:ml-4 min-w-0">
-                            <div className="text-xs lg:text-sm font-medium text-gray-900 truncate">
+                            <div className="text-xs lg:text-sm font-medium text-foreground truncate">
                               {user?.username === "demouser"
                                 ? contact.name
                                     .slice(0, -1)
@@ -222,7 +222,7 @@ export function ContactsTable({
                                 : contact.name}
                             </div>
                             {contact.email && (
-                              <div className="text-xs text-gray-500 truncate">
+                              <div className="text-xs text-muted-foreground truncate">
                                 {user?.username === "demouser"
                                   ? contact.email
                                       .split("@")[0]
@@ -237,7 +237,7 @@ export function ContactsTable({
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs lg:text-sm text-gray-900">
+                      <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs lg:text-sm text-foreground">
                         {user?.username === "demouser"
                           ? contact.phone.slice(0, -4).replace(/\d/g, "*") +
                             contact.phone.slice(-4)
@@ -259,7 +259,7 @@ export function ContactsTable({
                               )
                             )
                           ) : (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-muted-foreground">
                               {t("contacts.noGroups")}
                             </span>
                           )}
@@ -281,7 +281,7 @@ export function ContactsTable({
                           {contact.status?.toLocaleUpperCase() || "N/A"}
                         </Badge>
                       </td>
-                      <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs lg:text-sm text-gray-900 hidden xl:table-cell">
+                      <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs lg:text-sm text-foreground hidden xl:table-cell">
                         {contact.lastContact
                           ? new Date(
                               contact.lastContact
@@ -412,13 +412,13 @@ export function ContactsTable({
               {contacts.map((contact: Contact) => (
                 <div
                   key={contact.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-background border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                       <input
                         type="checkbox"
-                        className="rounded border-gray-300 mt-1 flex-shrink-0"
+                        className="rounded border-border mt-1 flex-shrink-0"
                         checked={selectedContactIds.includes(contact.id)}
                         onChange={() => toggleSelectOne(contact.id)}
                       />
@@ -428,14 +428,14 @@ export function ContactsTable({
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-gray-900 truncate">
+                        <div className="text-sm font-semibold text-foreground truncate">
                           {user?.username === "demouser"
                             ? contact.name.slice(0, -1).replace(/./g, "*") +
                               contact.name.slice(-1)
                             : contact.name}
                         </div>
                         {contact.email && (
-                          <div className="text-xs text-gray-500 truncate">
+                          <div className="text-xs text-muted-foreground truncate">
                             {user?.username === "demouser"
                               ? contact.email
                                   .split("@")[0]
@@ -465,12 +465,12 @@ export function ContactsTable({
                     </Badge>
                   </div>
 
-                  <div className="space-y-2 text-sm border-t border-gray-100 pt-3">
+                  <div className="space-y-2 text-sm border-t border-border pt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-500 font-medium text-xs">
+                      <span className="text-muted-foreground font-medium text-xs">
                         Phone:
                       </span>
-                      <span className="text-gray-700 text-xs">
+                      <span className="text-muted-foreground text-xs">
                         {user?.username === "demouser"
                           ? contact.phone.slice(0, -4).replace(/\d/g, "*") +
                             contact.phone.slice(-4)
@@ -478,7 +478,7 @@ export function ContactsTable({
                       </span>
                     </div>
                     <div className="flex justify-between items-start">
-                      <span className="text-gray-500 font-medium text-xs">
+                      <span className="text-muted-foreground font-medium text-xs">
                         Groups:
                       </span>
                       <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
@@ -496,17 +496,17 @@ export function ContactsTable({
                             )
                           )
                         ) : (
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-muted-foreground">
                             {t("contacts.noGroups")}
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-500 font-medium text-xs">
+                      <span className="text-muted-foreground font-medium text-xs">
                         Last Contact:
                       </span>
-                      <span className="text-gray-700 text-xs">
+                      <span className="text-muted-foreground text-xs">
                         {contact.lastContact
                           ? new Date(
                               contact.lastContact
@@ -516,7 +516,7 @@ export function ContactsTable({
                     </div>
                   </div>
 
-                  <div className="flex justify-between gap-2 mt-4 pt-3 border-t border-gray-100">
+                  <div className="flex justify-between gap-2 mt-4 pt-3 border-t border-border">
                     <Button
                       variant="outline"
                       size="sm"
@@ -594,9 +594,9 @@ export function ContactsTable({
         )}
 
         {contacts.length > 0 && (
-          <div className="bg-gray-50 px-3 sm:px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 gap-3">
+          <div className="bg-muted px-3 sm:px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-border gap-3">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
-              <div className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+              <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
                 Showing{" "}
                 <span className="font-medium">
                   {(page - 1) * limit + 1}

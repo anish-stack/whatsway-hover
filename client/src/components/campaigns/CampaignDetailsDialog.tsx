@@ -191,7 +191,7 @@ export function CampaignDetailsDialog({ campaign: initialCampaign, onClose }: Ca
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-medium">Reply Rate</span>
-                    <span className="text-sm font-bold text-purple-600">{replyRate}%</span>
+                    <span className="text-sm font-bold text-[var(--brand)]">{replyRate}%</span>
                   </div>
                   <Progress value={replyRate} className="h-2" />
                 </div>

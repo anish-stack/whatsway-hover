@@ -202,7 +202,7 @@ const HealthMonitor = () => {
       case "incident":
         return <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />;
       default:
-        return <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+        return <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     }
   };
 
@@ -215,7 +215,7 @@ const HealthMonitor = () => {
       case "incident":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -228,7 +228,7 @@ const HealthMonitor = () => {
       case "stable":
         return <Activity className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />;
       default:
-        return <Activity className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />;
+        return <Activity className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />;
     }
   };
 
@@ -239,34 +239,34 @@ const HealthMonitor = () => {
       case "identified":
         return "bg-blue-100 text-blue-800";
       case "monitoring":
-        return "bg-purple-100 text-purple-800";
+        return "bg-[var(--brand-100)] text-[var(--brand)]";
       case "resolved":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
   const getComponentIcon = (name: string) => {
     if (name.includes("WhatsApp"))
-      return <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     if (name.includes("Message"))
-      return <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     if (name.includes("Template"))
-      return <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     if (name.includes("Contact"))
-      return <Users className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <Users className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     if (name.includes("Analytics"))
-      return <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     if (name.includes("Webhook"))
-      return <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
-    return <Server className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+      return <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
+    return <Server className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 sm:py-4 gap-3">
             <div className="flex items-center space-x-3 sm:space-x-4">
@@ -274,10 +274,10 @@ const HealthMonitor = () => {
                 <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">
                   Health Monitor
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Monitor your WhatsApp API and system health
                 </p>
               </div>
@@ -286,7 +286,7 @@ const HealthMonitor = () => {
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="24h">Last 24 Hours</option>
                 <option value="7d">Last 7 Days</option>
@@ -313,7 +313,7 @@ const HealthMonitor = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* System Status Overview */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 mb-6 sm:mb-8">
+        <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border mb-6 sm:mb-8">
           <div className="flex flex-col gap-4 mb-4 sm:mb-6">
             <div className="flex items-start space-x-3 sm:space-x-4">
               {systemStatus.overall === "healthy" ? (
@@ -330,24 +330,24 @@ const HealthMonitor = () => {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">
                   {systemStatus.overall === "healthy"
                     ? "All Systems Operational"
                     : systemStatus.overall === "degraded"
                     ? "Partial System Degradation"
                     : "System Incidents Detected"}
                 </h2>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Last updated: {systemStatus.lastUpdated}
                 </p>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3">
-              <button className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+              <button className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center">
                 <Calendar className="w-4 h-4 mr-2" />
                 View History
               </button>
-              <button className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+              <button className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center">
                 <Download className="w-4 h-4 mr-2" />
                 Export Report
               </button>
@@ -359,12 +359,12 @@ const HealthMonitor = () => {
             {systemStatus.components.map((component, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-sm transition-all"
+                className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-sm transition-all"
               >
                 <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
                     {getComponentIcon(component.name)}
-                    <h3 className="font-medium text-sm sm:text-base text-gray-900 truncate">
+                    <h3 className="font-medium text-sm sm:text-base text-foreground truncate">
                       {component.name}
                     </h3>
                   </div>
@@ -379,28 +379,28 @@ const HealthMonitor = () => {
 
                 <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                   <div>
-                    <span className="text-gray-500">Uptime:</span>
-                    <span className="ml-1 sm:ml-2 font-medium text-gray-900">
+                    <span className="text-muted-foreground">Uptime:</span>
+                    <span className="ml-1 sm:ml-2 font-medium text-foreground">
                       {component.uptime}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Response:</span>
-                    <span className="ml-1 sm:ml-2 font-medium text-gray-900">
+                    <span className="text-muted-foreground">Response:</span>
+                    <span className="ml-1 sm:ml-2 font-medium text-foreground">
                       {component.responseTime}
                     </span>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <span className="text-gray-500">Last Incident:</span>
-                    <span className="ml-1 sm:ml-2 font-medium text-gray-900">
+                    <span className="text-muted-foreground">Last Incident:</span>
+                    <span className="ml-1 sm:ml-2 font-medium text-foreground">
                       {component.lastIncident}
                     </span>
                   </div>
                   <div className="flex items-center col-span-2 sm:col-span-1">
-                    <span className="text-gray-500">Trend:</span>
+                    <span className="text-muted-foreground">Trend:</span>
                     <span className="ml-1 sm:ml-2 flex items-center">
                       {getTrendIcon(component.trend)}
-                      <span className="ml-1 font-medium text-gray-900">
+                      <span className="ml-1 font-medium text-foreground">
                         {component.trend}
                       </span>
                     </span>
@@ -416,7 +416,7 @@ const HealthMonitor = () => {
           {metrics.map((metric, index) => (
             <div
               key={index}
-              className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200"
+              className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border"
             >
               <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
                 <div
@@ -426,12 +426,12 @@ const HealthMonitor = () => {
                     className={`w-4 h-4 sm:w-5 sm:h-5 text-${metric.color}-600`}
                   />
                 </div>
-                <h3 className="font-medium text-sm sm:text-base text-gray-900 truncate">
+                <h3 className="font-medium text-sm sm:text-base text-foreground truncate">
                   {metric.name}
                 </h3>
               </div>
               <div className="flex items-end justify-between">
-                <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <div className="text-2xl sm:text-3xl font-bold text-foreground">
                   {metric.value}
                 </div>
                 <div
@@ -456,23 +456,23 @@ const HealthMonitor = () => {
 
         {/* Active Incidents */}
         {incidents.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6 sm:mb-8">
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+          <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden mb-6 sm:mb-8">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-muted">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
                 Active Incidents
               </h3>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-border">
               {incidents.map((incident) => (
                 <div key={incident.id} className="p-4 sm:p-6">
                   <div className="flex flex-col gap-3 mb-3 sm:mb-4">
                     <div className="flex items-start space-x-2 sm:space-x-3">
                       <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm sm:text-base text-gray-900">
+                        <h4 className="font-semibold text-sm sm:text-base text-foreground">
                           {incident.title}
                         </h4>
-                        <p className="text-xs sm:text-sm text-gray-600">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           {incident.component} • Started {incident.started}
                         </p>
                       </div>
@@ -486,12 +486,12 @@ const HealthMonitor = () => {
                     </div>
                   </div>
 
-                  <p className="text-sm sm:text-base text-gray-700 mb-3 sm:mb-4">
+                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
                     {incident.description}
                   </p>
 
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <h5 className="font-medium text-sm sm:text-base text-gray-900 mb-2">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
+                    <h5 className="font-medium text-sm sm:text-base text-foreground mb-2">
                       Updates
                     </h5>
                     <div className="space-y-2 sm:space-y-3">
@@ -502,10 +502,10 @@ const HealthMonitor = () => {
                         >
                           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs sm:text-sm text-gray-700">
+                            <p className="text-xs sm:text-sm text-muted-foreground">
                               {update.message}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               {update.time}
                             </p>
                           </div>
@@ -522,8 +522,8 @@ const HealthMonitor = () => {
         {/* System Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {/* API Performance */}
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
+          <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
               API Performance
             </h3>
             <div className="space-y-3 sm:space-y-4">
@@ -533,27 +533,27 @@ const HealthMonitor = () => {
                 { name: "Get Contacts", success: 100, latency: 180 },
                 { name: "Create Campaign", success: 99.5, latency: 210 },
               ].map((api, index) => (
-                <div key={index} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <div key={index} className="bg-muted p-3 sm:p-4 rounded-lg">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                    <h4 className="font-medium text-sm sm:text-base text-gray-900">
+                    <h4 className="font-medium text-sm sm:text-base text-foreground">
                       {api.name}
                     </h4>
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="flex items-center">
                         <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mr-1" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-900">
+                        <span className="text-xs sm:text-sm font-medium text-foreground">
                           {api.success}%
                         </span>
                       </div>
                       <div className="flex items-center">
                         <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 mr-1" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-900">
+                        <span className="text-xs sm:text-sm font-medium text-foreground">
                           {api.latency}ms
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                  <div className="w-full bg-border rounded-full h-1.5 sm:h-2">
                     <div
                       className={`h-1.5 sm:h-2 rounded-full ${
                         api.success > 99.5
@@ -571,8 +571,8 @@ const HealthMonitor = () => {
           </div>
 
           {/* System Resources */}
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
+          <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
               System Resources
             </h3>
             <div className="space-y-3 sm:space-y-4">
@@ -606,21 +606,21 @@ const HealthMonitor = () => {
                   status: "degraded",
                 },
               ].map((resource, index) => (
-                <div key={index} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <div key={index} className="bg-muted p-3 sm:p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-sm sm:text-base text-gray-900">
+                    <h4 className="font-medium text-sm sm:text-base text-foreground">
                       {resource.name}
                     </h4>
                     <div className="flex items-center space-x-2">
                       {getStatusIcon(resource.status)}
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 whitespace-nowrap">
+                      <span className="text-xs sm:text-sm font-medium text-foreground whitespace-nowrap">
                         {resource.value}
                         {resource.unit} / {resource.max}
                         {resource.unit}
                       </span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                  <div className="w-full bg-border rounded-full h-1.5 sm:h-2">
                     <div
                       className={`h-1.5 sm:h-2 rounded-full ${
                         resource.value < 50

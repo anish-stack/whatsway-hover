@@ -94,9 +94,9 @@ export default function VerifyOtp({ email, onVerified }: Props) {
         <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
           <KeyRound className="h-6 w-6 text-green-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">Verify Your Email</h2>
-        <p className="text-sm text-gray-500">
-          We've sent a 6-digit code to <span className="font-medium text-gray-700">{maskedEmail}</span>
+        <h2 className="text-xl font-semibold text-foreground">Verify Your Email</h2>
+        <p className="text-sm text-muted-foreground">
+          We've sent a 6-digit code to <span className="font-medium text-muted-foreground">{maskedEmail}</span>
         </p>
       </div>
 
@@ -117,7 +117,7 @@ export default function VerifyOtp({ email, onVerified }: Props) {
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             ref={(el) => (inputRefs.current[index] = el!)}
-            className="w-12 h-14 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg 
+            className="w-12 h-14 text-center text-xl font-semibold border-2 border-border rounded-lg 
               focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 
               transition-all duration-200
               hover:border-gray-400"
@@ -141,7 +141,7 @@ export default function VerifyOtp({ email, onVerified }: Props) {
         )}
       </Button>
 
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted-foreground">
         Didn't receive the code? Check your spam folder.
       </p>
     </div>

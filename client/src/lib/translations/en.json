@@ -93,7 +93,14 @@
         "plans": "Plans",
         "message_logs": "Message Logs",
         "apiDocs": "API Documentation",
-        "documentation": "Documentation"
+        "documentation": "Documentation",
+        "wallet": "Wallet",
+        "messagePricing": "Message Pricing",
+        "sendingCaps": "Sending Caps",
+        "partner": "Partner Panel",
+        "resellers": "Resellers",
+        "greenTick": "Green Tick",
+        "greenTickReview": "Green Tick Review"
     },
     "widget": {
         "title": "Widget Builder",
@@ -1105,7 +1112,7 @@
             "subHeadline": "From bulk messaging to AI chatbots, our platform provides all the tools you need to create successful WhatsApp marketing campaigns",
             "demo": "Demo",
             "campaign_progress": "Campaign Progress",
-            "whatsAppAPI":"WHATSAPP Business CAMPAING",
+            "whatsAppAPI": "WHATSAPP Business CAMPAING",
             "featureTabs": [
                 {
                     "title": "Bulk Messaging",

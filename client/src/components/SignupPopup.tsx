@@ -58,14 +58,14 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in duration-300">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-[var(--brand)]" />
           </div>
 
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-[var(--ink)] mb-2">
             Welcome to {appName}!
           </h3>
-          <p className="text-gray-600">
+          <p className="text-[var(--ink-500)]">
             Check your email for next steps to get started with your free
             account.
           </p>
@@ -80,14 +80,14 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
         <div className="relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
+            className="absolute top-4 right-4 p-2 hover:bg-[var(--canvas)] rounded-full transition-colors z-10"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-[var(--ink-500)]" />
           </button>
 
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Left Side - Benefits */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 p-8 text-white">
+            <div className="bg-gradient-to-br from-[var(--brand)] to-[var(--brand-700)] p-8 text-white">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="bg-white/20 p-2 rounded-lg">
                   <MessageCircle className="w-6 h-6" />
@@ -98,7 +98,7 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
               <h2 className="text-2xl font-bold mb-4">
                 Start Your WhatsApp Marketing Journey
               </h2>
-              <p className="text-green-100 mb-6">
+              <p className="text-[var(--brand-100)] mb-6">
                 Join thousands of businesses already growing with our platform
               </p>
 
@@ -126,16 +126,16 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
 
             {/* Right Side - Form */}
             <div className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-[var(--ink)] mb-2">
                 Get Started Free
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-[var(--ink-500)] mb-6">
                 No credit card required. Start sending campaigns in minutes.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--ink-700)] mb-2">
                     Work Email
                   </label>
                   <input
@@ -143,14 +143,14 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your work email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-[var(--mist)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                     required
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center group"
+                  className="w-full bg-gradient-to-r from-[var(--brand)] to-[var(--brand-700)] text-white py-3 rounded-lg font-semibold hover:from-[var(--brand)] hover:to-[var(--brand-700)] transition-all flex items-center justify-center group"
                 >
                   Create Free Account
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -158,32 +158,32 @@ const SignupPopup: React.FC<SignupPopupProps> = ({ onClose }) => {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--ink-500)]">
                   By signing up, you agree to our{" "}
                   <a
                     href="/terms-of-service"
-                    className="text-green-600 hover:underline"
+                    className="text-[var(--brand)] hover:underline"
                   >
                     Terms of Service
                   </a>{" "}
                   and{" "}
                   <a
                     href="/privacy-policy"
-                    className="text-green-600 hover:underline"
+                    className="text-[var(--brand)] hover:underline"
                   >
                     Privacy Policy
                   </a>
                 </p>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
+              <div className="mt-6 pt-6 border-t border-[var(--mist)]">
+                <div className="flex items-center justify-center space-x-4 text-sm text-[var(--ink-500)]">
                   <div className="flex items-center space-x-1">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-[var(--brand)]" />
                     <span>No setup fees</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-[var(--brand)]" />
                     <span>Cancel anytime</span>
                   </div>
                 </div>

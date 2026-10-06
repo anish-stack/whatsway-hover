@@ -53,9 +53,9 @@ function getNameStatusBadge(status: string | null | undefined) {
     case "DECLINED":
       return <Badge className="bg-red-100 text-red-700 border-red-200"><XCircle className="w-3 h-3 mr-1" />Declined</Badge>;
     case "EXPIRED":
-      return <Badge className="bg-gray-100 text-gray-700 border-gray-200"><AlertTriangle className="w-3 h-3 mr-1" />Expired</Badge>;
+      return <Badge className="bg-muted text-muted-foreground border-border"><AlertTriangle className="w-3 h-3 mr-1" />Expired</Badge>;
     case "NONE":
-      return <Badge className="bg-gray-100 text-gray-500 border-gray-200">None</Badge>;
+      return <Badge className="bg-muted text-muted-foreground border-border">None</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }

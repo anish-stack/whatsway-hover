@@ -94,7 +94,7 @@ function getNotificationIcon(type: string) {
     case "channel_health_warning":
       return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
     default:
-      return <Bell className="w-5 h-5 text-gray-500" />;
+      return <Bell className="w-5 h-5 text-muted-foreground" />;
   }
 }
 
@@ -279,7 +279,7 @@ export default function NotificationBell() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg">
+        <button className="relative p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg">
           <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function NotificationBell() {
 
         <ScrollArea className="max-h-[420px]">
           {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
               <BellOff className="w-10 h-10 mb-2" />
               <p className="text-sm">No notifications yet</p>
             </div>
@@ -316,19 +316,19 @@ export default function NotificationBell() {
               {notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50 ${
+                  className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted ${
                     !n.isRead ? "bg-blue-50/50" : ""
                   }`}
                   onClick={() => handleNotificationClick(n)}
                 >
-                  <div className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+                  <div className="mt-1 flex-shrink-0 w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                     {getNotificationIcon(n.type)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p
                         className={`text-sm leading-snug ${
-                          !n.isRead ? "font-semibold text-gray-900" : "font-medium text-gray-700"
+                          !n.isRead ? "font-semibold text-foreground" : "font-medium text-muted-foreground"
                         }`}
                       >
                         {n.title}
@@ -337,14 +337,14 @@ export default function NotificationBell() {
                         <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 line-clamp-2 mt-1 leading-relaxed">
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
                       {n.message}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-muted-foreground">
                         {formatTimeAgo(n.createdAt)}
                       </p>
-                      <ExternalLink className="w-3 h-3 text-gray-400" />
+                      <ExternalLink className="w-3 h-3 text-muted-foreground" />
                     </div>
                   </div>
                   {!n.isRead && (

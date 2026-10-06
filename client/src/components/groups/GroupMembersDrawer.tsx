@@ -813,7 +813,7 @@ export function GroupMembersDrawer({
 
           <div className="px-6 pt-3 pb-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search members"
                 value={search}
@@ -824,7 +824,7 @@ export function GroupMembersDrawer({
           </div>
 
           {!isDemo && members.length > 0 && (
-            <div className="px-6 pb-2 flex items-center gap-2 text-xs text-gray-600">
+            <div className="px-6 pb-2 flex items-center gap-2 text-xs text-muted-foreground">
               <Checkbox
                 checked={allSelected}
                 onCheckedChange={toggleAll}
@@ -836,18 +836,18 @@ export function GroupMembersDrawer({
 
           <ScrollArea className="flex-1 px-6">
             {isLoading ? (
-              <div className="py-10 text-center text-sm text-gray-500">
+              <div className="py-10 text-center text-sm text-muted-foreground">
                 Loading…
               </div>
             ) : total === 0 && !search ? (
               <div className="py-12 text-center flex flex-col items-center gap-3">
-                <div className="rounded-full bg-gray-100 p-4">
-                  <Users className="h-8 w-8 text-gray-400" />
+                <div className="rounded-full bg-muted p-4">
+                  <Users className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <p className="text-sm text-gray-600 font-medium">
+                <p className="text-sm text-muted-foreground font-medium">
                   No contacts in this group yet
                 </p>
-                <p className="text-xs text-gray-500 max-w-xs">
+                <p className="text-xs text-muted-foreground max-w-xs">
                   Add contacts to start sending campaigns to this audience.
                 </p>
                 {!isDemo && (
@@ -862,7 +862,7 @@ export function GroupMembersDrawer({
                 )}
               </div>
             ) : members.length === 0 ? (
-              <div className="py-10 text-center text-sm text-gray-500">
+              <div className="py-10 text-center text-sm text-muted-foreground">
                 No members match "{search}".
               </div>
             ) : (
@@ -870,7 +870,7 @@ export function GroupMembersDrawer({
                 {members.map((m) => (
                   <div
                     key={m.id}
-                    className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50"
+                    className="flex items-center gap-3 px-3 py-2.5 hover:bg-muted"
                   >
                     {!isDemo && (
                       <Checkbox
@@ -879,10 +879,10 @@ export function GroupMembersDrawer({
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 truncate">
+                      <div className="text-sm font-medium text-foreground truncate">
                         {m.name || "(no name)"}
                       </div>
-                      <div className="text-xs text-gray-500 flex items-center gap-1 truncate">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1 truncate">
                         <Phone className="h-3 w-3" />
                         {m.phone}
                         {m.email ? (
@@ -922,7 +922,7 @@ export function GroupMembersDrawer({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-3 border-t flex items-center justify-between text-xs text-gray-600">
+            <div className="px-6 py-3 border-t flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 Page {page} of {totalPages} · {total} total
               </span>
@@ -1072,12 +1072,12 @@ export function GroupMembersDrawer({
                     )}
                     {importResult.rowErrors.length > 0 && (
                       <div className="mt-2">
-                        <div className="font-medium text-gray-900 mb-1">
+                        <div className="font-medium text-foreground mb-1">
                           Row errors (first {importResult.rowErrors.length}):
                         </div>
-                        <div className="max-h-40 overflow-y-auto rounded border bg-gray-50 p-2 text-xs space-y-1">
+                        <div className="max-h-40 overflow-y-auto rounded border bg-muted p-2 text-xs space-y-1">
                           {importResult.rowErrors.map((e, i) => (
-                            <div key={i} className="text-gray-700">
+                            <div key={i} className="text-muted-foreground">
                               <span className="font-mono">Row {e.row}</span>
                               {e.phone ? ` (${e.phone})` : ""}: {e.error}
                             </div>

@@ -462,7 +462,7 @@ export default function AutomationFlowBuilder({
   }), [setEdges]);
 
   return (
-    <div className="h-screen w-full grid grid-cols-12 bg-gray-50">
+    <div className="h-screen w-full grid grid-cols-12 bg-muted">
       <Sidebar onAddNode={addNode} />
 
       <div className="col-span-7 flex flex-col">
@@ -498,15 +498,15 @@ export default function AutomationFlowBuilder({
               nodeColor="#f1f5f9"
               nodeBorderRadius={8}
               maskColor="rgba(241,245,249,0.7)"
-              className="!bg-white !border !border-gray-200 !rounded-lg !shadow-sm"
+              className="!bg-background !border !border-border !rounded-lg !shadow-sm"
             />
-            <Controls className="!bg-white !border !border-gray-200 !rounded-lg !shadow-sm" />
+            <Controls className="!bg-background !border !border-border !rounded-lg !shadow-sm" />
             <Background color="#e2e8f0" gap={20} size={1} />
           </ReactFlow>
         </div>
       </div>
 
-      <div className="col-span-3 border-l border-gray-200 bg-white overflow-hidden min-h-0">
+      <div className="col-span-3 border-l border-border bg-background overflow-hidden min-h-0">
         <ConfigPanel
           selected={selectedNode}
           onChange={patchSelected}

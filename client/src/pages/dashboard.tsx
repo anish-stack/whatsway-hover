@@ -167,8 +167,8 @@ export default function Dashboard() {
         };
       case "logout":
         return {
-          icon: <LogOut className="w-4 h-4 text-gray-600" />,
-          color: "bg-gray-100",
+          icon: <LogOut className="w-4 h-4 text-muted-foreground" />,
+          color: "bg-muted",
           label: t("dashboard.activity.logout"),
         };
       case "user_created":
@@ -185,8 +185,8 @@ export default function Dashboard() {
         };
       default:
         return {
-          icon: <Activity className="w-4 h-4 text-purple-600" />,
-          color: "bg-purple-100",
+          icon: <Activity className="w-4 h-4 text-[var(--brand)]" />,
+          color: "bg-[var(--brand-100)]",
           label: t("dashboard.activity.default"),
         };
     }
@@ -271,14 +271,14 @@ export default function Dashboard() {
                     <div className="rounded-lg p-2.5 bg-green-50 text-green-600">
                       <Send className="w-5 h-5" />
                     </div>
-                    <h3 className="text-sm font-medium text-gray-600">{t("dashboard.deliveryRate")}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("dashboard.deliveryRate")}</h3>
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-3xl font-bold text-foreground mb-2">
                     {stats.totalMessages > 0
                       ? Math.min(((stats.messagesDelivered || 0) / stats.totalMessages) * 100, 100).toFixed(1)
                       : "0.0"}%
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-border rounded-full h-2">
                     <div
                       className="bg-green-500 h-2 rounded-full transition-all duration-500"
                       style={{
@@ -288,7 +288,7 @@ export default function Dashboard() {
                       }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     {stats.messagesDelivered ?? 0} {t("dashboard.of")} {stats.totalMessages ?? 0} {t("dashboard.messages")}
                   </p>
                 </CardContent>
@@ -297,19 +297,19 @@ export default function Dashboard() {
               <Card className="hover-lift fade-in">
                 <CardContent className="pt-6 pb-4 px-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="rounded-lg p-2.5 bg-violet-50 text-violet-600">
+                    <div className="rounded-lg p-2.5 bg-[var(--brand-100)] text-[var(--brand)]">
                       <Eye className="w-5 h-5" />
                     </div>
-                    <h3 className="text-sm font-medium text-gray-600">{t("dashboard.readRate")}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("dashboard.readRate")}</h3>
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-3xl font-bold text-foreground mb-2">
                     {stats.totalMessages > 0
                       ? Math.min(((stats.messagesRead || 0) / stats.totalMessages) * 100, 100).toFixed(1)
                       : "0.0"}%
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-border rounded-full h-2">
                     <div
-                      className="bg-violet-500 h-2 rounded-full transition-all duration-500"
+                      className="bg-[var(--brand)] h-2 rounded-full transition-all duration-500"
                       style={{
                         width: `${stats.totalMessages > 0
                           ? Math.min(((stats.messagesRead || 0) / stats.totalMessages) * 100, 100)
@@ -317,7 +317,7 @@ export default function Dashboard() {
                       }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     {stats.messagesRead ?? 0} {t("dashboard.of")} {stats.totalMessages ?? 0} {t("dashboard.messages")}
                   </p>
                 </CardContent>
@@ -329,14 +329,14 @@ export default function Dashboard() {
                     <div className="rounded-lg p-2.5 bg-amber-50 text-amber-600">
                       <TrendingUp className="w-5 h-5" />
                     </div>
-                    <h3 className="text-sm font-medium text-gray-600">{t("dashboard.monthlyGrowth")}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("dashboard.monthlyGrowth")}</h3>
                   </div>
                   {(() => {
                     const growth = getMonthlyGrowth(stats);
                     return (
                       <>
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-3xl font-bold text-gray-900">
+                          <span className="text-3xl font-bold text-foreground">
                             {growth.growth}%
                           </span>
                           {!growth.isFlat && (
@@ -347,7 +347,7 @@ export default function Dashboard() {
                             )
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {stats.thisMonthMessages ?? 0} {t("dashboard.thisMonthVs")} {stats.lastMonthMessages ?? 0} {t("dashboard.lastMonth")}
                         </p>
                       </>
@@ -371,8 +371,8 @@ export default function Dashboard() {
                     return (
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-500 mb-1">{t("dashboard.thisWeek")}</p>
-                          <p className="text-2xl font-bold text-gray-900">{stats.weekContacts ?? 0}</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t("dashboard.thisWeek")}</p>
+                          <p className="text-2xl font-bold text-foreground">{stats.weekContacts ?? 0}</p>
                         </div>
                         <div className="text-center">
                           <div className={`flex items-center gap-1 text-lg font-semibold ${comparison.isUp ? "text-green-600" : "text-red-600"}`}>
@@ -383,11 +383,11 @@ export default function Dashboard() {
                             )}
                             {comparison.percentage}%
                           </div>
-                          <p className="text-xs text-gray-500">{t("dashboard.vsLastWeek")}</p>
+                          <p className="text-xs text-muted-foreground">{t("dashboard.vsLastWeek")}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500 mb-1">{t("dashboard.lastWeek")}</p>
-                          <p className="text-2xl font-bold text-gray-400">{stats.lastWeekContacts ?? 0}</p>
+                          <p className="text-sm text-muted-foreground mb-1">{t("dashboard.lastWeek")}</p>
+                          <p className="text-2xl font-bold text-muted-foreground">{stats.lastWeekContacts ?? 0}</p>
                         </div>
                       </div>
                     );
@@ -408,16 +408,16 @@ export default function Dashboard() {
                       <div className="w-12 h-12 rounded-full bg-pink-50 flex items-center justify-center mx-auto mb-2">
                         <Megaphone className="w-6 h-6 text-pink-600" />
                       </div>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalCampaigns ?? 0}</p>
-                      <p className="text-sm text-gray-500">{t("dashboard.campaigns")}</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.totalCampaigns ?? 0}</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.campaigns")}</p>
                     </div>
-                    <div className="h-12 w-px bg-gray-200" />
+                    <div className="h-12 w-px bg-border" />
                     <div className="text-center">
-                      <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-2">
-                        <FileText className="w-6 h-6 text-purple-600" />
+                      <div className="w-12 h-12 rounded-full bg-[var(--brand-100)] flex items-center justify-center mx-auto mb-2">
+                        <FileText className="w-6 h-6 text-[var(--brand)]" />
                       </div>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalTemplates ?? 0}</p>
-                      <p className="text-sm text-gray-500">{t("dashboard.templates")}</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.totalTemplates ?? 0}</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.templates")}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -472,25 +472,25 @@ export default function Dashboard() {
               <div className="flex items-center justify-center space-x-6 mt-4 flex-wrap">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-blue-600 rounded mr-2" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {t("dashboard.sent")}
                   </span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-green-600 rounded mr-2" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {t("dashboard.delivered")}
                   </span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-orange-600 rounded mr-2" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {t("dashboard.read")}
                   </span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-purple-600 rounded mr-2" />
-                  <span className="text-sm text-gray-600">
+                  <div className="w-3 h-3 bg-[var(--brand)] rounded mr-2" />
+                  <span className="text-sm text-muted-foreground">
                     {t("dashboard.replied")}
                   </span>
                 </div>
@@ -511,11 +511,11 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {isLoading ? (
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {t("dashboard.loadingActivities")}
                     </p>
                   ) : activityLogs.length === 0 ? (
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {t("dashboard.noRecentActivities")}
                     </p>
                   ) : (
@@ -539,10 +539,10 @@ export default function Dashboard() {
                               {meta.icon}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm text-gray-900">
+                              <p className="text-sm text-foreground">
                                 {meta.label} {t("dashboard.by")} {log.userName}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(new Date(log.createdAt), {
                                   addSuffix: true,
                                 })}
@@ -586,10 +586,10 @@ export default function Dashboard() {
                       <Upload className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h4 className=" text-gray-900 text-xs md:text-sm">
+                      <h4 className=" text-foreground text-xs md:text-sm">
                         {t("dashboard.importContacts")}
                       </h4>
-                      <p className="text-sm text-gray-600 hidden sm:block ">
+                      <p className="text-sm text-muted-foreground hidden sm:block ">
                         {t("dashboard.uploadCSV")}
                       </p>
                     </div>
@@ -604,10 +604,10 @@ export default function Dashboard() {
                       <FileText className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h4 className=" text-gray-900 text-xs md:text-sm">
+                      <h4 className=" text-foreground text-xs md:text-sm">
                         {t("dashboard.newTemplate")}
                       </h4>
-                      <p className="text-sm text-gray-600 text-nowrap hidden sm:block ">
+                      <p className="text-sm text-muted-foreground text-nowrap hidden sm:block ">
                         {t("dashboard.createMessageTemplate")}
                       </p>
                     </div>
@@ -615,17 +615,17 @@ export default function Dashboard() {
 
                   <Button
                     variant="outline"
-                    className="p-4 h-auto text-left flex flex-col items-start space-y-2 hover:bg-purple-50"
+                    className="p-4 h-auto text-left flex flex-col items-start space-y-2 hover:bg-[var(--brand-100)]"
                     onClick={() => setLocation("/automation")}
                   >
-                    <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-[var(--brand)] rounded-lg flex items-center justify-center">
                       <Zap className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h4 className=" text-gray-900 text-xs md:text-sm">
+                      <h4 className=" text-foreground text-xs md:text-sm">
                         {t("dashboard.buildFlow")}
                       </h4>
-                      <p className="text-sm text-gray-600 text-nowrap hidden sm:block">
+                      <p className="text-sm text-muted-foreground text-nowrap hidden sm:block">
                         {t("dashboard.createAutomation")}
                       </p>
                     </div>
@@ -640,10 +640,10 @@ export default function Dashboard() {
                       <BarChart3 className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h4 className=" text-gray-900 text-xs md:text-sm">
+                      <h4 className=" text-foreground text-xs md:text-sm">
                         {t("dashboard.viewReports")}
                       </h4>
-                      <p className="text-sm text-gray-600 text-nowrap hidden sm:block">
+                      <p className="text-sm text-muted-foreground text-nowrap hidden sm:block">
                         {t("dashboard.detailedAnalytics")}
                       </p>
                     </div>
@@ -674,10 +674,10 @@ export default function Dashboard() {
                         <MessageSquare className="w-4 h-4 text-white" />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                        <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
                           {t("dashboard.whatsAppCloudAPI")}
                         </h4>
-                        <p className="text-xs sm:text-sm text-gray-600 truncate">
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">
                           {user?.username
                             ? activeChannel
                               ? `${activeChannel.name
@@ -729,16 +729,16 @@ export default function Dashboard() {
                             <Activity className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-medium text-gray-900">
+                            <h4 className="font-medium text-foreground">
                               {t("dashboard.healthDetails")}
                             </h4>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-muted-foreground">
                               {t("dashboard.rating")}:{" "}
                               {activeChannel?.healthDetails.quality_rating || "N/A"}
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           {t("dashboard.lastChecked")}{" "}
                           {formatDistanceToNow(new Date(activeChannel.lastHealthCheck), { addSuffix: true })}
                         </span>
@@ -747,19 +747,19 @@ export default function Dashboard() {
 
                     {/* Performance Stats */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
-                      <div className="text-center p-3 bg-gray-50 rounded-lg">
-                        <p className="text-lg font-bold text-gray-900">
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <p className="text-lg font-bold text-foreground">
                           {activeChannel?.lastHealthCheck ? "100%" : "N/A"}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-muted-foreground">
                           {t("dashboard.apiUptime")}
                         </p>
                       </div>
-                      <div className="text-center p-3 bg-gray-50 rounded-lg">
-                        <p className="text-lg font-bold text-gray-900">
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <p className="text-lg font-bold text-foreground">
                           {activeChannel?.healthDetails.name_status || "N/A"}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-muted-foreground">
                           {t("dashboard.apiStatus")}
                         </p>
                       </div>
@@ -794,10 +794,10 @@ export default function Dashboard() {
                       return (
                         <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-gray-700">
+                            <span className="text-sm font-medium text-muted-foreground">
                               {t("dashboard.dailyMessageLimit")}
                             </span>
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-muted-foreground">
                               {todaySent} / {limitLabel}
                             </span>
                           </div>

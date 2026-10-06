@@ -151,18 +151,18 @@ const PressKit = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-6">
-            <FileText className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-6">
+            <FileText className="w-8 h-8 text-[var(--brand)]" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6">
             Press
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               Kit
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto">
             Everything you need to know about WPSaaS. Download our media assets,
             company information, and latest news updates.
           </p>
@@ -174,10 +174,10 @@ const PressKit = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl font-bold text-[var(--ink)] mb-6">
                 About WPSaaS
               </h2>
-              <div className="space-y-4 text-gray-600">
+              <div className="space-y-4 text-[var(--ink-500)]">
                 <p>
                   WPSaaS is the leading WhatsApp marketing platform that enables
                   businesses to connect their own Meta WhatsApp Business API and
@@ -203,17 +203,17 @@ const PressKit = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">
+            <div className="bg-[var(--canvas)] p-8 rounded-2xl">
+              <h3 className="text-xl font-bold text-[var(--ink)] mb-6">
                 Company Facts
               </h3>
               <div className="grid grid-cols-2 gap-6">
                 {Object.entries(companyInfo).map(([key, value]) => (
                   <div key={key} className="text-center">
-                    <div className="text-2xl font-bold text-green-600 mb-1">
+                    <div className="text-2xl font-bold text-[var(--brand)] mb-1">
                       {value}
                     </div>
-                    <div className="text-gray-600 text-sm capitalize">
+                    <div className="text-[var(--ink-500)] text-sm capitalize">
                       {key.replace(/([A-Z])/g, " $1")}
                     </div>
                   </div>
@@ -225,13 +225,13 @@ const PressKit = () => {
       </section>
 
       {/* Key Statistics */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Key Statistics
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Numbers that showcase our impact
             </p>
           </div>
@@ -242,13 +242,13 @@ const PressKit = () => {
                 key={index}
                 className="bg-white p-6 rounded-xl shadow-lg text-center"
               >
-                <div className="bg-green-100 p-3 rounded-lg w-fit mx-auto mb-4">
-                  <stat.icon className="w-6 h-6 text-green-600" />
+                <div className="bg-[var(--brand-100)] p-3 rounded-lg w-fit mx-auto mb-4">
+                  <stat.icon className="w-6 h-6 text-[var(--brand)]" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="text-3xl font-bold text-[var(--ink)] mb-2">
                   {stat.value}
                 </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-[var(--ink-500)]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -259,22 +259,22 @@ const PressKit = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Media Assets
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Download high-quality assets for your stories
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {assets.map((category, index) => (
-              <div key={index} className="bg-gray-50 p-8 rounded-2xl">
+              <div key={index} className="bg-[var(--canvas)] p-8 rounded-2xl">
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-green-100 p-2 rounded-lg">
-                    <category.icon className="w-6 h-6 text-green-600" />
+                  <div className="bg-[var(--brand-100)] p-2 rounded-lg">
+                    <category.icon className="w-6 h-6 text-[var(--brand)]" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-xl font-bold text-[var(--ink)]">
                     {category.category}
                   </h3>
                 </div>
@@ -286,21 +286,21 @@ const PressKit = () => {
                       className="flex items-center justify-between bg-white p-4 rounded-lg"
                     >
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-[var(--ink)]">
                           {item.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-[var(--ink-500)]">
                           {item.format} • {item.size}
                         </div>
                       </div>
-                      <button className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition-colors">
+                      <button className="bg-[var(--brand)] text-white p-2 rounded-lg hover:bg-[var(--brand)] transition-colors">
                         <Download className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                 </div>
 
-                <button className="w-full mt-6 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors">
+                <button className="w-full mt-6 bg-[var(--mist)] text-[var(--ink-700)] py-3 rounded-lg hover:bg-gray-300 transition-colors">
                   Download All {category.category}
                 </button>
               </div>
@@ -310,13 +310,13 @@ const PressKit = () => {
       </section>
 
       {/* Executive Team */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Executive Team
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Meet the leaders behind WPSaaS
             </p>
           </div>
@@ -332,11 +332,11 @@ const PressKit = () => {
                   alt={exec.name}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
                 />
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                <h3 className="text-xl font-bold text-[var(--ink)] mb-1">
                   {exec.name}
                 </h3>
-                <p className="text-green-600 font-medium mb-4">{exec.role}</p>
-                <p className="text-gray-600 text-sm">{exec.bio}</p>
+                <p className="text-[var(--brand)] font-medium mb-4">{exec.role}</p>
+                <p className="text-[var(--ink-500)] text-sm">{exec.bio}</p>
               </div>
             ))}
           </div>
@@ -347,10 +347,10 @@ const PressKit = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               Recent News
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               Latest coverage and announcements
             </p>
           </div>
@@ -359,18 +359,18 @@ const PressKit = () => {
             {recentNews.map((news, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-6 rounded-xl hover:bg-gray-100 transition-colors"
+                className="bg-[var(--canvas)] p-6 rounded-xl hover:bg-[var(--canvas)] transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                   <div className="flex-1">
-                    <div className="text-sm text-gray-500 mb-2">
+                    <div className="text-sm text-[var(--ink-500)] mb-2">
                       {news.date} • {news.publication}
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
                       {news.title}
                     </h3>
                   </div>
-                  <button className="mt-4 md:mt-0 md:ml-6 text-green-600 hover:text-green-700 font-medium">
+                  <button className="mt-4 md:mt-0 md:ml-6 text-[var(--brand)] hover:text-[var(--brand)] font-medium">
                     Read Article →
                   </button>
                 </div>
@@ -381,7 +381,7 @@ const PressKit = () => {
       </section>
 
       {/* Contact Information */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Media Inquiries

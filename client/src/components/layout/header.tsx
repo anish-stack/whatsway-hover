@@ -73,121 +73,131 @@ export default function Header({
 
   const { isOpen, toggle } = useSidebar();
 
-  // UI unchanged --------------------------------------
   return (
-    <>
-      <header className="bg-white shadow-sm border-b border-gray-100  px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between flex-wrap">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggle}
-              className="lg:hidden   p-2 bg-white rounded-lg shadow-md hover:bg-gray-50"
+    <header className="sticky top-0 z-30 border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl sm:px-6 sm:py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            onClick={toggle}
+            aria-label="Open menu"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary lg:hidden"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+
+          <div className="min-w-0 border-l-[3px] border-[var(--flare)] pl-3">
+            <h1 className="truncate font-[family-name:var(--font-display)] text-base font-bold tracking-[-0.03em] text-foreground sm:text-lg lg:text-2xl">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="hidden truncate text-sm text-muted-foreground lg:block">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {action && (
+            <Button
+              onClick={action.onClick}
+              size="sm"
+              className="gap-2"
             >
-              <Menu className="w-4 h-4" />
-            </button>
-            <div>
-              <h1 className="  text-base sm:text-lg lg:text-2xl font-bold text-gray-900">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="text-sm text-gray-600 hidden lg:block  ">
-                  {subtitle}
-                </p>
-              )}
-            </div>
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{action.label}</span>
+            </Button>
+          )}
+
+          <div className="hidden sm:block">
+            <LanguageSelector />
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-4 ">
-            <div className=" w-fit  ">
-              {action && (
-                <Button
-                  onClick={action.onClick}
-                  className="bg-green-600 text-white px-3 py-1 flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>{action.label}</span>
-                </Button>
-              )}
-            </div>
-            <div className=" w-fit hidden sm:block ">
-              <LanguageSelector />
-            </div>
-
-            {user?.role != "superadmin" && (
-              <>
-                <button
-                  onClick={() => setLocation("/settings?tab=support")}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  title="Support"
-                >
-                  <Headphones className="w-5 h-5 text-gray-600" />
-                </button>
-                <button
-                  onClick={() => setLocation("/settings?tab=message_logs")}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  title="Message Logs"
-                >
-                  <ScrollText className="w-5 h-5 text-gray-600" />
-                </button>
-                <NotificationBell />
-              </>
-            )}
-
-            <div className="relative" ref={dropdownRef}>
+          {user?.role != "superadmin" && (
+            <>
               <button
-                className="w-10 h-10 rounded-full overflow-hidden border-2"
-                onClick={() => setDropdownOpen((x) => !x)}
+                onClick={() => setLocation("/settings?tab=support")}
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                title="Support"
               >
-                <img
-                  src={
-                    userPhotoUrl ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      username
-                    )}`
-                  }
-                  className="w-full h-full object-cover"
-                />
+                <Headphones className="h-[18px] w-[18px]" />
               </button>
+              <button
+                onClick={() => setLocation("/settings?tab=message_logs")}
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                title="Message Logs"
+              >
+                <ScrollText className="h-[18px] w-[18px]" />
+              </button>
+              <NotificationBell />
+            </>
+          )}
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
-                  <div className="px-4 py-2 border-b text-gray-800 font-semibold">
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className="h-9 w-9 overflow-hidden rounded-xl border border-border transition-colors hover:border-primary"
+              onClick={() => setDropdownOpen((x) => !x)}
+            >
+              <img
+                src={
+                  userPhotoUrl ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    username
+                  )}&background=08A957&color=fff`
+                }
+                className="h-full w-full object-cover"
+              />
+            </button>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-border bg-popover shadow-[0_18px_40px_-20px_rgba(22,18,46,0.5)]">
+                <div className="border-b border-border px-4 py-3">
+                  <p className="truncate text-sm font-semibold text-foreground">
                     {username}
-                  </div>
+                  </p>
+                  <p className="truncate text-xs capitalize text-muted-foreground">
+                    {user?.role}
+                  </p>
+                </div>
 
+                <div className="p-1.5">
                   <button
-                    className="flex items-center w-full px-4 py-2 hover:bg-gray-100"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary hover:text-primary"
                     onClick={() => {
                       setLocation("/settings");
                       setDropdownOpen(false);
                     }}
                   >
-                    <Settings className="w-4 h-4 mr-2" />  {t("Landing.header.Settings")}
+                    <Settings className="h-4 w-4 opacity-70" />
+                    {t("Landing.header.Settings")}
                   </button>
 
                   <button
-                    className="flex items-center w-full px-4 py-2 hover:bg-gray-100"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary hover:text-primary"
                     onClick={() => {
                       setLocation("/account");
                       setDropdownOpen(false);
                     }}
                   >
-                    <User className="w-4 h-4 mr-2" />  {t("Landing.header.Account")}
+                    <User className="h-4 w-4 opacity-70" />
+                    {t("Landing.header.Account")}
                   </button>
+
+                  <div className="my-1 h-px bg-border" />
 
                   <button
-                    className="flex items-center w-full px-4 py-2 hover:bg-gray-100"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-[var(--bad)] transition-colors hover:bg-[var(--bad-soft)]"
                     onClick={logout}
                   >
-                    <LogOut className="w-4 h-4 mr-2" />   {t("Landing.header.logout")}
+                    <LogOut className="h-4 w-4 opacity-70" />
+                    {t("Landing.header.logout")}
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
-      </header>
-
-    </>
+      </div>
+    </header>
   );
 }

@@ -47,7 +47,7 @@ export function PageNumbers({ currentPage, totalPages, onPageChange }: PageNumbe
             1
           </Button>
           {pages[0] > 2 && (
-            <span className="text-xs px-1 py-1 text-gray-400 self-center">…</span>
+            <span className="text-xs px-1 py-1 text-muted-foreground self-center">…</span>
           )}
         </>
       )}
@@ -69,7 +69,7 @@ export function PageNumbers({ currentPage, totalPages, onPageChange }: PageNumbe
       {pages[pages.length - 1] < totalPages && (
         <>
           {pages[pages.length - 1] < totalPages - 1 && (
-            <span className="text-xs px-1 py-1 text-gray-400 self-center">…</span>
+            <span className="text-xs px-1 py-1 text-muted-foreground self-center">…</span>
           )}
           <Button
             variant="outline"

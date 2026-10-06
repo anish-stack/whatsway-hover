@@ -327,7 +327,7 @@ function StartNode() {
 
 function ConditionsNode({ data }: { data: BuilderNodeData }) {
   return (
-    <Shell tint="bg-purple-500 border-purple-600">
+    <Shell tint="bg-[var(--brand)] border-[var(--brand)]">
       <div className="font-semibold flex items-center gap-2">
         <GitBranch className="w-4 h-4" /> Conditions
       </div>
@@ -461,7 +461,7 @@ function UserReplyNode({ data }: { data: BuilderNodeData }) {
               key={button.id}
               className="bg-green-500 text-xs px-2 py-1 rounded flex items-center gap-1"
             >
-              <div className="w-1 h-1 bg-white rounded-full" />
+              <div className="w-1 h-1 bg-background rounded-full" />
               {button.text}
             </div>
           ))}
@@ -506,7 +506,7 @@ function SendTemplateNode({ data }: { data: BuilderNodeData }) {
 
 function AssignUserNode({ data }: { data: BuilderNodeData }) {
   return (
-    <Shell tint="bg-indigo-600 border-indigo-700">
+    <Shell tint="bg-[var(--brand)] border-[var(--brand)]">
       <div className="font-semibold flex items-center gap-2">
         <Users className="w-4 h-4" /> Assign to
       </div>
@@ -563,7 +563,7 @@ function FileUploadButton({
       <button
         type="button"
         onClick={handleClick}
-        className={`flex items-center gap-2 px-3 py-2 border rounded-md hover:bg-gray-50 ${className}`}
+        className={`flex items-center gap-2 px-3 py-2 border rounded-md hover:bg-muted ${className}`}
       >
         {children}
       </button>
@@ -596,7 +596,7 @@ function ConfigPanel({
 }) {
   if (!selected || selected.data.kind === "start") {
     return (
-      <div className="h-full flex items-center justify-center text-gray-500">
+      <div className="h-full flex items-center justify-center text-muted-foreground">
         Select a node to configure
       </div>
     );
@@ -680,7 +680,7 @@ function ConfigPanel({
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs uppercase tracking-wide text-gray-500">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">
                 Configure
               </div>
               <div className="text-lg font-semibold">{d.label}</div>
@@ -756,7 +756,7 @@ function ConfigPanel({
                 ))}
 
                 {(!d.keywords || d.keywords.length === 0) && (
-                  <div className="text-sm text-gray-500 italic">
+                  <div className="text-sm text-muted-foreground italic">
                     No keywords added yet. Click "Add Keyword" to start.
                   </div>
                 )}
@@ -855,7 +855,7 @@ function ConfigPanel({
 
                 {d.audioPreview && (
                   <div className="relative border rounded-lg p-2 flex items-center gap-2">
-                    <FileAudio className="w-5 h-5 text-purple-500" />
+                    <FileAudio className="w-5 h-5 text-[var(--brand)]" />
                     <span className="text-sm">Audio file attached</span>
                     <button
                       onClick={removeFile("audio")}
@@ -868,7 +868,7 @@ function ConfigPanel({
 
                 {d.documentPreview && (
                   <div className="relative border rounded-lg p-2 flex items-center gap-2">
-                    <FileIcon className="w-5 h-5 text-gray-500" />
+                    <FileIcon className="w-5 h-5 text-muted-foreground" />
                     <span className="text-sm">Document attached</span>
                     <button
                       onClick={removeFile("document")}
@@ -1114,7 +1114,7 @@ function ConfigPanel({
                 ))}
 
                 {(!d.buttons || d.buttons.length === 0) && (
-                  <div className="text-sm text-gray-500 italic border rounded-lg p-4 text-center">
+                  <div className="text-sm text-muted-foreground italic border rounded-lg p-4 text-center">
                     No answer options added. Users will be able to type free
                     text responses.
                     <br />
@@ -1135,8 +1135,8 @@ function ConfigPanel({
               {/* Preview Section */}
               {(d.question || (d.buttons && d.buttons.length > 0)) && (
                 <div className="border-t pt-4">
-                  <Label className="text-xs text-gray-500">PREVIEW</Label>
-                  <div className="bg-gray-50 rounded-lg p-3 mt-2">
+                  <Label className="text-xs text-muted-foreground">PREVIEW</Label>
+                  <div className="bg-muted rounded-lg p-3 mt-2">
                     {d.question && (
                       <div className="font-medium text-sm mb-3">
                         {d.question}
@@ -1155,7 +1155,7 @@ function ConfigPanel({
                       </div>
                     )}
                     {(!d.buttons || d.buttons.length === 0) && (
-                      <div className="text-xs text-gray-500 italic">
+                      <div className="text-xs text-muted-foreground italic">
                         [User can type free text response]
                       </div>
                     )}
@@ -1497,31 +1497,31 @@ export default function AutomationFlowBuilderXYFlow({
   };
 
   return (
-    <div className="h-screen w-full grid grid-cols-12 bg-gray-50">
+    <div className="h-screen w-full grid grid-cols-12 bg-muted">
       {/* Left Sidebar */}
-      <div className="col-span-2 border-r bg-white flex flex-col">
+      <div className="col-span-2 border-r bg-background flex flex-col">
         <div className="p-4 border-b">
           <div className="font-semibold">Operations</div>
         </div>
         <ScrollArea className="p-2">
           <div className="space-y-4">
             <div>
-              <div className="text-[11px] uppercase text-gray-500 px-2 mb-1 flex items-center gap-2">
+              <div className="text-[11px] uppercase text-muted-foreground px-2 mb-1 flex items-center gap-2">
                 <GitBranch className="w-3 h-3" /> Conditions
               </div>
               <div className="space-y-1">
                 <button
                   onClick={() => addNode("conditions")}
-                  className="w-full text-left text-sm px-3 py-2 hover:bg-purple-50 rounded flex items-center gap-2"
+                  className="w-full text-left text-sm px-3 py-2 hover:bg-[var(--brand-100)] rounded flex items-center gap-2"
                 >
-                  <div className="w-2 h-2 bg-purple-500 rounded-full" />{" "}
+                  <div className="w-2 h-2 bg-[var(--brand)] rounded-full" />{" "}
                   Conditions
                 </button>
               </div>
             </div>
 
             <div>
-              <div className="text-[11px] uppercase text-gray-500 px-2 mb-1 flex items-center gap-2">
+              <div className="text-[11px] uppercase text-muted-foreground px-2 mb-1 flex items-center gap-2">
                 <MessageCircle className="w-3 h-3" /> Send a message
               </div>
               <div className="space-y-1">
@@ -1541,7 +1541,7 @@ export default function AutomationFlowBuilderXYFlow({
             </div>
 
             <div>
-              <div className="text-[11px] uppercase text-gray-500 px-2 mb-1 flex items-center gap-2">
+              <div className="text-[11px] uppercase text-muted-foreground px-2 mb-1 flex items-center gap-2">
                 <Reply className="w-3 h-3" /> Ask a question
               </div>
               <button
@@ -1553,22 +1553,22 @@ export default function AutomationFlowBuilderXYFlow({
             </div>
 
             <div>
-              <div className="text-[11px] uppercase text-gray-500 px-2 mb-1 flex items-center gap-2">
+              <div className="text-[11px] uppercase text-muted-foreground px-2 mb-1 flex items-center gap-2">
                 <Clock className="w-3 h-3" /> Operations
               </div>
               <div className="space-y-1">
                 <button
                   onClick={() => addNode("time_gap")}
-                  className="w-full text-left text-sm px-3 py-2 hover:bg-gray-100 rounded flex items-center gap-2"
+                  className="w-full text-left text-sm px-3 py-2 hover:bg-muted rounded flex items-center gap-2"
                 >
                   <div className="w-2 h-2 bg-gray-600 rounded-full" /> Time
                   Delay
                 </button>
                 <button
                   onClick={() => addNode("assign_user")}
-                  className="w-full text-left text-sm px-3 py-2 hover:bg-indigo-50 rounded flex items-center gap-2"
+                  className="w-full text-left text-sm px-3 py-2 hover:bg-[var(--brand-100)] rounded flex items-center gap-2"
                 >
-                  <div className="w-2 h-2 bg-indigo-600 rounded-full" /> Assign
+                  <div className="w-2 h-2 bg-[var(--brand)] rounded-full" /> Assign
                   to Member
                 </button>
               </div>
@@ -1580,13 +1580,13 @@ export default function AutomationFlowBuilderXYFlow({
       {/* Center Canvas */}
       <div className="col-span-8 flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="bg-background border-b px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       {/* Left Section */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
         {/* Back Button */}
         <button
           onClick={onClose}
-          className="text-gray-600 hover:text-gray-900 self-start sm:self-center"
+          className="text-muted-foreground hover:text-foreground self-start sm:self-center"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -1619,7 +1619,7 @@ export default function AutomationFlowBuilderXYFlow({
 
         {/* Trigger Selector */}
         <div className="flex flex-col gap-2 min-w-[180px] px-4">
-          <Label className="flex items-center gap-2 text-xs font-medium text-gray-700">
+          <Label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <UserPlus className="w-4 h-4" />
             Trigger Channel
           </Label>
@@ -1670,8 +1670,8 @@ export default function AutomationFlowBuilderXYFlow({
         </div>
 
         {/* Bottom bar add quick */}
-        <div className="bg-white border-t px-4 py-2 flex items-center gap-2">
-          <span className="text-sm text-gray-600">Add step:</span>
+        <div className="bg-background border-t px-4 py-2 flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Add step:</span>
           <Button
             size="sm"
             variant="secondary"
@@ -1718,7 +1718,7 @@ export default function AutomationFlowBuilderXYFlow({
       </div>
 
       {/* Right Config Panel */}
-      <div className="col-span-2 border-l bg-white">
+      <div className="col-span-2 border-l bg-background">
         <ConfigPanel
           selected={selectedNode}
           onChange={patchSelected}

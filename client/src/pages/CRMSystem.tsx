@@ -180,7 +180,7 @@ const CRMSystem = () => {
       case "customer":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -195,7 +195,7 @@ const CRMSystem = () => {
       case "closed":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -212,20 +212,20 @@ const CRMSystem = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 gap-3">
             <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="bg-purple-100 p-2 rounded-lg flex-shrink-0">
-                <Database className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+              <div className="bg-[var(--brand-100)] p-2 rounded-lg flex-shrink-0">
+                <Database className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground truncate">
                   CRM System
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Manage contacts, deals, and relationships
                 </p>
               </div>
@@ -271,14 +271,14 @@ const CRMSystem = () => {
           ].map((stat, index) => (
             <div
               key={index}
-              className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200"
+              className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border"
             >
               <div className="flex items-center justify-between">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
                     {stat.title}
                   </p>
-                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mt-1 sm:mt-2">
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mt-1 sm:mt-2">
                     {stat.value}
                   </p>
                 </div>
@@ -295,8 +295,8 @@ const CRMSystem = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
-          <div className="border-b border-gray-200 overflow-x-auto">
+        <div className="bg-background rounded-xl shadow-sm border border-border mb-6">
+          <div className="border-b border-border overflow-x-auto">
             <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
               {[
                 { id: "contacts", name: "Contacts", icon: Users },
@@ -309,7 +309,7 @@ const CRMSystem = () => {
                   className={`flex items-center space-x-2 py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-green-500 text-green-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      : "border-transparent text-muted-foreground hover:text-muted-foreground hover:border-border"
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />
@@ -325,19 +325,19 @@ const CRMSystem = () => {
               {/* Search and Filter */}
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
                   <input
                     type="text"
                     placeholder="Search contacts..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="all">All Status</option>
                   <option value="lead">Lead</option>
@@ -351,7 +351,7 @@ const CRMSystem = () => {
                 {filteredContacts.map((contact) => (
                   <div
                     key={contact.id}
-                    className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all"
+                    className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all"
                   >
                     <div className="flex items-start gap-3">
                       {/* Checkbox + Avatar */}
@@ -360,7 +360,7 @@ const CRMSystem = () => {
                           type="checkbox"
                           checked={selectedContacts.includes(contact.id)}
                           onChange={() => handleSelectContact(contact.id)}
-                          className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          className="w-4 h-4 text-green-600 border-border rounded focus:ring-green-500"
                         />
                         <img
                           src={contact.avatar}
@@ -374,23 +374,23 @@ const CRMSystem = () => {
                         {/* Name & Company */}
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-sm sm:text-base text-gray-900 truncate">
+                            <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">
                               {contact.name}
                             </h3>
-                            <p className="text-gray-600 text-xs sm:text-sm truncate">
+                            <p className="text-muted-foreground text-xs sm:text-sm truncate">
                               {contact.company}
                             </p>
                           </div>
 
                           {/* Desktop Actions */}
                           <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                            <button className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors">
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                            <button className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors">
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                            <button className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors">
                               <MoreVertical className="w-4 h-4" />
                             </button>
                           </div>
@@ -399,7 +399,7 @@ const CRMSystem = () => {
                           <div className="relative lg:hidden flex-shrink-0">
                             <button
                               onClick={() => toggleDropdown(contact.id)}
-                              className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                              className="p-1.5 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                               aria-label="More actions"
                             >
                               <MoreVertical className="w-5 h-5" />
@@ -411,16 +411,16 @@ const CRMSystem = () => {
                                   className="fixed inset-0 z-10"
                                   onClick={() => setOpenDropdown(null)}
                                 />
-                                <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-                                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <div className="absolute right-0 top-full mt-1 w-44 bg-background rounded-lg shadow-lg border border-border py-1 z-20">
+                                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                                     <Eye className="w-4 h-4" />
                                     View
                                   </button>
-                                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                                     <Edit className="w-4 h-4" />
                                     Edit
                                   </button>
-                                  <div className="border-t border-gray-200 my-1"></div>
+                                  <div className="border-t border-border my-1"></div>
                                   <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
                                     <Trash2 className="w-4 h-4" />
                                     Delete
@@ -434,14 +434,14 @@ const CRMSystem = () => {
                         {/* Contact Info - Stacked on mobile */}
                         <div className="space-y-1.5 sm:space-y-2 mb-2 sm:mb-3">
                           <div className="flex items-center gap-2">
-                            <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-xs sm:text-sm text-gray-600 truncate">
+                            <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                            <span className="text-xs sm:text-sm text-muted-foreground truncate">
                               {contact.email}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-xs sm:text-sm text-gray-600">
+                            <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                            <span className="text-xs sm:text-sm text-muted-foreground">
                               {contact.phone}
                             </span>
                           </div>
@@ -456,10 +456,10 @@ const CRMSystem = () => {
                           >
                             {contact.status}
                           </span>
-                          <span className="text-xs sm:text-sm font-semibold text-gray-900">
+                          <span className="text-xs sm:text-sm font-semibold text-foreground">
                             ${contact.value.toLocaleString()}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-muted-foreground">
                             • {contact.lastContact}
                           </span>
                         </div>
@@ -478,24 +478,24 @@ const CRMSystem = () => {
                 {deals.map((deal) => (
                   <div
                     key={deal.id}
-                    className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all"
+                    className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-1">
+                        <h3 className="font-semibold text-sm sm:text-base text-foreground mb-1">
                           {deal.title}
                         </h3>
-                        <p className="text-gray-600 text-xs sm:text-sm">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           {deal.company} • {deal.contact}
                         </p>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 sm:gap-6">
                         <div className="flex-1 sm:flex-initial">
-                          <div className="text-base sm:text-lg font-bold text-gray-900">
+                          <div className="text-base sm:text-lg font-bold text-foreground">
                             ${deal.value.toLocaleString()}
                           </div>
-                          <div className="text-xs sm:text-sm text-gray-600">
+                          <div className="text-xs sm:text-sm text-muted-foreground">
                             {deal.probability}% probability
                           </div>
                         </div>
@@ -508,16 +508,16 @@ const CRMSystem = () => {
                           >
                             {deal.stage}
                           </span>
-                          <div className="text-xs sm:text-sm text-gray-600 mt-1">
+                          <div className="text-xs sm:text-sm text-muted-foreground mt-1">
                             {deal.closeDate}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-1">
-                          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                          <button className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors">
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                          <button className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors">
                             <MoreVertical className="w-4 h-4" />
                           </button>
                         </div>
@@ -536,17 +536,17 @@ const CRMSystem = () => {
                 {activities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="border border-gray-200 rounded-lg p-3 sm:p-4"
+                    className="border border-border rounded-lg p-3 sm:p-4"
                   >
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">
                         <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm sm:text-base text-gray-900 mb-1">
+                        <p className="text-sm sm:text-base text-foreground mb-1">
                           {activity.description}
                         </p>
-                        <p className="text-xs sm:text-sm text-gray-600">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           {activity.contact} • {activity.timestamp}
                         </p>
                       </div>

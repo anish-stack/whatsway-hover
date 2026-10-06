@@ -66,7 +66,7 @@ const BotFlowBuilder = () => {
       type: 'delay',
       name: 'Delay',
       icon: Clock,
-      color: 'bg-purple-500',
+      color: 'bg-[var(--brand)]',
       description: 'Wait before next action'
     },
     {
@@ -161,26 +161,26 @@ const BotFlowBuilder = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <div className="bg-purple-100 p-2 rounded-lg">
-                <Bot className="w-6 h-6 text-purple-600" />
+              <div className="bg-[var(--brand-100)] p-2 rounded-lg">
+                <Bot className="w-6 h-6 text-[var(--brand)]" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Bot Flow Builder</h1>
-                <p className="text-gray-600">Design intelligent chat automation</p>
+                <h1 className="text-2xl font-bold text-foreground">Bot Flow Builder</h1>
+                <p className="text-muted-foreground">Design intelligent chat automation</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+              <button className="bg-muted text-muted-foreground px-4 py-2 rounded-lg hover:bg-border transition-colors flex items-center">
                 <Upload className="w-4 h-4 mr-2" />
                 Import
               </button>
-              <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+              <button className="bg-muted text-muted-foreground px-4 py-2 rounded-lg hover:bg-border transition-colors flex items-center">
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </button>
@@ -199,14 +199,14 @@ const BotFlowBuilder = () => {
 
       <div className="flex h-screen">
         {/* Left Sidebar - Node Types */}
-        <div className="w-80 bg-white border-r border-gray-200 p-6">
+        <div className="w-80 bg-background border-r border-border p-6">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Flow Components</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Flow Components</h3>
             <div className="space-y-3">
               {nodeTypes.map((node, index) => (
                 <div
                   key={index}
-                  className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 cursor-pointer transition-all hover:shadow-md"
+                  className="p-4 border border-border rounded-lg hover:border-border cursor-pointer transition-all hover:shadow-md"
                   draggable
                 >
                   <div className="flex items-center space-x-3">
@@ -214,8 +214,8 @@ const BotFlowBuilder = () => {
                       <node.icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">{node.name}</h4>
-                      <p className="text-sm text-gray-600">{node.description}</p>
+                      <h4 className="font-medium text-foreground">{node.name}</h4>
+                      <p className="text-sm text-muted-foreground">{node.description}</p>
                     </div>
                   </div>
                 </div>
@@ -224,19 +224,19 @@ const BotFlowBuilder = () => {
           </div>
 
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Templates</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Templates</h3>
             <div className="space-y-3">
               {templates.map(template => (
-                <div key={template.id} className="p-3 border border-gray-200 rounded-lg hover:border-gray-300 cursor-pointer">
+                <div key={template.id} className="p-3 border border-border rounded-lg hover:border-border cursor-pointer">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium text-gray-900 text-sm">{template.name}</h4>
+                    <h4 className="font-medium text-foreground text-sm">{template.name}</h4>
                     <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                       {template.category}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600 mb-2">{template.description}</p>
+                  <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">{template.nodes} nodes</span>
+                    <span className="text-xs text-muted-foreground">{template.nodes} nodes</span>
                     <button className="text-blue-600 hover:text-blue-700 text-xs font-medium">
                       Use Template
                     </button>
@@ -250,15 +250,15 @@ const BotFlowBuilder = () => {
         {/* Main Canvas */}
         <div className="flex-1 relative overflow-hidden">
           {/* Canvas Header */}
-          <div className="bg-white border-b border-gray-200 p-4">
+          <div className="bg-background border-b border-border p-4">
             <div className="flex items-center justify-between">
               <input
                 type="text"
                 value={flowName}
                 onChange={(e) => setFlowName(e.target.value)}
-                className="text-lg font-semibold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2"
+                className="text-lg font-semibold text-foreground bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2"
               />
-              <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 <span>6 nodes</span>
                 <span>•</span>
                 <span>Last saved: 2 min ago</span>
@@ -272,14 +272,14 @@ const BotFlowBuilder = () => {
           </div>
 
           {/* Canvas */}
-          <div className="h-full bg-gray-50 relative overflow-auto">
+          <div className="h-full bg-muted relative overflow-auto">
             <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
               {/* Flow Nodes */}
               {flowNodes.map(node => (
                 <div
                   key={node.id}
-                  className={`absolute bg-white border-2 rounded-lg p-4 cursor-pointer shadow-md hover:shadow-lg transition-all ${
-                    selectedNode?.id === node.id ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+                  className={`absolute bg-background border-2 rounded-lg p-4 cursor-pointer shadow-md hover:shadow-lg transition-all ${
+                    selectedNode?.id === node.id ? 'border-blue-500 ring-2 ring-blue-200' : 'border-border'
                   }`}
                   style={{ left: node.position.x, top: node.position.y, width: '200px' }}
                   onClick={() => setSelectedNode(node)}
@@ -294,18 +294,18 @@ const BotFlowBuilder = () => {
                         </div>
                       );
                     })()}
-                    <h4 className="font-medium text-gray-900 text-sm">{node.title}</h4>
+                    <h4 className="font-medium text-foreground text-sm">{node.title}</h4>
                   </div>
-                  <p className="text-xs text-gray-600 mb-3">{node.content}</p>
+                  <p className="text-xs text-muted-foreground mb-3">{node.content}</p>
                   <div className="flex justify-between items-center">
                     <div className="flex space-x-1">
-                      <button className="p-1 text-gray-400 hover:text-gray-600">
+                      <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                         <Edit className="w-3 h-3" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-gray-600">
+                      <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                         <Copy className="w-3 h-3" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-600">
+                      <button className="p-1 text-muted-foreground hover:text-red-600">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
@@ -353,56 +353,56 @@ const BotFlowBuilder = () => {
         </div>
 
         {/* Right Sidebar - Properties */}
-        <div className="w-80 bg-white border-l border-gray-200 p-6">
+        <div className="w-80 bg-background border-l border-border p-6">
           {selectedNode ? (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Node Properties</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Node Properties</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Node Title
                   </label>
                   <input
                     type="text"
                     value={selectedNode.title}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 {selectedNode.type === 'message' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
                       Message Content
                     </label>
                     <textarea
                       value={selectedNode.content}
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
 
                 {selectedNode.type === 'trigger' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
                       Trigger Keywords
                     </label>
                     <input
                       type="text"
                       value={selectedNode.content}
                       placeholder="hello, hi, start"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
 
                 {selectedNode.type === 'delay' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
                       Delay Duration
                     </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                       <option>5 seconds</option>
                       <option>30 seconds</option>
                       <option>1 minute</option>
@@ -413,14 +413,14 @@ const BotFlowBuilder = () => {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Node Actions
                   </label>
                   <div className="space-y-2">
                     <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
                       Update Node
                     </button>
-                    <button className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                    <button className="w-full bg-muted text-muted-foreground py-2 rounded-lg hover:bg-border transition-colors">
                       Duplicate Node
                     </button>
                     <button className="w-full bg-red-100 text-red-700 py-2 rounded-lg hover:bg-red-200 transition-colors">
@@ -432,29 +432,29 @@ const BotFlowBuilder = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <Workflow className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-600 mb-2">No Node Selected</h3>
-              <p className="text-gray-500">Click on a node to edit its properties</p>
+              <Workflow className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-muted-foreground mb-2">No Node Selected</h3>
+              <p className="text-muted-foreground">Click on a node to edit its properties</p>
             </div>
           )}
 
           <div className="border-t pt-6 mt-6">
-            <h4 className="font-semibold text-gray-900 mb-3">Flow Statistics</h4>
+            <h4 className="font-semibold text-foreground mb-3">Flow Statistics</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total Nodes</span>
+                <span className="text-muted-foreground">Total Nodes</span>
                 <span className="font-medium">6</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Triggers</span>
+                <span className="text-muted-foreground">Triggers</span>
                 <span className="font-medium">1</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Messages</span>
+                <span className="text-muted-foreground">Messages</span>
                 <span className="font-medium">3</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Conditions</span>
+                <span className="text-muted-foreground">Conditions</span>
                 <span className="font-medium">1</span>
               </div>
             </div>

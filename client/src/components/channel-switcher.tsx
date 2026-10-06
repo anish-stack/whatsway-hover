@@ -244,7 +244,7 @@ export function ChannelSwitcher() {
   };
 
   if (isLoading || isActiveChannelLoading) {
-    return <div className="w-full h-9 bg-gray-100 animate-pulse rounded" />;
+    return <div className="w-full h-9 bg-muted animate-pulse rounded" />;
   }
 
   return (
@@ -265,7 +265,7 @@ export function ChannelSwitcher() {
                     {channels.find((c) => c.id === selectedChannelId)?.name}
                   </span>
                   {checkingHealthForId === selectedChannelId && (
-                    <Loader2 className="w-3 h-3 animate-spin text-gray-400" />
+                    <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
                   )}
                 </div>
               ) : (
@@ -321,7 +321,7 @@ export function ChannelSwitcher() {
           >
             Previous
           </Button>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             Page {page} of {totalPages}
           </span>
           <Button
@@ -371,8 +371,8 @@ export function ChannelSwitcher() {
                 </div>
                 <DialogTitle className="text-red-700">Channel Connection Issue</DialogTitle>
               </div>
-              <DialogDescription className="text-gray-600">
-                There's a problem with the connection for channel <strong className="text-gray-900">{healthWarningChannel}</strong>.
+              <DialogDescription className="text-muted-foreground">
+                There's a problem with the connection for channel <strong className="text-foreground">{healthWarningChannel}</strong>.
               </DialogDescription>
             </DialogHeader>
 

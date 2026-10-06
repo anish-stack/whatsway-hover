@@ -103,7 +103,7 @@ const WABAConnection = () => {
       case "disconnected":
         return "text-red-600 bg-red-100";
       default:
-        return "text-gray-600 bg-gray-100";
+        return "text-muted-foreground bg-muted";
     }
   };
 
@@ -118,7 +118,7 @@ const WABAConnection = () => {
       case "error":
         return <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />;
       default:
-        return <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />;
+        return <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />;
     }
   };
 
@@ -149,18 +149,18 @@ const WABAConnection = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-background shadow-sm border-b">
         <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Title + subtitle */}
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 flex items-center">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground flex items-center">
                 <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-green-600 mr-2 flex-shrink-0" />
                 <span className="truncate">WABA Connection Management</span>
               </h1>
-              <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mt-1">
                 Manage your WhatsApp Business API connections
               </p>
             </div>
@@ -180,21 +180,21 @@ const WABAConnection = () => {
       <div className="p-4 sm:p-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-4 sm:p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Total Connections
                 </p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900">3</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">3</p>
               </div>
               <Smartphone className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 flex-shrink-0" />
             </div>
           </div>
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-4 sm:p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Active Connections
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-green-600">
@@ -204,23 +204,23 @@ const WABAConnection = () => {
               <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 flex-shrink-0" />
             </div>
           </div>
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-4 sm:p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Total Messages
                 </p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   2,373
                 </p>
               </div>
-              <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 flex-shrink-0" />
+              <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--brand)] flex-shrink-0" />
             </div>
           </div>
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+          <div className="bg-background p-4 sm:p-6 rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Health Score
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-yellow-600">
@@ -233,23 +233,23 @@ const WABAConnection = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm mb-4 sm:mb-6">
+        <div className="bg-background p-3 sm:p-4 rounded-lg shadow-sm mb-4 sm:mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 flex-1">
               <div className="relative flex-1 sm:max-w-md">
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search connections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="all">All Status</option>
                 <option value="connected">Connected</option>
@@ -258,11 +258,11 @@ const WABAConnection = () => {
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+              <button className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center">
                 <Download className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Export</span>
               </button>
-              <button className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+              <button className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center">
                 <Upload className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Import</span>
               </button>
@@ -275,7 +275,7 @@ const WABAConnection = () => {
           {filteredConnections.map((connection) => (
             <div
               key={connection.id}
-              className="bg-white rounded-lg shadow-sm border"
+              className="bg-background rounded-lg shadow-sm border"
             >
               <div className="p-4 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
@@ -284,10 +284,10 @@ const WABAConnection = () => {
                       <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">
                         {connection.businessName}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600 truncate">
+                      <p className="text-sm sm:text-base text-muted-foreground truncate">
                         {connection.phoneNumber}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
@@ -301,21 +301,21 @@ const WABAConnection = () => {
                         </span>
                         <div className="flex items-center gap-1">
                           {getHealthIcon(connection.health)}
-                          <span className="text-xs sm:text-sm text-gray-600">
+                          <span className="text-xs sm:text-sm text-muted-foreground">
                             Health
                           </span>
                         </div>
                         <div className="hidden sm:flex items-center gap-1">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">
+                          <Clock className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
                             Last sync: {connection.lastSync}
                           </span>
                         </div>
                       </div>
                       {/* Mobile Last Sync */}
                       <div className="sm:hidden flex items-center gap-1 mt-2">
-                        <Clock className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-600">
+                        <Clock className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">
                           {connection.lastSync}
                         </span>
                       </div>
@@ -325,21 +325,21 @@ const WABAConnection = () => {
                   {/* Desktop Action Buttons */}
                   <div className="hidden md:flex items-center gap-1 flex-shrink-0">
                     <button
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                       title="Refresh"
                       aria-label="Refresh"
                     >
                       <RefreshCw className="w-5 h-5" />
                     </button>
                     <button
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                       title="Edit"
                       aria-label="Edit"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
                     <button
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                       title="Settings"
                       aria-label="Settings"
                     >
@@ -358,7 +358,7 @@ const WABAConnection = () => {
                   <div className="relative md:hidden flex-shrink-0">
                     <button
                       onClick={() => toggleDropdown(connection.id)}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                       aria-label="More actions"
                       aria-expanded={openDropdown === connection.id}
                     >
@@ -374,29 +374,29 @@ const WABAConnection = () => {
                         />
 
                         {/* Dropdown Menu */}
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-background rounded-lg shadow-lg border border-border py-1 z-20">
                           <button
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                             onClick={() => setOpenDropdown(null)}
                           >
                             <RefreshCw className="w-4 h-4" />
                             Refresh
                           </button>
                           <button
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                             onClick={() => setOpenDropdown(null)}
                           >
                             <Edit className="w-4 h-4" />
                             Edit
                           </button>
                           <button
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted transition-colors"
                             onClick={() => setOpenDropdown(null)}
                           >
                             <Settings className="w-4 h-4" />
                             Settings
                           </button>
-                          <div className="border-t border-gray-200 my-1"></div>
+                          <div className="border-t border-border my-1"></div>
                           <button
                             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                             onClick={() => setOpenDropdown(null)}
@@ -412,52 +412,52 @@ const WABAConnection = () => {
 
                 {/* Connection Details */}
                 <div className="mt-4 sm:mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                           Messages Sent
                         </p>
-                        <p className="text-lg sm:text-xl font-bold text-gray-900">
+                        <p className="text-lg sm:text-xl font-bold text-foreground">
                           {connection.messagesCount.toLocaleString()}
                         </p>
                       </div>
                       <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0" />
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                           Templates
                         </p>
-                        <p className="text-lg sm:text-xl font-bold text-gray-900">
+                        <p className="text-lg sm:text-xl font-bold text-foreground">
                           {connection.templatesCount}
                         </p>
                       </div>
-                      <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 flex-shrink-0" />
+                      <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)] flex-shrink-0" />
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                           Created
                         </p>
-                        <p className="text-xs sm:text-sm text-gray-900">
+                        <p className="text-xs sm:text-sm text-foreground">
                           {connection.createdAt}
                         </p>
                       </div>
                       <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                           Last Activity
                         </p>
-                        <p className="text-xs sm:text-sm text-gray-900">
+                        <p className="text-xs sm:text-sm text-foreground">
                           {connection.lastActivity}
                         </p>
                       </div>
@@ -468,15 +468,15 @@ const WABAConnection = () => {
 
                 {/* Token and Webhook Information */}
                 <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-xs sm:text-sm font-medium text-gray-700">
+                      <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">
                         Access Token
                       </h4>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleTokenVisibility(connection.id)}
-                          className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-1 text-muted-foreground hover:text-muted-foreground transition-colors"
                           aria-label="Toggle token visibility"
                         >
                           {showTokens[connection.id] ? (
@@ -487,14 +487,14 @@ const WABAConnection = () => {
                         </button>
                         <button
                           onClick={() => copyToClipboard(connection.token)}
-                          className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-1 text-muted-foreground hover:text-muted-foreground transition-colors"
                           aria-label="Copy token"
                         >
                           <Copy className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
-                    <p className="text-xs sm:text-sm font-mono text-gray-600 bg-white p-2 rounded border break-all">
+                    <p className="text-xs sm:text-sm font-mono text-muted-foreground bg-background p-2 rounded border break-all">
                       {showTokens[connection.id]
                         ? connection.token
                         : "••••••••••••••••••••"}
@@ -502,39 +502,39 @@ const WABAConnection = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="bg-muted p-3 sm:p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-xs sm:text-sm font-medium text-gray-700">
+                        <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">
                           Webhook URL
                         </h4>
                         <button
                           onClick={() => copyToClipboard(connection.webhookUrl)}
-                          className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-1 text-muted-foreground hover:text-muted-foreground transition-colors"
                           aria-label="Copy webhook URL"
                         >
                           <Copy className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-xs sm:text-sm font-mono text-gray-600 bg-white p-2 rounded border break-all">
+                      <p className="text-xs sm:text-sm font-mono text-muted-foreground bg-background p-2 rounded border break-all">
                         {connection.webhookUrl}
                       </p>
                     </div>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="bg-muted p-3 sm:p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-xs sm:text-sm font-medium text-gray-700">
+                        <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">
                           Verify Token
                         </h4>
                         <button
                           onClick={() =>
                             copyToClipboard(connection.verifyToken)
                           }
-                          className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-1 text-muted-foreground hover:text-muted-foreground transition-colors"
                           aria-label="Copy verify token"
                         >
                           <Copy className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-xs sm:text-sm font-mono text-gray-600 bg-white p-2 rounded border break-all">
+                      <p className="text-xs sm:text-sm font-mono text-muted-foreground bg-background p-2 rounded border break-all">
                         {connection.verifyToken}
                       </p>
                     </div>
@@ -546,12 +546,12 @@ const WABAConnection = () => {
         </div>
 
         {filteredConnections.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
-            <Smartphone className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-background rounded-lg shadow-sm p-8 sm:p-12 text-center">
+            <Smartphone className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
               No connections found
             </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-6">
               {searchTerm || filterStatus !== "all"
                 ? "Try adjusting your search or filter criteria."
                 : "Get started by adding your first WhatsApp Business API connection."}

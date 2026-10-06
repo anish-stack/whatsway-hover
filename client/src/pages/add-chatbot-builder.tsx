@@ -201,7 +201,7 @@ const AddChatbotBuilder = () => {
 
   const ChatPreview = () => (
     <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="w-full max-w-md bg-background rounded-2xl shadow-2xl overflow-hidden">
         {/* Chat Header */}
         <div
           className="flex items-center justify-between p-4"
@@ -215,7 +215,7 @@ const AddChatbotBuilder = () => {
               <img
                 src={config.logoUrl}
                 alt="Logo"
-                className="w-10 h-10 rounded-full bg-white p-1"
+                className="w-10 h-10 rounded-full bg-background p-1"
               />
             ) : (
               <div
@@ -231,7 +231,7 @@ const AddChatbotBuilder = () => {
         </div>
 
         {/* Chat Messages */}
-        <div className="h-96 overflow-y-auto p-4 space-y-4 bg-gray-50">
+        <div className="h-96 overflow-y-auto p-4 space-y-4 bg-muted">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -254,7 +254,7 @@ const AddChatbotBuilder = () => {
                   className={`rounded-2xl px-4 py-3 ${
                     msg.type === "user"
                       ? "rounded-tr-none text-white"
-                      : "rounded-tl-none bg-white border border-gray-200 text-gray-800"
+                      : "rounded-tl-none bg-background border border-border text-foreground"
                   }`}
                   style={
                     msg.type === "user"
@@ -264,7 +264,7 @@ const AddChatbotBuilder = () => {
                 >
                   {msg.text}
                 </div>
-                <span className="text-xs text-gray-400 mt-1 px-2">
+                <span className="text-xs text-muted-foreground mt-1 px-2">
                   {msg.time}
                 </span>
               </div>
@@ -273,8 +273,8 @@ const AddChatbotBuilder = () => {
         </div>
 
         {/* Chat Input */}
-        <div className="p-4 bg-white border-t border-gray-200">
-          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+        <div className="p-4 bg-background border-t border-border">
+          <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2">
             <input
               type="text"
               placeholder="Message..."
@@ -283,14 +283,14 @@ const AddChatbotBuilder = () => {
               onKeyPress={(e) => e.key === "Enter" && sendMessage()}
               className="flex-1 bg-transparent outline-none text-sm"
             />
-            <button className="text-gray-400">📎</button>
-            <button className="text-gray-400">😊</button>
+            <button className="text-muted-foreground">📎</button>
+            <button className="text-muted-foreground">😊</button>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-4 pb-3 bg-white text-center">
-          <span className="text-xs text-gray-400">
+        <div className="px-4 pb-3 bg-background text-center">
+          <span className="text-xs text-muted-foreground">
             Powered by <span className="text-blue-600">{appName}</span>
           </span>
         </div>
@@ -311,11 +311,11 @@ const AddChatbotBuilder = () => {
       <Header title={t("chatbot.title")} subtitle={t("chatbot.subtitle")} />
 
       <main className="p-6 space-y-6">
-        <div className="flex h-screen bg-white">
+        <div className="flex h-screen bg-background">
           {/* Left Panel */}
-          <div className="w-96 border-r border-gray-200 overflow-y-auto">
+          <div className="w-96 border-r border-border overflow-y-auto">
             {/* Steps Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               {[
                 { num: 1, label: "Configure", icon: "⚙️" },
                 { num: 2, label: "Customize", icon: "🎨" },
@@ -327,12 +327,12 @@ const AddChatbotBuilder = () => {
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                       step >= s.num
                         ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-400"
+                        : "bg-border text-muted-foreground"
                     }`}
                   >
                     {step > s.num ? <Check size={16} /> : s.num}
                   </div>
-                  <span className="text-xs mt-1 text-gray-600">{s.label}</span>
+                  <span className="text-xs mt-1 text-muted-foreground">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -341,17 +341,17 @@ const AddChatbotBuilder = () => {
             {step === 1 && (
               <div className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
                     Configure
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Create and configure a chatbot that interacts with your
                     users, ensuring it delivers accurate information.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Chatbot Title
                   </label>
                   <input
@@ -360,12 +360,12 @@ const AddChatbotBuilder = () => {
                     onChange={(e) =>
                       setConfig({ ...config, title: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Bubble Message
                   </label>
                   <input
@@ -374,12 +374,12 @@ const AddChatbotBuilder = () => {
                     onChange={(e) =>
                       setConfig({ ...config, bubbleMessage: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Welcome Message
                   </label>
                   <input
@@ -388,12 +388,12 @@ const AddChatbotBuilder = () => {
                     onChange={(e) =>
                       setConfig({ ...config, welcomeMessage: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Chatbot Instructions
                   </label>
                   <textarea
@@ -403,12 +403,12 @@ const AddChatbotBuilder = () => {
                     }
                     placeholder="Explain chatbot role"
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Language
                   </label>
                   <select
@@ -416,7 +416,7 @@ const AddChatbotBuilder = () => {
                     onChange={(e) =>
                       setConfig({ ...config, language: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="en">English</option>
                     <option value="es">Spanish</option>
@@ -426,7 +426,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Interaction Type
                   </label>
                   <select
@@ -434,7 +434,7 @@ const AddChatbotBuilder = () => {
                     onChange={(e) =>
                       setConfig({ ...config, interactionType: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="ai-only">Only AI</option>
                     <option value="human-only">Only Human</option>
@@ -443,7 +443,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Connect Message
                   </label>
                   <textarea
@@ -452,13 +452,13 @@ const AddChatbotBuilder = () => {
                       setConfig({ ...config, connectMessage: e.target.value })
                     }
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <button
                   onClick={() => setStep(2)}
-                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-[var(--brand-700)] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                 >
                   Next
                 </button>
@@ -469,21 +469,21 @@ const AddChatbotBuilder = () => {
             {step === 2 && (
               <div className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
                     Customize
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Personalize your chatbot's appearance to match your brand.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-muted-foreground mb-3">
                     Upload Logo
                   </label>
                   <div className="flex items-center gap-4">
                     <label className="cursor-pointer">
-                      <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-500 transition-colors">
+                      <div className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex items-center justify-center hover:border-blue-500 transition-colors">
                         {config.logoUrl ? (
                           <img
                             src={config.logoUrl}
@@ -491,7 +491,7 @@ const AddChatbotBuilder = () => {
                             className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
-                          <Upload className="text-gray-400" size={24} />
+                          <Upload className="text-muted-foreground" size={24} />
                         )}
                       </div>
                       <input
@@ -513,7 +513,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-muted-foreground mb-3">
                     Avatar
                   </label>
                   <div className="grid grid-cols-6 gap-3">
@@ -535,7 +535,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-muted-foreground mb-3">
                     Primary Color
                   </label>
                   <div className="grid grid-cols-6 gap-3">
@@ -563,13 +563,13 @@ const AddChatbotBuilder = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep(1)}
-                    className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                    className="flex-1 py-3 border border-border text-muted-foreground rounded-lg font-semibold hover:bg-muted transition-all"
                   >
                     Back
                   </button>
                   <button
                     onClick={() => setStep(3)}
-                    className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                    className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-[var(--brand-700)] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                   >
                     Next
                   </button>
@@ -581,10 +581,10 @@ const AddChatbotBuilder = () => {
             {step === 3 && (
               <div className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
                     Chatbot Training
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     This step is optional but highly recommended to personalize
                     your chatbot experience.
                   </p>
@@ -594,45 +594,45 @@ const AddChatbotBuilder = () => {
                   {["Website", "PDF", "Text", "Q&A"].map((tab) => (
                     <button
                       key={tab}
-                      className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-muted hover:bg-border transition-colors"
                     >
                       {tab}
                     </button>
                   ))}
                 </div>
 
-                <div className="bg-purple-50 rounded-lg p-4">
+                <div className="bg-[var(--brand-100)] rounded-lg p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-8 h-8 bg-[var(--brand)] rounded-full flex items-center justify-center text-white font-bold">
                       1
                     </div>
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-foreground">
                       Add Text
                     </span>
                   </div>
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Title
                       </label>
                       <input
                         type="text"
                         id="training-title"
                         placeholder="Type your title here"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Text
                       </label>
                       <textarea
                         id="training-text"
                         placeholder="Type your text here"
                         rows={6}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -652,11 +652,11 @@ const AddChatbotBuilder = () => {
 
                 {trainingData.length > 0 && (
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-foreground">
                       Added Training Data
                     </h3>
                     {trainingData.map((data) => (
-                      <div key={data.id} className="p-3 bg-gray-50 rounded-lg">
+                      <div key={data.id} className="p-3 bg-muted rounded-lg">
                         <p className="font-medium text-sm">{data.title}</p>
                       </div>
                     ))}
@@ -666,13 +666,13 @@ const AddChatbotBuilder = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep(2)}
-                    className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                    className="flex-1 py-3 border border-border text-muted-foreground rounded-lg font-semibold hover:bg-muted transition-all"
                   >
                     Back
                   </button>
                   <button
                     onClick={() => setStep(4)}
-                    className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                    className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-[var(--brand-700)] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                   >
                     Next
                   </button>
@@ -684,10 +684,10 @@ const AddChatbotBuilder = () => {
             {step === 4 && (
               <div className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
                     Test and Embed
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Your external AI chatbot has been successfully created! You
                     can now integrate it into your website and start engaging
                     with your audience.
@@ -695,7 +695,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Embed Code
                   </label>
                   <div className="relative">
@@ -712,7 +712,7 @@ const AddChatbotBuilder = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Width
                   </label>
                   <input
@@ -722,11 +722,11 @@ const AddChatbotBuilder = () => {
                     defaultValue="420"
                     className="w-full"
                   />
-                  <span className="text-sm text-gray-500">420px</span>
+                  <span className="text-sm text-muted-foreground">420px</span>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Height
                   </label>
                   <input
@@ -736,7 +736,7 @@ const AddChatbotBuilder = () => {
                     defaultValue="745"
                     className="w-full"
                   />
-                  <span className="text-sm text-gray-500">745px</span>
+                  <span className="text-sm text-muted-foreground">745px</span>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -752,7 +752,7 @@ const AddChatbotBuilder = () => {
 
                 <button
                   onClick={handleSubmitBot}
-                  className="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold mt-4"
+                  className="w-full py-3 bg-[var(--brand)] text-white rounded-lg font-semibold mt-4"
                 >
                   Submit & Deploy Chatbot
                 </button>

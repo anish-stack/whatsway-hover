@@ -40,9 +40,9 @@ import { useAuth } from "@/contexts/auth-context";
 const SimpleDailyChart = ({ data }: { data: any[] }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-500">
+      <div className="h-64 flex items-center justify-center text-muted-foreground">
         <div className="text-center">
-          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
           <p>No chart data available</p>
         </div>
       </div>
@@ -51,33 +51,33 @@ const SimpleDailyChart = ({ data }: { data: any[] }) => {
 
   return (
     <div className="space-y-4">
-      <div className="text-sm text-gray-600 mb-4">
+      <div className="text-sm text-muted-foreground mb-4">
         Daily Performance Overview
       </div>
       {data.map((item, index) => (
-        <div key={index} className="border rounded-lg p-4 bg-white">
+        <div key={index} className="border rounded-lg p-4 bg-background">
           <div className="flex justify-between items-center mb-3">
-            <span className="font-medium text-gray-900">{item.date}</span>
-            <div className="text-sm text-gray-500">
+            <span className="font-medium text-foreground">{item.date}</span>
+            <div className="text-sm text-muted-foreground">
               Total: {(item.sent || 0) + (item.delivered || 0) + (item.read || 0) + (item.failed || 0)}
             </div>
           </div>
           <div className="grid grid-cols-4 gap-4 text-sm">
             <div className="text-center p-2 bg-blue-50 rounded">
               <div className="text-blue-600 font-bold text-lg">{item.sent || 0}</div>
-              <div className="text-gray-600 text-xs">Sent</div>
+              <div className="text-muted-foreground text-xs">Sent</div>
             </div>
             <div className="text-center p-2 bg-green-50 rounded">
               <div className="text-green-600 font-bold text-lg">{item.delivered || 0}</div>
-              <div className="text-gray-600 text-xs">Delivered</div>
+              <div className="text-muted-foreground text-xs">Delivered</div>
             </div>
             <div className="text-center p-2 bg-orange-50 rounded">
               <div className="text-orange-600 font-bold text-lg">{item.read || 0}</div>
-              <div className="text-gray-600 text-xs">Read</div>
+              <div className="text-muted-foreground text-xs">Read</div>
             </div>
             <div className="text-center p-2 bg-red-50 rounded">
               <div className="text-red-600 font-bold text-lg">{item.failed || 0}</div>
-              <div className="text-gray-600 text-xs">Failed</div>
+              <div className="text-muted-foreground text-xs">Failed</div>
             </div>
           </div>
         </div>
@@ -102,9 +102,9 @@ const SafeMessageChart = ({ data }: { data: any[] }) => {
     // Validate data before passing to chart
     if (!data || !Array.isArray(data) || data.length === 0) {
       return (
-        <div className="h-64 flex items-center justify-center text-gray-500">
+        <div className="h-64 flex items-center justify-center text-muted-foreground">
           <div className="text-center">
-            <AlertCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+            <AlertCircle className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
             <p>No chart data available</p>
           </div>
         </div>
@@ -330,10 +330,10 @@ export default function CampaignAnalytics() {
           <Card>
             <CardContent className="text-center py-12">
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Error Loading Campaign
               </h3>
-              <p className="text-gray-500 mb-4">{error}</p>
+              <p className="text-muted-foreground mb-4">{error}</p>
               <div className="flex justify-center space-x-2">
                 <Link href="/analytics">
                   <Button variant="outline">
@@ -363,11 +363,11 @@ export default function CampaignAnalytics() {
         <div className="p-6">
           <Card>
             <CardContent className="text-center py-12">
-              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Campaign Not Found
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-muted-foreground mb-4">
                 The requested campaign could not be found or you don't have access to it.
               </p>
               <Link href="/analytics">
@@ -443,11 +443,11 @@ export default function CampaignAnalytics() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <p className="text-sm text-gray-600">Type</p>
+                <p className="text-sm text-muted-foreground">Type</p>
                 <p className="font-medium">{campaign.type || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Status</p>
+                <p className="text-sm text-muted-foreground">Status</p>
                 <span
                   className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
                   ${
@@ -457,30 +457,30 @@ export default function CampaignAnalytics() {
                       ? "bg-blue-100 text-blue-800"
                       : campaign.status === "failed"
                       ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-800"
+                      : "bg-muted text-foreground"
                   }`}
                 >
                   {campaign.status || 'Unknown'}
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">API Type</p>
+                <p className="text-sm text-muted-foreground">API Type</p>
                 <p className="font-medium">{campaign.apiType || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Campaign Type</p>
+                <p className="text-sm text-muted-foreground">Campaign Type</p>
                 <p className="font-medium capitalize">{campaign.campaignType || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Template</p>
+                <p className="text-sm text-muted-foreground">Template</p>
                 <p className="font-medium">{campaign.templateName || 'No template'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Language</p>
+                <p className="text-sm text-muted-foreground">Language</p>
                 <p className="font-medium">{campaign.templateLanguage || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Created</p>
+                <p className="text-sm text-muted-foreground">Created</p>
                 <p className="font-medium">
                   {campaign.createdAt 
                     ? new Date(campaign.createdAt).toLocaleString()
@@ -489,7 +489,7 @@ export default function CampaignAnalytics() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Scheduled</p>
+                <p className="text-sm text-muted-foreground">Scheduled</p>
                 <p className="font-medium">
                   {campaign.scheduledAt
                     ? new Date(campaign.scheduledAt).toLocaleString()
@@ -497,7 +497,7 @@ export default function CampaignAnalytics() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-sm text-muted-foreground">Completed</p>
                 <p className="font-medium">
                   {campaign.completedAt
                     ? new Date(campaign.completedAt).toLocaleString()
@@ -509,7 +509,7 @@ export default function CampaignAnalytics() {
             {/* Description */}
             {campaign.description && (
               <div className="mt-4 pt-4 border-t">
-                <p className="text-sm text-gray-600">Description</p>
+                <p className="text-sm text-muted-foreground">Description</p>
                 <p className="font-medium">{campaign.description}</p>
               </div>
             )}
@@ -522,8 +522,8 @@ export default function CampaignAnalytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Recipients</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-muted-foreground">Recipients</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {safeNumber(campaign.recipientCount).toLocaleString()}
                   </p>
                 </div>
@@ -538,8 +538,8 @@ export default function CampaignAnalytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Messages Sent</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-muted-foreground">Messages Sent</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {sentCount.toLocaleString()}
                   </p>
                 </div>
@@ -554,11 +554,11 @@ export default function CampaignAnalytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Delivery Rate</p>
+                  <p className="text-sm text-muted-foreground">Delivery Rate</p>
                   <p className="text-2xl font-bold text-green-600">
                     {deliveryRate}%
                   </p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="w-full bg-border rounded-full h-2 mt-2">
                     <div
                       className="bg-green-500 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(deliveryRate, 100)}%` }}
@@ -576,11 +576,11 @@ export default function CampaignAnalytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Read Rate</p>
+                  <p className="text-sm text-muted-foreground">Read Rate</p>
                   <p className="text-2xl font-bold text-orange-600">
                     {readRate.toFixed(1)}%
                   </p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="w-full bg-border rounded-full h-2 mt-2">
                     <div
                       className="bg-orange-500 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(readRate, 100)}%` }}
@@ -598,11 +598,11 @@ export default function CampaignAnalytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Failure Rate</p>
+                  <p className="text-sm text-muted-foreground">Failure Rate</p>
                   <p className="text-2xl font-bold text-red-600">
                     {failureRate.toFixed(1)}%
                   </p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="w-full bg-border rounded-full h-2 mt-2">
                     <div
                       className="bg-red-500 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(failureRate, 100)}%` }}
@@ -627,11 +627,11 @@ export default function CampaignAnalytics() {
               {chartData.length > 0 ? (
                 <SafeMessageChart data={chartData} />
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-500">
+                <div className="h-64 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                     <p>No daily performance data available</p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       This campaign may not have detailed daily tracking data.
                     </p>
                   </div>
@@ -658,7 +658,7 @@ export default function CampaignAnalytics() {
                     return (
                       <div
                         key={`${stat.status}-${index}`}
-                        className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
+                        className="flex items-center justify-between p-2 rounded-lg bg-muted"
                       >
                         <div className="flex items-center space-x-2">
                           <div
@@ -672,7 +672,7 @@ export default function CampaignAnalytics() {
                                 : stat.status === "pending"
                                 ? "bg-yellow-500"
                                 : stat.status === "sent"
-                                ? "bg-purple-500"
+                                ? "bg-[var(--brand)]"
                                 : "bg-gray-500"
                             }`}
                           />
@@ -684,7 +684,7 @@ export default function CampaignAnalytics() {
                           <span className="text-sm font-bold">
                             {count}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-muted-foreground">
                             ({percentage.toFixed(1)}%)
                           </span>
                         </div>
@@ -693,9 +693,9 @@ export default function CampaignAnalytics() {
                   })}
                 </div>
               ) : (
-                <div className="h-32 flex items-center justify-center text-gray-500">
+                <div className="h-32 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <AlertCircle className="w-6 h-6 mx-auto mb-1 text-gray-400" />
+                    <AlertCircle className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
                     <p className="text-sm">No status data available</p>
                   </div>
                 </div>
@@ -713,31 +713,31 @@ export default function CampaignAnalytics() {
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-muted">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Error Code
                       </th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Error Message
                       </th>
-                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Occurrences
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-background divide-y divide-border">
                     {errorAnalysis.map((error: any, index: number) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <tr key={index} className="hover:bg-muted">
+                        <td className="px-6 py-4 text-sm text-foreground">
+                          <code className="bg-muted px-2 py-1 rounded text-xs">
                             {error.errorCode || "N/A"}
                           </code>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
+                        <td className="px-6 py-4 text-sm text-foreground">
                           {error.errorMessage || "No error message provided"}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                        <td className="px-6 py-4 text-sm text-foreground font-medium">
                           {safeNumber(error.count)}
                         </td>
                       </tr>
@@ -759,13 +759,13 @@ export default function CampaignAnalytics() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {campaign.contactGroups?.length > 0 && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-2">Contact Groups</p>
+                    <p className="text-sm text-muted-foreground mb-2">Contact Groups</p>
                     <p className="font-medium">{campaign.contactGroups.length} group(s) selected</p>
                   </div>
                 )}
                 {campaign.csvData?.length > 0 && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-2">CSV Data</p>
+                    <p className="text-sm text-muted-foreground mb-2">CSV Data</p>
                     <p className="font-medium">{campaign.csvData.length} records imported</p>
                   </div>
                 )}

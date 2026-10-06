@@ -162,7 +162,7 @@ export function WebhookSettings() {
               <div>
                 <Label className="text-sm font-semibold">{t("settings.webhook_setting.yourWebhookUrl")}</Label>
                 <div className="flex items-center gap-2 mt-1">
-                  <code className="text-xs bg-white dark:bg-gray-900 px-3 py-2 rounded border flex-1 break-all">
+                  <code className="text-xs bg-background dark:bg-gray-900 px-3 py-2 rounded border flex-1 break-all">
                     {webhookUrl}
                   </code>
                   <Button variant="outline" size="sm" onClick={() => copyToClipboard(webhookUrl)}>
@@ -176,7 +176,7 @@ export function WebhookSettings() {
                 <div className="flex items-center gap-2 mt-1">
                   {activeConfig ? (
                     <>
-                      <code className="text-xs bg-white dark:bg-gray-900 px-3 py-2 rounded border flex-1 break-all">
+                      <code className="text-xs bg-background dark:bg-gray-900 px-3 py-2 rounded border flex-1 break-all">
                         {activeConfig.verifyToken}
                       </code>
                       <Button variant="outline" size="sm" onClick={() => copyToClipboard(activeConfig.verifyToken)}>
@@ -184,7 +184,7 @@ export function WebhookSettings() {
                       </Button>
                     </>
                   ) : (
-                    <span className="text-sm text-gray-500">{t("settings.webhook_setting.noActiveConfig")}</span>
+                    <span className="text-sm text-muted-foreground">{t("settings.webhook_setting.noActiveConfig")}</span>
                   )}
                 </div>
               </div>
@@ -202,7 +202,7 @@ export function WebhookSettings() {
                     );
                   })()}
                   {activeConfig.lastPingAt && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {t("settings.webhook_setting.lastEventLabel")} {new Date(activeConfig.lastPingAt).toLocaleString()}
                     </span>
                   )}
@@ -255,8 +255,8 @@ export function WebhookSettings() {
               <Loading />
             ) : webhookConfigs.length === 0 ? (
               <div className="text-center py-12">
-                <Webhook className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500 mb-4 text-sm sm:text-base">
+                <Webhook className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-4 text-sm sm:text-base">
                   {t("settings.webhook_setting.noWebhooks")}
                 </p>
                 <Button
@@ -276,7 +276,7 @@ export function WebhookSettings() {
                   return (
                     <div
                       key={webhook.id}
-                      className="border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                      className="border border-border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
@@ -294,7 +294,7 @@ export function WebhookSettings() {
                             <Label className="text-sm shrink-0">
                               {t("settings.webhook_setting.webhookUrl")}
                             </Label>
-                            <code className="text-xs bg-gray-100 px-2 py-1 rounded break-all flex-1">
+                            <code className="text-xs bg-muted px-2 py-1 rounded break-all flex-1">
                               {webhook.webhookUrl}
                             </code>
                             <Button
@@ -321,7 +321,7 @@ export function WebhookSettings() {
                           </div>
 
                           {webhook.lastPingAt && (
-                            <div className="text-sm text-gray-500 truncate">
+                            <div className="text-sm text-muted-foreground truncate">
                               {t("settings.webhook_setting.lastEvent")}{" "}
                               {new Date(webhook.lastPingAt).toLocaleString()}
                             </div>

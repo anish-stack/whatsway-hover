@@ -1,50 +1,179 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter+Tight:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Design system — palette supplied by the project owner.
+   primary #08A957  dark #071A2D  footer #003F35  text #465568
+   accents: purple #8247E5  orange #FF8A34  pink #F34C8B  yellow #FFB800
+
+   Everything else in this file reads these variables, so changing a
+   value here repaints the whole app.
+   ============================================================ */
+
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(240, 10%, 3.9%);
-  --muted: hsl(240, 4.8%, 95.9%);
-  --muted-foreground: hsl(240, 3.7%, 15.9%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(240, 10%, 3.9%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(240, 10%, 3.9%);
-  --border: hsl(240, 5.9%, 90%);
-  --input: hsl(240, 5.9%, 90%);
-  --primary: hsl(221, 83%, 53%);
-  --primary-foreground: hsl(210, 40%, 98%);
-  --secondary: hsl(210, 40%, 96%);
-  --secondary-foreground: hsl(222, 84%, 4.9%);
-  --accent: hsl(210, 40%, 96%);
-  --accent-foreground: hsl(222, 84%, 4.9%);
-  --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(221, 83%, 53%);
-  --radius: 0.5rem;
+  /* ---- user palette (source of truth) ---- */
+  --primary: #08a957;
+  --primary-hover: #078c49;
+  --primary-light: #d9f7e7;
+  --primary-soft: #eafbf2;
 
-  /* WhatsApp Business Colors */
-  --whatsapp: hsl(145, 63%, 49%);
-  --whatsapp-dark: hsl(145, 63%, 42%);
-  --primary-blue: hsl(221, 83%, 53%);
-  --accent-orange: hsl(43, 96%, 56%);
-  --accent-purple: hsl(262, 83%, 58%);
-  --success: hsl(142, 76%, 36%);
-  --warning: hsl(43, 96%, 56%);
-  --error: hsl(0, 84%, 60%);
+  --dark: #071a2d;
+  --footer: #003f35;
 
-  /* Professional grays */
-  --neutral-50: hsl(210, 40%, 98%);
-  --neutral-100: hsl(210, 40%, 96%);
-  --neutral-200: hsl(214, 32%, 91%);
-  --neutral-300: hsl(213, 27%, 84%);
-  --neutral-400: hsl(215, 20%, 65%);
-  --neutral-500: hsl(215, 16%, 47%);
-  --neutral-600: hsl(215, 19%, 35%);
-  --neutral-700: hsl(215, 25%, 27%);
-  --neutral-800: hsl(217, 33%, 17%);
-  --neutral-900: hsl(222, 84%, 4.9%);
+  --text: #465568;
+  --text-muted: #6b7788;
+
+  --background: #ffffff;
+  --background-soft: #f7faf9;
+
+  --border: #e2e9e6;
+
+  --purple: #8247e5;
+  --orange: #ff8a34;
+  --pink: #f34c8b;
+  --yellow: #ffb800;
+
+  /* ---- shadcn surface, mapped onto palette above ---- */
+  --primary-rgb: 8, 169, 87;
+  --foreground: #465568;
+  --muted: #f0f5f3;
+  --muted-foreground: #6b7788;
+  --popover: #ffffff;
+  --popover-foreground: #465568;
+  --card: #ffffff;
+  --card-foreground: #465568;
+  --input: #e2e9e6;
+  --primary-foreground: #ffffff;
+  --secondary: #eafbf2;
+  --secondary-foreground: #056b37;
+  --accent: #fff1e4;
+  --accent-foreground: #c25f13;
+  --destructive: #f34c8b;
+  --destructive-foreground: #ffffff;
+  --ring: #08a957;
+  --radius: 0.75rem;
+  --button-primary: #08a957;
+
+  /* ---- design-system aliases (same names, new values) ---- */
+  --brand: #08a957;
+  --brand-600: #078c49;
+  --brand-700: #05713a;
+  --brand-deep: #003f35;
+  --brand-100: #d9f7e7;
+  --brand-50: #eafbf2;
+
+  --flare: #ff8a34;
+  --flare-600: #e8711a;
+  --flare-100: #fff1e4;
+
+  --ink: #071a2d;
+  --ink-700: #2c3d52;
+  --ink-500: #465568;
+  --ink-300: #6b7788;
+
+  --canvas: #f7faf9;
+  --mist: #e2e9e6;
+  --paper: #ffffff;
+
+  --ok: #08a957;
+  --ok-soft: #d9f7e7;
+  --warn: #ffb800;
+  --warn-soft: #fff6de;
+  --bad: #f34c8b;
+  --bad-soft: #fdeaf1;
+  --info: #8247e5;
+  --info-soft: #f0e9fd;
+
+  /* ---- legacy aliases kept so old markup never breaks ---- */
+  --whatsapp: #08a957;
+  --whatsapp-dark: #078c49;
+  --primary-blue: #08a957;
+  --accent-orange: #ff8a34;
+  --accent-purple: #8247e5;
+  --success: #08a957;
+  --warning: #ffb800;
+  --error: #f34c8b;
+
+  --neutral-50: #f7faf9;
+  --neutral-100: #f0f5f3;
+  --neutral-200: #e2e9e6;
+  --neutral-300: #c6d2cd;
+  --neutral-400: #6b7788;
+  --neutral-500: #5b6779;
+  --neutral-600: #465568;
+  --neutral-700: #2c3d52;
+  --neutral-800: #17293f;
+  --neutral-900: #071a2d;
+
+  /* ---- type ---- */
+  --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ---- elevation ---- */
+  --shelf-sm: 0 1px 0 0 rgba(7, 26, 45, 0.04), 0 2px 8px -4px rgba(7, 26, 45, 0.12);
+  --shelf-md: 0 10px 26px -14px rgba(7, 26, 45, 0.26);
+  --shelf-brand: 0 14px 30px -16px rgba(8, 169, 87, 0.55);
+  --shelf-flare: 0 14px 30px -16px rgba(255, 138, 52, 0.55);
+}
+
+.dark {
+  --primary: #12c268;
+  --primary-hover: #0ea95a;
+  --primary-light: #10321f;
+  --primary-soft: #0c2618;
+
+  --dark: #04101c;
+  --footer: #002d26;
+
+  --text: #ccd6e0;
+  --text-muted: #8e9bab;
+
+  --background: #071a2d;
+  --background-soft: #0b2238;
+
+  --border: #1d3348;
+
+  --primary-rgb: 18, 194, 104;
+  --foreground: #ccd6e0;
+  --muted: #10273e;
+  --muted-foreground: #8e9bab;
+  --popover: #0b2238;
+  --popover-foreground: #ccd6e0;
+  --card: #0b2238;
+  --card-foreground: #ccd6e0;
+  --input: #1d3348;
+  --primary-foreground: #04101c;
+  --secondary: #10273e;
+  --secondary-foreground: #e4ebf1;
+  --accent: #3a2413;
+  --accent-foreground: #ffb27a;
+  --destructive: #f4699c;
+  --destructive-foreground: #ffffff;
+  --ring: #12c268;
+  --button-primary: #12c268;
+
+  --brand: #12c268;
+  --brand-600: #0ea95a;
+  --brand-700: #0c8f4c;
+  --brand-100: #10321f;
+  --brand-50: #0c2618;
+  --flare: #ff9c55;
+  --flare-600: #ef8437;
+  --flare-100: #3a2413;
+  --ink: #e4ebf1;
+  --ink-700: #ccd6e0;
+  --ink-500: #8e9bab;
+  --ink-300: #627183;
+  --canvas: #04101c;
+  --mist: #1d3348;
+  --paper: #0b2238;
+  --ok-soft: #10321f;
+  --warn-soft: #33290a;
+  --bad-soft: #3a1526;
+  --info-soft: #221640;
 }
 
 @layer base {
@@ -52,113 +181,433 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
-}
 
-html {
-  scroll-behavior: smooth;
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    letter-spacing: -0.006em;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.028em;
+    line-height: 1.06;
+  }
+
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: #fff;
+  }
+
+  img {
+    max-width: 100%;
+  }
 }
 
 @layer components {
+  /* ---------- shells & rhythm ---------- */
+  .shell {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  .band {
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  }
+
+  .band-tight {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .canvas-bg {
+    background: var(--canvas);
+  }
+
+  .ink-bg {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  /* ---------- type scale ---------- */
+  .display-xl {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.038em;
+  }
+
+  .display-lg {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.4vw, 3.15rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.032em;
+  }
+
+  .display-md {
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.026em;
+  }
+
+  .lede {
+    font-size: clamp(1rem, 1.35vw, 1.15rem);
+    line-height: 1.62;
+    color: var(--ink-500);
+    max-width: 62ch;
+  }
+
+  .measure {
+    max-width: 68ch;
+  }
+
+  /* ---------- surfaces ---------- */
+  .surface {
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    border-radius: 16px;
+  }
+
+  .surface-soft {
+    background: color-mix(in srgb, var(--brand) 4%, var(--paper));
+    border: 1px solid color-mix(in srgb, var(--brand) 14%, transparent);
+    border-radius: 16px;
+  }
+
+  .shelf {
+    box-shadow: var(--shelf-sm);
+  }
+
+  .shelf-lift {
+    box-shadow: var(--shelf-md);
+  }
+
+  /* one signature device: a solid offset plate behind key panels */
+  .plate {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    border-radius: 18px;
+    box-shadow: 10px 12px 0 -2px color-mix(in srgb, var(--brand) 16%, transparent);
+  }
+
+  .plate-flare {
+    box-shadow: 10px 12px 0 -2px color-mix(in srgb, var(--flare) 28%, transparent);
+  }
+
+  /* left rule = "this one is current", never decoration */
+  .rule-brand {
+    border-left: 3px solid var(--brand);
+  }
+
+  .rule-flare {
+    border-left: 3px solid var(--flare);
+  }
+
+  /* ---------- controls ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.4rem;
+    transition: transform 0.16s ease, background-color 0.16s ease,
+      box-shadow 0.16s ease, color 0.16s ease;
+    white-space: nowrap;
+  }
+
+  .btn-brand {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: var(--shelf-brand);
+  }
+
+  .btn-brand:hover {
+    background: var(--brand-600);
+    transform: translateY(-1px);
+  }
+
+  .btn-flare {
+    background: var(--flare);
+    color: #26100a;
+    box-shadow: var(--shelf-flare);
+  }
+
+  .btn-flare:hover {
+    background: var(--flare-600);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .btn-ink {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .btn-ink:hover {
+    background: var(--ink-700);
+  }
+
+  .btn-quiet {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--mist);
+  }
+
+  .btn-quiet:hover {
+    border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+    color: var(--brand);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+
+  .chip-flare {
+    background: var(--flare-100);
+    color: var(--flare-600);
+  }
+
+  .chip-ok {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+
+  /* ---------- data / dashboard ---------- */
+  .stat-tile {
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    border-radius: 16px;
+    padding: 1.15rem 1.25rem;
+  }
+
+  .stat-figure {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.15rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--ink-500);
+  }
+
+  .hair {
+    height: 1px;
+    background: var(--mist);
+    border: 0;
+  }
+
+  /* ---------- chat thread (hero signature) ---------- */
+  .thread {
+    background: color-mix(in srgb, var(--brand) 5%, var(--paper));
+    border-radius: 14px;
+    padding: 1rem;
+  }
+
+  .bubble-in,
+  .bubble-out {
+    max-width: 82%;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    border-radius: 14px;
+  }
+
+  .bubble-in {
+    background: var(--paper);
+    border: 1px solid var(--mist);
+    border-bottom-left-radius: 4px;
+    color: var(--ink);
+  }
+
+  .bubble-out {
+    background: var(--brand);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    margin-left: auto;
+  }
+
+  /* ---------- legacy helper classes (kept working) ---------- */
   .dots-bg {
     background-image: radial-gradient(
       circle,
-      hsl(215, 20%, 85%) 1px,
+      color-mix(in srgb, var(--brand) 22%, transparent) 1px,
       transparent 1px
     );
-    background-size: 20px 20px;
+    background-size: 22px 22px;
+  }
+
+  .grid-bg {
+    background-image: linear-gradient(var(--mist) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mist) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 0%, #000 35%, transparent 75%);
   }
 
   .hover-lift {
-    @apply transition-all duration-200 ease-in-out;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
   }
 
   .hover-lift:hover {
-    @apply -translate-y-0.5 shadow-md;
-  }
-
-  .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .pulse-gentle {
-    animation: pulseGentle 2s infinite;
-  }
-
-  @keyframes pulseGentle {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
+    transform: translateY(-2px);
+    box-shadow: var(--shelf-md);
   }
 
   .whatsapp-green {
-    background-color: var(--whatsapp);
+    background-color: var(--ok);
   }
 
   .primary-blue {
-    background-color: var(--primary-blue);
+    background-color: var(--brand);
   }
 
   .accent-orange {
-    background-color: var(--accent-orange);
+    background-color: var(--flare);
   }
 
   .accent-purple {
-    background-color: var(--accent-purple);
+    background-color: var(--brand-700);
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out both;
+  }
+
+  .pulse-gentle {
+    animation: pulseGentle 2.4s ease-in-out infinite;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
+/* ---------- motion: one orchestrated entrance, nothing scattered ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--muted);
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--neutral-400);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--neutral-500);
-}
-
-/* Loading animation */
-.loading-spinner {
-  border: 2px solid var(--muted);
-  border-top: 2px solid var(--primary);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
+@keyframes pulseGentle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
+  to {
     transform: rotate(360deg);
   }
+}
+
+.rise {
+  animation: riseIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--brand) 32%, transparent);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--brand) 55%, transparent);
+}
+
+.loading-spinner {
+  border: 2px solid var(--mist);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 0.8s linear infinite;
 }

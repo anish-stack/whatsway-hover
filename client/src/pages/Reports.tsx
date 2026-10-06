@@ -236,20 +236,20 @@ const Reports = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 sm:py-4 gap-3">
             <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="bg-purple-100 p-2 rounded-lg flex-shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+              <div className="bg-[var(--brand-100)] p-2 rounded-lg flex-shrink-0">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">
                   Reports
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Analyze your WhatsApp marketing performance
                 </p>
               </div>
@@ -258,7 +258,7 @@ const Reports = () => {
               <select
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
               >
                 <option value="24h">Last 24 Hours</option>
                 <option value="7d">Last 7 Days</option>
@@ -266,7 +266,7 @@ const Reports = () => {
                 <option value="90d">Last 90 Days</option>
                 <option value="custom">Custom Range</option>
               </select>
-              <button className="flex-1 sm:flex-none bg-purple-500 text-white px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+              <button className="flex-1 sm:flex-none bg-[var(--brand)] text-white px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg hover:bg-[var(--brand)] transition-colors flex items-center justify-center">
                 <Download className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Export Data</span>
               </button>
@@ -277,8 +277,8 @@ const Reports = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 sm:mb-8">
-          <div className="border-b border-gray-200 overflow-x-auto">
+        <div className="bg-background rounded-xl shadow-sm border border-border mb-6 sm:mb-8">
+          <div className="border-b border-border overflow-x-auto">
             <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
               {[
                 { id: "overview", name: "Overview", icon: BarChart3 },
@@ -291,8 +291,8 @@ const Reports = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                     activeTab === tab.id
-                      ? "border-purple-500 text-purple-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      ? "border-[var(--brand)] text-[var(--brand)]"
+                      : "border-transparent text-muted-foreground hover:text-muted-foreground hover:border-border"
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />
@@ -309,14 +309,14 @@ const Reports = () => {
                 (metric, index) => (
                   <div
                     key={index}
-                    className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200"
+                    className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
                           {metric.name}
                         </p>
-                        <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1 sm:mt-2">
+                        <p className="text-xl sm:text-2xl font-bold text-foreground mt-1 sm:mt-2">
                           {metric.value}
                         </p>
                         <div className="flex items-center mt-1 sm:mt-2">
@@ -324,7 +324,7 @@ const Reports = () => {
                           <span className="text-xs sm:text-sm font-medium text-green-600">
                             {metric.change}
                           </span>
-                          <span className="text-xs sm:text-sm text-gray-500 ml-1 hidden sm:inline">
+                          <span className="text-xs sm:text-sm text-muted-foreground ml-1 hidden sm:inline">
                             vs last period
                           </span>
                         </div>
@@ -347,12 +347,12 @@ const Reports = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
           {/* Message Volume Chart */}
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
                 Message Volume
               </h3>
-              <select className="px-3 py-1.5 sm:py-1 border border-gray-300 rounded text-xs sm:text-sm">
+              <select className="px-3 py-1.5 sm:py-1 border border-border rounded text-xs sm:text-sm">
                 <option>Daily</option>
                 <option>Weekly</option>
                 <option>Monthly</option>
@@ -362,10 +362,10 @@ const Reports = () => {
               {[40, 65, 50, 80, 120, 90, 70].map((height, index) => (
                 <div key={index} className="flex-1 flex flex-col items-center">
                   <div
-                    className="w-full bg-purple-100 rounded-t"
+                    className="w-full bg-[var(--brand-100)] rounded-t"
                     style={{ height: `${height}px` }}
                   ></div>
-                  <span className="text-[10px] sm:text-xs text-gray-500 mt-1 sm:mt-2">
+                  <span className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2">
                     {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index]}
                   </span>
                 </div>
@@ -374,12 +374,12 @@ const Reports = () => {
           </div>
 
           {/* Engagement Metrics */}
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
                 Engagement Metrics
               </h3>
-              <select className="px-3 py-1.5 sm:py-1 border border-gray-300 rounded text-xs sm:text-sm">
+              <select className="px-3 py-1.5 sm:py-1 border border-border rounded text-xs sm:text-sm">
                 <option>All Campaigns</option>
                 <option>Welcome Series</option>
                 <option>Promotional</option>
@@ -394,14 +394,14 @@ const Reports = () => {
               ].map((metric, index) => (
                 <div key={index}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs sm:text-sm font-medium text-gray-700">
+                    <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                       {metric.name}
                     </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900">
+                    <span className="text-xs sm:text-sm font-medium text-foreground">
                       {metric.value}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                  <div className="w-full bg-border rounded-full h-1.5 sm:h-2">
                     <div
                       className={`bg-${metric.color}-500 h-1.5 sm:h-2 rounded-full`}
                       style={{ width: `${metric.value}%` }}
@@ -414,36 +414,36 @@ const Reports = () => {
         </div>
 
         {/* Saved Reports */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6 sm:mb-8">
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+        <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden mb-6 sm:mb-8">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
               Saved Reports
             </h3>
-            <button className="w-full sm:w-auto bg-purple-500 text-white px-4 py-2 text-sm sm:text-base rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+            <button className="w-full sm:w-auto bg-[var(--brand)] text-white px-4 py-2 text-sm sm:text-base rounded-lg hover:bg-[var(--brand)] transition-colors flex items-center justify-center">
               <Plus className="w-4 h-4 mr-2" />
               Create Report
             </button>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-border">
             {reports.map((report) => (
               <div key={report.id} className="p-4 sm:p-6">
                 <div className="flex flex-col gap-3">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-                      <h4 className="font-semibold text-sm sm:text-base text-gray-900">
+                      <h4 className="font-semibold text-sm sm:text-base text-foreground">
                         {report.name}
                       </h4>
                       <span
                         className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           report.type === "scheduled"
                             ? "bg-blue-100 text-blue-800"
-                            : "bg-purple-100 text-purple-800"
+                            : "bg-[var(--brand-100)] text-[var(--brand)]"
                         }`}
                       >
                         {report.type}
                       </span>
                     </div>
-                    <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">
+                    <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4">
                       {report.description}
                     </p>
 
@@ -451,7 +451,7 @@ const Reports = () => {
                       {report.metrics.map((metric, index) => (
                         <span
                           key={index}
-                          className="bg-gray-100 text-gray-800 px-2 py-1 rounded-md text-xs"
+                          className="bg-muted text-foreground px-2 py-1 rounded-md text-xs"
                         >
                           {metric}
                         </span>
@@ -460,17 +460,17 @@ const Reports = () => {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <button className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 border border-gray-300 rounded text-xs sm:text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <button className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 border border-border rounded text-xs sm:text-sm text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center">
                       <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Download
                     </button>
-                    <button className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 border border-gray-300 rounded text-xs sm:text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <button className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 border border-border rounded text-xs sm:text-sm text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center">
                       <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Share
                     </button>
                     <button
                       onClick={() => toggleReportExpand(report.id)}
-                      className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-300 rounded"
+                      className="p-1.5 text-muted-foreground hover:text-muted-foreground border border-border rounded"
                     >
                       {expandedReport === report.id ? (
                         <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -482,32 +482,32 @@ const Reports = () => {
                 </div>
 
                 {expandedReport === report.id && (
-                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-border">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                       <div>
-                        <h5 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                        <h5 className="text-xs sm:text-sm font-medium text-foreground mb-2">
                           Schedule
                         </h5>
                         <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-500">Frequency:</span>
-                            <span className="text-gray-900">
+                            <span className="text-muted-foreground">Frequency:</span>
+                            <span className="text-foreground">
                               {report.frequency}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-500">
+                            <span className="text-muted-foreground">
                               Last Generated:
                             </span>
-                            <span className="text-gray-900">
+                            <span className="text-foreground">
                               {report.lastGenerated}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-500">
+                            <span className="text-muted-foreground">
                               Next Generation:
                             </span>
-                            <span className="text-gray-900">
+                            <span className="text-foreground">
                               {report.nextGeneration}
                             </span>
                           </div>
@@ -515,7 +515,7 @@ const Reports = () => {
                       </div>
 
                       <div>
-                        <h5 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                        <h5 className="text-xs sm:text-sm font-medium text-foreground mb-2">
                           Recipients
                         </h5>
                         {report.recipients.length > 0 ? (
@@ -525,30 +525,30 @@ const Reports = () => {
                                 key={index}
                                 className="flex items-center space-x-2"
                               >
-                                <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-                                <span className="text-xs sm:text-sm text-gray-600 truncate">
+                                <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                                <span className="text-xs sm:text-sm text-muted-foreground truncate">
                                   {recipient}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs sm:text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             No recipients configured
                           </p>
                         )}
                       </div>
 
                       <div className="sm:col-span-2 lg:col-span-1">
-                        <h5 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                        <h5 className="text-xs sm:text-sm font-medium text-foreground mb-2">
                           Actions
                         </h5>
                         <div className="space-y-2">
-                          <button className="w-full px-3 py-2 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors text-xs sm:text-sm flex items-center justify-center">
+                          <button className="w-full px-3 py-2 bg-[var(--brand-100)] text-[var(--brand)] rounded hover:bg-[var(--brand-100)] transition-colors text-xs sm:text-sm flex items-center justify-center">
                             <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                             Generate Now
                           </button>
-                          <button className="w-full px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-xs sm:text-sm flex items-center justify-center">
+                          <button className="w-full px-3 py-2 bg-muted text-muted-foreground rounded hover:bg-border transition-colors text-xs sm:text-sm flex items-center justify-center">
                             <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                             Edit Report
                           </button>
@@ -563,37 +563,37 @@ const Reports = () => {
         </div>
 
         {/* Channel Comparison - Desktop Table */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">
+        <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">
             Channel Comparison
           </h3>
 
           {/* Desktop Table View */}
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Channel
                   </th>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Open Rate
                   </th>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Response Rate
                   </th>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Conversion Rate
                   </th>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Cost per Message
                   </th>
-                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     ROI
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-border">
                 {[
                   {
                     channel: "WhatsApp",
@@ -626,7 +626,7 @@ const Reports = () => {
                     roi: 180,
                   },
                 ].map((channel, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={index} className="hover:bg-muted">
                     <td className="px-4 xl:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         <div
@@ -636,62 +636,62 @@ const Reports = () => {
                             className={`w-5 h-5 text-${channel.color}-600`}
                           />
                         </div>
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-foreground">
                           {channel.channel}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 xl:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-12 xl:w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div className="w-12 xl:w-16 bg-border rounded-full h-2 mr-2">
                           <div
                             className="bg-blue-500 h-2 rounded-full"
                             style={{ width: `${channel.openRate}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-foreground">
                           {channel.openRate}%
                         </span>
                       </div>
                     </td>
                     <td className="px-4 xl:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-12 xl:w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div className="w-12 xl:w-16 bg-border rounded-full h-2 mr-2">
                           <div
                             className="bg-green-500 h-2 rounded-full"
                             style={{ width: `${channel.responseRate * 2}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-foreground">
                           {channel.responseRate}%
                         </span>
                       </div>
                     </td>
                     <td className="px-4 xl:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-12 xl:w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div className="w-12 xl:w-16 bg-border rounded-full h-2 mr-2">
                           <div
-                            className="bg-purple-500 h-2 rounded-full"
+                            className="bg-[var(--brand)] h-2 rounded-full"
                             style={{ width: `${channel.conversionRate * 5}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-foreground">
                           {channel.conversionRate}%
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 xl:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-4 xl:px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
                       ${channel.costPerMessage.toFixed(2)}
                     </td>
                     <td className="px-4 xl:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-12 xl:w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div className="w-12 xl:w-16 bg-border rounded-full h-2 mr-2">
                           <div
                             className="bg-orange-500 h-2 rounded-full"
                             style={{ width: `${(channel.roi / 500) * 100}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-foreground">
                           {channel.roi}%
                         </span>
                       </div>
@@ -738,7 +738,7 @@ const Reports = () => {
             ].map((channel, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg p-4"
+                className="border border-border rounded-lg p-4"
               >
                 <div className="flex items-center space-x-3 mb-4">
                   <div className={`p-2 rounded-lg bg-${channel.color}-100`}>
@@ -746,7 +746,7 @@ const Reports = () => {
                       className={`w-5 h-5 text-${channel.color}-600`}
                     />
                   </div>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-foreground">
                     {channel.channel}
                   </span>
                 </div>
@@ -765,17 +765,17 @@ const Reports = () => {
                   ].map((metric, idx) => (
                     <div key={idx}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs sm:text-sm text-gray-600">
+                        <span className="text-xs sm:text-sm text-muted-foreground">
                           {metric.label}
                         </span>
-                        <span className="text-xs sm:text-sm font-medium text-gray-900">
+                        <span className="text-xs sm:text-sm font-medium text-foreground">
                           {metric.isPrice ? metric.value : `${metric.value}%`}
                         </span>
                       </div>
                       {!metric.isPrice && (
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
+                        <div className="w-full bg-border rounded-full h-1.5">
                           <div
-                            className="bg-purple-500 h-1.5 rounded-full"
+                            className="bg-[var(--brand)] h-1.5 rounded-full"
                             style={{
                               width: `${
                                 metric.value > 100 ? 100 : metric.value

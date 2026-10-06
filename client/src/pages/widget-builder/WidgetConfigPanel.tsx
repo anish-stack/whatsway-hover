@@ -179,7 +179,7 @@ export default function WidgetConfigPanel({
                       placeholder="https://example.com/logo.png"
                       className="flex-1"
                     />
-                    <label className="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-md cursor-pointer hover:bg-slate-50">
+                    <label className="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-md cursor-pointer hover:bg-muted">
                       <input
                         type="file"
                         className="hidden"

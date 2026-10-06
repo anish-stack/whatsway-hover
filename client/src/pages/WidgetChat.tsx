@@ -99,7 +99,7 @@ export default function WidgetChat() {
     }
 
     return (
-        <div className="flex flex-col h-screen bg-white max-w-md mx-auto border-x shadow-xl overflow-hidden">
+        <div className="flex flex-col h-screen bg-background max-w-md mx-auto border-x shadow-xl overflow-hidden">
             {/* Header */}
             <div
                 className="p-4 text-white"
@@ -119,12 +119,12 @@ export default function WidgetChat() {
             </div>
 
             {/* Content */}
-            <ScrollArea className="flex-1 bg-slate-50">
+            <ScrollArea className="flex-1 bg-muted">
                 {screen === "home" && (
                     <div className="p-6 space-y-6">
-                        <div className="bg-white rounded-xl shadow-sm p-6 space-y-4 border">
+                        <div className="bg-background rounded-xl shadow-sm p-6 space-y-4 border">
                             <h2 className="text-xl font-bold">Hello! 👋</h2>
-                            <p className="text-slate-600">{config.greeting || "How can we help you today?"}</p>
+                            <p className="text-muted-foreground">{config.greeting || "How can we help you today?"}</p>
                             <Button
                                 onClick={() => setScreen("chat")}
                                 className="w-full h-12 text-lg"
@@ -135,8 +135,8 @@ export default function WidgetChat() {
                         </div>
 
                         <div className="space-y-3">
-                            <p className="text-sm font-semibold text-slate-500 uppercase">Usual response time</p>
-                            <div className="flex items-center gap-2 text-slate-700">
+                            <p className="text-sm font-semibold text-muted-foreground uppercase">Usual response time</p>
+                            <div className="flex items-center gap-2 text-muted-foreground">
                                 <Clock className="h-4 w-4" />
                                 <span>{config.responseTime || "Under a few minutes"}</span>
                             </div>
@@ -149,7 +149,7 @@ export default function WidgetChat() {
                         {messages.map((msg: any) => (
                             <div key={msg.id} className={`flex ${msg.fromType === "user" ? "justify-end" : "justify-start"}`}>
                                 <div
-                                    className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.fromType === "user" ? "bg-primary text-white" : "bg-white text-slate-800 border"
+                                    className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.fromType === "user" ? "bg-primary text-white" : "bg-background text-foreground border"
                                         }`}
                                     style={msg.fromType === "user" ? { backgroundColor: primaryColor } : {}}
                                 >
@@ -164,7 +164,7 @@ export default function WidgetChat() {
 
             {/* Footer / Input */}
             {screen === "chat" && (
-                <div className="p-4 bg-white border-t">
+                <div className="p-4 bg-background border-t">
                     <div className="flex gap-2">
                         <Input
                             placeholder="Type a message..."

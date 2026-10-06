@@ -179,7 +179,7 @@ export default function Plans() {
     icon: "Zap",
     popular: false,
     badge: "",
-    color: "border-gray-200",
+    color: "border-border",
     buttonColor: "bg-blue-500 hover:bg-blue-600",
     monthlyPrice: "0",
     annualPrice: "0",
@@ -419,7 +419,7 @@ export default function Plans() {
       icon: plan.icon || "Zap",
       popular: plan.popular || false,
       badge: plan.badge || "",
-      color: plan.color || "border-gray-200",
+      color: plan.color || "border-border",
       buttonColor: plan.buttonColor || "bg-blue-500 hover:bg-blue-600",
       monthlyPrice: plan.monthlyPrice || "0",
       annualPrice: plan.annualPrice || "0",
@@ -457,7 +457,7 @@ export default function Plans() {
       icon: "Zap",
       popular: false,
       badge: "",
-      color: "border-gray-200",
+      color: "border-border",
       buttonColor: "bg-blue-500 hover:bg-blue-600",
       monthlyPrice: "0",
       annualPrice: "0",
@@ -512,10 +512,10 @@ export default function Plans() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-muted-foreground">
                       {t("plans.stats.totalPlans")}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-foreground">
                       {plans.length}
                     </p>
                   </div>
@@ -530,15 +530,15 @@ export default function Plans() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-muted-foreground">
                       {t("plans.stats.featured")}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-foreground">
                       {plans.filter((p) => p.popular).length}
                     </p>
                   </div>
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <Star className="w-6 h-6 text-purple-600" />
+                  <div className="p-3 bg-[var(--brand-100)] rounded-lg">
+                    <Star className="w-6 h-6 text-[var(--brand)]" />
                   </div>
                 </div>
               </CardContent>
@@ -548,10 +548,10 @@ export default function Plans() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-muted-foreground">
                       {t("plans.stats.active")}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-foreground">
                       {plans.length}
                     </p>
                   </div>
@@ -566,10 +566,10 @@ export default function Plans() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-muted-foreground">
                       {t("plans.stats.billing")}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-foreground">
                       {isAnnual
                         ? t("plans.stats.annual")
                         : t("plans.stats.monthly")}
@@ -595,13 +595,13 @@ export default function Plans() {
               <div className="w-full">
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 flex-wrap min-w-0">
-                    <div className="inline-flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                    <div className="inline-flex items-center gap-2 bg-muted rounded-lg p-1">
                       <button
                         onClick={() => setIsAnnual(false)}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-all w-full sm:w-auto text-center ${
                           !isAnnual
-                            ? "bg-white text-gray-900 shadow-sm"
-                            : "text-gray-600 hover:text-gray-900"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                         aria-pressed={!isAnnual}
                       >
@@ -614,8 +614,8 @@ export default function Plans() {
                         onClick={() => setIsAnnual(true)}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-all w-full sm:w-auto text-center ${
                           isAnnual
-                            ? "bg-white text-gray-900 shadow-sm"
-                            : "text-gray-600 hover:text-gray-900"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                         aria-pressed={isAnnual}
                       >
@@ -634,7 +634,7 @@ export default function Plans() {
                       <select
                         value={selectedCurrency}
                         onChange={(e) => setSelectedCurrency(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer"
+                        className="px-3 py-2 border border-border rounded-lg text-sm font-medium bg-background focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer"
                       >
                         {displayedCurrencies.map((cur) => (
                           <option key={cur} value={cur}>
@@ -683,8 +683,8 @@ export default function Plans() {
           <CardContent>
             {/* Create/Edit Form */}
             {showForm && (
-              <div className="mb-8 p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="mb-8 p-6 bg-muted rounded-lg border-2 border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   {editingPlan
                     ? t("plans.form.editTitle")
                     : t("plans.form.createTitle")}
@@ -694,7 +694,7 @@ export default function Plans() {
                   {/* Basic Info */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.planName")}
                       </label>
                       <input
@@ -704,12 +704,12 @@ export default function Plans() {
                           setFormData({ ...formData, name: e.target.value })
                         }
                         placeholder={t("plans.form.planNamePlaceholder")}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.icon")}
                       </label>
                       <select
@@ -717,7 +717,7 @@ export default function Plans() {
                         onChange={(e) =>
                           setFormData({ ...formData, icon: e.target.value })
                         }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       >
                         <option value="Zap">
                           {t("plans.form.iconOptions.zap")}
@@ -735,7 +735,7 @@ export default function Plans() {
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.description")}
                       </label>
                       <textarea
@@ -748,7 +748,7 @@ export default function Plans() {
                         }
                         placeholder={t("plans.form.descriptionPlaceholder")}
                         rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
                       />
                     </div>
                   </div>
@@ -756,7 +756,7 @@ export default function Plans() {
                   {/* Pricing */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.monthlyPrice")} ({currencySymbol})
                       </label>
                       <input
@@ -770,12 +770,12 @@ export default function Plans() {
                           })
                         }
                         placeholder={t("plans.form.monthlyPricePlaceholder")}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.annualPrice")} ({currencySymbol})
                       </label>
                       <input
@@ -789,19 +789,19 @@ export default function Plans() {
                           })
                         }
                         placeholder={t("plans.form.annualPricePlaceholder")}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                   </div>
 
                   {/* Multi-Currency Pricing */}
-                  <div className="space-y-4 p-4 bg-white rounded-lg border border-gray-200">
+                  <div className="space-y-4 p-4 bg-background rounded-lg border border-border">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-gray-900">Multi-Currency Pricing (Optional)</h4>
+                      <h4 className="text-sm font-semibold text-foreground">Multi-Currency Pricing (Optional)</h4>
                       <div className="flex items-center gap-2">
                         <select
                           id="new-currency-select"
-                          className="px-2 py-1 text-sm border border-gray-300 rounded-md outline-none"
+                          className="px-2 py-1 text-sm border border-border rounded-md outline-none"
                           value={newCurrencyToAdd}
                           onChange={(e) => setNewCurrencyToAdd(e.target.value)}
                         >
@@ -837,11 +837,11 @@ export default function Plans() {
 
                     <div className="space-y-3">
                       {Object.entries(formData.multiCurrencyPrices).map(([cur, prices]) => (
-                        <div key={cur} className="flex items-center gap-4 p-3 bg-gray-50 rounded-md border border-gray-200">
-                          <span className="font-bold text-gray-700 min-w-[50px]">{cur}</span>
+                        <div key={cur} className="flex items-center gap-4 p-3 bg-muted rounded-md border border-border">
+                          <span className="font-bold text-muted-foreground min-w-[50px]">{cur}</span>
                           <div className="flex-1 grid grid-cols-2 gap-2">
                             <div>
-                              <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Monthly</label>
+                              <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Monthly</label>
                               <input
                                 type="number"
                                 step="0.01"
@@ -853,11 +853,11 @@ export default function Plans() {
                                     [cur]: { ...prices, monthly: e.target.value }
                                   }
                                 })}
-                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none"
+                                className="w-full px-2 py-1 text-sm border border-border rounded focus:ring-1 focus:ring-blue-500 outline-none"
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Annual</label>
+                              <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Annual</label>
                               <input
                                 type="number"
                                 step="0.01"
@@ -869,7 +869,7 @@ export default function Plans() {
                                     [cur]: { ...prices, annual: e.target.value }
                                   }
                                 })}
-                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none"
+                                className="w-full px-2 py-1 text-sm border border-border rounded focus:ring-1 focus:ring-blue-500 outline-none"
                               />
                             </div>
                           </div>
@@ -892,7 +892,7 @@ export default function Plans() {
                   {/* Customization */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.badgeText")}
                       </label>
                       <input
@@ -902,12 +902,12 @@ export default function Plans() {
                           setFormData({ ...formData, badge: e.target.value })
                         }
                         placeholder={t("plans.form.badgePlaceholder")}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.borderColor")}
                       </label>
                       <select
@@ -915,15 +915,15 @@ export default function Plans() {
                         onChange={(e) =>
                           setFormData({ ...formData, color: e.target.value })
                         }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       >
-                        <option value="border-gray-200">
+                        <option value="border-border">
                           {t("plans.form.borderOptions.gray")}
                         </option>
                         <option value="border-blue-500">
                           {t("plans.form.borderOptions.blue")}
                         </option>
-                        <option value="border-purple-500">
+                        <option value="border-[var(--brand)]">
                           {t("plans.form.borderOptions.purple")}
                         </option>
                         <option value="border-green-500">
@@ -939,7 +939,7 @@ export default function Plans() {
                   {/* Permissions */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.channels")}
                       </label>
                       <input
@@ -957,11 +957,11 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.channelsPlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.contacts")}
                       </label>
                       <input
@@ -979,11 +979,11 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.contactsPlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.automation")}
                       </label>
                       <input
@@ -1001,11 +1001,11 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.automationPlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.campaign")}
                       </label>
                       <input
@@ -1023,11 +1023,11 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.campaignPlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.apiRequestsPerMonth")}
                       </label>
                       <input
@@ -1045,11 +1045,11 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.apiRequestsPerMonthPlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
                         {t("plans.form.permissions.apiRateLimitPerMinute")}
                       </label>
                       <input
@@ -1067,7 +1067,7 @@ export default function Plans() {
                         placeholder={t(
                           "plans.form.permissions.apiRateLimitPerMinutePlaceholder"
                         )}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
                   </div>
@@ -1086,7 +1086,7 @@ export default function Plans() {
                         }
                         className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-muted-foreground">
                         {t("plans.form.popularToggle")}
                       </span>
                     </label>
@@ -1095,7 +1095,7 @@ export default function Plans() {
                   {/* Features */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-muted-foreground">
                         {t("plans.form.features")}
                       </label>
                       <Button
@@ -1110,9 +1110,9 @@ export default function Plans() {
                     </div>
 
                     {formData.features.length === 0 ? (
-                      <div className="text-center py-8 bg-white rounded-lg border-2 border-dashed border-gray-300">
-                        <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">
+                      <div className="text-center py-8 bg-background rounded-lg border-2 border-dashed border-border">
+                        <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">
                           {t("plans.form.noFeatures")}
                         </p>
                       </div>
@@ -1121,7 +1121,7 @@ export default function Plans() {
                         {formData.features.map((feature, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-2 bg-white p-3 rounded-lg border border-gray-200"
+                            className="flex items-center gap-2 bg-background p-3 rounded-lg border border-border"
                           >
                             <input
                               type="text"
@@ -1130,7 +1130,7 @@ export default function Plans() {
                                 updateFeature(index, "name", e.target.value)
                               }
                               placeholder={t("plans.form.featureName")}
-                              className="flex-1 px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                              className="flex-1 px-3 py-1.5 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
                             />
                             <label className="flex items-center gap-1.5 text-sm">
                               <input
@@ -1190,13 +1190,13 @@ export default function Plans() {
               if (plans.length === 0) {
                 return (
                   <div className="text-center py-12">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                      <AlertCircle className="w-8 h-8 text-gray-400" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
+                      <AlertCircle className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
                       {t("plans.empty.title")}
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-muted-foreground mb-6">
                       {t("plans.empty.description")}
                     </p>
                     {isSuper && (
@@ -1248,7 +1248,7 @@ export default function Plans() {
                     return (
                       <div
                         key={plan.id}
-                        className={`relative bg-white rounded-xl shadow-md border-2 ${
+                        className={`relative bg-background rounded-xl shadow-md border-2 ${
                           plan.color
                         } hover:shadow-lg transition-all duration-300 overflow-hidden ${
                           isPopular ? "ring-2 ring-blue-500 ring-offset-2" : ""
@@ -1264,21 +1264,21 @@ export default function Plans() {
                           <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
                             <IconComponent className="w-6 h-6 text-blue-600" />
                           </div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2">
+                          <h3 className="text-xl font-bold text-foreground mb-2">
                             {plan.name}
                           </h3>
-                          <p className="text-sm text-gray-600 mb-4 min-h-[40px] line-clamp-2">
+                          <p className="text-sm text-muted-foreground mb-4 min-h-[40px] line-clamp-2">
                             {plan.description}
                           </p>
                           <div className="mb-4">
                             <div className="flex items-baseline gap-1">
-                              <span className="text-3xl font-black text-gray-900">
+                              <span className="text-3xl font-black text-foreground">
                                 {planCurrencySymbol}
                                 {isAnnual
                                   ? annualPrice
                                   : monthlyPrice}
                               </span>
-                              <span className="text-sm text-gray-600 font-medium">
+                              <span className="text-sm text-muted-foreground font-medium">
                                 /
                                 {isAnnual
                                   ? t("plans.card.perYear")
@@ -1301,7 +1301,7 @@ export default function Plans() {
                                     return (
                                       <div
                                         key={key}
-                                        className="text-xs text-gray-600"
+                                        className="text-xs text-muted-foreground"
                                       >
                                         ✓ {value} {labelMap[key] || key}
                                       </div>
@@ -1320,13 +1320,13 @@ export default function Plans() {
                                   {feature.included ? (
                                     <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                                   ) : (
-                                    <X className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                    <X className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                                   )}
                                   <span
                                     className={`text-sm ${
                                       feature.included
-                                        ? "text-gray-700"
-                                        : "text-gray-400"
+                                        ? "text-muted-foreground"
+                                        : "text-muted-foreground"
                                     }`}
                                   >
                                     {feature.name}

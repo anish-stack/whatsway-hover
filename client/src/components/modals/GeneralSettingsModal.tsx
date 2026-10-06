@@ -392,7 +392,7 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
           {/* Support Email */}
 <div className="space-y-2">
   <Label className="flex items-center font-medium">
-    <Tag className="w-4 h-4 mr-2 text-indigo-500" />
+    <Tag className="w-4 h-4 mr-2 text-[var(--brand)]" />
     Support Email
   </Label>
   <Input
@@ -409,7 +409,7 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
           {/* Logo Upload */}
           <div className="space-y-2">
             <Label className="flex items-center font-medium">
-              <ImageIcon className="w-4 h-4 mr-2 text-purple-500" />
+              <ImageIcon className="w-4 h-4 mr-2 text-[var(--brand)]" />
               Logo
               {getUploadStatusIcon("logo") && (
                 <span className="ml-2">{getUploadStatusIcon("logo")}</span>
@@ -425,7 +425,7 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
                         alt="Logo preview"
                         className="w-12 h-12 object-contain rounded border"
                       />
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         Logo uploaded
                       </span>
                     </div>
@@ -440,11 +440,11 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">
+                    <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">
                       Upload your logo
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       PNG, JPG, JPEG, SVG up to 2MB
                     </p>
                   </div>
@@ -485,7 +485,7 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
               alt="Secondary logo preview"
               className="w-12 h-12 object-contain rounded border"
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-muted-foreground">
               Secondary logo uploaded
             </span>
           </div>
@@ -500,11 +500,11 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
         </div>
       ) : (
         <div className="text-center py-4">
-          <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600 mb-2">
+          <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm text-muted-foreground mb-2">
             Upload secondary logo
           </p>
-          <p className="text-xs text-gray-400">PNG, JPG, SVG up to 2MB</p>
+          <p className="text-xs text-muted-foreground">PNG, JPG, SVG up to 2MB</p>
         </div>
       )}
       <Input
@@ -537,7 +537,7 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
                         alt="Favicon preview"
                         className="w-8 h-8 object-contain rounded border"
                       />
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         Favicon uploaded
                       </span>
                     </div>
@@ -552,11 +552,11 @@ const GeneralSettingsModal: React.FC<GeneralSettingsModalProps> = ({
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">
+                    <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">
                       Upload your favicon
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       ICO, PNG 32x32px up to 2MB
                     </p>
                   </div>

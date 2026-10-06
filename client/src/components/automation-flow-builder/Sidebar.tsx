@@ -112,27 +112,27 @@ const nodeCategories = [
         kind: "conditions" as NodeKind,
         name: "Condition",
         icon: GitBranch,
-        color: "text-purple-600",
-        bg: "bg-purple-50",
-        border: "border-purple-200",
+        color: "text-[var(--brand)]",
+        bg: "bg-[var(--brand-100)]",
+        border: "border-[var(--mist)]",
         tip: "Branch the flow based on keywords or rules. Check if the customer's message contains, equals, or starts with specific words to route them down different paths.",
       },
       {
         kind: "time_gap" as NodeKind,
         name: "Delay",
         icon: Clock,
-        color: "text-slate-600",
-        bg: "bg-slate-100",
-        border: "border-slate-200",
+        color: "text-muted-foreground",
+        bg: "bg-muted",
+        border: "border-border",
         tip: "Pause the flow for a set duration before continuing to the next step. Use for spacing out messages or waiting before follow-ups (seconds to hours).",
       },
       {
         kind: "set_variable" as NodeKind,
         name: "Variable",
         icon: Variable,
-        color: "text-violet-600",
-        bg: "bg-violet-50",
-        border: "border-violet-200",
+        color: "text-[var(--brand)]",
+        bg: "bg-[var(--brand-100)]",
+        border: "border-[var(--mist)]",
         tip: "Store a value for use in later steps. Set from a static value, the customer's last message, or a webhook response. Use {{varName}} in text fields to insert it.",
       },
     ],
@@ -144,9 +144,9 @@ const nodeCategories = [
         kind: "assign_user" as NodeKind,
         name: "Assign",
         icon: Users,
-        color: "text-indigo-600",
-        bg: "bg-indigo-50",
-        border: "border-indigo-200",
+        color: "text-[var(--brand)]",
+        bg: "bg-[var(--brand-100)]",
+        border: "border-[var(--mist)]",
         tip: "Route the conversation to a specific team member or agent. Use after qualifying a lead or when human intervention is needed.",
       },
       {
@@ -206,16 +206,16 @@ const nodeCategories = [
 export function Sidebar({ onAddNode }: SidebarProps) {
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="col-span-2 bg-white flex flex-col border-r border-gray-200 overflow-hidden">
-        <div className="px-3 py-2.5 border-b border-gray-200">
-          <div className="font-semibold text-xs text-gray-900">Flow Nodes</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">Click to add · hover <Info className="w-2.5 h-2.5 inline" /> for help</div>
+      <div className="col-span-2 bg-background flex flex-col border-r border-border overflow-hidden">
+        <div className="px-3 py-2.5 border-b border-border">
+          <div className="font-semibold text-xs text-foreground">Flow Nodes</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">Click to add · hover <Info className="w-2.5 h-2.5 inline" /> for help</div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2.5">
           {nodeCategories.map((category) => (
             <div key={category.label}>
-              <div className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1.5 px-0.5">
+              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5 px-0.5">
                 {category.label}
               </div>
               <div className="grid grid-cols-2 gap-1.5">
@@ -228,7 +228,7 @@ export function Sidebar({ onAddNode }: SidebarProps) {
                         className={`w-full flex flex-col items-center gap-1.5 px-2 py-3 rounded-lg border ${item.border} ${item.bg} hover:shadow-sm transition-all duration-150 cursor-pointer active:scale-95`}
                       >
                         <Icon className={`w-5 h-5 ${item.color}`} />
-                        <span className="text-[10px] font-medium text-gray-600 leading-tight text-center w-full">
+                        <span className="text-[10px] font-medium text-muted-foreground leading-tight text-center w-full">
                           {item.name}
                         </span>
                       </button>
@@ -238,12 +238,12 @@ export function Sidebar({ onAddNode }: SidebarProps) {
                             className="absolute top-1 right-1 p-0.5 rounded-full hover:bg-white/80 transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Info className="w-3 h-3 text-gray-400 hover:text-gray-600" />
+                            <Info className="w-3 h-3 text-muted-foreground hover:text-muted-foreground" />
                           </button>
                         </TooltipTrigger>
                         <TooltipContent side="right" className="max-w-[220px] text-xs leading-relaxed p-3">
                           <p className="font-semibold mb-1">{item.name}</p>
-                          <p className="text-gray-500">{item.tip}</p>
+                          <p className="text-muted-foreground">{item.tip}</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>

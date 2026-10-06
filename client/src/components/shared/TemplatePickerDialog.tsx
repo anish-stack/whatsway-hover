@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 export const templateCategoryConfig: Record<string, { label: string; className: string; icon: any }> = {
   MARKETING: {
     label: "Marketing",
-    className: "bg-purple-50 text-purple-700 border-purple-200",
+    className: "bg-[var(--brand-100)] text-[var(--brand)] border-[var(--mist)]",
     icon: Megaphone,
   },
   UTILITY: {
@@ -388,7 +388,7 @@ export function TemplatePickerDialog({
         {!selectedTemplate && (
           <div className="space-y-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search templates..."
                 value={templateSearchQuery}
@@ -440,8 +440,8 @@ export function TemplatePickerDialog({
                   <Loading />
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="mx-auto h-10 w-10 text-gray-300 mb-3" />
+                <div className="text-center py-8 text-muted-foreground">
+                  <FileText className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
                   <p className="font-medium">No templates found</p>
                   <p className="text-sm mt-1">
                     {templateSearchQuery || templateCategoryFilter !== "ALL"
@@ -462,10 +462,10 @@ export function TemplatePickerDialog({
                       <div
                         key={template.id}
                         onClick={() => handleTemplateSelect(template)}
-                        className="border rounded-lg p-3.5 cursor-pointer hover:shadow-md hover:border-green-300 transition-all bg-white group"
+                        className="border rounded-lg p-3.5 cursor-pointer hover:shadow-md hover:border-green-300 transition-all bg-background group"
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold text-sm text-gray-900 truncate flex-1 mr-2">
+                          <h4 className="font-semibold text-sm text-foreground truncate flex-1 mr-2">
                             {template.name}
                           </h4>
                         </div>
@@ -474,27 +474,27 @@ export function TemplatePickerDialog({
                             <CatIcon className="w-3 h-3 mr-1" />
                             {cat.label}
                           </Badge>
-                          <span className="inline-flex items-center text-[11px] text-gray-500">
+                          <span className="inline-flex items-center text-[11px] text-muted-foreground">
                             <Globe className="w-3 h-3 mr-0.5" />
                             {langLabel}
                           </span>
                           {MediaIcon && (
-                            <span className="inline-flex items-center text-[11px] text-gray-500">
+                            <span className="inline-flex items-center text-[11px] text-muted-foreground">
                               <MediaIcon className="w-3 h-3 mr-0.5" />
                               {template.mediaType}
                             </span>
                           )}
                         </div>
                         {template.header && (
-                          <p className="text-sm font-medium text-gray-800 truncate mb-0.5">
+                          <p className="text-sm font-medium text-foreground truncate mb-0.5">
                             {template.header}
                           </p>
                         )}
-                        <p className="text-sm text-gray-600 line-clamp-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
                           {template.body}
                         </p>
                         {template.footer && (
-                          <p className="text-xs text-gray-400 italic mt-1">{template.footer}</p>
+                          <p className="text-xs text-muted-foreground italic mt-1">{template.footer}</p>
                         )}
                         {buttons.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
@@ -504,7 +504,7 @@ export function TemplatePickerDialog({
                                 <Badge
                                   key={idx}
                                   variant="outline"
-                                  className="text-[10px] px-1.5 py-0 bg-gray-50 text-gray-600 border-gray-200"
+                                  className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground border-border"
                                 >
                                   <BtnIcon className="w-2.5 h-2.5 mr-0.5" />
                                   {button.text || button.type}
@@ -521,24 +521,24 @@ export function TemplatePickerDialog({
             })()
           ) : (
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+              <div className="p-4 bg-muted rounded-lg space-y-2">
                 <h4 className="font-medium">{selectedTemplate.name}</h4>
                 {selectedTemplate.header && !requiresHeaderImage && (
-                  <p className="text-sm font-medium text-gray-800">{selectedTemplate.header}</p>
+                  <p className="text-sm font-medium text-foreground">{selectedTemplate.header}</p>
                 )}
-                <p className="text-sm text-gray-600">{selectedTemplate.body}</p>
+                <p className="text-sm text-muted-foreground">{selectedTemplate.body}</p>
                 {selectedTemplate.footer && (
-                  <p className="text-xs text-gray-400 italic">{selectedTemplate.footer}</p>
+                  <p className="text-xs text-muted-foreground italic">{selectedTemplate.footer}</p>
                 )}
                 {(() => {
                   const previewButtons = getTemplateButtons(selectedTemplate);
                   if (previewButtons.length === 0) return null;
                   return (
-                    <div className="flex flex-wrap gap-1 pt-1 border-t border-gray-200 mt-2">
+                    <div className="flex flex-wrap gap-1 pt-1 border-t border-border mt-2">
                       {previewButtons.map((btn, idx) => {
                         const BtnIcon = templateButtonTypeIcons[btn.type] || MousePointerClick;
                         return (
-                          <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0 bg-white text-gray-600 border-gray-200">
+                          <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0 bg-background text-muted-foreground border-border">
                             <BtnIcon className="w-2.5 h-2.5 mr-0.5" />
                             {btn.text || btn.type}
                           </Badge>
@@ -583,27 +583,27 @@ export function TemplatePickerDialog({
 
               {isCarouselTemplate && carouselCards.length > 0 && (
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700 block">
+                  <label className="text-sm font-medium text-muted-foreground block">
                     Carousel Cards ({carouselCards.length} cards)
                   </label>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Upload images/videos for each card. The media from template creation will be used if you don't upload new ones.
                   </p>
                   {carouselCards.map((card: any, cardIdx: number) => {
                     const cardMediaType = (card.mediaType || "image").toLowerCase();
                     return (
-                      <div key={cardIdx} className="border rounded-lg p-3 space-y-2 bg-gray-50">
+                      <div key={cardIdx} className="border rounded-lg p-3 space-y-2 bg-muted">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Card {cardIdx + 1}</span>
+                          <span className="text-sm font-medium text-muted-foreground">Card {cardIdx + 1}</span>
                           <Badge variant="outline" className="text-[10px]">{cardMediaType}</Badge>
                         </div>
                         {card.body && (
-                          <p className="text-xs text-gray-600">{card.body}</p>
+                          <p className="text-xs text-muted-foreground">{card.body}</p>
                         )}
                         {Array.isArray(card.buttons) && card.buttons.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {card.buttons.map((btn: any, bi: number) => (
-                              <Badge key={bi} variant="outline" className="text-[10px] px-1.5 py-0 bg-white">
+                              <Badge key={bi} variant="outline" className="text-[10px] px-1.5 py-0 bg-background">
                                 {btn.text || btn.type}
                               </Badge>
                             ))}
@@ -631,7 +631,7 @@ export function TemplatePickerDialog({
                             <p className="text-xs text-blue-600 mt-1">Uploading...</p>
                           )}
                           {!cardMediaIds[cardIdx] && cardUploadingIdx !== cardIdx && (
-                            <p className="text-xs text-gray-400 mt-1">Optional — template example media will be used if not provided</p>
+                            <p className="text-xs text-muted-foreground mt-1">Optional — template example media will be used if not provided</p>
                           )}
                         </div>
                       </div>
@@ -652,7 +652,7 @@ export function TemplatePickerDialog({
                     min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                     onChange={(e) => setExpirationDate(e.target.value)}
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Set when the limited time offer expires. The countdown timer will be shown to the recipient.
                   </p>
                 </div>
@@ -694,7 +694,7 @@ export function TemplatePickerDialog({
                       />
                     )}
                     {sampleValue && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         Sample: <span className="font-medium">{sampleValue}</span>
                       </p>
                     )}
@@ -707,7 +707,7 @@ export function TemplatePickerDialog({
                 if (allButtons.length === 0) return null;
                 return (
                   <div className="space-y-3">
-                    <label className="text-sm font-medium text-gray-700 block">Buttons</label>
+                    <label className="text-sm font-medium text-muted-foreground block">Buttons</label>
                     {allButtons.map((button, i) => {
                       if (button.type === "URL" && button.url?.includes("{{")) {
                         return (
@@ -722,7 +722,7 @@ export function TemplatePickerDialog({
                                 setButtonParams({ ...buttonParams, [i]: e.target.value })
                               }
                             />
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               URL: <span className="font-medium">{button.url}</span>
                             </p>
                           </div>
@@ -746,30 +746,30 @@ export function TemplatePickerDialog({
                       }
                       if (button.type === "URL") {
                         return (
-                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-gray-200">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-border">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <ExternalLink className="w-3.5 h-3.5" />
                               <span className="font-medium">{button.text}</span>
                             </div>
-                            <p className="text-xs text-gray-400 mt-0.5 ml-5">{button.url}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 ml-5">{button.url}</p>
                           </div>
                         );
                       }
                       if (button.type === "PHONE_NUMBER") {
                         return (
-                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-gray-200">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-border">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Phone className="w-3.5 h-3.5" />
                               <span className="font-medium">{button.text}</span>
                             </div>
-                            <p className="text-xs text-gray-400 mt-0.5 ml-5">{button.phone_number}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 ml-5">{button.phone_number}</p>
                           </div>
                         );
                       }
                       if (button.type === "QUICK_REPLY") {
                         return (
-                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-gray-200">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div key={`btn-${i}`} className="pl-3 border-l-2 border-border">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Reply className="w-3.5 h-3.5" />
                               <span className="font-medium">{button.text}</span>
                             </div>

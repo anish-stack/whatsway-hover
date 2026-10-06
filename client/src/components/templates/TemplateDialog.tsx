@@ -844,7 +844,7 @@ export function TemplateDialog({
   const renderPreview = () => {
     if (isAuthentication) {
       return (
-        <div className="bg-white rounded-xl shadow-sm max-w-sm mx-auto overflow-hidden border border-gray-100">
+        <div className="bg-background rounded-xl shadow-sm max-w-sm mx-auto overflow-hidden border border-border">
           <div className="p-4 space-y-2">
             <div className="flex items-center gap-2 mb-1">
               <Shield className="w-4 h-4 text-green-600" />
@@ -858,20 +858,20 @@ export function TemplateDialog({
           </div>
           <div className="border-t">
             {authType === "COPY_CODE" && (
-              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50">
+              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted">
                 <Clipboard className="w-4 h-4" />
                 Copy Code
               </button>
             )}
             {authType === "ONE_TAP" && (
-              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50">
+              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted">
                 <ExternalLink className="w-4 h-4" />
                 Autofill
               </button>
             )}
             {authType === "ZERO_TAP" && (
               <div className="py-2 px-4 text-center">
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   Code delivered silently to app
                 </span>
               </div>
@@ -883,9 +883,9 @@ export function TemplateDialog({
 
     if (isLTO) {
       return (
-        <div className="bg-white rounded-xl shadow-sm max-w-sm mx-auto overflow-hidden border border-gray-100">
+        <div className="bg-background rounded-xl shadow-sm max-w-sm mx-auto overflow-hidden border border-border">
           {watchedValues.mediaType !== "text" && (
-            <div className="bg-gray-200 h-40 flex items-center justify-center">
+            <div className="bg-border h-40 flex items-center justify-center">
               {watchedValues.mediaType === "image" && watchedValues.mediaUrl ? (
                 <img
                   src={watchedValues.mediaUrl}
@@ -893,7 +893,7 @@ export function TemplateDialog({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center text-gray-500">
+                <div className="flex flex-col items-center text-muted-foreground">
                   {getMediaIcon(watchedValues.mediaType)}
                   <span className="text-xs mt-1">Media Preview</span>
                 </div>
@@ -932,14 +932,14 @@ export function TemplateDialog({
               {watchedValues.body || "Template body..."}
             </p>
             {watchedValues.footer && (
-              <p className="text-xs text-gray-500 pt-1">
+              <p className="text-xs text-muted-foreground pt-1">
                 {watchedValues.footer}
               </p>
             )}
           </div>
           <div className="border-t divide-y">
             {watchedValues.couponCode && (
-              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50">
+              <button className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted">
                 <Copy className="w-4 h-4" />
                 Copy offer code
               </button>
@@ -947,7 +947,7 @@ export function TemplateDialog({
             {watchedValues.buttons?.map((button, idx) => (
               <button
                 key={idx}
-                className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
+                className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted"
               >
                 {button.type === "URL" && (
                   <ExternalLink className="w-4 h-4" />
@@ -968,7 +968,7 @@ export function TemplateDialog({
       const currentCard = cards[previewCardIndex];
       return (
         <div className="max-w-sm mx-auto">
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mb-2">
+          <div className="bg-background rounded-xl shadow-sm overflow-hidden border border-border mb-2">
             {watchedValues.body && (
               <div className="p-4">
                 <p className="text-sm whitespace-pre-wrap">
@@ -978,8 +978,8 @@ export function TemplateDialog({
             )}
           </div>
           {currentCard && (
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-              <div className="bg-gray-200 h-32 flex items-center justify-center">
+            <div className="bg-background rounded-xl shadow-sm overflow-hidden border border-border">
+              <div className="bg-border h-32 flex items-center justify-center">
                 {currentCard.mediaUrl ? (
                   <img
                     src={currentCard.mediaUrl}
@@ -987,7 +987,7 @@ export function TemplateDialog({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="flex flex-col items-center text-gray-500">
+                  <div className="flex flex-col items-center text-muted-foreground">
                     {getMediaIcon(currentCard.mediaType || "image")}
                     <span className="text-xs mt-1">Card {previewCardIndex + 1}</span>
                   </div>
@@ -1003,7 +1003,7 @@ export function TemplateDialog({
                   {currentCard.buttons.map((btn: any, idx: number) => (
                     <button
                       key={idx}
-                      className="w-full py-2 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
+                      className="w-full py-2 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted"
                     >
                       {btn.type === "URL" && (
                         <ExternalLink className="w-3 h-3" />
@@ -1026,11 +1026,11 @@ export function TemplateDialog({
                   setPreviewCardIndex(Math.max(0, previewCardIndex - 1))
                 }
                 disabled={previewCardIndex === 0}
-                className="p-1 rounded-full hover:bg-gray-200 disabled:opacity-30"
+                className="p-1 rounded-full hover:bg-border disabled:opacity-30"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground">
                 {previewCardIndex + 1} / {cards.length}
               </span>
               <button
@@ -1041,7 +1041,7 @@ export function TemplateDialog({
                   )
                 }
                 disabled={previewCardIndex >= cards.length - 1}
-                className="p-1 rounded-full hover:bg-gray-200 disabled:opacity-30"
+                className="p-1 rounded-full hover:bg-border disabled:opacity-30"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -1060,9 +1060,9 @@ export function TemplateDialog({
 
     return (
       <div className="max-w-sm mx-auto">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+        <div className="bg-background rounded-xl shadow-sm overflow-hidden border border-border">
           {watchedValues.mediaType !== "text" && (
-            <div className="bg-gray-200 h-44 overflow-hidden flex items-center justify-center">
+            <div className="bg-border h-44 overflow-hidden flex items-center justify-center">
               {watchedValues.mediaType === "image" && watchedValues.mediaUrl ? (
                 <img
                   src={watchedValues.mediaUrl}
@@ -1070,7 +1070,7 @@ export function TemplateDialog({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center text-gray-500">
+                <div className="flex flex-col items-center text-muted-foreground">
                   {getMediaIcon(watchedValues.mediaType)}
                   <span className="text-xs mt-1">Media Preview</span>
                 </div>
@@ -1096,7 +1096,7 @@ export function TemplateDialog({
               }) || "Template body will appear here..."}
             </p>
             {watchedValues.footer && (
-              <p className="text-xs text-gray-500 pt-1">
+              <p className="text-xs text-muted-foreground pt-1">
                 {watchedValues.footer}
               </p>
             )}
@@ -1107,7 +1107,7 @@ export function TemplateDialog({
               {ctaButtons.map((button, idx) => (
                 <button
                   key={idx}
-                  className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
+                  className="w-full py-2.5 px-4 text-[#00a884] text-sm font-medium flex items-center justify-center gap-2 hover:bg-muted"
                 >
                   {button.type === "URL" && (
                     <ExternalLink className="w-4 h-4" />
@@ -1132,7 +1132,7 @@ export function TemplateDialog({
             {quickReplies.map((button, idx) => (
               <button
                 key={idx}
-                className="px-4 py-2 text-[#00a884] text-sm font-medium bg-white rounded-full border border-gray-200 shadow-sm hover:bg-gray-50"
+                className="px-4 py-2 text-[#00a884] text-sm font-medium bg-background rounded-full border border-border shadow-sm hover:bg-muted"
               >
                 {button.text || "Quick Reply"}
               </button>
@@ -1213,7 +1213,7 @@ export function TemplateDialog({
               <div className="overflow-y-auto max-h-[calc(90vh-200px)] pr-4 space-y-4">
                 {/* Basic Info */}
                 <div className="space-y-4">
-                  <h3 className="font-medium text-sm text-gray-700">
+                  <h3 className="font-medium text-sm text-muted-foreground">
                     Basic Information
                   </h3>
 
@@ -1418,7 +1418,7 @@ export function TemplateDialog({
                       control={form.control}
                       name="authSecurityDisclaimer"
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between rounded-lg border p-3 bg-white">
+                        <FormItem className="flex items-center justify-between rounded-lg border p-3 bg-background">
                           <div className="space-y-0.5">
                             <FormLabel>Security Disclaimer</FormLabel>
                             <FormDescription>
@@ -1479,11 +1479,11 @@ export function TemplateDialog({
                       </>
                     )}
 
-                    <div className="bg-white rounded-lg border p-3">
+                    <div className="bg-background rounded-lg border p-3">
                       <Label className="text-sm font-medium">
                         Auto-generated Message
                       </Label>
-                      <p className="text-sm mt-1 text-gray-600 whitespace-pre-wrap">
+                      <p className="text-sm mt-1 text-muted-foreground whitespace-pre-wrap">
                         {watchedValues.body}
                       </p>
                     </div>
@@ -1493,16 +1493,16 @@ export function TemplateDialog({
                 {/* Content Section (hidden for authentication) */}
                 {!isAuthentication && (
                   <div className="space-y-4">
-                    <h3 className="font-medium text-sm text-gray-700">
+                    <h3 className="font-medium text-sm text-muted-foreground">
                       Template Content
                     </h3>
 
                     {/* Coupon Code Fields */}
                     {isCouponCode && (
-                      <div className="space-y-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+                      <div className="space-y-4 bg-[var(--brand-100)] border border-[var(--mist)] rounded-lg p-4">
                         <div className="flex items-center gap-2">
-                          <Tag className="w-4 h-4 text-purple-700" />
-                          <h4 className="text-sm font-medium text-purple-900">
+                          <Tag className="w-4 h-4 text-[var(--brand)]" />
+                          <h4 className="text-sm font-medium text-[var(--brand)]">
                             Coupon Code
                           </h4>
                         </div>
@@ -1526,7 +1526,7 @@ export function TemplateDialog({
                                       )
                                     }
                                   />
-                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                                     {field.value?.length || 0}/15
                                   </span>
                                 </div>
@@ -1564,7 +1564,7 @@ export function TemplateDialog({
                                     maxLength={16}
                                     {...field}
                                   />
-                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                                     {field.value?.length || 0}/16
                                   </span>
                                 </div>
@@ -1580,7 +1580,7 @@ export function TemplateDialog({
                           control={form.control}
                           name="hasExpiration"
                           render={({ field }) => (
-                            <FormItem className="flex items-center justify-between rounded-lg border bg-white p-3">
+                            <FormItem className="flex items-center justify-between rounded-lg border bg-background p-3">
                               <div className="space-y-0.5">
                                 <FormLabel>Show Countdown Timer</FormLabel>
                                 <FormDescription>
@@ -1647,7 +1647,7 @@ export function TemplateDialog({
                                       )
                                     }
                                   />
-                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                                     {field.value?.length || 0}/15
                                   </span>
                                 </div>
@@ -1799,7 +1799,7 @@ export function TemplateDialog({
                                   className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs ${
                                     (field.value?.length || 0) >= 60
                                       ? "text-red-500"
-                                      : "text-gray-400"
+                                      : "text-muted-foreground"
                                   }`}
                                 >
                                   {field.value?.length || 0}/60
@@ -1862,7 +1862,7 @@ export function TemplateDialog({
                                   className={`absolute right-3 bottom-3 text-xs ${
                                     (field.value?.length || 0) >= bodyCharLimit
                                       ? "text-red-500"
-                                      : "text-gray-400"
+                                      : "text-muted-foreground"
                                   }`}
                                 >
                                   {field.value?.length || 0}/{bodyCharLimit}
@@ -1898,7 +1898,7 @@ export function TemplateDialog({
                                   className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs ${
                                     (field.value?.length || 0) > 60
                                       ? "text-red-500"
-                                      : "text-gray-400"
+                                      : "text-muted-foreground"
                                   }`}
                                 >
                                   {field.value?.length || 0}/60
@@ -1974,7 +1974,7 @@ export function TemplateDialog({
                 {/* Carousel Cards Section */}
                 {isCarousel && (
                   <div className="space-y-4">
-                    <h3 className="font-medium text-sm text-gray-700">
+                    <h3 className="font-medium text-sm text-muted-foreground">
                       Carousel Content
                     </h3>
 
@@ -2004,7 +2004,7 @@ export function TemplateDialog({
                     />
 
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm text-gray-700">
+                      <h4 className="font-medium text-sm text-muted-foreground">
                         Cards ({carouselFields.length}/10)
                       </h4>
                       <Button
@@ -2028,7 +2028,7 @@ export function TemplateDialog({
                     {carouselFields.map((cardField, cardIdx) => (
                       <div
                         key={cardField.id}
-                        className="border rounded-lg p-4 space-y-3 bg-gray-50"
+                        className="border rounded-lg p-4 space-y-3 bg-muted"
                       >
                         <div className="flex items-center justify-between">
                           <Label className="font-medium">
@@ -2123,7 +2123,7 @@ export function TemplateDialog({
                                     maxLength={160}
                                     {...field}
                                   />
-                                  <span className="absolute right-2 bottom-2 text-xs text-gray-400">
+                                  <span className="absolute right-2 bottom-2 text-xs text-muted-foreground">
                                     {field.value?.length || 0}/160
                                   </span>
                                 </div>
@@ -2296,11 +2296,11 @@ export function TemplateDialog({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-sm text-gray-700">
+                        <h3 className="font-medium text-sm text-muted-foreground">
                           Action Buttons
                         </h3>
                         {(hasQuickReply || hasCTA || hasCopyCode) && (
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {hasQuickReply
                               ? `Quick Reply buttons (${quickReplyCount}/3) - cannot mix with URL/Phone buttons`
                               : `CTA buttons (${ctaCount + copyCodeCount}/2) - cannot mix with Quick Reply buttons`}
@@ -2320,7 +2320,7 @@ export function TemplateDialog({
                     </div>
 
                     {buttonFields.length === 0 ? (
-                      <p className="text-sm text-gray-500 text-center py-4">
+                      <p className="text-sm text-muted-foreground text-center py-4">
                         No buttons added. Click "Add Button" to create action
                         buttons.
                       </p>
@@ -2392,7 +2392,7 @@ export function TemplateDialog({
                                           maxLength={25}
                                           {...field}
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                                           {field.value?.length || 0}/25
                                         </span>
                                       </div>
@@ -2425,7 +2425,7 @@ export function TemplateDialog({
                                             )
                                           }
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                                           {field.value?.length || 0}/15
                                         </span>
                                       </div>
@@ -2496,7 +2496,7 @@ export function TemplateDialog({
               </div>
 
               {/* Right side - Preview */}
-              <div className="bg-gray-50 rounded-lg p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="bg-muted rounded-lg p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
                 <div className="flex items-center gap-2 mb-4">
                   <Smartphone className="w-5 h-5" />
                   <span className="font-medium">WhatsApp Preview</span>
@@ -2593,8 +2593,8 @@ export function TemplateDialog({
 
                   {/* Button mixing rule info */}
                   {!isAuthentication && !isCarousel && buttonFields.length > 0 && (
-                    <div className="bg-gray-100 border border-gray-200 rounded-lg p-3">
-                      <p className="text-xs text-gray-600">
+                    <div className="bg-muted border border-border rounded-lg p-3">
+                      <p className="text-xs text-muted-foreground">
                         <strong>Button Rules:</strong> Quick Reply buttons
                         (max 3) cannot be mixed with URL/Phone/Copy Code
                         buttons (max 2). All buttons in a template must be

@@ -181,28 +181,28 @@ const ChatHub = () => {
   const selectedChatData = chats.find((c) => c.id === selectedChat);
 
   return (
-    <div className="h-full w-full bg-gray-50 p-4 sm:p-6">
+    <div className="h-full w-full bg-muted p-4 sm:p-6">
       {/* Main Container - Full height with proper constraints */}
-      <div className="flex h-full max-h-[calc(100vh-120px)] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="flex h-full max-h-[calc(100vh-120px)] bg-background rounded-xl shadow-sm border border-border overflow-hidden">
         {/* Left Sidebar - Chat List */}
         <div
           className={`${
             selectedChat ? "hidden md:flex" : "flex"
-          } w-full md:w-80 lg:w-96 border-r border-gray-200 flex-col bg-white`}
+          } w-full md:w-80 lg:w-96 border-r border-border flex-col bg-background`}
         >
           {/* Header */}
-          <div className="p-3 sm:p-4 border-b border-gray-200 flex-shrink-0">
-            <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">
+          <div className="p-3 sm:p-4 border-b border-border flex-shrink-0">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-2 sm:mb-3">
               Chat Hub
             </h2>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search conversations..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full pl-10 pr-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
@@ -213,7 +213,7 @@ const ChatHub = () => {
               <div
                 key={chat.id}
                 onClick={() => handleSelectChat(chat.id)}
-                className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+                className={`p-3 sm:p-4 border-b border-border cursor-pointer hover:bg-muted transition-colors ${
                   selectedChat === chat.id
                     ? "bg-green-50 md:border-r-4 md:border-green-500"
                     : ""
@@ -239,14 +239,14 @@ const ChatHub = () => {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                      <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
                         {chat.name}
                       </h3>
-                      <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                      <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
                         {chat.timestamp}
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate">
                       {chat.lastMessage}
                     </p>
                     <div className="flex items-center justify-between mt-1 gap-2">
@@ -277,16 +277,16 @@ const ChatHub = () => {
         <div
           className={`${
             selectedChat ? "flex" : "hidden md:flex"
-          } flex-1 flex-col bg-white min-w-0`}
+          } flex-1 flex-col bg-background min-w-0`}
         >
           {selectedChat && selectedChatData ? (
             <>
               {/* Chat Header - Fixed */}
-              <div className="p-2 sm:p-3 md:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0 bg-white">
+              <div className="p-2 sm:p-3 md:p-4 border-b border-border flex items-center justify-between flex-shrink-0 bg-background">
                 <div className="flex items-center space-x-2 md:space-x-3 flex-1 min-w-0">
                   <button
                     onClick={handleBackToList}
-                    className="md:hidden p-1.5 hover:bg-gray-100 rounded-lg flex-shrink-0"
+                    className="md:hidden p-1.5 hover:bg-muted rounded-lg flex-shrink-0"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
@@ -294,7 +294,7 @@ const ChatHub = () => {
                   {/* Clickable Avatar and Name */}
                   <div
                     onClick={() => setShowContactInfo(true)}
-                    className="flex items-center space-x-2 md:space-x-3 flex-1 min-w-0 cursor-pointer hover:bg-gray-50 rounded-lg p-1 transition-colors"
+                    className="flex items-center space-x-2 md:space-x-3 flex-1 min-w-0 cursor-pointer hover:bg-muted rounded-lg p-1 transition-colors"
                   >
                     <img
                       src={selectedChatData.avatar}
@@ -302,10 +302,10 @@ const ChatHub = () => {
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
                     />
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                      <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
                         {selectedChatData.name}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-500 truncate">
+                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
                         {selectedChatData.phone}
                       </p>
                     </div>
@@ -313,20 +313,20 @@ const ChatHub = () => {
                 </div>
 
                 <div className="flex items-center space-x-1 flex-shrink-0">
-                  <button className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                  <button className="p-1.5 sm:p-2 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
-                  <button className="hidden sm:block p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                  <button className="hidden sm:block p-1.5 sm:p-2 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted">
                     <Video className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
-                  <button className="hidden sm:block p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                  <button className="hidden sm:block p-1.5 sm:p-2 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted">
                     <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
 
               {/* Messages - Scrollable area */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-50">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-muted">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
@@ -338,7 +338,7 @@ const ChatHub = () => {
                       className={`max-w-[85%] sm:max-w-xs md:max-w-md px-3 sm:px-4 py-2 rounded-lg ${
                         msg.sender === "agent"
                           ? "bg-green-500 text-white"
-                          : "bg-white border border-gray-200 shadow-sm"
+                          : "bg-background border border-border shadow-sm"
                       }`}
                     >
                       <p className="text-xs sm:text-sm break-words leading-relaxed">
@@ -348,7 +348,7 @@ const ChatHub = () => {
                         className={`flex items-center justify-between mt-1 gap-2 ${
                           msg.sender === "agent"
                             ? "text-green-100"
-                            : "text-gray-500"
+                            : "text-muted-foreground"
                         }`}
                       >
                         <span className="text-xs">{msg.timestamp}</span>
@@ -368,13 +368,13 @@ const ChatHub = () => {
               </div>
 
               {/* Canned Responses - Fixed */}
-              <div className="bg-white p-2 sm:p-3 border-t border-gray-200 flex-shrink-0">
+              <div className="bg-background p-2 sm:p-3 border-t border-border flex-shrink-0">
                 <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-hide">
                   {cannedResponses.map((response, index) => (
                     <button
                       key={index}
                       onClick={() => setMessage(response)}
-                      className="bg-gray-100 hover:bg-gray-200 px-2.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm text-gray-700 whitespace-nowrap border border-gray-300 flex-shrink-0 transition-colors"
+                      className="bg-muted hover:bg-border px-2.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm text-muted-foreground whitespace-nowrap border border-border flex-shrink-0 transition-colors"
                     >
                       {response}
                     </button>
@@ -383,9 +383,9 @@ const ChatHub = () => {
               </div>
 
               {/* Message Input - Fixed */}
-              <div className="bg-white p-2 sm:p-3 md:p-4 border-t border-gray-200 flex-shrink-0">
+              <div className="bg-background p-2 sm:p-3 md:p-4 border-t border-border flex-shrink-0">
                 <div className="flex items-center space-x-1.5 sm:space-x-2">
-                  <button className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 flex-shrink-0">
+                  <button className="p-1.5 sm:p-2 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted flex-shrink-0">
                     <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
 
@@ -398,11 +398,11 @@ const ChatHub = () => {
                         e.key === "Enter" && handleSendMessage()
                       }
                       placeholder="Type a message..."
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
 
-                  <button className="hidden sm:block p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 flex-shrink-0">
+                  <button className="hidden sm:block p-1.5 sm:p-2 text-muted-foreground hover:text-muted-foreground rounded-lg hover:bg-muted flex-shrink-0">
                     <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
@@ -418,11 +418,11 @@ const ChatHub = () => {
           ) : (
             <div className="hidden md:flex flex-1 items-center justify-center">
               <div className="text-center p-4">
-                <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
                   No Chat Selected
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Select a conversation to start chatting
                 </p>
               </div>
@@ -439,12 +439,12 @@ const ChatHub = () => {
             onClick={() => setShowContactInfo(false)}
           />
 
-          <div className="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white">
+          <div className="fixed top-0 right-0 h-full w-full sm:w-96 bg-background shadow-2xl z-50 overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-background">
               <h3 className="text-lg font-semibold">Contact Info</h3>
               <button
                 onClick={() => setShowContactInfo(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -457,10 +457,10 @@ const ChatHub = () => {
                   alt="Contact"
                   className="w-20 h-20 rounded-full mx-auto mb-3 object-cover"
                 />
-                <h3 className="font-semibold text-gray-900 text-lg">
+                <h3 className="font-semibold text-foreground text-lg">
                   {selectedChatData.name}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   {selectedChatData.phone}
                 </p>
               </div>
@@ -478,19 +478,19 @@ const ChatHub = () => {
                 </div>
 
                 <div className="border-t pt-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">
+                  <h4 className="font-semibold text-foreground mb-3">
                     Quick Actions
                   </h4>
                   <div className="space-y-2">
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-100 flex items-center transition-colors">
+                    <button className="w-full text-left p-3 rounded-lg hover:bg-muted flex items-center transition-colors">
                       <Star className="w-5 h-5 mr-3 text-yellow-500" />
                       Add to Favorites
                     </button>
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-100 flex items-center transition-colors">
-                      <Archive className="w-5 h-5 mr-3 text-gray-500" />
+                    <button className="w-full text-left p-3 rounded-lg hover:bg-muted flex items-center transition-colors">
+                      <Archive className="w-5 h-5 mr-3 text-muted-foreground" />
                       Archive Chat
                     </button>
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-100 flex items-center text-red-600 transition-colors">
+                    <button className="w-full text-left p-3 rounded-lg hover:bg-muted flex items-center text-red-600 transition-colors">
                       <Trash2 className="w-5 h-5 mr-3" />
                       Delete Chat
                     </button>
@@ -498,18 +498,18 @@ const ChatHub = () => {
                 </div>
 
                 <div className="border-t pt-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">
+                  <h4 className="font-semibold text-foreground mb-3">
                     Contact Info
                   </h4>
                   <div className="space-y-3">
                     <div>
-                      <span className="text-gray-500 text-sm">Status:</span>
+                      <span className="text-muted-foreground text-sm">Status:</span>
                       <span className="ml-2 capitalize text-sm">
                         {selectedChatData.status}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500 text-sm">Tags:</span>
+                      <span className="text-muted-foreground text-sm">Tags:</span>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {selectedChatData.tags.map((tag, index) => (
                           <span

@@ -182,7 +182,7 @@ export default function ChatbotList() {
                               className={`px-2 py-1 text-xs rounded-full ${
                                 bot.isActive
                                   ? "bg-green-100 text-green-700"
-                                  : "bg-gray-200 text-gray-600"
+                                  : "bg-border text-muted-foreground"
                               }`}
                             >
                               {bot.isActive ? "Active" : "Inactive"}

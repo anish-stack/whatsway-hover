@@ -122,8 +122,8 @@ export default function Templates({ userId }: TemplatesProps) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+        <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+          <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="py-3 px-4 border-b">{t("users.templates.name")}</th>
               <th className="py-3 px-4 border-b">{t("users.templates.category")}</th>
@@ -136,7 +136,7 @@ export default function Templates({ userId }: TemplatesProps) {
             {templates.map((template) => (
               <tr
                 key={template.id}
-                className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                className="hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <td className="py-3 px-4 border-b">{template.name}</td>
                 <td className="py-3 px-4 border-b">{template.category}</td>
@@ -180,7 +180,7 @@ export default function Templates({ userId }: TemplatesProps) {
         <div className="w-full mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* LEFT SIDE → Showing X to Y of Total */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-muted-foreground">
               {t("users.templates.showing")} {(page - 1) * limit + 1} {t("users.templates.to")}{" "}
               {Math.min(page * limit, Number(data.pagination.total))} {t("users.templates.of")}{" "}
               {data.pagination.total} {t("users.templates.templatesCount")}

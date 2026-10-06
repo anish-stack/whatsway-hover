@@ -60,10 +60,10 @@ function NodeShell({
 }) {
   return (
     <div
-      className={`rounded-xl bg-white shadow-md min-w-[240px] max-w-[280px] overflow-hidden transition-all duration-200 border ${
+      className={`rounded-xl bg-background shadow-md min-w-[240px] max-w-[280px] overflow-hidden transition-all duration-200 border ${
         selected
           ? "border-blue-400 ring-2 ring-blue-100"
-          : "border-gray-200 hover:shadow-lg"
+          : "border-border hover:shadow-lg"
       }`}
     >
       <div className={`flex items-center gap-2.5 px-3.5 py-2.5 ${bgColor} border-b ${borderColor}`}>
@@ -73,7 +73,7 @@ function NodeShell({
         <span className={`font-semibold text-xs ${color}`}>{title}</span>
       </div>
       {children && (
-        <div className="px-3.5 py-2.5 text-xs text-gray-600 space-y-2">
+        <div className="px-3.5 py-2.5 text-xs text-muted-foreground space-y-2">
           {children}
         </div>
       )}
@@ -88,7 +88,7 @@ export function StartNode() {
       <div className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center text-white shadow-md border-2 border-white">
         <Zap className="w-6 h-6" />
       </div>
-      <div className="mt-1.5 px-2.5 py-0.5 bg-white rounded-full shadow-sm border border-gray-200">
+      <div className="mt-1.5 px-2.5 py-0.5 bg-background rounded-full shadow-sm border border-border">
         <span className="text-[10px] font-semibold text-green-700 uppercase">{t("automations.nodes.start")}</span>
       </div>
       <Handle type="source" position={Position.Bottom} className="!bg-green-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -100,30 +100,30 @@ export function ConditionsNode({ data }: { data: BuilderNodeData }) {
   const { t } = useTranslation();
   return (
     <div className="relative">
-      <Handle type="target" position={Position.Top} className="!bg-purple-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
+      <Handle type="target" position={Position.Top} className="!bg-[var(--brand)] !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
       <NodeShell
         icon={<GitBranch className="w-4 h-4" />}
         title={t("automations.nodes.condition")}
-        color="text-purple-700"
-        bgColor="bg-purple-50"
-        borderColor="border-purple-100"
+        color="text-[var(--brand)]"
+        bgColor="bg-[var(--brand-100)]"
+        borderColor="border-[var(--mist)]"
       >
         {data.conditionType === "keyword" && data.keywords && data.keywords.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {data.keywords.slice(0, 3).map((kw, i) => (
-              <span key={i} className="bg-purple-50 text-purple-700 text-[10px] px-1.5 py-0.5 rounded font-medium">
+              <span key={i} className="bg-[var(--brand-100)] text-[var(--brand)] text-[10px] px-1.5 py-0.5 rounded font-medium">
                 {kw}
               </span>
             ))}
             {data.keywords.length > 3 && (
-              <span className="text-purple-400 text-[10px]">+{data.keywords.length - 3}</span>
+              <span className="text-[var(--brand)] text-[10px]">+{data.keywords.length - 3}</span>
             )}
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noConditions")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noConditions")}</div>
         )}
         {data.matchType && (
-          <div className="text-[10px] text-purple-600 font-medium">
+          <div className="text-[10px] text-[var(--brand)] font-medium">
             {t("automations.nodes.match", { type: data.matchType })}
           </div>
         )}
@@ -151,38 +151,38 @@ export function CustomReplyNode({ data }: { data: BuilderNodeData }) {
         borderColor="border-blue-100"
       >
         {data.message ? (
-          <p className="line-clamp-2 text-[11px] text-gray-600 bg-gray-50 rounded-lg p-2 border border-gray-100">
+          <p className="line-clamp-2 text-[11px] text-muted-foreground bg-muted rounded-lg p-2 border border-border">
             {data.message.length > 80 ? `${data.message.slice(0, 80)}...` : data.message}
           </p>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noMessage")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noMessage")}</div>
         )}
 
         <div className="flex flex-wrap gap-1">
           {data.imagePreview && (
-            <span className="inline-flex items-center gap-0.5 bg-gray-100 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-medium">
+            <span className="inline-flex items-center gap-0.5 bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded font-medium">
               <Image className="w-2.5 h-2.5" /> Image
             </span>
           )}
           {data.videoPreview && (
-            <span className="inline-flex items-center gap-0.5 bg-gray-100 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-medium">
+            <span className="inline-flex items-center gap-0.5 bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded font-medium">
               <Video className="w-2.5 h-2.5" /> Video
             </span>
           )}
           {data.audioPreview && (
-            <span className="inline-flex items-center gap-0.5 bg-gray-100 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-medium">
+            <span className="inline-flex items-center gap-0.5 bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded font-medium">
               <FileAudio className="w-2.5 h-2.5" /> Audio
             </span>
           )}
           {data.documentPreview && (
-            <span className="inline-flex items-center gap-0.5 bg-gray-100 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-medium">
+            <span className="inline-flex items-center gap-0.5 bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded font-medium">
               <FileIcon className="w-2.5 h-2.5" /> Doc
             </span>
           )}
         </div>
 
         {data.buttons && data.buttons.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-1.5 border-t border-gray-100">
+          <div className="flex flex-wrap gap-1 pt-1.5 border-t border-border">
             {data.buttons.slice(0, 3).map((btn) => (
               <span key={btn.id} className="bg-blue-50 text-blue-600 text-[10px] px-2 py-0.5 rounded font-medium border border-blue-100">
                 {btn.text}
@@ -212,11 +212,11 @@ export function UserReplyNode({ data }: { data: BuilderNodeData }) {
         borderColor="border-amber-100"
       >
         {data.question ? (
-          <p className="line-clamp-2 text-[11px] text-gray-600 bg-gray-50 rounded-lg p-2 border border-gray-100">
+          <p className="line-clamp-2 text-[11px] text-muted-foreground bg-muted rounded-lg p-2 border border-border">
             {data.question.length > 80 ? `${data.question.slice(0, 80)}...` : data.question}
           </p>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noQuestion")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noQuestion")}</div>
         )}
         {data.saveAs && (
           <div className="text-[10px] text-amber-600 font-medium font-mono">
@@ -224,7 +224,7 @@ export function UserReplyNode({ data }: { data: BuilderNodeData }) {
           </div>
         )}
         {data.buttons && data.buttons.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-1.5 border-t border-gray-100">
+          <div className="flex flex-wrap gap-1 pt-1.5 border-t border-border">
             {data.buttons.slice(0, 3).map((btn) => (
               <span key={btn.id} className="bg-green-50 text-green-600 text-[10px] px-2 py-0.5 rounded font-medium border border-green-100">
                 {btn.text}
@@ -251,13 +251,13 @@ export function TimeGapNode({ data }: { data: BuilderNodeData }) {
       <NodeShell
         icon={<Clock className="w-4 h-4" />}
         title="Wait / Delay"
-        color="text-slate-700"
-        bgColor="bg-slate-50"
-        borderColor="border-slate-200"
+        color="text-muted-foreground"
+        bgColor="bg-muted"
+        borderColor="border-border"
       >
-        <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-100">
-          <span className="text-lg font-bold text-slate-700">{display}</span>
-          <span className="text-[10px] text-gray-400 font-medium uppercase">pause</span>
+        <div className="flex items-center gap-2 bg-muted rounded-lg p-2 border border-border">
+          <span className="text-lg font-bold text-muted-foreground">{display}</span>
+          <span className="text-[10px] text-muted-foreground font-medium uppercase">pause</span>
         </div>
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-slate-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -278,12 +278,12 @@ export function SendTemplateNode({ data }: { data: BuilderNodeData }) {
         borderColor="border-teal-100"
       >
         {data.templateId ? (
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-100">
+          <div className="flex items-center gap-2 bg-muted rounded-lg p-2 border border-border">
             <FileText className="w-3.5 h-3.5 text-teal-600" />
-            <span className="text-[11px] text-gray-600 font-medium">{t("automations.nodes.templateSelected")}</span>
+            <span className="text-[11px] text-muted-foreground font-medium">{t("automations.nodes.templateSelected")}</span>
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noTemplate")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noTemplate")}</div>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-teal-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -295,24 +295,24 @@ export function AssignUserNode({ data }: { data: BuilderNodeData }) {
   const { t } = useTranslation();
   return (
     <div className="relative">
-      <Handle type="target" position={Position.Top} className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
+      <Handle type="target" position={Position.Top} className="!bg-[var(--brand)] !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
       <NodeShell
         icon={<Users className="w-4 h-4" />}
         title="Assign Agent"
-        color="text-indigo-700"
-        bgColor="bg-indigo-50"
-        borderColor="border-indigo-100"
+        color="text-[var(--brand)]"
+        bgColor="bg-[var(--brand-100)]"
+        borderColor="border-[var(--mist)]"
       >
         {data.assigneeId ? (
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-100">
-            <Users className="w-3.5 h-3.5 text-indigo-600" />
-            <span className="text-[11px] text-gray-600 font-medium">{t("automations.nodes.agentAssigned")}</span>
+          <div className="flex items-center gap-2 bg-muted rounded-lg p-2 border border-border">
+            <Users className="w-3.5 h-3.5 text-[var(--brand)]" />
+            <span className="text-[11px] text-muted-foreground font-medium">{t("automations.nodes.agentAssigned")}</span>
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noAgent")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noAgent")}</div>
         )}
       </NodeShell>
-      <Handle type="source" position={Position.Bottom} className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
+      <Handle type="source" position={Position.Bottom} className="!bg-[var(--brand)] !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
     </div>
   );
 }
@@ -334,10 +334,10 @@ export function WebhookNode({ data }: { data: BuilderNodeData }) {
             <span className="inline-block bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold">
               {data.webhookMethod || "POST"}
             </span>
-            <div className="text-[11px] text-gray-500 truncate bg-gray-50 rounded px-2 py-1 font-mono border border-gray-100">{data.webhookUrl}</div>
+            <div className="text-[11px] text-muted-foreground truncate bg-muted rounded px-2 py-1 font-mono border border-border">{data.webhookUrl}</div>
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noWebhook")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noWebhook")}</div>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-orange-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -353,7 +353,7 @@ export function EndNode({ data }: { data: BuilderNodeData }) {
       <div className="w-14 h-14 rounded-full bg-red-500 flex items-center justify-center text-white shadow-md border-2 border-white">
         <CircleStop className="w-6 h-6" />
       </div>
-      <div className="mt-1.5 px-2.5 py-0.5 bg-white rounded-full shadow-sm border border-gray-200">
+      <div className="mt-1.5 px-2.5 py-0.5 bg-background rounded-full shadow-sm border border-border">
         <span className="text-[10px] font-semibold text-red-700 uppercase">{data.endMessage || "End"}</span>
       </div>
     </div>
@@ -373,12 +373,12 @@ export function AddToGroupNode({ data }: { data: BuilderNodeData }) {
         borderColor="border-emerald-100"
       >
         {data.groupName ? (
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-100">
+          <div className="flex items-center gap-2 bg-muted rounded-lg p-2 border border-border">
             <UserPlus className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-[11px] text-gray-600 font-medium truncate">{data.groupName}</span>
+            <span className="text-[11px] text-muted-foreground font-medium truncate">{data.groupName}</span>
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noGroup")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noGroup")}</div>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-emerald-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -404,13 +404,13 @@ export function UpdateContactNode({ data }: { data: BuilderNodeData }) {
               {data.contactField}
             </span>
             {data.contactFieldValue && (
-              <div className="text-[11px] text-gray-500 truncate bg-gray-50 rounded px-2 py-1 border border-gray-100">
+              <div className="text-[11px] text-muted-foreground truncate bg-muted rounded px-2 py-1 border border-border">
                 {data.contactFieldValue}
               </div>
             )}
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noField")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noField")}</div>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-cyan-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -422,35 +422,35 @@ export function SetVariableNode({ data }: { data: BuilderNodeData }) {
   const { t } = useTranslation();
   return (
     <div className="relative">
-      <Handle type="target" position={Position.Top} className="!bg-violet-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
+      <Handle type="target" position={Position.Top} className="!bg-[var(--brand)] !w-3 !h-3 !border-2 !border-white !shadow-sm !-top-1.5" />
       <NodeShell
         icon={<Variable className="w-4 h-4" />}
         title="Set Variable"
-        color="text-violet-700"
-        bgColor="bg-violet-50"
-        borderColor="border-violet-100"
+        color="text-[var(--brand)]"
+        bgColor="bg-[var(--brand-100)]"
+        borderColor="border-[var(--mist)]"
       >
         {data.variableName ? (
           <div className="space-y-1">
-            <div className="text-[10px] text-violet-600 font-medium font-mono">
+            <div className="text-[10px] text-[var(--brand)] font-medium font-mono">
               ${data.variableName}
             </div>
             {data.variableValue && (
-              <div className="text-[11px] text-gray-500 truncate bg-gray-50 rounded px-2 py-1 border border-gray-100">
+              <div className="text-[11px] text-muted-foreground truncate bg-muted rounded px-2 py-1 border border-border">
                 = {data.variableValue}
               </div>
             )}
             {data.variableSource && data.variableSource !== "static" && (
-              <span className="inline-block bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
+              <span className="inline-block bg-[var(--brand-100)] text-[var(--brand)] px-1.5 py-0.5 rounded text-[10px] font-medium">
                 {data.variableSource === "from_message" ? "From Message" : "From Webhook"}
               </span>
             )}
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noVariable")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noVariable")}</div>
         )}
       </NodeShell>
-      <Handle type="source" position={Position.Bottom} className="!bg-violet-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
+      <Handle type="source" position={Position.Bottom} className="!bg-[var(--brand)] !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
     </div>
   );
 }
@@ -470,16 +470,16 @@ export function SendLocationNode({ data }: { data: BuilderNodeData }) {
         {data.locationName || (data.latitude && data.longitude) ? (
           <div className="space-y-1">
             {data.locationName && (
-              <div className="text-[11px] text-gray-700 font-medium">{data.locationName}</div>
+              <div className="text-[11px] text-muted-foreground font-medium">{data.locationName}</div>
             )}
             {data.latitude && data.longitude && (
-              <div className="text-[10px] text-gray-400 font-mono bg-gray-50 rounded px-2 py-1 border border-gray-100">
+              <div className="text-[10px] text-muted-foreground font-mono bg-muted rounded px-2 py-1 border border-border">
                 {data.latitude}, {data.longitude}
               </div>
             )}
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noLocation")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noLocation")}</div>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-rose-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -501,17 +501,17 @@ export function SendListMessageNode({ data }: { data: BuilderNodeData }) {
         borderColor="border-sky-100"
       >
         {data.message ? (
-          <p className="line-clamp-2 text-[11px] text-gray-600 bg-gray-50 rounded-lg p-2 border border-gray-100">
+          <p className="line-clamp-2 text-[11px] text-muted-foreground bg-muted rounded-lg p-2 border border-border">
             {data.message.length > 60 ? `${data.message.slice(0, 60)}...` : data.message}
           </p>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noBody")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noBody")}</div>
         )}
         <div className="flex items-center gap-2">
           <span className="inline-block bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded text-[10px] font-bold">
             {data.listSections?.length || 0} sections
           </span>
-          <span className="text-[10px] text-gray-400">{totalRows} items</span>
+          <span className="text-[10px] text-muted-foreground">{totalRows} items</span>
         </div>
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-sky-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -536,14 +536,14 @@ export function SendMediaNode({ data }: { data: BuilderNodeData }) {
           {mediaLabel}
         </span>
         {data.mediaUrl ? (
-          <div className="text-[11px] text-gray-500 truncate bg-gray-50 rounded px-2 py-1 font-mono border border-gray-100">
+          <div className="text-[11px] text-muted-foreground truncate bg-muted rounded px-2 py-1 font-mono border border-border">
             {data.mediaUrl}
           </div>
         ) : (
-          <div className="text-gray-400 italic text-[11px]">{t("automations.nodes.noMedia")}</div>
+          <div className="text-muted-foreground italic text-[11px]">{t("automations.nodes.noMedia")}</div>
         )}
         {data.mediaCaption && (
-          <p className="text-[10px] text-gray-400 truncate">{data.mediaCaption}</p>
+          <p className="text-[10px] text-muted-foreground truncate">{data.mediaCaption}</p>
         )}
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-pink-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />
@@ -563,9 +563,9 @@ export function MarkAsReadNode() {
         bgColor="bg-lime-50"
         borderColor="border-lime-100"
       >
-        <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-100">
+        <div className="flex items-center gap-2 bg-muted rounded-lg p-2 border border-border">
           <CheckCheck className="w-3.5 h-3.5 text-lime-600" />
-          <span className="text-[11px] text-gray-600 font-medium">{t("automations.nodes.sendReadReceipts")}</span>
+          <span className="text-[11px] text-muted-foreground font-medium">{t("automations.nodes.sendReadReceipts")}</span>
         </div>
       </NodeShell>
       <Handle type="source" position={Position.Bottom} className="!bg-lime-500 !w-3 !h-3 !border-2 !border-white !shadow-sm !-bottom-1.5" />

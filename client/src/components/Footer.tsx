@@ -18,12 +18,10 @@
 import React from "react";
 import { Link } from "wouter";
 import {
-  MessageCircle,
   Twitter,
   Linkedin,
   Github,
   Mail,
-  ArrowRight,
   MessageSquare,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
@@ -87,14 +85,14 @@ const Footer: React.FC = () => {
       {link.href.startsWith("/") ? (
         <Link
           to={link.href}
-          className="text-gray-400 hover:text-white text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
+          className="text-sm text-white/55 transition-colors hover:text-white"
         >
           {link.name}
         </Link>
       ) : (
         <a
           href={link.href}
-          className="text-gray-400 hover:text-white text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
+          className="text-sm text-white/55 transition-colors hover:text-white"
         >
           {link.name}
         </a>
@@ -102,139 +100,116 @@ const Footer: React.FC = () => {
     </li>
   );
 
-  return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-white relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+  const socials = [
+    { href: "https://x.com", Icon: Twitter, label: t("Landing.footerSec.socialLinks.twitter") },
+    { href: "https://linkedin.com/", Icon: Linkedin, label: t("Landing.footerSec.socialLinks.linkedin") },
+    { href: "https://github.com/", Icon: Github, label: t("Landing.footerSec.socialLinks.github") },
+    { href: "https://mail.google.com", Icon: Mail, label: t("Landing.footerSec.socialLinks.mail") },
+  ];
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+  return (
+    <footer className="ink-bg">
+      <div className="shell pb-10 pt-16">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3">
+            <Link href="/" className="inline-flex items-center">
               {brandSettings?.logo2 && brandSettings.logo2 !== "/uploads/null" ? (
                 <img
                   src={brandSettings.logo2}
                   alt="Logo"
-                  className="h-12 object-contain"
+                  className="h-11 object-contain"
                   style={{ filter: "brightness(0) invert(1)" }}
                 />
               ) : brandSettings?.logo ? (
                 <img
                   src={brandSettings.logo}
                   alt="Logo"
-                  className="h-12 object-contain"
+                  className="h-11 object-contain"
                   style={{ filter: "brightness(0) invert(1)" }}
                 />
               ) : (
-                <div className="bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 rounded-xl p-2.5">
-                  <MessageSquare className="h-7 w-7" />
-                </div>
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--brand)] text-white">
+                  <MessageSquare className="h-6 w-6" />
+                </span>
               )}
             </Link>
-            <p className="text-gray-400 mt-5 mb-8 max-w-sm text-sm leading-relaxed">
+
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/55">
               {t("Landing.footerSec.brandSection.description")}
             </p>
-            <div className="flex space-x-3">
-              <a
-                href="https://x.com"
-                className="bg-gray-800/60 p-2.5 rounded-xl hover:bg-blue-500/20 border border-gray-700/50 hover:border-blue-500/30 transition-all duration-300 group hover:scale-110"
-                aria-label={t("Landing.footerSec.socialLinks.twitter")}
-              >
-                <Twitter className="w-4 h-4 text-gray-400 group-hover:text-blue-400 transition-colors duration-300" />
-              </a>
-              <a
-                href="https://linkedin.com/"
-                className="bg-gray-800/60 p-2.5 rounded-xl hover:bg-blue-600/20 border border-gray-700/50 hover:border-blue-600/30 transition-all duration-300 group hover:scale-110"
-                aria-label={t("Landing.footerSec.socialLinks.linkedin")}
-              >
-                <Linkedin className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors duration-300" />
-              </a>
-              <a
-                href="https://github.com/"
-                className="bg-gray-800/60 p-2.5 rounded-xl hover:bg-gray-600/20 border border-gray-700/50 hover:border-gray-500/30 transition-all duration-300 group hover:scale-110"
-                aria-label={t("Landing.footerSec.socialLinks.github")}
-              >
-                <Github className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-300" />
-              </a>
-              <a
-                href="https://mail.google.com"
-                className="bg-gray-800/60 p-2.5 rounded-xl hover:bg-emerald-500/20 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-300 group hover:scale-110"
-                aria-label={t("Landing.footerSec.socialLinks.mail")}
-              >
-                <Mail className="w-4 h-4 text-gray-400 group-hover:text-emerald-400 transition-colors duration-300" />
-              </a>
+
+            <div className="mt-7 flex gap-2">
+              {socials.map(({ href, Icon, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  aria-label={label}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/12 text-white/60 transition-colors hover:border-[var(--flare)] hover:text-[var(--flare)]"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           </div>
 
-          <div className="lg:col-span-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-300 mb-5">
-              Product
-            </h3>
-            <ul className="space-y-3">
-              {links.product.map((link, index) => renderLink(link, index))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-300 mb-5">
-              Company
-            </h3>
-            <ul className="space-y-3">
-              {links.company.map((link, index) => renderLink(link, index))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-300 mb-5">
-              Resources
-            </h3>
-            <ul className="space-y-3">
-              {links.resources.map((link, index) => renderLink(link, index))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-300 mb-5">
-              Legal
-            </h3>
-            <ul className="space-y-3">
-              {links.legal.map((link, index) => renderLink(link, index))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-xs">
-              {t("Landing.footerSec.bottomBar.copyrightText", {
-                appName: brandSettings?.title ?? "",
-              })}
-            </p>
-            <div className="flex items-center space-x-6">
-              <Link
-                to="/terms"
-                className="text-gray-500 hover:text-gray-300 text-xs transition-colors duration-200"
-              >
-                {t("Landing.footerSec.bottomBar.termsLink")}
-              </Link>
-              <Link
-                to="/privacy-policy"
-                className="text-gray-500 hover:text-gray-300 text-xs transition-colors duration-200"
-              >
-                {t("Landing.footerSec.bottomBar.privacyLink")}
-              </Link>
-              <Link
-                to="/cookie-policy"
-                className="text-gray-500 hover:text-gray-300 text-xs transition-colors duration-200"
-              >
-                {t("Landing.footerSec.bottomBar.cookieLink")}
-              </Link>
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:col-span-8">
+            <div>
+              <h3 className="text-sm font-semibold text-white">Product</h3>
+              <ul className="mt-4 space-y-3">
+                {links.product.map((link, index) => renderLink(link, index))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-white">Company</h3>
+              <ul className="mt-4 space-y-3">
+                {links.company.map((link, index) => renderLink(link, index))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-white">Resources</h3>
+              <ul className="mt-4 space-y-3">
+                {links.resources.map((link, index) => renderLink(link, index))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-white">Legal</h3>
+              <ul className="mt-4 space-y-3">
+                {links.legal.map((link, index) => renderLink(link, index))}
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
+      <div className="border-t border-white/10">
+        <div className="shell flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
+          <p className="text-xs text-white/40">
+            {t("Landing.footerSec.bottomBar.copyrightText", {
+              appName: brandSettings?.title ?? "",
+            })}
+          </p>
+          <div className="flex items-center gap-6">
+            <Link
+              to="/terms"
+              className="text-xs text-white/40 transition-colors hover:text-white"
+            >
+              {t("Landing.footerSec.bottomBar.termsLink")}
+            </Link>
+            <Link
+              to="/privacy-policy"
+              className="text-xs text-white/40 transition-colors hover:text-white"
+            >
+              {t("Landing.footerSec.bottomBar.privacyLink")}
+            </Link>
+            <Link
+              to="/cookie-policy"
+              className="text-xs text-white/40 transition-colors hover:text-white"
+            >
+              {t("Landing.footerSec.bottomBar.cookieLink")}
+            </Link>
+          </div>
+        </div>
+      </div>
     </footer>
   );
 };

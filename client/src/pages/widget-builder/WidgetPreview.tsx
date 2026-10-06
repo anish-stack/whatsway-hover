@@ -162,10 +162,10 @@ export default function WidgetPreview({
       {/* Background */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center space-y-2">
-          <p className="text-2xl font-bold text-slate-300">
+          <p className="text-2xl font-bold text-muted-foreground">
             Your Website
           </p>
-          <p className="text-sm text-slate-400">Widget preview</p>
+          <p className="text-sm text-muted-foreground">Widget preview</p>
         </div>
       </div>
 
@@ -177,7 +177,7 @@ export default function WidgetPreview({
             config.position.includes("right") ? "right-6" : "left-6"
           } ${
             config.position.includes("top") ? "top-6" : "bottom-6"
-          } w-[380px] h-[600px] flex flex-col bg-white rounded-2xl border overflow-hidden`}
+          } w-[380px] h-[600px] flex flex-col bg-background rounded-2xl border overflow-hidden`}
           style={{
             fontFamily: fontFamilyValue,
             boxShadow: containerShadow,
@@ -267,7 +267,7 @@ export default function WidgetPreview({
             {previewScreen === "home" && (
               <div className="p-4 space-y-4">
                     {/* Start Conversation Card */}
-                    <div className="bg-slate-50 rounded-xl p-4 space-y-3">
+                    <div className="bg-muted rounded-xl p-4 space-y-3">
                       <div className="flex items-center gap-3">
                         {config.showTeamAvatars && (
                         <div className="flex -space-x-2">
@@ -347,7 +347,7 @@ export default function WidgetPreview({
                       const displayFaqs = activePairsForDisplay.slice(0, config.articlesCount);
                       return (
                         <div className="space-y-3">
-                          <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                             Popular FAQs
                           </p>
                           <div className="space-y-2">
@@ -356,23 +356,23 @@ export default function WidgetPreview({
                               return (
                                 <div
                                   key={qa.id}
-                                  className="border border-slate-200 rounded-xl overflow-hidden transition-all"
+                                  className="border border-border rounded-xl overflow-hidden transition-all"
                                   style={{ transition: `all ${transitionSpeed} ease` }}
                                 >
                                   <button
-                                    className="w-full text-left p-3 hover:bg-slate-50 transition-colors flex items-center justify-between gap-2"
+                                    className="w-full text-left p-3 hover:bg-muted transition-colors flex items-center justify-between gap-2"
                                     onClick={() => setExpandedFaqId(isExpanded ? null : qa.id)}
                                   >
                                     <div className="flex-1 min-w-0">
-                                      <p className="text-sm font-medium text-slate-800">
+                                      <p className="text-sm font-medium text-foreground">
                                         {qa.question}
                                       </p>
-                                      <p className="text-xs text-slate-400 mt-0.5">
+                                      <p className="text-xs text-muted-foreground mt-0.5">
                                         {qa.category}
                                       </p>
                                     </div>
                                     <ChevronDown
-                                      className="h-4 w-4 text-slate-400 flex-shrink-0 transition-transform"
+                                      className="h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform"
                                       style={{
                                         transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                                         transition: `transform ${transitionSpeed} ease`,
@@ -389,7 +389,7 @@ export default function WidgetPreview({
                                   >
                                     <div className="px-3 pb-3 pt-0">
                                       <div
-                                        className="text-sm text-slate-600 leading-relaxed bg-slate-50 rounded-lg p-3"
+                                        className="text-sm text-muted-foreground leading-relaxed bg-muted rounded-lg p-3"
                                         style={{ borderLeft: `3px solid ${config.primaryColor}` }}
                                       >
                                         {qa.answer || "No answer provided yet."}
@@ -436,7 +436,7 @@ export default function WidgetPreview({
                         className={`rounded-xl px-3 py-2 max-w-[80%] ${
                           msg.role === "user"
                             ? "text-white"
-                            : "bg-slate-100"
+                            : "bg-muted"
                         }`}
                         style={
                           msg.role === "user"
@@ -522,7 +522,7 @@ export default function WidgetPreview({
                               style={{ transition: `all ${transitionSpeed} ease` }}
                             >
                               <button
-                                className="w-full text-left p-3 hover:bg-slate-50 transition-colors flex items-start gap-3"
+                                className="w-full text-left p-3 hover:bg-muted transition-colors flex items-start gap-3"
                                 onClick={() => setExpandedFaqId(isExpanded ? null : qa.id)}
                               >
                                 <HelpCircle
@@ -538,7 +538,7 @@ export default function WidgetPreview({
                                   </p>
                                 </div>
                                 <ChevronDown
-                                  className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5"
+                                  className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5"
                                   style={{
                                     transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                                     transition: `transform ${transitionSpeed} ease`,
@@ -555,7 +555,7 @@ export default function WidgetPreview({
                               >
                                 <div className="px-3 pb-3 pt-0 pl-10">
                                   <div
-                                    className="text-sm text-slate-600 leading-relaxed bg-slate-50 rounded-lg p-3"
+                                    className="text-sm text-muted-foreground leading-relaxed bg-muted rounded-lg p-3"
                                     style={{ borderLeft: `3px solid ${config.primaryColor}` }}
                                   >
                                     {qa.answer || "No answer provided yet."}

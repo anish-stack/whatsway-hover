@@ -148,9 +148,9 @@ const BulkImport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 sm:py-4 gap-3">
             <div className="flex items-center space-x-3 sm:space-x-4">
@@ -158,10 +158,10 @@ const BulkImport = () => {
                 <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground">
                   Bulk Import
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Import contacts from CSV or Excel files
                 </p>
               </div>
@@ -176,7 +176,7 @@ const BulkImport = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Progress Steps - Mobile Compact Version */}
-        <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-200 mb-4 sm:mb-6 lg:mb-8">
+        <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-border mb-4 sm:mb-6 lg:mb-8">
           {/* Mobile: Compact Progress */}
           <div className="lg:hidden">
             <div className="flex items-center justify-between mb-3">
@@ -185,17 +185,17 @@ const BulkImport = () => {
                   {activeStep}
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 text-sm">
+                  <div className="font-medium text-foreground text-sm">
                     {steps[activeStep - 1].title}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted-foreground">
                     Step {activeStep} of {steps.length}
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => setShowSteps(!showSteps)}
-                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                 aria-label="Toggle steps"
               >
                 {showSteps ? (
@@ -207,7 +207,7 @@ const BulkImport = () => {
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+            <div className="w-full bg-border rounded-full h-2 mb-3">
               <div
                 className="bg-green-500 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(activeStep / steps.length) * 100}%` }}
@@ -216,7 +216,7 @@ const BulkImport = () => {
 
             {/* Expandable Steps */}
             {showSteps && (
-              <div className="space-y-2 pt-3 border-t border-gray-200">
+              <div className="space-y-2 pt-3 border-t border-border">
                 {steps.map((step) => (
                   <div
                     key={step.number}
@@ -228,7 +228,7 @@ const BulkImport = () => {
                       className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${
                         activeStep >= step.number
                           ? "bg-green-500 text-white"
-                          : "bg-gray-200 text-gray-500"
+                          : "bg-border text-muted-foreground"
                       }`}
                     >
                       {activeStep > step.number ? "✓" : step.number}
@@ -237,8 +237,8 @@ const BulkImport = () => {
                       <div
                         className={`text-sm font-medium ${
                           activeStep >= step.number
-                            ? "text-gray-900"
-                            : "text-gray-500"
+                            ? "text-foreground"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {step.title}
@@ -258,7 +258,7 @@ const BulkImport = () => {
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     activeStep >= step.number
                       ? "bg-green-500 border-green-500 text-white"
-                      : "border-gray-300 text-gray-500"
+                      : "border-border text-muted-foreground"
                   }`}
                 >
                   {activeStep > step.number ? (
@@ -271,18 +271,18 @@ const BulkImport = () => {
                   <div
                     className={`font-medium ${
                       activeStep >= step.number
-                        ? "text-gray-900"
-                        : "text-gray-500"
+                        ? "text-foreground"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {step.title}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-muted-foreground">
                     {step.description}
                   </div>
                 </div>
                 {index < steps.length - 1 && (
-                  <ArrowRight className="w-5 h-5 text-gray-400 mx-6 xl:mx-8" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground mx-6 xl:mx-8" />
                 )}
               </div>
             ))}
@@ -294,17 +294,17 @@ const BulkImport = () => {
           <div className="lg:col-span-2">
             {/* Step 1: Upload File */}
             {activeStep === 1 && (
-              <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
+              <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-border">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">
                   Upload Your File
                 </h2>
 
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 lg:p-12 text-center hover:border-gray-400 transition-colors">
-                  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                <div className="border-2 border-dashed border-border rounded-lg p-6 sm:p-8 lg:p-12 text-center hover:border-gray-400 transition-colors">
+                  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
                     Drop your file here or click to browse
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-4">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                     Supports CSV, Excel (.xlsx, .xls) files up to 10MB
                   </p>
                   <input
@@ -338,8 +338,8 @@ const BulkImport = () => {
 
             {/* Step 2: Map Fields */}
             {activeStep === 2 && uploadedFile && (
-              <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
+              <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-border">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">
                   Map Your Fields
                 </h2>
 
@@ -373,18 +373,18 @@ const BulkImport = () => {
                   ].map((mapping, index) => (
                     <div
                       key={index}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-muted rounded-lg"
                     >
                       <div className="flex items-center space-x-3 sm:space-x-4">
-                        <div className="font-medium text-gray-900 text-sm sm:text-base">
+                        <div className="font-medium text-foreground text-sm sm:text-base">
                           {mapping.csvColumn}
                         </div>
-                        <ArrowRight className="w-4 h-4 text-gray-400 hidden sm:block" />
+                        <ArrowRight className="w-4 h-4 text-muted-foreground hidden sm:block" />
                       </div>
                       <div className="flex items-center gap-2">
                         <select
                           defaultValue={mapping.suggestedField}
-                          className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm sm:text-base border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="">Do Not Import</option>
                           <option value="Name">Name</option>
@@ -408,7 +408,7 @@ const BulkImport = () => {
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:justify-between">
                   <button
                     onClick={() => setActiveStep(1)}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors"
                   >
                     Back
                   </button>
@@ -424,8 +424,8 @@ const BulkImport = () => {
 
             {/* Step 3: Validate Data */}
             {activeStep === 3 && (
-              <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-200">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
+              <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-border">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">
                   Validate Your Data
                 </h2>
 
@@ -464,12 +464,12 @@ const BulkImport = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                <div className="bg-muted p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-                    <h3 className="font-medium text-gray-900 text-sm sm:text-base">
+                    <h3 className="font-medium text-foreground text-sm sm:text-base">
                       Data Preview
                     </h3>
-                    <span className="text-xs sm:text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       Showing 5 of {validationResults.total} records
                     </span>
                   </div>
@@ -501,10 +501,10 @@ const BulkImport = () => {
                     ].map((record, index) => (
                       <div
                         key={index}
-                        className="bg-white p-3 rounded-lg border border-gray-200"
+                        className="bg-background p-3 rounded-lg border border-border"
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <div className="font-medium text-gray-900 text-sm">
+                          <div className="font-medium text-foreground text-sm">
                             {record.name}
                           </div>
                           {record.status === "valid" && (
@@ -518,7 +518,7 @@ const BulkImport = () => {
                             </span>
                           )}
                         </div>
-                        <div className="space-y-1 text-xs text-gray-600">
+                        <div className="space-y-1 text-xs text-muted-foreground">
                           <div>📞 {record.phone}</div>
                           <div>✉️ {record.email}</div>
                           <div>🏢 {record.company}</div>
@@ -530,26 +530,26 @@ const BulkImport = () => {
                   {/* Desktop: Table View */}
                   <div className="hidden lg:block overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-gray-100">
+                      <thead className="bg-muted">
                         <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">
                             Name
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">
                             Phone
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">
                             Email
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">
                             Company
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">
                             Status
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-border">
                         {[
                           {
                             name: "John Smith",
@@ -587,17 +587,17 @@ const BulkImport = () => {
                             status: "missing-required",
                           },
                         ].map((record, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-2 text-sm text-gray-900">
+                          <tr key={index} className="hover:bg-muted">
+                            <td className="px-4 py-2 text-sm text-foreground">
                               {record.name}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-900">
+                            <td className="px-4 py-2 text-sm text-foreground">
                               {record.phone}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-900">
+                            <td className="px-4 py-2 text-sm text-foreground">
                               {record.email}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-900">
+                            <td className="px-4 py-2 text-sm text-foreground">
                               {record.company}
                             </td>
                             <td className="px-4 py-2">
@@ -651,7 +651,7 @@ const BulkImport = () => {
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:justify-between">
                   <button
                     onClick={() => setActiveStep(2)}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors"
                   >
                     Back
                   </button>
@@ -667,51 +667,51 @@ const BulkImport = () => {
 
             {/* Step 4: Import Complete */}
             {activeStep === 4 && (
-              <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-200">
+              <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-border">
                 <div className="text-center mb-6 sm:mb-8">
                   <div className="bg-green-100 p-3 sm:p-4 rounded-full w-fit mx-auto mb-4">
                     <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                     Import Completed!
                   </h2>
-                  <p className="text-sm sm:text-base text-gray-600">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {validationResults.valid} contacts were successfully
                     imported.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
+                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                       {validationResults.valid}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       Successful Imports
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
+                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                       {validationResults.duplicates +
                         validationResults.invalidPhone +
                         validationResults.missingRequired}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       Skipped Records
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  <div className="bg-muted p-3 sm:p-4 rounded-lg">
+                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                       2m 15s
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       Processing Time
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4">
-                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center">
                     <Download className="w-4 h-4 mr-2" />
                     Download Report
                   </button>
@@ -733,8 +733,8 @@ const BulkImport = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Import History */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+            <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
+              <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">
                 Recent Imports
               </h3>
 
@@ -742,12 +742,12 @@ const BulkImport = () => {
                 {importHistory.map((history) => (
                   <div
                     key={history.id}
-                    className="border border-gray-200 rounded-lg p-3 sm:p-4"
+                    className="border border-border rounded-lg p-3 sm:p-4"
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-start space-x-2 flex-1 min-w-0">
-                        <FileText className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-                        <span className="font-medium text-gray-900 text-xs sm:text-sm break-all">
+                        <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                        <span className="font-medium text-foreground text-xs sm:text-sm break-all">
                           {history.fileName}
                         </span>
                       </div>
@@ -756,12 +756,12 @@ const BulkImport = () => {
                       </div>
                     </div>
 
-                    <div className="text-xs text-gray-500 mb-2">
+                    <div className="text-xs text-muted-foreground mb-2">
                       {history.importedAt} • {history.duration}
                     </div>
 
                     <div className="flex items-center justify-between text-xs sm:text-sm">
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         {history.successfulImports}/{history.totalRecords}
                       </span>
                       <div className="flex items-center gap-2">
@@ -779,40 +779,40 @@ const BulkImport = () => {
             </div>
 
             {/* Help Section */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
+            <div className="bg-background p-4 sm:p-6 rounded-xl shadow-sm border border-border">
+              <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">
                 Import Tips
               </h3>
 
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs sm:text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Ensure phone numbers include country code (e.g., +1 for US)
                   </p>
                 </div>
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs sm:text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Use our template for best results and fewer errors
                   </p>
                 </div>
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs sm:text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Remove duplicates before importing to avoid confusion
                   </p>
                 </div>
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs sm:text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Limit imports to 10,000 contacts per file for best
                     performance
                   </p>
                 </div>
               </div>
 
-              <button className="w-full mt-3 sm:mt-4 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-xs sm:text-sm">
+              <button className="w-full mt-3 sm:mt-4 bg-muted text-muted-foreground py-2 rounded-lg hover:bg-border transition-colors text-xs sm:text-sm">
                 View Import Guide
               </button>
             </div>

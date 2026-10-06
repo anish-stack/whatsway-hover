@@ -51,12 +51,12 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-[var(--ink)] mb-6">
             {title}
           </h1>
-          {/* <p className="text-gray-600">Last Updated: {lastUpdated}</p> */}
+          {/* <p className="text-[var(--ink-500)]">Last Updated: {lastUpdated}</p> */}
         </div>
       </section>
 
@@ -66,8 +66,8 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
             {/* Table of Contents */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <div className="sticky top-24 bg-[var(--canvas)] rounded-xl p-6">
+                <h3 className="text-lg font-bold text-[var(--ink)] mb-4">
                   Table of Contents
                 </h3>
                 <nav className="space-y-2">
@@ -79,7 +79,7 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({
                           key={index}
                           href={`#${sectionId}`}
                           onClick={(e) => handleScrollToSection(e, sectionId)}
-                          className="block text-gray-600 hover:text-green-600 transition-colors py-1 cursor-pointer"
+                          className="block text-[var(--ink-500)] hover:text-[var(--brand)] transition-colors py-1 cursor-pointer"
                         >
                           {child.props.title}
                         </a>
@@ -125,10 +125,10 @@ export const PolicySection: React.FC<PolicySectionProps> = ({
 }) => {
   return (
     <section id={id} className="mb-12 scroll-mt-24">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3">
+      <h2 className="text-2xl font-bold text-[var(--ink)] mb-6 border-b border-[var(--mist)] pb-3">
         {title}
       </h2>
-      <div className="text-gray-600 leading-relaxed space-y-4">{children}</div>
+      <div className="text-[var(--ink-500)] leading-relaxed space-y-4">{children}</div>
     </section>
   );
 };

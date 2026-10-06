@@ -83,8 +83,8 @@ export default function ResetPassword({ email, otpCode, onReset }: Props) {
         <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
           <ShieldCheck className="h-6 w-6 text-green-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">Set New Password</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className="text-xl font-semibold text-foreground">Set New Password</h2>
+        <p className="text-sm text-muted-foreground">
           Create a strong password to secure your account.
         </p>
       </div>
@@ -97,22 +97,22 @@ export default function ResetPassword({ email, otpCode, onReset }: Props) {
 
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700">New Password</label>
+          <label className="text-sm font-medium text-muted-foreground">New Password</label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type={showNewPassword ? "text" : "password"}
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+              className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
               autoFocus
             />
             <button
               type="button"
               onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
             >
               {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -124,12 +124,12 @@ export default function ResetPassword({ email, otpCode, onReset }: Props) {
                   <div
                     key={i}
                     className={`h-1 flex-1 rounded-full transition-colors ${
-                      i <= passwordStrength.level ? passwordStrength.color : "bg-gray-200"
+                      i <= passwordStrength.level ? passwordStrength.color : "bg-border"
                     }`}
                   />
                 ))}
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Password strength: <span className="font-medium">{passwordStrength.label}</span>
               </p>
             </div>
@@ -137,21 +137,21 @@ export default function ResetPassword({ email, otpCode, onReset }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700">Confirm Password</label>
+          <label className="text-sm font-medium text-muted-foreground">Confirm Password</label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+              className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
             >
               {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>

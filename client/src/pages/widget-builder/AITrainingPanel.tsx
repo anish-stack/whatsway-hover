@@ -477,7 +477,7 @@ export default function AITrainingPanel({
       case "error":
         return <XCircle className="h-4 w-4 text-red-500" />;
       default:
-        return <Clock className="h-4 w-4 text-gray-400" />;
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -533,8 +533,8 @@ export default function AITrainingPanel({
             <p className="text-2xl font-bold text-blue-600">{stats.sources?.length || 0}</p>
             <p className="text-xs text-muted-foreground">Sources</p>
           </div>
-          <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-3 text-center">
-            <p className="text-2xl font-bold text-purple-600">{stats.totalChunks || 0}</p>
+          <div className="bg-[var(--brand-100)] dark:bg-[var(--brand)] rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-[var(--brand)]">{stats.totalChunks || 0}</p>
             <p className="text-xs text-muted-foreground">Chunks</p>
           </div>
           <div className="bg-green-50 dark:bg-green-950 rounded-lg p-3 text-center">

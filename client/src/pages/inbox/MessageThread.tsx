@@ -110,7 +110,7 @@ const TeamAssignDropdown = ({
               <span>
                 {user.firstName} {user.lastName}
               </span>
-              <span className="text-xs text-gray-500">@{user.username}</span>
+              <span className="text-xs text-muted-foreground">@{user.username}</span>
             </div>
           </DropdownMenuItem>
         ))}
@@ -196,8 +196,8 @@ const MessageThread = ({
     : ((selectedConversation as any)?.contact?.phone || selectedConversation?.contactPhone || "");
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50">
-      <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className="flex-1 flex flex-col bg-muted">
+      <div className="bg-background border-b border-border px-4 md:px-6 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -217,7 +217,7 @@ const MessageThread = ({
 
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-gray-900 text-[15px]">
+                <h3 className="font-semibold text-foreground text-[15px]">
                   {headerName ||
                       headerPhone ||
                       "Unknown"}
@@ -232,14 +232,14 @@ const MessageThread = ({
                   className={cn(
                     "text-[10px] font-medium px-2 py-0 h-5 rounded-full",
                     selectedConversation.status === "resolved"
-                      ? "bg-gray-100 text-gray-600"
+                      ? "bg-muted text-muted-foreground"
                       : "bg-green-50 text-green-700 border border-green-200"
                   )}
                 >
                   {selectedConversation.status || "open"}
                 </Badge>
               </div>
-              <p className="text-[13px] text-gray-500 mt-0.5">
+              <p className="text-[13px] text-muted-foreground mt-0.5">
                 {headerPhoneDisplay}
               </p>
             </div>
@@ -250,7 +250,7 @@ const MessageThread = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-gray-700"
+                className="h-8 w-8 text-muted-foreground hover:text-muted-foreground"
                 onClick={() =>
                   onTogglePin(selectedConversation.id, isPinned)
                 }
@@ -280,7 +280,7 @@ const MessageThread = ({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-muted-foreground">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -341,7 +341,7 @@ const MessageThread = ({
               <Loading />
             </div>
           ) : !messages || messages.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               No messages yet. Start a conversation!
             </div>
           ) : (
@@ -353,7 +353,7 @@ const MessageThread = ({
                     size="sm"
                     onClick={onLoadMoreMessages}
                     disabled={loadingMoreMessages}
-                    className="text-xs text-gray-500 border-gray-200"
+                    className="text-xs text-muted-foreground border-border"
                   >
                     {loadingMoreMessages ? "Loading..." : "Load older messages"}
                   </Button>
@@ -385,11 +385,11 @@ const MessageThread = ({
               {isTyping && (
                 <div className="flex items-end gap-2 mb-4">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-gray-200 text-xs">
+                    <AvatarFallback className="bg-border text-xs">
                       {typingUser[0] || "V"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
+                  <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-3">
                     <div className="flex gap-1">
                       <span
                         className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"

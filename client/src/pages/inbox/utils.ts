@@ -103,14 +103,14 @@ export const formatMessageDate = (date: any) => {
 export const getMessageStatusIcon = (status: string) => {
   switch (status) {
     case "sent":
-      return React.createElement(Check, { className: "w-3 h-3 text-gray-400" });
+      return React.createElement(Check, { className: "w-3 h-3 text-muted-foreground/75" });
     case "delivered":
-      return React.createElement(CheckCheck, { className: "w-3 h-3 text-gray-400" });
+      return React.createElement(CheckCheck, { className: "w-3 h-3 text-muted-foreground/75" });
     case "read":
       return React.createElement(CheckCheck, { className: "w-3 h-3 text-blue-500" });
     case "failed":
       return React.createElement(AlertCircle, { className: "w-3 h-3 text-red-500" });
     default:
-      return React.createElement(Clock, { className: "w-3 h-3 text-gray-400" });
+      return React.createElement(Clock, { className: "w-3 h-3 text-muted-foreground/75" });
   }
 };

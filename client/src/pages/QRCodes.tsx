@@ -115,18 +115,18 @@ const QRCodes = () => {
       case 'active': return 'bg-green-100 text-green-800';
       case 'paused': return 'bg-yellow-100 text-yellow-800';
       case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-muted text-foreground';
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'menu': return 'bg-blue-100 text-blue-800';
-      case 'support': return 'bg-purple-100 text-purple-800';
+      case 'support': return 'bg-[var(--brand-100)] text-[var(--brand)]';
       case 'catalog': return 'bg-orange-100 text-orange-800';
       case 'event': return 'bg-pink-100 text-pink-800';
       case 'newsletter': return 'bg-teal-100 text-teal-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-muted text-foreground';
     }
   };
 
@@ -147,9 +147,9 @@ const QRCodes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -157,8 +157,8 @@ const QRCodes = () => {
                 <QrCode className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">QR Codes</h1>
-                <p className="text-gray-600">Generate and manage WhatsApp QR codes</p>
+                <h1 className="text-2xl font-bold text-foreground">QR Codes</h1>
+                <p className="text-muted-foreground">Generate and manage WhatsApp QR codes</p>
               </div>
             </div>
             <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center">
@@ -178,11 +178,11 @@ const QRCodes = () => {
             { title: 'Conversions', value: qrCodes.reduce((sum, qr) => sum + qr.conversions, 0).toString(), icon: TrendingUp, color: 'purple' },
             { title: 'Avg Conversion Rate', value: `${(qrCodes.reduce((sum, qr) => sum + qr.conversionRate, 0) / qrCodes.length).toFixed(1)}%`, icon: BarChart3, color: 'orange' }
           ].map((stat, index) => (
-            <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div key={index} className="bg-background p-6 rounded-xl shadow-sm border border-border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                  <p className="text-2xl font-bold text-foreground mt-2">{stat.value}</p>
                 </div>
                 <div className={`p-3 rounded-lg bg-${stat.color}-100`}>
                   <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
@@ -193,22 +193,22 @@ const QRCodes = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="bg-background p-6 rounded-xl shadow-sm border border-border mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search QR codes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="all">All Types</option>
               <option value="menu">Menu</option>
@@ -217,7 +217,7 @@ const QRCodes = () => {
               <option value="event">Event</option>
               <option value="newsletter">Newsletter</option>
             </select>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+            <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors flex items-center">
               <Filter className="w-4 h-4 mr-2" />
               More Filters
             </button>
@@ -243,7 +243,7 @@ const QRCodes = () => {
                 </button>
                 <button 
                   onClick={() => setSelectedQRCodes([])}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   Clear
                 </button>
@@ -255,14 +255,14 @@ const QRCodes = () => {
         {/* QR Codes Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredQRCodes.map((qrCode) => (
-            <div key={qrCode.id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all">
+            <div key={qrCode.id} className="bg-background rounded-xl shadow-sm border border-border hover:shadow-md transition-all">
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <input
                     type="checkbox"
                     checked={selectedQRCodes.includes(qrCode.id)}
                     onChange={() => handleSelectQRCode(qrCode.id)}
-                    className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 mt-1"
+                    className="w-4 h-4 text-green-600 border-border rounded focus:ring-green-500 mt-1"
                   />
                   <div className="flex items-center space-x-2">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(qrCode.status)}`}>
@@ -275,34 +275,34 @@ const QRCodes = () => {
                 </div>
 
                 <div className="text-center mb-6">
-                  <div className="bg-gray-100 p-4 rounded-lg mb-4">
-                    <QrCode className="w-16 h-16 text-gray-600 mx-auto" />
+                  <div className="bg-muted p-4 rounded-lg mb-4">
+                    <QrCode className="w-16 h-16 text-muted-foreground mx-auto" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{qrCode.name}</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{qrCode.name}</h3>
                 </div>
 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Scans</span>
-                    <span className="font-semibold text-gray-900">{qrCode.scans.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Total Scans</span>
+                    <span className="font-semibold text-foreground">{qrCode.scans.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Conversions</span>
-                    <span className="font-semibold text-gray-900">{qrCode.conversions}</span>
+                    <span className="text-muted-foreground">Conversions</span>
+                    <span className="font-semibold text-foreground">{qrCode.conversions}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Conversion Rate</span>
+                    <span className="text-muted-foreground">Conversion Rate</span>
                     <span className="font-semibold text-green-600">{qrCode.conversionRate}%</span>
                   </div>
                 </div>
 
-                <div className="text-xs text-gray-500 mb-4">
+                <div className="text-xs text-muted-foreground mb-4">
                   <div>Created: {qrCode.created}</div>
                   <div>Last scan: {qrCode.lastScan}</div>
                 </div>
 
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm">
+                  <button className="flex-1 bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors flex items-center justify-center text-sm">
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </button>
@@ -310,7 +310,7 @@ const QRCodes = () => {
                     <Download className="w-4 h-4 mr-1" />
                     Download
                   </button>
-                  <button className="bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <button className="bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors">
                     <MoreVertical className="w-4 h-4" />
                   </button>
                 </div>
@@ -321,12 +321,12 @@ const QRCodes = () => {
 
         {/* Empty State */}
         {filteredQRCodes.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <QrCode className="w-8 h-8 text-gray-400" />
+          <div className="bg-background rounded-xl shadow-sm border border-border p-12 text-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <QrCode className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No QR codes found</h3>
-            <p className="text-gray-500 mb-6">
+            <h3 className="text-lg font-medium text-foreground mb-2">No QR codes found</h3>
+            <p className="text-muted-foreground mb-6">
               {searchTerm || filterType !== 'all' 
                 ? 'Try adjusting your search or filter criteria'
                 : 'Get started by creating your first WhatsApp QR code'

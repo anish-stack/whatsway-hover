@@ -141,7 +141,7 @@ const Webhooks = () => {
       case "error":
         return <XCircle className="w-4 h-4 text-red-500" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -154,7 +154,7 @@ const Webhooks = () => {
       case "error":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -191,7 +191,7 @@ const Webhooks = () => {
       label: "Total Calls Today",
       value: "31.8K",
       icon: Activity,
-      color: "text-purple-600",
+      color: "text-[var(--brand)]",
     },
     {
       label: "Avg Success Rate",
@@ -202,17 +202,17 @@ const Webhooks = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-background border-b border-border">
         <div className="mx-auto max-w-screen-2xl px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex flex-wrap items-start md:items-center md:justify-between gap-3 md:gap-4">
             {/* Left: Title + subtitle */}
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground truncate">
                 Webhooks
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1 break-words">
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mt-1 break-words">
                 Manage webhook endpoints and monitor delivery
               </p>
             </div>
@@ -222,7 +222,7 @@ const Webhooks = () => {
               {/* On small screens this is a grid that wraps; on md+ it becomes a single row */}
               <div className="grid grid-cols-1 min-[420px]:grid-cols-2 min-[680px]:grid-cols-3 md:grid-cols-3 md:flex md:flex-nowrap gap-2 md:gap-3">
                 <button
-                  className="w-full md:w-auto inline-flex items-center justify-center px-3 md:px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm md:text-base"
+                  className="w-full md:w-auto inline-flex items-center justify-center px-3 md:px-4 py-2 text-muted-foreground bg-background border border-border rounded-lg hover:bg-muted text-sm md:text-base"
                   aria-label="Export webhooks"
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -231,7 +231,7 @@ const Webhooks = () => {
                 </button>
 
                 <button
-                  className="w-full md:w-auto inline-flex items-center justify-center px-3 md:px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm md:text-base"
+                  className="w-full md:w-auto inline-flex items-center justify-center px-3 md:px-4 py-2 text-muted-foreground bg-background border border-border rounded-lg hover:bg-muted text-sm md:text-base"
                   aria-label="Import webhooks"
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -259,14 +259,14 @@ const Webhooks = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              className="bg-background p-6 rounded-lg shadow-sm border border-border"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {stat.label}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl font-bold text-foreground mt-1">
                     {stat.value}
                   </p>
                 </div>
@@ -277,26 +277,26 @@ const Webhooks = () => {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="p-4 border-b border-gray-200">
+        <div className="bg-background rounded-lg shadow-sm border border-border mb-6">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 flex-wrap space-y-3 sm:space-y-0">
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Search webhooks..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
+                  <Filter className="w-4 h-4 text-muted-foreground" />
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -307,7 +307,7 @@ const Webhooks = () => {
               </div>
               {selectedWebhooks.length > 0 && (
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {selectedWebhooks.length} selected
                   </span>
                   <button className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200">
@@ -327,7 +327,7 @@ const Webhooks = () => {
           {/* Webhooks List */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-muted">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
@@ -337,54 +337,54 @@ const Webhooks = () => {
                         filteredWebhooks.length > 0
                       }
                       onChange={handleSelectAll}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-border text-blue-600 focus:ring-blue-500"
                     />
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Webhook
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Event
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Success Rate
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Last Triggered
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Response Time
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-background divide-y divide-border">
                 {filteredWebhooks.map((webhook) => (
-                  <tr key={webhook.id} className="hover:bg-gray-50">
+                  <tr key={webhook.id} className="hover:bg-muted">
                     <td className="px-4 py-4">
                       <input
                         type="checkbox"
                         checked={selectedWebhooks.includes(webhook.id)}
                         onChange={() => handleSelectWebhook(webhook.id)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-border text-blue-600 focus:ring-blue-500"
                       />
                     </td>
                     <td className="px-4 py-4">
                       <div>
                         <div className="flex items-center">
-                          <Webhook className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="font-medium text-gray-900">
+                          <Webhook className="w-4 h-4 text-muted-foreground mr-2" />
+                          <span className="font-medium text-foreground">
                             {webhook.name}
                           </span>
                         </div>
                         <div className="flex items-center mt-1">
-                          <Globe className="w-3 h-3 text-gray-400 mr-1" />
-                          <span className="text-xs text-gray-500 truncate max-w-xs">
+                          <Globe className="w-3 h-3 text-muted-foreground mr-1" />
+                          <span className="text-xs text-muted-foreground truncate max-w-xs">
                             {webhook.url}
                           </span>
                         </div>
@@ -409,21 +409,21 @@ const Webhooks = () => {
                     </td>
                     <td className="px-4 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {webhook.successRate}%
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           {webhook.totalCalls.toLocaleString()} calls
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-foreground">
                         {webhook.lastTriggered}
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-foreground">
                         {webhook.avgResponseTime}
                       </div>
                     </td>
@@ -441,16 +441,16 @@ const Webhooks = () => {
                         <button className="p-1 text-blue-600 hover:text-blue-700">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="p-1 text-gray-600 hover:text-gray-700">
+                        <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                           <Copy className="w-4 h-4" />
                         </button>
-                        <button className="p-1 text-gray-600 hover:text-gray-700">
+                        <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                           <Settings className="w-4 h-4" />
                         </button>
                         <button className="p-1 text-red-600 hover:text-red-700">
                           <Trash2 className="w-4 h-4" />
                         </button>
-                        <button className="p-1 text-gray-400 hover:text-gray-600">
+                        <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
@@ -463,11 +463,11 @@ const Webhooks = () => {
 
           {filteredWebhooks.length === 0 && (
             <div className="text-center py-12">
-              <Webhook className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Webhook className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 No webhooks found
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-muted-foreground mb-4">
                 {searchTerm || filterStatus !== "all"
                   ? "Try adjusting your search or filter criteria"
                   : "Get started by creating your first webhook endpoint"}
@@ -483,9 +483,9 @@ const Webhooks = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
+        <div className="bg-background rounded-lg shadow-sm border border-border">
+          <div className="p-4 border-b border-border">
+            <h3 className="text-lg font-medium text-foreground">
               Recent Webhook Activity
             </h3>
           </div>
@@ -534,15 +534,15 @@ const Webhooks = () => {
                       <AlertTriangle className="w-4 h-4 text-red-500 mr-3" />
                     )}
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-foreground">
                         {activity.event}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {activity.webhook}
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-500">{activity.time}</span>
+                  <span className="text-xs text-muted-foreground">{activity.time}</span>
                 </div>
               ))}
             </div>

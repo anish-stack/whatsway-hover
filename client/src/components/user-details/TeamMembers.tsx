@@ -82,8 +82,8 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
     return (
       <div className="space-y-4">
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-            <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+          <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+            <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
               <tr>
                 <th className="py-3 px-4 border-b">{t("users.teamMembers.name")}</th>
                 <th className="py-3 px-4 border-b">{t("users.teamMembers.email")}</th>
@@ -97,28 +97,28 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
                 <tr key={index} className="animate-pulse">
                   <td className="py-3 px-4 border-b">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-200"></div>
-                      <div className="h-4 bg-gray-200 rounded w-32"></div>
+                      <div className="w-8 h-8 rounded-full bg-border"></div>
+                      <div className="h-4 bg-border rounded w-32"></div>
                     </div>
                   </td>
                   <td className="py-3 px-4 border-b">
-                    <div className="h-4 bg-gray-200 rounded w-40"></div>
+                    <div className="h-4 bg-border rounded w-40"></div>
                   </td>
                   <td className="py-3 px-4 border-b">
-                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-border rounded w-20"></div>
                   </td>
                   <td className="py-3 px-4 border-b">
-                    <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                    <div className="h-6 bg-border rounded-full w-16"></div>
                   </td>
                   <td className="py-3 px-4 border-b">
-                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-4 bg-border rounded w-24"></div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-center py-4 text-gray-500">
+        <div className="flex items-center justify-center py-4 text-muted-foreground">
           <Loader2 className="w-5 h-5 mr-2 animate-spin" />
           <span className="text-sm">{t("users.teamMembers.loading")}</span>
         </div>
@@ -155,8 +155,8 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+        <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+          <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="py-3 px-4 border-b">{t("users.teamMembers.name")}</th>
               <th className="py-3 px-4 border-b">{t("users.teamMembers.email")}</th>
@@ -169,10 +169,10 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
             {teamMembers.map((member) => (
               <tr
                 key={member.id}
-                className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                className="hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <td className="py-3 px-4 border-b flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold">
                     {member.firstName?.[0]}
                     {member.lastName?.[0]}
                   </div>
@@ -184,7 +184,7 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
 </td>
 
                 <td className="py-3 px-4 border-b flex items-center gap-1">
-                  <Shield className="w-3 h-3 text-gray-500" />
+                  <Shield className="w-3 h-3 text-muted-foreground" />
                   {member.role}
                 </td>
                 <td className="py-3 px-4 border-b">
@@ -192,13 +192,13 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
                     className={`px-2 py-1 rounded text-xs font-medium ${
                       member.status === "active"
                         ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-600"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {member.status === "active" ? t("users.teamMembers.active") : t("users.teamMembers.inactive")}
                   </span>
                 </td>
-                <td className="py-3 px-4 border-b text-gray-500 text-xs">
+                <td className="py-3 px-4 border-b text-muted-foreground text-xs">
                   {new Date(member.createdAt).toLocaleDateString()}
                 </td>
               </tr>
@@ -211,7 +211,7 @@ export default function TeamMembers({ userId }: TeamMembersProps) {
       {data?.pagination && (
         <div className="w-full mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-muted-foreground">
               {t("users.teamMembers.showing")} {(page - 1) * limit + 1} {t("users.teamMembers.to")}{" "}
               {Math.min(page * limit, data.pagination.total)} {t("users.teamMembers.of")}{" "}
               {data.pagination.total} {t("users.teamMembers.membersCount")}

@@ -141,7 +141,7 @@ const getContentTypeIcon = (contentType: string) => {
     case "image":
       return <Image className="w-4 h-4 text-blue-500" />;
     case "video":
-      return <Video className="w-4 h-4 text-purple-500" />;
+      return <Video className="w-4 h-4 text-[var(--brand)]" />;
     case "audio":
       return <Mic className="w-4 h-4 text-orange-500" />;
     case "document":
@@ -154,7 +154,7 @@ const getContentTypeIcon = (contentType: string) => {
     case "contact":
       return <Contact className="w-4 h-4 text-green-600" />;
     case "template":
-      return <LayoutTemplate className="w-4 h-4 text-indigo-500" />;
+      return <LayoutTemplate className="w-4 h-4 text-[var(--brand)]" />;
     case "interactive":
     case "button":
     case "button_reply":
@@ -165,7 +165,7 @@ const getContentTypeIcon = (contentType: string) => {
     case "order":
       return <FileIcon className="w-4 h-4 text-emerald-500" />;
     default:
-      return <Type className="w-4 h-4 text-gray-500" />;
+      return <Type className="w-4 h-4 text-muted-foreground" />;
   }
 };
 
@@ -194,19 +194,19 @@ const getContentTypeLabel = (contentType: string) => {
 const getContentTypeBadgeColor = (contentType: string) => {
   switch (contentType?.toLowerCase()) {
     case "image": return "bg-blue-50 text-blue-700 border-blue-200";
-    case "video": return "bg-purple-50 text-purple-700 border-purple-200";
+    case "video": return "bg-[var(--brand-100)] text-[var(--brand)] border-[var(--mist)]";
     case "audio": return "bg-orange-50 text-orange-700 border-orange-200";
     case "document": return "bg-yellow-50 text-yellow-700 border-yellow-200";
     case "sticker": return "bg-pink-50 text-pink-700 border-pink-200";
     case "location": return "bg-red-50 text-red-700 border-red-200";
     case "contacts":
     case "contact": return "bg-green-50 text-green-700 border-green-200";
-    case "template": return "bg-indigo-50 text-indigo-700 border-indigo-200";
+    case "template": return "bg-[var(--brand-100)] text-[var(--brand)] border-[var(--mist)]";
     case "interactive":
     case "button":
     case "button_reply":
     case "list_reply": return "bg-cyan-50 text-cyan-700 border-cyan-200";
-    default: return "bg-gray-50 text-gray-700 border-gray-200";
+    default: return "bg-muted text-muted-foreground border-border";
   }
 };
 
@@ -214,10 +214,10 @@ function DebugInfoSection({ log }: { log: MessageLog }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-border rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 text-xs font-medium text-gray-600 transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 bg-muted hover:bg-muted text-xs font-medium text-muted-foreground transition-colors"
       >
         <span className="flex items-center gap-1.5">
           <AlertCircle className="w-3.5 h-3.5" />
@@ -226,28 +226,28 @@ function DebugInfoSection({ log }: { log: MessageLog }) {
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="p-3 space-y-2 text-xs bg-white">
+        <div className="p-3 space-y-2 text-xs bg-background">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <span className="text-gray-500">Stored type:</span>{" "}
+              <span className="text-muted-foreground">Stored type:</span>{" "}
               <span className="font-mono font-medium">{log.contentType || "(empty)"}</span>
             </div>
             <div>
-              <span className="text-gray-500">WA type field:</span>{" "}
+              <span className="text-muted-foreground">WA type field:</span>{" "}
               <span className="font-mono font-medium">{log.type || "(empty)"}</span>
             </div>
             <div>
-              <span className="text-gray-500">Direction:</span>{" "}
+              <span className="text-muted-foreground">Direction:</span>{" "}
               <span className="font-mono font-medium">{log.direction || "(empty)"}</span>
             </div>
             <div>
-              <span className="text-gray-500">Message ID:</span>{" "}
+              <span className="text-muted-foreground">Message ID:</span>{" "}
               <span className="font-mono font-medium break-all">{log.id}</span>
             </div>
           </div>
           <div>
-            <p className="text-gray-500 mb-1">Full metadata JSON:</p>
-            <pre className="bg-gray-50 border rounded p-2 text-xs overflow-x-auto max-h-48 whitespace-pre-wrap break-all">
+            <p className="text-muted-foreground mb-1">Full metadata JSON:</p>
+            <pre className="bg-muted border rounded p-2 text-xs overflow-x-auto max-h-48 whitespace-pre-wrap break-all">
               {JSON.stringify(log.metadata ?? {}, null, 2)}
             </pre>
           </div>
@@ -265,9 +265,9 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
       case "delivered": return <CheckCircle className="w-4 h-4 text-blue-600" />;
       case "read": return <CheckCircle className="w-4 h-4 text-green-600" />;
       case "failed": return <XCircle className="w-4 h-4 text-red-600" />;
-      case "sent": return <Clock className="w-4 h-4 text-gray-600" />;
+      case "sent": return <Clock className="w-4 h-4 text-muted-foreground" />;
       case "pending": return <Clock className="w-4 h-4 text-yellow-600" />;
-      default: return <MessageSquare className="w-4 h-4 text-gray-600" />;
+      default: return <MessageSquare className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -286,7 +286,7 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
     if (ct === "image") {
       return (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Media Preview</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Media Preview</p>
           <img
             src={proxyUrl!}
             alt="Message image"
@@ -302,7 +302,7 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
     if (ct === "video") {
       return (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Media Preview</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Media Preview</p>
           <video controls className="max-w-full max-h-64 rounded-lg border">
             <source src={proxyUrl!} type={log.mediaMimeType || "video/mp4"} />
             Your browser does not support video playback.
@@ -314,7 +314,7 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
     if (ct === "audio") {
       return (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Media Preview</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Media Preview</p>
           <audio controls className="w-full">
             <source src={proxyUrl!} type={log.mediaMimeType || "audio/ogg"} />
             Your browser does not support audio playback.
@@ -326,13 +326,13 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
     if (ct === "document") {
       return (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Document</p>
-          <div className="flex items-center gap-2 text-sm bg-gray-50 p-3 rounded-lg border">
+          <p className="text-xs font-medium text-muted-foreground mb-1">Document</p>
+          <div className="flex items-center gap-2 text-sm bg-muted p-3 rounded-lg border">
             <FileText className="w-5 h-5 text-yellow-600" />
             <div className="flex-1">
-              <span className="text-gray-700">{log.content || "Document"}</span>
+              <span className="text-muted-foreground">{log.content || "Document"}</span>
               {log.mediaMimeType && (
-                <span className="text-xs text-gray-400 ml-2">({log.mediaMimeType})</span>
+                <span className="text-xs text-muted-foreground ml-2">({log.mediaMimeType})</span>
               )}
             </div>
             {proxyUrl && (
@@ -353,7 +353,7 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
     if (ct === "sticker") {
       return (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Sticker</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Sticker</p>
           <img
             src={proxyUrl!}
             alt="Sticker"
@@ -382,19 +382,19 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <p className="text-xs font-medium text-gray-500">Contact</p>
+              <p className="text-xs font-medium text-muted-foreground">Contact</p>
               <p className="text-sm font-medium">{isDemo ? maskName(log.contactName || "") || "-" : log.contactName || "-"}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500">Phone</p>
+              <p className="text-xs font-medium text-muted-foreground">Phone</p>
               <p className="text-sm font-mono">{isDemo ? maskPhone(log.phoneNumber) : log.phoneNumber}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500">Channel</p>
+              <p className="text-xs font-medium text-muted-foreground">Channel</p>
               <p className="text-sm">{log.channelName || log.channelId?.slice(0, 8) || "-"}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500">Direction</p>
+              <p className="text-xs font-medium text-muted-foreground">Direction</p>
               <div className="flex items-center gap-1 text-sm">
                 {log.direction === "outbound" ? (
                   <><ArrowUp className="w-3 h-3 text-blue-500" /> Sent</>
@@ -404,14 +404,14 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
               </div>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500">Type</p>
+              <p className="text-xs font-medium text-muted-foreground">Type</p>
               <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${getContentTypeBadgeColor(log.contentType)}`}>
                 {getContentTypeIcon(log.contentType)}
                 {getContentTypeLabel(log.contentType)}
               </div>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500">Status</p>
+              <p className="text-xs font-medium text-muted-foreground">Status</p>
               <div className="flex items-center gap-1 text-sm">
                 {getStatusIcon(log.status)}
                 <span className="capitalize">{log.status}</span>
@@ -420,8 +420,8 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
           </div>
 
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-1">Content</p>
-            <div className="bg-gray-50 p-3 rounded-lg text-sm whitespace-pre-wrap break-words border">
+            <p className="text-xs font-medium text-muted-foreground mb-1">Content</p>
+            <div className="bg-muted p-3 rounded-lg text-sm whitespace-pre-wrap break-words border">
               {isDemo ? maskContent(log.content) : (log.content || "-")}
             </div>
           </div>
@@ -430,18 +430,18 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p className="text-xs font-medium text-gray-500">Created</p>
+              <p className="text-xs font-medium text-muted-foreground">Created</p>
               <p>{format(new Date(log.createdAt), "MMM d, yyyy h:mm:ss a")}</p>
             </div>
             {log.deliveredAt && (
               <div>
-                <p className="text-xs font-medium text-gray-500">Delivered</p>
+                <p className="text-xs font-medium text-muted-foreground">Delivered</p>
                 <p>{format(new Date(log.deliveredAt), "MMM d, yyyy h:mm:ss a")}</p>
               </div>
             )}
             {log.readAt && (
               <div>
-                <p className="text-xs font-medium text-gray-500">Read</p>
+                <p className="text-xs font-medium text-muted-foreground">Read</p>
                 <p>{format(new Date(log.readAt), "MMM d, yyyy h:mm:ss a")}</p>
               </div>
             )}
@@ -449,21 +449,21 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
 
           {log.whatsappMessageId && (
             <div>
-              <p className="text-xs font-medium text-gray-500">WhatsApp Message ID</p>
-              <p className="text-xs font-mono text-gray-600 break-all bg-gray-50 p-2 rounded">{log.whatsappMessageId}</p>
+              <p className="text-xs font-medium text-muted-foreground">WhatsApp Message ID</p>
+              <p className="text-xs font-mono text-muted-foreground break-all bg-muted p-2 rounded">{log.whatsappMessageId}</p>
             </div>
           )}
 
           {log.templateName && (
             <div>
-              <p className="text-xs font-medium text-gray-500">Template</p>
+              <p className="text-xs font-medium text-muted-foreground">Template</p>
               <p className="text-sm">{log.templateName}</p>
             </div>
           )}
 
           {log.campaignName && (
             <div>
-              <p className="text-xs font-medium text-gray-500">Campaign Source</p>
+              <p className="text-xs font-medium text-muted-foreground">Campaign Source</p>
               <div className="flex items-center gap-1.5 mt-0.5 px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 w-fit">
                 <Megaphone className="w-3 h-3" />
                 {log.campaignName}
@@ -519,8 +519,8 @@ function MessageDetailDialog({ log, open, onClose, isDemo }: { log: MessageLog |
 
           {log.metadata && Object.keys(log.metadata).length > 0 && !log.metadata.rawWebhook && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Metadata</p>
-              <pre className="bg-gray-50 p-2 rounded text-xs overflow-x-auto border max-h-40">
+              <p className="text-xs font-medium text-muted-foreground mb-1">Metadata</p>
+              <pre className="bg-muted p-2 rounded text-xs overflow-x-auto border max-h-40">
                 {JSON.stringify(log.metadata, null, 2)}
               </pre>
             </div>
@@ -605,11 +605,11 @@ export default function SuperadminMessageLogs() {
       case "failed":
         return <XCircle className="w-4 h-4 text-red-600" />;
       case "sent":
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
       case "pending":
         return <Clock className="w-4 h-4 text-yellow-600" />;
       default:
-        return <MessageSquare className="w-4 h-4 text-gray-600" />;
+        return <MessageSquare className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -623,9 +623,9 @@ export default function SuperadminMessageLogs() {
         return "bg-green-100 text-green-800 border-green-300";
       case "sent":
       case "pending":
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-muted text-foreground border-border";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-muted text-foreground border-border";
     }
   };
 
@@ -713,7 +713,7 @@ export default function SuperadminMessageLogs() {
           <CardContent>
             <div className="flex flex-col gap-3 mb-4 sm:mb-6">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder={t("messageLogs.searchPlaceholder") !== "messageLogs.searchPlaceholder" ? t("messageLogs.searchPlaceholder") : "Search phone, contact or content..."}
                   value={searchQuery}
@@ -770,9 +770,9 @@ export default function SuperadminMessageLogs() {
               <Loading />
             ) : logs.length === 0 ? (
               <div className="text-center py-12">
-                <MessageSquare className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500 mb-2">{t("messageLogs.noLogs") !== "messageLogs.noLogs" ? t("messageLogs.noLogs") : "No message logs found"}</p>
-                <p className="text-sm text-gray-400">
+                <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-2">{t("messageLogs.noLogs") !== "messageLogs.noLogs" ? t("messageLogs.noLogs") : "No message logs found"}</p>
+                <p className="text-sm text-muted-foreground">
                   {searchQuery || statusFilter !== "all" || channelFilter !== "all"
                     ? (t("messageLogs.adjustFilters") !== "messageLogs.adjustFilters" ? t("messageLogs.adjustFilters") : "Try adjusting your filters")
                     : (t("messageLogs.noMessagesSent") !== "messageLogs.noMessagesSent" ? t("messageLogs.noMessagesSent") : "No messages have been sent yet")}
@@ -841,13 +841,13 @@ export default function SuperadminMessageLogs() {
                               {log.status}
                             </div>
                           </TableCell>
-                          <TableCell className="text-sm text-gray-600 whitespace-nowrap">
+                          <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                             {format(new Date(log.createdAt), "MMM d, h:mm a")}
                           </TableCell>
                           <TableCell className="text-right">
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedLog(log); }}
-                              className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-muted-foreground transition-colors"
                               title="View details"
                             >
                               <Eye className="w-4 h-4" />
@@ -860,7 +860,7 @@ export default function SuperadminMessageLogs() {
                 </div>
 
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-                  <div className="text-gray-500">
+                  <div className="text-muted-foreground">
                     Showing {startItem}-{endItem} of {total} messages
                   </div>
                   <div className="flex items-center gap-1">
@@ -885,7 +885,7 @@ export default function SuperadminMessageLogs() {
 
                     {getPageNumbers().map((p, i) =>
                       p === "..." ? (
-                        <span key={`ellipsis-${i}`} className="px-2 text-gray-400">...</span>
+                        <span key={`ellipsis-${i}`} className="px-2 text-muted-foreground">...</span>
                       ) : (
                         <Button
                           key={p}

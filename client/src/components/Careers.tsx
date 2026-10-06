@@ -160,25 +160,25 @@ const Careers = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand-50)] via-white to-blue-50">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-6">
-            <Briefcase className="w-8 h-8 text-green-600" />
+          <div className="bg-[var(--brand-100)] p-4 rounded-full w-fit mx-auto mb-6">
+            <Briefcase className="w-8 h-8 text-[var(--brand)]" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6">
             {t("careers.hero.title")}
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[var(--brand)] to-blue-600 bg-clip-text text-transparent">
               {t("careers.hero.titleHighlight")}
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-[var(--ink-500)] max-w-3xl mx-auto mb-8">
             {t("careers.hero.subtitle")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="#careers"
-              className="bg-green-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-600 transition-all transform hover:scale-105 shadow-xl"
+              className="bg-[var(--brand)] text-white px-8 py-4 rounded-xl font-bold hover:bg-[var(--brand)] transition-all transform hover:scale-105 shadow-xl"
             >
               {t("careers.hero.buttons.viewPositions")}
             </a>
@@ -191,11 +191,11 @@ const Careers = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-xl">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+              <div key={index} className="bg-[var(--canvas)] p-6 rounded-xl">
+                <div className="text-3xl font-bold text-[var(--brand)] mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-[var(--ink-500)]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -203,13 +203,13 @@ const Careers = () => {
       </section>
 
       {/* Open Positions */}
-      <section id="careers" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section id="careers" className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               {t("careers.positions.heading")}
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               {t("careers.positions.subtitle")}
             </p>
           </div>
@@ -222,8 +222,8 @@ const Careers = () => {
                 onClick={() => setSelectedDepartment(dept.id)}
                 className={`px-6 py-3 rounded-xl font-medium transition-all ${
                   selectedDepartment === dept.id
-                    ? "bg-green-500 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-100 shadow-md"
+                    ? "bg-[var(--brand)] text-white shadow-lg"
+                    : "bg-white text-[var(--ink-700)] hover:bg-[var(--canvas)] shadow-md"
                 }`}
               >
                 {dept.name}
@@ -241,15 +241,15 @@ const Careers = () => {
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-4 mb-4">
-                      <h3 className="text-2xl font-bold text-gray-900">
+                      <h3 className="text-2xl font-bold text-[var(--ink)]">
                         {job.title}
                       </h3>
-                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-[var(--brand-100)] text-[var(--brand)] px-3 py-1 rounded-full text-sm font-medium">
                         {job.department}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-4">
+                    <div className="flex flex-wrap items-center gap-4 text-[var(--ink-500)] mb-4">
                       <div className="flex items-center space-x-2">
                         <MapPin className="w-4 h-4" />
                         <span>{job.location}</span>
@@ -264,7 +264,7 @@ const Careers = () => {
                       </div>
                     </div>
 
-                    <p className="text-gray-700 mb-4">{job.description}</p>
+                    <p className="text-[var(--ink-700)] mb-4">{job.description}</p>
 
                     <div className="flex flex-wrap gap-2 mb-4">
                       {job.requirements.map((req, index) => (
@@ -277,7 +277,7 @@ const Careers = () => {
                       ))}
                     </div>
 
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-[var(--ink-500)]">
                       Posted {job.posted}
                     </div>
                   </div>
@@ -285,7 +285,7 @@ const Careers = () => {
                   <div className="mt-6 lg:mt-0 lg:ml-8">
                     <Link
                       href="/contact"
-                      className="w-fit lg:w-auto bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-all flex items-center justify-center group"
+                      className="w-fit lg:w-auto bg-[var(--brand)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand)] transition-all flex items-center justify-center group"
                     >
                       {t("careers.positions.applyButton")}
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -298,11 +298,11 @@ const Careers = () => {
 
           {filteredJobs.length === 0 && (
             <div className="text-center py-12">
-              <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              <Search className="w-16 h-16 text-[var(--ink-300)] mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-[var(--ink-500)] mb-2">
                 {t("careers.positions.noResults.title")}
               </h3>
-              <p className="text-gray-500">
+              <p className="text-[var(--ink-500)]">
                 {t("careers.positions.noResults.description")}
               </p>
             </div>
@@ -314,10 +314,10 @@ const Careers = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               {t("careers.benefits.heading")}
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               {t("careers.benefits.subtitle")}
             </p>
           </div>
@@ -328,15 +328,15 @@ const Careers = () => {
               return (
                 <div
                   key={index}
-                  className="bg-gray-50 p-6 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="bg-[var(--canvas)] p-6 rounded-xl hover:bg-[var(--canvas)] transition-colors"
                 >
-                  <div className="bg-green-100 p-3 rounded-lg w-fit mb-4">
-                    <Icon className="w-6 h-6 text-green-600" />
+                  <div className="bg-[var(--brand-100)] p-3 rounded-lg w-fit mb-4">
+                    <Icon className="w-6 h-6 text-[var(--brand)]" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg font-bold text-[var(--ink)] mb-2">
                     {benefit.title}
                   </h3>
-                  <p className="text-gray-600">{benefit.description}</p>
+                  <p className="text-[var(--ink-500)]">{benefit.description}</p>
                 </div>
               );
             })}
@@ -345,13 +345,13 @@ const Careers = () => {
       </section>
 
       {/* Company Values */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--canvas)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-[var(--ink)] mb-4">
               {t("careers.values.heading")}
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[var(--ink-500)]">
               {t("careers.values.subtitle")}
             </p>
           </div>
@@ -359,10 +359,10 @@ const Careers = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
               <div key={index} className="bg-white p-8 rounded-xl shadow-lg">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-[var(--ink)] mb-3">
                   {value.title}
                 </h3>
-                <p className="text-gray-600">{value.description}</p>
+                <p className="text-[var(--ink-500)]">{value.description}</p>
               </div>
             ))}
           </div>
@@ -370,7 +370,7 @@ const Careers = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--brand)] to-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             {t("careers.cta.heading")}
@@ -380,7 +380,7 @@ const Careers = () => {
           </p>
           <Link
             href="/contact"
-            className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl"
+            className="bg-white text-[var(--brand)] px-8 py-4 rounded-xl font-bold hover:bg-[var(--canvas)] transition-all transform hover:scale-105 shadow-xl"
           >
             {t("careers.cta.button")}
           </Link>

@@ -33,11 +33,11 @@ import { useTranslation } from "@/lib/i18n";
 const AVATAR_COLORS = [
   "bg-emerald-500",
   "bg-blue-500",
-  "bg-violet-500",
+  "bg-[var(--brand)]",
   "bg-amber-500",
   "bg-rose-500",
   "bg-cyan-500",
-  "bg-indigo-500",
+  "bg-[var(--brand)]",
   "bg-pink-500",
   "bg-teal-500",
   "bg-orange-500",
@@ -118,7 +118,7 @@ const ConversationListItem = ({
         "group relative flex items-center gap-3 px-4 py-3.5 cursor-pointer transition-all duration-150",
         isSelected
           ? "bg-green-50/80 border-l-[3px] border-l-green-500 shadow-sm"
-          : "border-l-[3px] border-l-transparent hover:bg-gray-50/80"
+          : "border-l-[3px] border-l-transparent hover:bg-muted/80"
       )}
     >
       <Avatar className="h-11 w-11 flex-shrink-0">
@@ -129,10 +129,10 @@ const ConversationListItem = ({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2 mb-0.5">
-          <h4 className="font-semibold text-[14px] text-gray-900 truncate leading-tight flex items-center gap-1">
+          <h4 className="font-semibold text-[14px] text-foreground truncate leading-tight flex items-center gap-1">
             {isPinned && (
               <Pin
-                className="w-3 h-3 text-gray-500 flex-shrink-0 fill-current"
+                className="w-3 h-3 text-muted-foreground flex-shrink-0 fill-current"
                 aria-label={t("inbox.pin.pinned")}
               />
             )}
@@ -140,7 +140,7 @@ const ConversationListItem = ({
               {displayName || displayPhone || "Unknown"}
             </span>
           </h4>
-          <span className="text-[11px] text-gray-400 whitespace-nowrap flex-shrink-0 font-medium">
+          <span className="text-[11px] text-muted-foreground whitespace-nowrap flex-shrink-0 font-medium">
             {lastMessageTime}
           </span>
         </div>
@@ -156,7 +156,7 @@ const ConversationListItem = ({
             {conversation.type === "chatbot" && (
               <Bot className="w-3.5 h-3.5 text-green-500 inline-block mr-1.5 flex-shrink-0" />
             )}
-            <p className="text-[13px] text-gray-500 truncate leading-tight">
+            <p className="text-[13px] text-muted-foreground truncate leading-tight">
               {getMessagePreview(conversation.lastMessageText, demo) ||
                 "Tap to open conversation"}
             </p>
@@ -170,7 +170,7 @@ const ConversationListItem = ({
                 title={isPinned ? t("inbox.pin.unpin") : t("inbox.pin.pin")}
                 aria-label={isPinned ? t("inbox.pin.unpin") : t("inbox.pin.pin")}
                 className={cn(
-                  "p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-200 transition",
+                  "p-1 rounded-md text-muted-foreground hover:text-muted-foreground hover:bg-border transition",
                   // Always visible on touch (no hover), reveal on hover for desktop.
                   isPinned
                     ? "opacity-100"

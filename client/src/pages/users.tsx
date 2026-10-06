@@ -70,7 +70,7 @@ interface PaginationType {
 
 const statusColors: Record<string, string> = {
   active: "bg-green-100 text-green-800",
-  inactive: "bg-gray-100 text-gray-800",
+  inactive: "bg-muted text-foreground",
   pending: "bg-yellow-100 text-yellow-800",
   banned: "bg-red-100 text-red-800",
 };
@@ -324,7 +324,7 @@ const User: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dots-bg">
+    <div className="min-h-screen bg-muted dots-bg">
       <Header title={t("users.title")} subtitle={t("users.subtitle")} action={{
         label: t("users.AddUser"),
         onClick: () => setOpenAddModal(true),
@@ -343,7 +343,7 @@ const User: React.FC = () => {
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 w-full"
             />
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           </div>
 
           <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
@@ -384,7 +384,7 @@ const User: React.FC = () => {
               setStatusFilter(e.target.value);
               setPagination((prev) => ({ ...prev, page: 1 }));
             }}
-            className="border rounded-md px-3 py-2 text-sm bg-white"
+            className="border rounded-md px-3 py-2 text-sm bg-background"
           >
             <option value="">{t("users.status.allStatus")}</option>
             <option value="active">{t("users.status.active")}</option>
@@ -398,7 +398,7 @@ const User: React.FC = () => {
               setHasChannelsFilter(e.target.value);
               setPagination((prev) => ({ ...prev, page: 1 }));
             }}
-            className="border rounded-md px-3 py-2 text-sm bg-white"
+            className="border rounded-md px-3 py-2 text-sm bg-background"
           >
             <option value="">{t("users.user.allUser")}</option>
             <option value="yes">{t("users.user.hasCannells")}</option>
@@ -411,7 +411,7 @@ const User: React.FC = () => {
               setDateRangeFilter(e.target.value);
               setPagination((prev) => ({ ...prev, page: 1 }));
             }}
-            className="border rounded-md px-3 py-2 text-sm bg-white"
+            className="border rounded-md px-3 py-2 text-sm bg-background"
           >
             <option value="">{t("users.Date.alltime")}</option>
             <option value="week">{t("users.Date.thisweek")}</option>
@@ -452,15 +452,15 @@ const User: React.FC = () => {
         )}
 
         {/* Stats */}
-        <div className="mb-4 text-sm text-gray-700">
+        <div className="mb-4 text-sm text-muted-foreground">
           {t("users.stats.showing")} {users.length} {t("users.stats.of")}{" "}
           {pagination.total} {t("users.stats.users")}
         </div>
 
         {/* TABLE FOR DESKTOP */}
-        <div className="hidden md:block bg-white border rounded-lg shadow-sm overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="hidden md:block bg-background border rounded-lg shadow-sm overflow-x-auto">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold w-12">#</th>
                 <th className="px-4 py-3">
@@ -494,23 +494,23 @@ const User: React.FC = () => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-gray-500">
+                  <td colSpan={9} className="py-10 text-center text-muted-foreground">
                     {t("users.loading")}
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-gray-500">
+                  <td colSpan={9} className="py-10 text-center text-muted-foreground">
                     {t("users.noUsers")}
                   </td>
                 </tr>
               ) : (
                 users.map((u, index) => (
-                  <tr key={u.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-500 font-medium">
+                  <tr key={u.id} className="hover:bg-muted">
+                    <td className="px-4 py-3 text-sm text-muted-foreground font-medium">
                       {(pagination.page - 1) * pagination.limit + index + 1}
                     </td>
                     <td className="px-4 py-3">
@@ -540,7 +540,7 @@ const User: React.FC = () => {
                           >
                             {isDemoUser(user?.username) ? maskName(u.username) : u.username}
                           </Link>
-                          <p className="text-xs text-gray-500">{isDemoUser(user?.username) ? maskEmail(u.email) : u.email}</p>
+                          <p className="text-xs text-muted-foreground">{isDemoUser(user?.username) ? maskEmail(u.email) : u.email}</p>
                         </div>
                       </div>
                     </td>
@@ -564,7 +564,7 @@ const User: React.FC = () => {
                       </span>
                     </td>
 
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-muted-foreground">
                       {u.createdAt
                         ? formatDateTime(u.createdAt)
                         : "—"}
@@ -575,7 +575,7 @@ const User: React.FC = () => {
                         formatDateTime(u.lastLogin)
                       ) : (
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-gray-400">{t("users.lastLoginNever")}</span>
+                          <span className="text-muted-foreground">{t("users.lastLoginNever")}</span>
                           {u.isEmailVerified === false && (
                             <span className="text-[10px] text-orange-500">Email not verified</span>
                           )}
@@ -584,7 +584,7 @@ const User: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3 text-center">
-                      <div className="flex justify-center gap-3 text-gray-500">
+                      <div className="flex justify-center gap-3 text-muted-foreground">
                         <FaEdit
                           onClick={() => {
                             setSelectedUserForEdit(u);
@@ -629,22 +629,22 @@ const User: React.FC = () => {
         {/* MOBILE CARD LIST */}
         <div className="md:hidden space-y-4">
           {loading ? (
-            <p className="text-center text-gray-500 py-10">
+            <p className="text-center text-muted-foreground py-10">
               {t("users.loading")}
             </p>
           ) : users.length === 0 ? (
-            <p className="text-center text-gray-500 py-10">
+            <p className="text-center text-muted-foreground py-10">
               {t("users.noUsers")}
             </p>
           ) : (
             users.map((u, index) => (
               <div
                 key={u.id}
-                className="bg-white shadow-sm rounded-lg p-4 border space-y-3"
+                className="bg-background shadow-sm rounded-lg p-4 border space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-400 font-medium w-6 text-center flex-shrink-0">
+                    <span className="text-sm text-muted-foreground font-medium w-6 text-center flex-shrink-0">
                       {(pagination.page - 1) * pagination.limit + index + 1}
                     </span>
                     <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center overflow-hidden">
@@ -660,11 +660,11 @@ const User: React.FC = () => {
                     <div>
                       <Link
                         href={`/users/${u.id}`}
-                        className="font-semibold text-gray-800"
+                        className="font-semibold text-foreground"
                       >
                         {isDemoUser(user?.username) ? maskName(u.username) : u.username}
                       </Link>
-                      <p className="text-xs text-gray-500">{isDemoUser(user?.username) ? maskEmail(u.email) : u.email}</p>
+                      <p className="text-xs text-muted-foreground">{isDemoUser(user?.username) ? maskEmail(u.email) : u.email}</p>
                     </div>
                   </div>
 
@@ -675,7 +675,7 @@ const User: React.FC = () => {
                   />
                 </div>
 
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-muted-foreground space-y-1">
                   <p>
                     <strong>{t("users.card.phone")}</strong>{" "}
                     {isDemoUser(user?.username) ? maskPhone(u.phone || "") : (u.phone || t("users.phonePlaceholder"))}
@@ -710,7 +710,7 @@ const User: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-2 text-gray-500">
+                <div className="flex justify-end gap-4 pt-2 text-muted-foreground">
                   <FaEdit
                     onClick={() => {
                       setSelectedUserForEdit(u);
@@ -744,7 +744,7 @@ const User: React.FC = () => {
         {/* Pagination */}
         <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
           <div className="flex items-center gap-4 order-2 sm:order-1">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-muted-foreground">
               {t("users.pagination.showing")}{" "}
               {(pagination.page - 1) * pagination.limit + 1}{" "}
               {t("users.pagination.to")}{" "}

@@ -172,7 +172,7 @@ export default function NotificationTemplatesSettings() {
           <CardContent className="p-6">
             <div className="flex flex-col items-center justify-center py-8">
               <Loading />
-              <p className="text-sm text-gray-500 mt-2">{t("settings.notifications.loading")}</p>
+              <p className="text-sm text-muted-foreground mt-2">{t("settings.notifications.loading")}</p>
             </div>
           </CardContent>
         </Card>
@@ -198,8 +198,8 @@ export default function NotificationTemplatesSettings() {
         {templates.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">{t("settings.notifications.noTemplates")}</p>
+              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">{t("settings.notifications.noTemplates")}</p>
             </CardContent>
           </Card>
         ) : (
@@ -222,7 +222,7 @@ export default function NotificationTemplatesSettings() {
               <CardContent className="space-y-4">
                 {/* Toggles */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted">
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-blue-500" />
                       <Label className="text-sm font-medium cursor-pointer">
@@ -241,7 +241,7 @@ export default function NotificationTemplatesSettings() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                  <div className="flex items-center justify-between p-3 border rounded-lg bg-muted">
                     <div className="flex items-center gap-2">
                       <Bell className="w-4 h-4 text-green-500" />
                       <Label className="text-sm font-medium cursor-pointer">

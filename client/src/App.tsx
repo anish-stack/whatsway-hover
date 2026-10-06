@@ -42,6 +42,13 @@ import Team from "@/pages/team";
 import Sidebar from "@/components/layout/sidebar";
 import Account from "./pages/account";
 import { AppLayout } from "./components/layout/AppLayout";
+import WalletPage from "@/pages/billing/wallet";
+import RateCardPage from "@/pages/billing/rates";
+import CapsPage from "@/pages/billing/caps";
+import ResellerPanel from "@/pages/reseller/panel";
+import ResellerAdmin from "@/pages/reseller/admin";
+import BlueTickPage from "@/pages/blue-tick";
+import BlueTickAdmin from "@/pages/blue-tick-admin";
 import ChatbotBuilder from "./pages/chatbot-builder";
 import AddChatbotBuilder from "./pages/add-chatbot-builder";
 import WidgetBuilder from "./pages/widget-builder";
@@ -108,6 +115,14 @@ import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 // means authenticated-only (no specific permission required).
 const ROUTE_PERMISSIONS: Record<string, string> = {
   "/dashboard": "",
+  // v3.8 — billing, partner panel and verification
+  "/wallet": "",
+  "/billing/rates": "",
+  "/billing/caps": "",
+  "/partner": "",
+  "/resellers": "",
+  "/green-tick": "",
+  "/green-tick/review": "",
   "/contacts": "contacts.view",
   "/users": "",
   "/channels-management": "",
@@ -257,6 +272,16 @@ function ProtectedRoutes() {
   // Check if user has access to current route. Default policy is DENY:
   // unmapped routes redirect to /dashboard. Empty-string permissions mean
   // "authenticated-only" (allowed).
+  // A reseller has no use for the operator dashboard — send it to the
+  // partner panel, which is that role's home screen.
+  useEffect(() => {
+    if (isAuthenticated && user?.role === "reseller") {
+      if (location === "/" || location === "/dashboard") {
+        setLocation("/partner");
+      }
+    }
+  }, [location, isAuthenticated, user, setLocation]);
+
   useEffect(() => {
     if (isAuthenticated && user && location !== "/" && location !== "/dashboard") {
       const routeKey = resolveRouteKey(location);
@@ -347,6 +372,27 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/plans">
             <PermissionRoute component={Plans} />
+          </Route>
+          <Route path="/wallet">
+            <PermissionRoute component={WalletPage} />
+          </Route>
+          <Route path="/billing/rates">
+            <PermissionRoute component={RateCardPage} />
+          </Route>
+          <Route path="/billing/caps">
+            <PermissionRoute component={CapsPage} />
+          </Route>
+          <Route path="/partner">
+            <PermissionRoute component={ResellerPanel} />
+          </Route>
+          <Route path="/resellers">
+            <PermissionRoute component={ResellerAdmin} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/green-tick">
+            <PermissionRoute component={BlueTickPage} />
+          </Route>
+          <Route path="/green-tick/review">
+            <PermissionRoute component={BlueTickAdmin} requiredRoles={["superadmin"]} />
           </Route>
           <Route path="/gateway">
             <PermissionRoute component={GatewaySettings} requiredRoles={["superadmin"]} />

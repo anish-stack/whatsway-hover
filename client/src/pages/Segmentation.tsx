@@ -125,13 +125,13 @@ const Segmentation = () => {
       case "behavioral":
         return "bg-blue-100 text-blue-800";
       case "demographic":
-        return "bg-purple-100 text-purple-800";
+        return "bg-[var(--brand-100)] text-[var(--brand)]";
       case "geographic":
         return "bg-green-100 text-green-800";
       case "engagement":
         return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -167,21 +167,21 @@ const Segmentation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 py-3 sm:py-4">
             {/* Left: Icon + titles */}
             <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
-              <div className="bg-indigo-100 p-2 sm:p-2.5 rounded-lg shrink-0">
-                <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
+              <div className="bg-[var(--brand-100)] p-2 sm:p-2.5 rounded-lg shrink-0">
+                <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+                <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   Segmentation
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Create and manage audience segments
                 </p>
               </div>
@@ -239,14 +239,14 @@ const Segmentation = () => {
           ].map((stat, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+              className="bg-background p-6 rounded-xl shadow-sm border border-border"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {stat.title}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
+                  <p className="text-2xl font-bold text-foreground mt-2">
                     {stat.value}
                   </p>
                 </div>
@@ -259,22 +259,22 @@ const Segmentation = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="bg-background p-6 rounded-xl shadow-sm border border-border mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search segments..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="all">All Types</option>
               <option value="behavioral">Behavioral</option>
@@ -282,7 +282,7 @@ const Segmentation = () => {
               <option value="geographic">Geographic</option>
               <option value="engagement">Engagement</option>
             </select>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+            <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors flex items-center">
               <Filter className="w-4 h-4 mr-2" />
               More Filters
             </button>
@@ -309,7 +309,7 @@ const Segmentation = () => {
                 </button>
                 <button
                   onClick={() => setSelectedSegments([])}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   Clear
                 </button>
@@ -323,7 +323,7 @@ const Segmentation = () => {
           {filteredSegments.map((segment) => (
             <div
               key={segment.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all"
+              className="bg-background rounded-xl shadow-sm border border-border hover:shadow-md transition-all"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -331,7 +331,7 @@ const Segmentation = () => {
                     type="checkbox"
                     checked={selectedSegments.includes(segment.id)}
                     onChange={() => handleSelectSegment(segment.id)}
-                    className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 mt-1"
+                    className="w-4 h-4 text-green-600 border-border rounded focus:ring-green-500 mt-1"
                   />
                   <div className="flex items-center space-x-2">
                     <span
@@ -342,30 +342,30 @@ const Segmentation = () => {
                       {getTypeIcon(segment.type)}
                       <span className="ml-1">{segment.type}</span>
                     </span>
-                    <button className="p-1 text-gray-400 hover:text-gray-600">
+                    <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                       <MoreVertical className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {segment.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-muted-foreground text-sm mb-4">
                   {segment.description}
                 </p>
 
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                <div className="bg-muted p-4 rounded-lg mb-4">
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2">
                     Segment Criteria:
                   </h4>
                   <div className="space-y-2">
                     {segment.criteria.map((criterion, index) => (
                       <div
                         key={index}
-                        className="text-sm text-gray-600 flex items-center space-x-2"
+                        className="text-sm text-muted-foreground flex items-center space-x-2"
                       >
-                        <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-[var(--brand)] rounded-full"></div>
                         <span>
                           {criterion.field} {criterion.operator}{" "}
                           {criterion.value}
@@ -377,26 +377,26 @@ const Segmentation = () => {
 
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
                       {segment.contacts.toLocaleString()} contacts
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-muted-foreground">
                     Updated {segment.lastUpdated}
                   </div>
                 </div>
 
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm">
+                  <button className="flex-1 bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors flex items-center justify-center text-sm">
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </button>
-                  <button className="flex-1 bg-indigo-100 text-indigo-700 py-2 px-3 rounded-lg hover:bg-indigo-200 transition-colors flex items-center justify-center text-sm">
+                  <button className="flex-1 bg-[var(--brand-100)] text-[var(--brand)] py-2 px-3 rounded-lg hover:bg-[var(--brand-100)] transition-colors flex items-center justify-center text-sm">
                     <MessageSquare className="w-4 h-4 mr-1" />
                     Message
                   </button>
-                  <button className="bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <button className="bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
@@ -407,14 +407,14 @@ const Segmentation = () => {
 
         {/* Empty State */}
         {filteredSegments.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Layers className="w-8 h-8 text-gray-400" />
+          <div className="bg-background rounded-xl shadow-sm border border-border p-12 text-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Layers className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-foreground mb-2">
               No segments found
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-muted-foreground mb-6">
               {searchTerm || filterType !== "all"
                 ? "Try adjusting your search or filter criteria"
                 : "Get started by creating your first audience segment"}

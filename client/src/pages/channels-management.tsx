@@ -74,7 +74,7 @@ const healthColors: Record<string, string> = {
   healthy: "bg-green-100 text-green-800",
   warning: "bg-yellow-100 text-yellow-800",
   error: "bg-red-100 text-red-800",
-  unknown: "bg-gray-100 text-gray-800",
+  unknown: "bg-muted text-foreground",
 };
 
 const statusBadgeColors: Record<string, string> = {
@@ -330,7 +330,7 @@ const ChannelsManagement: React.FC = () => {
   ) => (
     <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
       <div className="flex items-center gap-4 order-2 sm:order-1">
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-muted-foreground">
           {t("channelsManagement.pagination.showing")} {(pagination.page - 1) * pagination.limit + 1} {t("channelsManagement.pagination.to")}{" "}
           {Math.min(pagination.page * pagination.limit, pagination.total)} {t("channelsManagement.pagination.of")}{" "}
           {pagination.total} {label === "channels" ? t("channelsManagement.pagination.channels") : t("channelsManagement.pagination.logs")}
@@ -379,7 +379,7 @@ const ChannelsManagement: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dots-bg">
+    <div className="min-h-screen bg-muted dots-bg">
       <Header title={t("channelsManagement.title")} subtitle={t("channelsManagement.subtitle")} />
 
       <div className="p-4 md:p-6">
@@ -388,7 +388,7 @@ const ChannelsManagement: React.FC = () => {
             onClick={() => setActiveTab("channels")}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "channels"
                 ? "border-green-600 text-green-600"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                : "border-transparent text-muted-foreground hover:text-muted-foreground"
               }`}
           >
             {t("channelsManagement.tabs.channels")}
@@ -397,7 +397,7 @@ const ChannelsManagement: React.FC = () => {
             onClick={() => setActiveTab("signup-logs")}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "signup-logs"
                 ? "border-green-600 text-green-600"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                : "border-transparent text-muted-foreground hover:text-muted-foreground"
               }`}
           >
             {t("channelsManagement.tabs.signupLogs")}
@@ -417,7 +417,7 @@ const ChannelsManagement: React.FC = () => {
                   onChange={(e) => setChannelSearch(e.target.value)}
                   className="pl-10 w-full"
                 />
-                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               </div>
               <select
                 value={channelStatusFilter}
@@ -426,7 +426,7 @@ const ChannelsManagement: React.FC = () => {
                   setChannelPagination((prev) => ({ ...prev, page: 1 }));
                   fetchChannels(1, channelSearch, channelPagination.limit, e.target.value, channelHealthFilter);
                 }}
-                className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto"
+                className="border border-border rounded-md px-3 py-2 text-sm bg-background w-full sm:w-auto"
               >
                 <option value="">{t("channelsManagement.filter.allStatuses")}</option>
                 <option value="active">{t("channelsManagement.filter.active")}</option>
@@ -439,7 +439,7 @@ const ChannelsManagement: React.FC = () => {
                   setChannelPagination((prev) => ({ ...prev, page: 1 }));
                   fetchChannels(1, channelSearch, channelPagination.limit, channelStatusFilter, e.target.value);
                 }}
-                className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white w-full sm:w-auto"
+                className="border border-border rounded-md px-3 py-2 text-sm bg-background w-full sm:w-auto"
               >
                 <option value="">{t("channelsManagement.filter.allHealth")}</option>
                 <option value="healthy">{t("channelsManagement.filter.healthy")}</option>
@@ -465,13 +465,13 @@ const ChannelsManagement: React.FC = () => {
               </Button>
             </form>
 
-            <div className="mb-4 text-sm text-gray-700">
+            <div className="mb-4 text-sm text-muted-foreground">
               {t("channelsManagement.stats.showing")} {channels.length} {t("channelsManagement.stats.of")} {channelPagination.total} {t("channelsManagement.stats.channels")}
             </div>
 
-            <div className="hidden md:block bg-white border rounded-lg shadow-sm overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="hidden md:block bg-background border rounded-lg shadow-sm overflow-x-auto">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="bg-muted">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.channels.channelName")}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.channels.phoneNumber")}</th>
@@ -483,22 +483,22 @@ const ChannelsManagement: React.FC = () => {
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.channels.actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {channelsLoading ? (
                     <tr>
-                      <td colSpan={8} className="py-10 text-center text-gray-500">
+                      <td colSpan={8} className="py-10 text-center text-muted-foreground">
                         {t("channelsManagement.table.channels.loading")}
                       </td>
                     </tr>
                   ) : channels.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-10 text-center text-gray-500">
+                      <td colSpan={8} className="py-10 text-center text-muted-foreground">
                         {t("channelsManagement.table.channels.noChannels")}
                       </td>
                     </tr>
                   ) : (
                     channels.map((ch) => (
-                      <tr key={ch.id} className="hover:bg-gray-50">
+                      <tr key={ch.id} className="hover:bg-muted">
                         <td className="px-4 py-3 text-sm font-medium">{_isDemo ? maskName(ch.name || t("channelsManagement.table.channels.unnamed")) : (ch.name || t("channelsManagement.table.channels.unnamed"))}</td>
                         <td className="px-4 py-3 text-sm">{_isDemo ? maskPhone(ch.phoneNumber) : (ch.phoneNumber || t("channelsManagement.table.channels.na"))}</td>
                         <td className="px-4 py-3">
@@ -511,10 +511,10 @@ const ChannelsManagement: React.FC = () => {
                                 {ch.ownerUsername || t("channelsManagement.table.channels.unknown")}
                               </Link>
                             ) : (
-                              <span className="text-sm text-gray-500">{t("channelsManagement.table.channels.unknown")}</span>
+                              <span className="text-sm text-muted-foreground">{t("channelsManagement.table.channels.unknown")}</span>
                             )}
                             {ch.ownerEmail && (
-                              <p className="text-xs text-gray-500">{_isDemo ? maskEmail(ch.ownerEmail) : ch.ownerEmail}</p>
+                              <p className="text-xs text-muted-foreground">{_isDemo ? maskEmail(ch.ownerEmail) : ch.ownerEmail}</p>
                             )}
                           </div>
                         </td>
@@ -522,7 +522,7 @@ const ChannelsManagement: React.FC = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${ch.isActive
                                 ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-800"
+                                : "bg-muted text-foreground"
                               }`}
                           >
                             {ch.isActive ? t("channelsManagement.table.channels.activeBadge") : t("channelsManagement.table.channels.inactiveBadge")}
@@ -542,7 +542,7 @@ const ChannelsManagement: React.FC = () => {
                         <td className="px-4 py-3 text-sm">{formatDate(ch.createdAt)}</td>
                         <td className="px-4 py-3">
                           {_isDemo ? (
-                            <span className="text-xs text-gray-400">{t("channelsManagement.table.channels.disabled")}</span>
+                            <span className="text-xs text-muted-foreground">{t("channelsManagement.table.channels.disabled")}</span>
                           ) : (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -580,30 +580,30 @@ const ChannelsManagement: React.FC = () => {
 
             <div className="md:hidden space-y-4">
               {channelsLoading ? (
-                <p className="text-center text-gray-500 py-10">{t("channelsManagement.table.channels.loading")}</p>
+                <p className="text-center text-muted-foreground py-10">{t("channelsManagement.table.channels.loading")}</p>
               ) : channels.length === 0 ? (
-                <p className="text-center text-gray-500 py-10">{t("channelsManagement.table.channels.noChannels")}</p>
+                <p className="text-center text-muted-foreground py-10">{t("channelsManagement.table.channels.noChannels")}</p>
               ) : (
                 channels.map((ch) => (
                   <div
                     key={ch.id}
-                    className="bg-white shadow-sm rounded-lg p-4 border space-y-3"
+                    className="bg-background shadow-sm rounded-lg p-4 border space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-gray-800">{_isDemo ? maskName(ch.name || t("channelsManagement.table.channels.unnamed")) : (ch.name || t("channelsManagement.table.channels.unnamed"))}</p>
-                        <p className="text-xs text-gray-500">{_isDemo ? maskPhone(ch.phoneNumber) : (ch.phoneNumber || t("channelsManagement.table.channels.na"))}</p>
+                        <p className="font-semibold text-foreground">{_isDemo ? maskName(ch.name || t("channelsManagement.table.channels.unnamed")) : (ch.name || t("channelsManagement.table.channels.unnamed"))}</p>
+                        <p className="text-xs text-muted-foreground">{_isDemo ? maskPhone(ch.phoneNumber) : (ch.phoneNumber || t("channelsManagement.table.channels.na"))}</p>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${ch.isActive
                             ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                            : "bg-muted text-foreground"
                           }`}
                       >
                         {ch.isActive ? t("channelsManagement.table.channels.activeBadge") : t("channelsManagement.table.channels.inactiveBadge")}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <div className="text-sm text-muted-foreground space-y-1">
                       <p>
                         <strong>{t("channelsManagement.table.channels.owner")}:</strong>{" "}
                         {ch.createdBy ? (
@@ -617,7 +617,7 @@ const ChannelsManagement: React.FC = () => {
                           t("channelsManagement.table.channels.unknown")
                         )}
                         {ch.ownerEmail && (
-                          <span className="text-xs text-gray-500 ml-1">({_isDemo ? maskEmail(ch.ownerEmail) : ch.ownerEmail})</span>
+                          <span className="text-xs text-muted-foreground ml-1">({_isDemo ? maskEmail(ch.ownerEmail) : ch.ownerEmail})</span>
                         )}
                       </p>
                       <p>
@@ -692,13 +692,13 @@ const ChannelsManagement: React.FC = () => {
               </select>
             </div>
 
-            <div className="mb-4 text-sm text-gray-700">
+            <div className="mb-4 text-sm text-muted-foreground">
               {t("channelsManagement.stats.showing")} {logs.length} {t("channelsManagement.stats.of")} {logPagination.total} {t("channelsManagement.stats.logs")}
             </div>
 
-            <div className="hidden md:block bg-white border rounded-lg shadow-sm overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="hidden md:block bg-background border rounded-lg shadow-sm overflow-x-auto">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="bg-muted">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.logs.user")}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.logs.status")}</th>
@@ -708,16 +708,16 @@ const ChannelsManagement: React.FC = () => {
                     <th className="px-4 py-3 text-left text-sm font-semibold">{t("channelsManagement.table.logs.date")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {logsLoading ? (
                     <tr>
-                      <td colSpan={6} className="py-10 text-center text-gray-500">
+                      <td colSpan={6} className="py-10 text-center text-muted-foreground">
                         {t("channelsManagement.table.logs.loading")}
                       </td>
                     </tr>
                   ) : logs.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-10 text-center text-gray-500">
+                      <td colSpan={6} className="py-10 text-center text-muted-foreground">
                         {t("channelsManagement.table.logs.noLogs")}
                       </td>
                     </tr>
@@ -728,25 +728,25 @@ const ChannelsManagement: React.FC = () => {
                       return (
                         <React.Fragment key={log.id}>
                           <tr
-                            className={`hover:bg-gray-50 ${hasDetails ? "cursor-pointer" : ""} ${isExpanded ? "bg-gray-50" : ""}`}
+                            className={`hover:bg-muted ${hasDetails ? "cursor-pointer" : ""} ${isExpanded ? "bg-muted" : ""}`}
                             onClick={() => hasDetails && setExpandedLogId(isExpanded ? null : log.id)}
                           >
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-2">
                                 {hasDetails && (
-                                  <span className="text-gray-400 text-xs">{isExpanded ? "▼" : "▶"}</span>
+                                  <span className="text-muted-foreground text-xs">{isExpanded ? "▼" : "▶"}</span>
                                 )}
                                 <div>
                                   <p className="text-sm font-medium">{log.username || t("channelsManagement.table.logs.unknown")}</p>
                                   {log.email && (
-                                    <p className="text-xs text-gray-500">{_isDemo ? maskEmail(log.email) : log.email}</p>
+                                    <p className="text-xs text-muted-foreground">{_isDemo ? maskEmail(log.email) : log.email}</p>
                                   )}
                                 </div>
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <span
-                                className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeColors[log.status] || "bg-gray-100 text-gray-800"
+                                className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeColors[log.status] || "bg-muted text-foreground"
                                   }`}
                               >
                                 {log.status.toUpperCase()}
@@ -759,11 +759,11 @@ const ChannelsManagement: React.FC = () => {
                                   {log.errorMessage}
                                 </span>
                               ) : (
-                                <span className="text-gray-400">—</span>
+                                <span className="text-muted-foreground">—</span>
                               )}
                             </td>
                             <td className="px-4 py-3 text-sm">
-                              {log.phoneNumber ? (_isDemo ? maskPhone(log.phoneNumber) : log.phoneNumber) : <span className="text-gray-400">—</span>}
+                              {log.phoneNumber ? (_isDemo ? maskPhone(log.phoneNumber) : log.phoneNumber) : <span className="text-muted-foreground">—</span>}
                             </td>
                             <td className="px-4 py-3 text-sm">{formatDate(log.createdAt)}</td>
                           </tr>
@@ -798,26 +798,26 @@ const ChannelsManagement: React.FC = () => {
                                     )}
                                     {log.errorMessage && (
                                       <div>
-                                        <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.errorMessage")}</span>
+                                        <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.errorMessage")}</span>
                                         <p className="text-red-700 mt-1">{log.errorMessage}</p>
                                       </div>
                                     )}
                                     {log.wabaId && (
                                       <div>
-                                        <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.wabaId")}</span>{" "}
-                                        <span className="font-mono text-gray-600">{log.wabaId}</span>
+                                        <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.wabaId")}</span>{" "}
+                                        <span className="font-mono text-muted-foreground">{log.wabaId}</span>
                                       </div>
                                     )}
                                     {log.channelId && (
                                       <div>
-                                        <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.channelId")}</span>{" "}
-                                        <span className="font-mono text-gray-600">{log.channelId}</span>
+                                        <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.channelId")}</span>{" "}
+                                        <span className="font-mono text-muted-foreground">{log.channelId}</span>
                                       </div>
                                     )}
                                     {log.errorDetails && (
                                       <div>
-                                        <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.rawErrorDetails")}</span>
-                                        <pre className="mt-1 p-3 bg-white border rounded text-xs font-mono text-gray-700 overflow-x-auto whitespace-pre-wrap">
+                                        <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.rawErrorDetails")}</span>
+                                        <pre className="mt-1 p-3 bg-background border rounded text-xs font-mono text-muted-foreground overflow-x-auto whitespace-pre-wrap">
                                           {JSON.stringify(log.errorDetails, null, 2)}
                                         </pre>
                                       </div>
@@ -837,9 +837,9 @@ const ChannelsManagement: React.FC = () => {
 
             <div className="md:hidden space-y-4">
               {logsLoading ? (
-                <p className="text-center text-gray-500 py-10">{t("channelsManagement.table.logs.loading")}</p>
+                <p className="text-center text-muted-foreground py-10">{t("channelsManagement.table.logs.loading")}</p>
               ) : logs.length === 0 ? (
-                <p className="text-center text-gray-500 py-10">{t("channelsManagement.table.logs.noLogs")}</p>
+                <p className="text-center text-muted-foreground py-10">{t("channelsManagement.table.logs.noLogs")}</p>
               ) : (
                 logs.map((log) => {
                   const hasDetails = log.errorMessage || log.errorDetails || log.wabaId;
@@ -847,31 +847,31 @@ const ChannelsManagement: React.FC = () => {
                   return (
                     <div
                       key={log.id}
-                      className={`bg-white shadow-sm rounded-lg p-4 border space-y-3 ${hasDetails ? "cursor-pointer" : ""}`}
+                      className={`bg-background shadow-sm rounded-lg p-4 border space-y-3 ${hasDetails ? "cursor-pointer" : ""}`}
                       onClick={() => hasDetails && setExpandedLogId(isExpanded ? null : log.id)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           {hasDetails && (
-                            <span className="text-gray-400 text-xs">{isExpanded ? "▼" : "▶"}</span>
+                            <span className="text-muted-foreground text-xs">{isExpanded ? "▼" : "▶"}</span>
                           )}
                           <div>
-                            <p className="font-semibold text-gray-800">
+                            <p className="font-semibold text-foreground">
                               {log.username || t("channelsManagement.table.logs.unknown")}
                             </p>
                             {log.email && (
-                              <p className="text-xs text-gray-500">{_isDemo ? maskEmail(log.email) : log.email}</p>
+                              <p className="text-xs text-muted-foreground">{_isDemo ? maskEmail(log.email) : log.email}</p>
                             )}
                           </div>
                         </div>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeColors[log.status] || "bg-gray-100 text-gray-800"
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeColors[log.status] || "bg-muted text-foreground"
                             }`}
                         >
                           {log.status.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600 space-y-1">
+                      <div className="text-sm text-muted-foreground space-y-1">
                         <p>
                           <strong>{t("channelsManagement.table.logs.step")}</strong> {log.step || t("channelsManagement.table.logs.na")}
                         </p>
@@ -917,26 +917,26 @@ const ChannelsManagement: React.FC = () => {
                             )}
                             {log.errorMessage && (
                               <div>
-                                <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.fullError")}</span>
+                                <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.fullError")}</span>
                                 <p className="text-red-700 mt-1">{log.errorMessage}</p>
                               </div>
                             )}
                             {log.wabaId && (
                               <div>
-                                <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.wabaId")}</span>{" "}
-                                <span className="font-mono text-gray-600">{log.wabaId}</span>
+                                <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.wabaId")}</span>{" "}
+                                <span className="font-mono text-muted-foreground">{log.wabaId}</span>
                               </div>
                             )}
                             {log.channelId && (
                               <div>
-                                <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.channelId")}</span>{" "}
-                                <span className="font-mono text-gray-600">{log.channelId}</span>
+                                <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.channelId")}</span>{" "}
+                                <span className="font-mono text-muted-foreground">{log.channelId}</span>
                               </div>
                             )}
                             {log.errorDetails && (
                               <div>
-                                <span className="font-semibold text-gray-700">{t("channelsManagement.table.logs.rawErrorDetails")}</span>
-                                <pre className="mt-1 p-2 bg-white border rounded text-xs font-mono text-gray-700 overflow-x-auto whitespace-pre-wrap">
+                                <span className="font-semibold text-muted-foreground">{t("channelsManagement.table.logs.rawErrorDetails")}</span>
+                                <pre className="mt-1 p-2 bg-background border rounded text-xs font-mono text-muted-foreground overflow-x-auto whitespace-pre-wrap">
                                   {JSON.stringify(log.errorDetails, null, 2)}
                                 </pre>
                               </div>

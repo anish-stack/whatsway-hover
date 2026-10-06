@@ -258,22 +258,22 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Category:</span>
+                <span className="text-muted-foreground">Category:</span>
                 <span className="ml-2 font-medium">{template.category}</span>
               </div>
               <div>
-                <span className="text-gray-500">Language:</span>
+                <span className="text-muted-foreground">Language:</span>
                 <span className="ml-2 font-medium">{template.language || "en_US"}</span>
               </div>
               <div>
-                <span className="text-gray-500">Created:</span>
+                <span className="text-muted-foreground">Created:</span>
                 <span className="ml-2 font-medium">
                   {format(new Date(template.createdAt), "MMM d, yyyy")}
                 </span>
               </div>
               {template.lastUsed && (
                 <div>
-                  <span className="text-gray-500">Last Used:</span>
+                  <span className="text-muted-foreground">Last Used:</span>
                   <span className="ml-2 font-medium">
                     {format(new Date(template.lastUsed), "MMM d, yyyy")}
                   </span>
@@ -292,9 +292,9 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
             </div>
 
             <div className="max-w-sm mx-auto space-y-2">
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="bg-background rounded-lg shadow-sm overflow-hidden">
                 {hasMediaHeader && !isCarousel && (
-                  <div className="bg-gray-200 h-48 rounded-t-lg flex items-center justify-center overflow-hidden">
+                  <div className="bg-border h-48 rounded-t-lg flex items-center justify-center overflow-hidden">
                     {headerMediaUrl && isRenderableUrl(headerMediaUrl) && headerFormat === "IMAGE" ? (
                       <img
                         src={headerMediaUrl}
@@ -307,9 +307,9 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                       />
                     ) : (
                       <>
-                        {headerFormat === "IMAGE" && <Image className="w-16 h-16 text-gray-400" />}
-                        {headerFormat === "VIDEO" && <Video className="w-16 h-16 text-gray-400" />}
-                        {headerFormat === "DOCUMENT" && <FileText className="w-16 h-16 text-gray-400" />}
+                        {headerFormat === "IMAGE" && <Image className="w-16 h-16 text-muted-foreground" />}
+                        {headerFormat === "VIDEO" && <Video className="w-16 h-16 text-muted-foreground" />}
+                        {headerFormat === "DOCUMENT" && <FileText className="w-16 h-16 text-muted-foreground" />}
                       </>
                     )}
                   </div>
@@ -329,7 +329,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                   )}
 
                   {footerText && (
-                    <div className="text-xs text-gray-500 pt-1">
+                    <div className="text-xs text-muted-foreground pt-1">
                       {formatWhatsAppText(footerText)}
                     </div>
                   )}
@@ -340,7 +340,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                     {ctaButtons.map((btn, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-center gap-2 py-2 text-[#00a5f4] text-sm font-medium border-b last:border-b-0 cursor-pointer hover:bg-gray-50"
+                        className="flex items-center justify-center gap-2 py-2 text-[#00a5f4] text-sm font-medium border-b last:border-b-0 cursor-pointer hover:bg-muted"
                       >
                         {renderButtonIcon(btn)}
                         <span>{btn.text || btn.type}</span>
@@ -355,7 +355,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                   {quickReplyButtons.map((btn, idx) => (
                     <div
                       key={idx}
-                      className="bg-white rounded-lg shadow-sm px-4 py-2 text-[#00a5f4] text-sm font-medium flex-1 text-center min-w-[80px] cursor-pointer hover:bg-gray-50"
+                      className="bg-background rounded-lg shadow-sm px-4 py-2 text-[#00a5f4] text-sm font-medium flex-1 text-center min-w-[80px] cursor-pointer hover:bg-muted"
                     >
                       {btn.text}
                     </div>
@@ -369,13 +369,13 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                     <>
                       <button
                         onClick={() => scrollCarousel("left")}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 rounded-full p-1 shadow-md hover:bg-white"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 rounded-full p-1 shadow-md hover:bg-background"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => scrollCarousel("right")}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 rounded-full p-1 shadow-md hover:bg-white"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 rounded-full p-1 shadow-md hover:bg-background"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -398,8 +398,8 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
 
                       return (
                         <div key={cardIdx} className="snap-start shrink-0 w-[200px] space-y-2">
-                          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <div className="bg-gray-200 h-32 flex items-center justify-center overflow-hidden">
+                          <div className="bg-background rounded-lg shadow-sm overflow-hidden">
+                            <div className="bg-border h-32 flex items-center justify-center overflow-hidden">
                               {isRenderableUrl(cardData.mediaUrl) ? (
                                 <img
                                   src={cardData.mediaUrl}
@@ -411,7 +411,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                                   }}
                                 />
                               ) : (
-                                <div className="flex flex-col items-center text-gray-400">
+                                <div className="flex flex-col items-center text-muted-foreground">
                                   {cardData.mediaType === "video" ? (
                                     <Video className="w-10 h-10" />
                                   ) : (
@@ -448,7 +448,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                               {cardQuickReplies.map((btn, btnIdx) => (
                                 <div
                                   key={btnIdx}
-                                  className="bg-white rounded-lg shadow-sm px-2 py-1 text-[#00a5f4] text-xs font-medium flex-1 text-center"
+                                  className="bg-background rounded-lg shadow-sm px-2 py-1 text-[#00a5f4] text-xs font-medium flex-1 text-center"
                                 >
                                   {btn.text}
                                 </div>
@@ -481,7 +481,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
               {headerText && (
                 <div>
                   <SectionLabel>Header</SectionLabel>
-                  <div className="bg-gray-50 p-3 rounded text-sm">
+                  <div className="bg-muted p-3 rounded text-sm">
                     {headerText}
                   </div>
                 </div>
@@ -490,7 +490,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
               {hasMediaHeader && (
                 <div>
                   <SectionLabel>Header Media</SectionLabel>
-                  <div className="bg-gray-50 p-3 rounded text-sm text-gray-600">
+                  <div className="bg-muted p-3 rounded text-sm text-muted-foreground">
                     Type: {headerFormat}
                   </div>
                 </div>
@@ -499,7 +499,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
               {bodyText && (
                 <div>
                   <SectionLabel>Body</SectionLabel>
-                  <div className="bg-gray-50 p-3 rounded text-sm whitespace-pre-wrap">
+                  <div className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">
                     {bodyText}
                   </div>
                 </div>
@@ -508,7 +508,7 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
               {footerText && (
                 <div>
                   <SectionLabel>Footer</SectionLabel>
-                  <div className="bg-gray-50 p-3 rounded text-sm">
+                  <div className="bg-muted p-3 rounded text-sm">
                     {footerText}
                   </div>
                 </div>
@@ -517,14 +517,14 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
               {buttons.length > 0 && (
                 <div>
                   <SectionLabel>Buttons</SectionLabel>
-                  <div className="bg-gray-50 p-3 rounded space-y-2">
+                  <div className="bg-muted p-3 rounded space-y-2">
                     {buttons.map((button, idx) => (
                       <div key={idx} className="text-sm flex items-center gap-2">
                         <Badge variant="outline" className="text-xs shrink-0">{button.type}</Badge>
                         <span>{button.text}</span>
-                        {button.url && <span className="text-gray-400 text-xs truncate">({button.url})</span>}
-                        {button.phone_number && <span className="text-gray-400 text-xs">({button.phone_number})</span>}
-                        {button.phoneNumber && <span className="text-gray-400 text-xs">({button.phoneNumber})</span>}
+                        {button.url && <span className="text-muted-foreground text-xs truncate">({button.url})</span>}
+                        {button.phone_number && <span className="text-muted-foreground text-xs">({button.phone_number})</span>}
+                        {button.phoneNumber && <span className="text-muted-foreground text-xs">({button.phoneNumber})</span>}
                       </div>
                     ))}
                   </div>
@@ -538,10 +538,10 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
                     {carouselCards.map((card, idx) => {
                       const cardData = resolveCardData(card);
                       return (
-                        <div key={idx} className="bg-gray-50 p-3 rounded border border-gray-200">
+                        <div key={idx} className="bg-muted p-3 rounded border border-border">
                           <div className="flex items-center gap-2 mb-2">
                             <Badge variant="outline" className="text-xs">Card {idx + 1}</Badge>
-                            <span className="text-xs text-gray-400 capitalize">{cardData.mediaType} header</span>
+                            <span className="text-xs text-muted-foreground capitalize">{cardData.mediaType} header</span>
                           </div>
                           {cardData.body && (
                             <div className="text-sm whitespace-pre-wrap mb-2">{cardData.body}</div>
@@ -570,5 +570,5 @@ export function TemplatePreview({ template, onClose }: TemplatePreviewProps) {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <div className="font-medium mb-1 text-sm text-gray-500">{children}</div>;
+  return <div className="font-medium mb-1 text-sm text-muted-foreground">{children}</div>;
 }

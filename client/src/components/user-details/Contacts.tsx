@@ -114,8 +114,8 @@ export default function Contacts({ userId }: ContactsProps) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+        <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+          <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="py-3 px-4 border-b">{t("users.contacts.name")}</th>
               <th className="py-3 px-4 border-b">{t("users.contacts.phone")}</th>
@@ -130,7 +130,7 @@ export default function Contacts({ userId }: ContactsProps) {
             {contacts.map((contact) => (
               <tr
                 key={contact.id}
-                className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                className="hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <td className="py-3 px-4 border-b">{contact.name}</td>
                 <td className="py-3 px-4 border-b">
@@ -151,7 +151,7 @@ export default function Contacts({ userId }: ContactsProps) {
                       {t("users.contacts.active")}
                     </span>
                   ) : (
-                    <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                    <span className="px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
                       {contact.status}
                     </span>
                   )}
@@ -177,7 +177,7 @@ export default function Contacts({ userId }: ContactsProps) {
         <div className="w-full mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* LEFT SIDE → Showing + Per Page */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-muted-foreground">
               {t("users.contacts.showing")} {(page - 1) * limit + 1} {t("users.contacts.to")}{" "}
               {Math.min(page * limit, data.pagination.total)} {t("users.contacts.of")}{" "}
               {data.pagination.total} {t("users.contacts.contactsCount")}

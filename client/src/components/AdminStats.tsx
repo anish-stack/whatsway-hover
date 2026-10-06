@@ -71,7 +71,7 @@ export default function AdminStats() {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="h-32 bg-gray-100 rounded-lg animate-pulse"
+              className="h-32 bg-muted rounded-lg animate-pulse"
             />
           ))}
         </div>
@@ -119,8 +119,8 @@ export default function AdminStats() {
             label={t("dashboard.read")}
             value={stats.messagesRead ?? 0}
             icon={<Eye className="w-6 h-6" />}
-            iconClassName="bg-violet-50 text-violet-600"
-            borderColor="border-l-violet-500"
+            iconClassName="bg-[var(--brand-100)] text-[var(--brand)]"
+            borderColor="border-l-[var(--brand)]"
           />
           <CardStat
             label={t("dashboard.failed")}
@@ -165,8 +165,8 @@ export default function AdminStats() {
             label={t("dashboard.dashboardStates.Total_Templates")}
             value={stats.totalTemplates}
             icon={<FileText className="w-6 h-6" />}
-            iconClassName="bg-purple-50 text-purple-600"
-            borderColor="border-l-purple-500"
+            iconClassName="bg-[var(--brand-100)] text-[var(--brand)]"
+            borderColor="border-l-[var(--brand)]"
           />
         )}
         {stats.totalChannels !== undefined && stats.totalChannels !== null && (
@@ -192,8 +192,8 @@ export default function AdminStats() {
             label={t("dashboard.dashboardStates.Total_Users")}
             value={stats.totalUsers}
             icon={<UsersRound className="w-6 h-6" />}
-            iconClassName="bg-indigo-50 text-indigo-600"
-            borderColor="border-l-indigo-500"
+            iconClassName="bg-[var(--brand-100)] text-[var(--brand)]"
+            borderColor="border-l-[var(--brand)]"
           />
         )}
         {stats.totalCampaigns !== undefined && stats.totalCampaigns !== null && (

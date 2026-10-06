@@ -72,7 +72,7 @@ function getLanguageLabel(code: string): string {
 const categoryConfig: Record<string, { label: string; className: string; icon: any }> = {
   MARKETING: {
     label: "Marketing",
-    className: "bg-purple-50 text-purple-700 border-purple-200",
+    className: "bg-[var(--brand-100)] text-[var(--brand)] border-[var(--mist)]",
     icon: Megaphone,
   },
   UTILITY: {
@@ -175,7 +175,7 @@ export function TemplatesTable({
     <div className="space-y-4">
       <div className="flex items-center space-x-2 w-full max-w-lg mx-auto">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("templates.search.placeholder")}
             value={searchQuery}
@@ -186,7 +186,7 @@ export function TemplatesTable({
       </div>
 
       {filteredTemplates.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted-foreground">
           {t("templates.search.noMatches", { query: searchQuery })}
         </div>
       ) : (
@@ -201,12 +201,12 @@ export function TemplatesTable({
             return (
               <div
                 key={template.id}
-                className="border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer bg-white group"
+                className="border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer bg-background group"
                 onClick={() => onViewTemplate(template)}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm truncate text-gray-900">
+                    <h3 className="font-semibold text-sm truncate text-foreground">
                       {template.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -214,12 +214,12 @@ export function TemplatesTable({
                         <CatIcon className="w-3 h-3 mr-1" />
                         {t(`templates.categories.${(cat.label || "marketing").toLowerCase()}`)}
                       </Badge>
-                      <span className="inline-flex items-center text-[11px] text-gray-500">
+                      <span className="inline-flex items-center text-[11px] text-muted-foreground">
                         <Globe className="w-3 h-3 mr-0.5" />
                         {langLabel}
                       </span>
                       {MediaIcon && (
-                        <span className="inline-flex items-center text-[11px] text-gray-500">
+                        <span className="inline-flex items-center text-[11px] text-muted-foreground">
                           <MediaIcon className="w-3 h-3 mr-0.5" />
                           {template.mediaType}
                         </span>
@@ -268,15 +268,15 @@ export function TemplatesTable({
 
                 <div className="space-y-1.5">
                   {template.header && (
-                    <p className="text-sm font-medium text-gray-800 truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {template.header}
                     </p>
                   )}
-                  <p className="text-sm text-gray-600 line-clamp-3">
+                  <p className="text-sm text-muted-foreground line-clamp-3">
                     {template.body}
                   </p>
                   {template.footer && (
-                    <p className="text-xs text-gray-400 italic">{template.footer}</p>
+                    <p className="text-xs text-muted-foreground italic">{template.footer}</p>
                   )}
                 </div>
 
@@ -288,7 +288,7 @@ export function TemplatesTable({
                         <Badge
                           key={idx}
                           variant="outline"
-                          className="text-[11px] px-1.5 py-0.5 bg-gray-50 text-gray-600 border-gray-200"
+                          className="text-[11px] px-1.5 py-0.5 bg-muted text-muted-foreground border-border"
                         >
                           <BtnIcon className="w-3 h-3 mr-1" />
                           {button.text || button.type}
@@ -298,12 +298,12 @@ export function TemplatesTable({
                   </div>
                 )}
 
-                <div className="mt-3 pt-2.5 border-t text-xs text-gray-400 flex items-center justify-between">
+                <div className="mt-3 pt-2.5 border-t text-xs text-muted-foreground flex items-center justify-between">
                   <span>
                     {format(new Date(template.createdAt), "MMM d, yyyy")}
                   </span>
                   {buttons.length > 0 && (
-                    <span className="text-gray-400">
+                    <span className="text-muted-foreground">
                       {buttons.length === 1 
                         ? t("templates.buttonCount", { count: buttons.length }) 
                         : t("templates.buttonsCount", { count: buttons.length })}

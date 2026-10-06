@@ -192,8 +192,8 @@ export default function Channels({ userId }: ChannelsProps) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+        <table className="min-w-full border border-border bg-background rounded-lg shadow-sm">
+          <thead className="bg-muted text-left text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="py-3 px-4 border-b">{t("users.channels.name")}</th>
               <th className="py-3 px-4 border-b">{t("users.channels.phoneNumber")}</th>
@@ -210,7 +210,7 @@ export default function Channels({ userId }: ChannelsProps) {
             {channels.map((channel) => (
               <tr
                 key={channel.id}
-                className="hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                className="hover:bg-muted transition-colors text-sm text-muted-foreground"
               >
                 <td className="py-3 px-4 border-b">{channel.name}</td>
                 <td className="py-3 px-4 border-b">{isDemoUser(user?.username) ? maskValue(channel.phoneNumber) : channel.phoneNumber}</td>
@@ -220,7 +220,7 @@ export default function Channels({ userId }: ChannelsProps) {
                       {t("users.channels.active")}
                     </span>
                   ) : (
-                    <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                    <span className="px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
                       {t("users.channels.inactive")}
                     </span>
                   )}
@@ -284,7 +284,7 @@ export default function Channels({ userId }: ChannelsProps) {
         <div className="w-full mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* LEFT SIDE → Showing + Per Page */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-muted-foreground">
               {t("users.channels.showing")} {(page - 1) * limit + 1} {t("users.channels.to")}{" "}
               {Math.min(page * limit, pagination.total)} {t("users.channels.of")} {pagination.total}{" "}
               {t("users.channels.channelsCount")}

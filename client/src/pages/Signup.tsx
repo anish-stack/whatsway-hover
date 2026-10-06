@@ -40,6 +40,11 @@ const Signup: React.FC = () => {
     agreeToTerms: false,
   });
 
+  // A partner's signup link looks like /signup?ref=CODE. The backend
+  // attaches the new account to that reseller; an unknown code is ignored.
+  const referralCode =
+    new URLSearchParams(window.location.search).get("ref") || undefined;
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,6 +109,8 @@ const Signup: React.FC = () => {
       firstName: formData.firstName,
       lastName: formData.lastName,
       avatar: "",
+      // partner referral, read from ?ref= on the signup URL
+      referralCode,
     });
 
     const data = await res.json();
@@ -151,7 +158,7 @@ const Signup: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-6">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)] px-4 py-6">
         <div className="max-w-md w-full space-y-8 mt-[50px]">
           <div className="text-center">
             <div className="flex justify-center mb-4">
@@ -162,15 +169,15 @@ const Signup: React.FC = () => {
                   className="h-16 object-contain"
                 />
               ) : (
-                <div className="bg-green-800 text-primary-foreground rounded-full p-3">
+                <div className="bg-[var(--brand)] text-primary-foreground rounded-full p-3">
                   <MessageSquare className="h-8 w-8" />
                 </div>
               )}
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-[var(--ink)]">
               Create your account
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-[var(--ink-500)]">
               Start your WhatsApp marketing journey today
             </p>
           </div>
@@ -185,18 +192,18 @@ const Signup: React.FC = () => {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                     Username
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                     <input
                       type="text"
                       name="username"
                       value={formData.username}
                       onChange={handleChange}
-                      className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                        errors.username ? "border-red-300" : "border-gray-300"
+                      className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
+                        errors.username ? "border-red-300" : "border-[var(--mist)]"
                       }`}
                       placeholder="Choose a unique username"
                       required
@@ -209,18 +216,18 @@ const Signup: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                       First Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                       <input
                         type="text"
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.firstName ? "border-red-300" : "border-gray-300"
+                        className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
+                          errors.firstName ? "border-red-300" : "border-[var(--mist)]"
                         }`}
                         placeholder="John"
                         required
@@ -234,18 +241,18 @@ const Signup: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                       Last Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                       <input
                         type="text"
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.lastName ? "border-red-300" : "border-gray-300"
+                        className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
+                          errors.lastName ? "border-red-300" : "border-[var(--mist)]"
                         }`}
                         placeholder="Doe"
                         required
@@ -260,18 +267,18 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                        errors.email ? "border-red-300" : "border-gray-300"
+                      className={`w-full pl-10 pr-4 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
+                        errors.email ? "border-red-300" : "border-[var(--mist)]"
                       }`}
                       placeholder="john@company.com"
                       required
@@ -283,18 +290,18 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className={`w-full pl-10 pr-12 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                        errors.password ? "border-red-300" : "border-gray-300"
+                      className={`w-full pl-10 pr-12 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
+                        errors.password ? "border-red-300" : "border-[var(--mist)]"
                       }`}
                       placeholder="Create a strong password"
                       required
@@ -302,7 +309,7 @@ const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] hover:text-[var(--ink-500)]"
                     >
                       {showPassword ? (
                         <EyeOff className="w-4 h-4" />
@@ -317,20 +324,20 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--ink-700)] mb-1.5">
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] w-4 h-4" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`w-full pl-10 pr-12 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      className={`w-full pl-10 pr-12 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent ${
                         errors.confirmPassword
                           ? "border-red-300"
-                          : "border-gray-300"
+                          : "border-[var(--mist)]"
                       }`}
                       placeholder="Confirm your password"
                       required
@@ -338,7 +345,7 @@ const Signup: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--ink-300)] hover:text-[var(--ink-500)]"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="w-4 h-4" />
@@ -361,20 +368,20 @@ const Signup: React.FC = () => {
                       name="agreeToTerms"
                       checked={formData.agreeToTerms}
                       onChange={handleChange}
-                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 mt-0.5"
+                      className="w-4 h-4 text-[var(--brand)] border-[var(--mist)] rounded focus:ring-[var(--brand)] mt-0.5"
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-[var(--ink-500)]">
                       I agree to the{" "}
                       <Link
                         to="/terms"
-                        className="text-green-600 hover:text-green-700"
+                        className="text-[var(--brand)] hover:text-[var(--brand)]"
                       >
                         Terms of Service
                       </Link>{" "}
                       and{" "}
                       <Link
                         to="/privacy-policy"
-                        className="text-green-600 hover:text-green-700"
+                        className="text-[var(--brand)] hover:text-[var(--brand)]"
                       >
                         Privacy Policy
                       </Link>
@@ -390,7 +397,7 @@ const Signup: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-md font-medium text-sm transition-colors disabled:opacity-50 flex items-center justify-center"
+                  className="w-full bg-[var(--brand)] hover:bg-[var(--brand)] text-white py-2.5 rounded-md font-medium text-sm transition-colors disabled:opacity-50 flex items-center justify-center"
                 >
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -404,11 +411,11 @@ const Signup: React.FC = () => {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-gray-600">
+                <p className="text-[var(--ink-500)]">
                   Already have an account?{" "}
                   <Link
                     to="/login"
-                    className="text-green-600 hover:text-green-700 font-medium"
+                    className="text-[var(--brand)] hover:text-[var(--brand)] font-medium"
                   >
                     Sign in
                   </Link>
@@ -418,9 +425,9 @@ const Signup: React.FC = () => {
           </Card>
 
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+            <div className="flex items-center justify-center space-x-6 text-sm text-[var(--ink-500)]">
               <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-[var(--brand)] rounded-full"></div>
                 <span>Secure Login</span>
               </div>
               <div className="flex items-center space-x-1">
@@ -428,7 +435,7 @@ const Signup: React.FC = () => {
                 <span>GDPR Compliant</span>
               </div>
               <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-[var(--brand)] rounded-full"></div>
                 <span>24/7 Support</span>
               </div>
             </div>

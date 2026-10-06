@@ -233,7 +233,7 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
 
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <div className="space-y-4 mt-2">
@@ -246,7 +246,7 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
                 <Input
                   value={currentVerifiedName || "Not available"}
                   readOnly
-                  className="bg-gray-50 text-gray-600 cursor-not-allowed"
+                  className="bg-muted text-muted-foreground cursor-not-allowed"
                 />
                 {onOpenDisplayName && (
                   <Button
@@ -270,11 +270,11 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
 
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-border">
                   {photoPreview ? (
                     <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <Building2 className="w-8 h-8 text-gray-400" />
+                    <Building2 className="w-8 h-8 text-muted-foreground" />
                   )}
                 </div>
                 <button
@@ -299,8 +299,8 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
                   }}
                 />
               </div>
-              <div className="text-sm text-gray-500">
-                <p className="font-medium text-gray-700">Profile Photo</p>
+              <div className="text-sm text-muted-foreground">
+                <p className="font-medium text-muted-foreground">Profile Photo</p>
                 <p>JPEG or PNG, max 5MB</p>
               </div>
             </div>
@@ -317,7 +317,7 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
                 placeholder="Brief description of your business"
                 maxLength={139}
               />
-              <p className="text-xs text-gray-400">{formData.about.length}/139 characters</p>
+              <p className="text-xs text-muted-foreground">{formData.about.length}/139 characters</p>
             </div>
 
             <div className="space-y-1.5">
@@ -333,7 +333,7 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
                 maxLength={512}
                 rows={3}
               />
-              <p className="text-xs text-gray-400">{formData.description.length}/512 characters</p>
+              <p className="text-xs text-muted-foreground">{formData.description.length}/512 characters</p>
             </div>
 
             <div className="space-y-1.5">
@@ -372,7 +372,7 @@ export function BusinessProfileEditor({ open, onOpenChange, channelId, channelNa
               </Label>
               {formData.websites.map((url, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <Input value={url} readOnly className="flex-1 text-sm bg-gray-50" />
+                  <Input value={url} readOnly className="flex-1 text-sm bg-muted" />
                   <Button variant="ghost" size="sm" onClick={() => removeWebsite(index)} className="text-red-500 hover:text-red-700 px-2">
                     Remove
                   </Button>

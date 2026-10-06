@@ -62,9 +62,9 @@ export function CustomEdge({
         >
           <button
             onClick={handleDelete}
-            className="w-5 h-5 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 hover:border-red-300 transition-colors"
+            className="w-5 h-5 bg-background border border-border rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 hover:border-red-300 transition-colors"
           >
-            <X className="w-2.5 h-2.5 text-gray-400 hover:text-red-500" />
+            <X className="w-2.5 h-2.5 text-muted-foreground hover:text-red-500" />
           </button>
         </div>
       </EdgeLabelRenderer>

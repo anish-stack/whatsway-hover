@@ -166,7 +166,7 @@ export default function AddUserModal({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-gray-500"
+              className="absolute right-3 top-9 text-muted-foreground"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />

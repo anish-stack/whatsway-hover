@@ -111,7 +111,7 @@ export default function SMTPSettings() {
       <Card>
         <CardContent className="p-6 flex flex-col items-center justify-center py-10">
           <Loading />
-          <p className="text-sm mt-3 text-gray-500">{t("settings.smtp.loading")}</p>
+          <p className="text-sm mt-3 text-muted-foreground">{t("settings.smtp.loading")}</p>
         </CardContent>
       </Card>
     );
@@ -190,7 +190,7 @@ export default function SMTPSettings() {
               <h3 className="text-lg font-semibold">{t("settings.smtp.details")}</h3>
 
               {displayData.updatedAt && (
-                <div className="flex items-center text-sm text-gray-500">
+                <div className="flex items-center text-sm text-muted-foreground">
                   <Clock className="w-4 h-4 mr-1" />
                   {formatLastUpdated(displayData.updatedAt)}
                 </div>
@@ -203,7 +203,7 @@ export default function SMTPSettings() {
                 <Label className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-blue-500" /> {t("settings.smtp.host")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.host || t("settings.smtp.notConfigured")}
                 </p>
               </div>
@@ -211,9 +211,9 @@ export default function SMTPSettings() {
               {/* port */}
               <div>
                 <Label className="flex items-center gap-2">
-                  <Server className="w-4 h-4 text-purple-500" /> {t("settings.smtp.port")}
+                  <Server className="w-4 h-4 text-[var(--brand)]" /> {t("settings.smtp.port")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.port || t("settings.smtp.notProvided")}
                 </p>
               </div>
@@ -223,7 +223,7 @@ export default function SMTPSettings() {
                 <Label className="flex items-center gap-2">
                   <Lock className="w-4 h-4 text-green-600" /> {t("settings.smtp.secure")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.secure === true ? t("settings.smtp.enabled") : t("settings.smtp.disabled")}
                 </p>
               </div>
@@ -233,7 +233,7 @@ export default function SMTPSettings() {
                 <Label className="flex items-center gap-2">
                   <User className="w-4 h-4 text-orange-600" /> {t("settings.smtp.user")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.user ? "********" : t("settings.smtp.notConfigured")}
                 </p>
               </div>
@@ -241,9 +241,9 @@ export default function SMTPSettings() {
               {/* from name */}
               <div>
                 <Label className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-indigo-600" /> {t("settings.smtp.fromName")}
+                  <User className="w-4 h-4 text-[var(--brand)]" /> {t("settings.smtp.fromName")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.fromName || t("settings.smtp.notConfigured")}
                 </p>
               </div>
@@ -253,7 +253,7 @@ export default function SMTPSettings() {
                 <Label className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-red-600" /> {t("settings.smtp.fromEmail")}
                 </Label>
-                <p className="mt-2 p-3 bg-gray-100 rounded border">
+                <p className="mt-2 p-3 bg-muted rounded border">
                   {displayData.fromEmail || t("settings.smtp.notConfigured")}
                 </p>
               </div>
@@ -263,7 +263,7 @@ export default function SMTPSettings() {
                 <Label className="flex items-center gap-2">
                   <ImageIcon className="w-4 h-4 text-yellow-600" /> {t("settings.smtp.logo")}
                 </Label>
-                <div className="mt-2 p-3 bg-gray-100 rounded border">
+                <div className="mt-2 p-3 bg-muted rounded border">
                   {displayData.logo ? (
                     <div className="space-y-2">
                       <img
@@ -274,10 +274,10 @@ export default function SMTPSettings() {
                           (e.target as HTMLImageElement).style.display = "none";
                         }}
                       />
-                      <p className="text-xs text-gray-500 break-all">{displayData.logo}</p>
+                      <p className="text-xs text-muted-foreground break-all">{displayData.logo}</p>
                     </div>
                   ) : (
-                    <p className="text-gray-500">{t("settings.smtp.noLogo")}</p>
+                    <p className="text-muted-foreground">{t("settings.smtp.noLogo")}</p>
                   )}
                 </div>
               </div>

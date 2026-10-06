@@ -286,8 +286,8 @@ export default function Analytics() {
               {/* Time Range Selection */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex items-center space-x-2 flex-shrink-0">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs sm:text-sm font-medium text-gray-700">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                     {t("analytics.time_range")}:
                   </span>
                 </div>
@@ -370,11 +370,11 @@ export default function Analytics() {
                 </Button>
                 <div
                   id="export-dropdown"
-                  className="hidden absolute right-0 mt-1 w-full sm:w-48 bg-white rounded-md shadow-lg z-10 border"
+                  className="hidden absolute right-0 mt-1 w-full sm:w-48 bg-background rounded-md shadow-lg z-10 border"
                 >
                   <div className="py-1">
                     <button
-                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-muted-foreground hover:bg-muted w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                       disabled={!rangeIsReady}
                       onClick={() => {
                         handleExport("pdf", "all");
@@ -387,7 +387,7 @@ export default function Analytics() {
                       {t("analytics.export.pdf")}
                     </button>
                     <button
-                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-muted-foreground hover:bg-muted w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                       disabled={!rangeIsReady}
                       onClick={() => {
                         handleExport("excel", "all");
@@ -400,7 +400,7 @@ export default function Analytics() {
                       {t("analytics.export.excel")}
                     </button>
                     <button
-                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                      className="flex items-center px-4 py-2 text-xs sm:text-sm text-muted-foreground hover:bg-muted w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                       disabled={!rangeIsReady}
                       onClick={() => {
                         handleExport("csv", "all");
@@ -444,14 +444,14 @@ export default function Analytics() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                         {t("analytics.OverviewTab.Total_Messages")}
                       </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                      <p className="text-xl sm:text-2xl font-bold text-foreground truncate">
                         {(messageMetrics.totalMessages || 0).toLocaleString()}
                       </p>
 
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {rangePreset === "custom"
                           ? rangeLabel
                           : `${t("analytics.OverviewTab.last")} ${rangeDays} ${t("analytics.OverviewTab.days")}`}
@@ -468,13 +468,13 @@ export default function Analytics() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                         {t("analytics.OverviewTab.Delivery")}
                       </p>
                       <p className="text-xl sm:text-2xl font-bold text-green-600">
                         {deliveryRate.toFixed(1)}%
                       </p>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-border rounded-full h-2 mt-2">
                         <div
                           className="bg-green-500 h-2 rounded-full transition-all"
                           style={{ width: `${deliveryRate}%` }}
@@ -492,13 +492,13 @@ export default function Analytics() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                         {t("analytics.OverviewTab.read_rate")}
                       </p>
                       <p className="text-xl sm:text-2xl font-bold text-orange-600">
                         {readRate.toFixed(1)}%
                       </p>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-border rounded-full h-2 mt-2">
                         <div
                           className="bg-orange-500 h-2 rounded-full transition-all"
                           style={{ width: `${readRate}%` }}
@@ -516,21 +516,21 @@ export default function Analytics() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                         {t("analytics.OverviewTab.reply_rate")}
                       </p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-600">
+                      <p className="text-xl sm:text-2xl font-bold text-[var(--brand)]">
                         {replyRate.toFixed(1)}%
                       </p>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-border rounded-full h-2 mt-2">
                         <div
-                          className="bg-purple-500 h-2 rounded-full transition-all"
+                          className="bg-[var(--brand)] h-2 rounded-full transition-all"
                           style={{ width: `${replyRate}%` }}
                         />
                       </div>
                     </div>
-                    <div className="p-2 bg-purple-50 rounded-lg flex-shrink-0 ml-2">
-                      <Reply className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+                    <div className="p-2 bg-[var(--brand-100)] rounded-lg flex-shrink-0 ml-2">
+                      <Reply className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" />
                     </div>
                   </div>
                 </CardContent>
@@ -540,13 +540,13 @@ export default function Analytics() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                         {t("analytics.OverviewTab.Failure_rate")}
                       </p>
                       <p className="text-xl sm:text-2xl font-bold text-red-600">
                         {failureRate.toFixed(1)}%
                       </p>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="w-full bg-border rounded-full h-2 mt-2">
                         <div
                           className="bg-red-500 h-2 rounded-full transition-all"
                           style={{ width: `${failureRate}%` }}
@@ -575,7 +575,7 @@ export default function Analytics() {
                       <MessageChart data={chartData} />
                     </div>
                   ) : (
-                    // <div className="h-48 sm:h-64 flex items-center justify-center text-gray-500 text-sm">
+                    // <div className="h-48 sm:h-64 flex items-center justify-center text-muted-foreground text-sm">
                     //   No data available for the selected period
                     // </div>
                     <StateDisplay
@@ -596,7 +596,7 @@ export default function Analytics() {
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {t("analytics.OverviewTab.Active_Campaigns")}
                     </span>
                     <span className="text-xs sm:text-sm font-medium">
@@ -604,7 +604,7 @@ export default function Analytics() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {t("analytics.OverviewTab.Total_Campaigns")}
                     </span>
                     <span className="text-xs sm:text-sm font-medium">
@@ -612,7 +612,7 @@ export default function Analytics() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {t("analytics.OverviewTab.Unique_Contacts")}
                     </span>
                     <span className="text-xs sm:text-sm font-medium">
@@ -620,7 +620,7 @@ export default function Analytics() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {t("analytics.OverviewTab.Total_Recipients")}
                     </span>
                     <span className="text-xs sm:text-sm font-medium">
@@ -704,16 +704,16 @@ export default function Analytics() {
                         key={hour.hour}
                         className="flex items-center space-x-2"
                       >
-                        <span className="text-xs sm:text-sm text-gray-600 w-10 sm:w-12">
+                        <span className="text-xs sm:text-sm text-muted-foreground w-10 sm:w-12">
                           {hour.hour}:00
                         </span>
-                        <div className="flex-1 bg-gray-200 rounded-full h-3 sm:h-4">
+                        <div className="flex-1 bg-border rounded-full h-3 sm:h-4">
                           <div
                             className="bg-blue-500 h-3 sm:h-4 rounded-full transition-all"
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
-                        <span className="text-xs sm:text-sm text-gray-700 w-10 sm:w-12 text-right">
+                        <span className="text-xs sm:text-sm text-muted-foreground w-10 sm:w-12 text-right">
                           {hour.count}
                         </span>
                       </div>
@@ -729,11 +729,11 @@ export default function Analytics() {
             {campaignAnalytics?.campaigns?.length === 0 ? (
               <Card>
                 <CardContent className="text-center py-8 sm:py-12 px-4">
-                  <Target className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                  <Target className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
                     {t("analytics.noCampaignsFound")}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     {t("analytics.startCreatingCampaigns")}
                   </p>
                   <Link href="/campaigns">
@@ -816,46 +816,46 @@ export default function Analytics() {
                     {/* Desktop Table View */}
                     <div className="hidden md:block overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-muted">
                           <tr>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.campaign")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.status")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.recipients")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                               {t("analytics.CampaignsTab.table.sent")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.delivered")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden xl:table-cell">
                               {t("analytics.CampaignsTab.table.read")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.rate")}
                             </th>
-                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-3 lg:px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               {t("analytics.CampaignsTab.table.actions")}
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-background divide-y divide-border">
                           {campaignAnalytics?.campaigns?.map(
                             (campaign: any) => (
                               <tr
                                 key={campaign.id}
-                                className="hover:bg-gray-50"
+                                className="hover:bg-muted"
                               >
                                 <td className="px-3 lg:px-6 py-3 lg:py-4">
-                                  <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[150px]">
+                                  <div className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[150px]">
                                     {campaign.name}
                                   </div>
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-muted-foreground">
                                     {campaign.type}
                                   </div>
                                 </td>
@@ -866,25 +866,25 @@ export default function Analytics() {
                                         ? "bg-green-100 text-green-800"
                                         : campaign.status === "completed"
                                         ? "bg-blue-100 text-blue-800"
-                                        : "bg-gray-100 text-gray-800"
+                                        : "bg-muted text-foreground"
                                     }`}
                                   >
                                     {campaign.status}
                                   </span>
                                 </td>
-                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-gray-900">
+                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-foreground">
                                   {campaign.recipientCount || 0}
                                 </td>
-                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
+                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-foreground hidden lg:table-cell">
                                   {campaign.sentCount || 0}
                                 </td>
-                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-gray-900">
+                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-foreground">
                                   {campaign.deliveredCount || 0}
                                 </td>
-                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-gray-900 hidden xl:table-cell">
+                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-foreground hidden xl:table-cell">
                                   {campaign.readCount || 0}
                                 </td>
-                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-gray-900">
+                                <td className="px-3 lg:px-6 py-3 lg:py-4 text-xs sm:text-sm text-foreground">
                                   {(() => {
                                     const sent = Number(campaign.sentCount) || 0;
                                     const delivered = Number(campaign.deliveredCount) || 0;
@@ -922,14 +922,14 @@ export default function Analytics() {
                       {campaignAnalytics?.campaigns?.map((campaign: any) => (
                         <div
                           key={campaign.id}
-                          className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                          className="bg-background border border-border rounded-lg p-4 shadow-sm"
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1 min-w-0">
-                              <h3 className="text-sm font-semibold text-gray-900 truncate">
+                              <h3 className="text-sm font-semibold text-foreground truncate">
                                 {campaign.name}
                               </h3>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {campaign.type}
                               </p>
                             </div>
@@ -939,34 +939,34 @@ export default function Analytics() {
                                   ? "bg-green-100 text-green-800"
                                   : campaign.status === "completed"
                                   ? "bg-blue-100 text-blue-800"
-                                  : "bg-gray-100 text-gray-800"
+                                  : "bg-muted text-foreground"
                               }`}
                             >
                               {campaign.status}
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 text-xs mb-3 pb-3 border-b border-gray-100">
+                          <div className="grid grid-cols-2 gap-2 text-xs mb-3 pb-3 border-b border-border">
                             <div>
-                              <span className="text-gray-500">{t("analytics.CampaignsTab.table.recipients")}:</span>
+                              <span className="text-muted-foreground">{t("analytics.CampaignsTab.table.recipients")}:</span>
                               <span className="font-medium ml-1">
                                 {campaign.recipientCount || 0}
                               </span>
                             </div>
                             <div>
-                              <span className="text-gray-500">{t("analytics.CampaignsTab.table.sent")}:</span>
+                              <span className="text-muted-foreground">{t("analytics.CampaignsTab.table.sent")}:</span>
                               <span className="font-medium ml-1">
                                 {campaign.sentCount || 0}
                               </span>
                             </div>
                             <div>
-                              <span className="text-gray-500">{t("analytics.CampaignsTab.table.delivered")}:</span>
+                              <span className="text-muted-foreground">{t("analytics.CampaignsTab.table.delivered")}:</span>
                               <span className="font-medium ml-1">
                                 {campaign.deliveredCount || 0}
                               </span>
                             </div>
                             <div>
-                              <span className="text-gray-500">{t("analytics.CampaignsTab.table.read")}:</span>
+                              <span className="text-muted-foreground">{t("analytics.CampaignsTab.table.read")}:</span>
                               <span className="font-medium ml-1">
                                 {campaign.readCount || 0}
                               </span>
@@ -975,7 +975,7 @@ export default function Analytics() {
 
                           <div className="flex items-center justify-between">
                             <div className="text-xs">
-                              <span className="text-gray-500">
+                              <span className="text-muted-foreground">
                                 {t("analytics.CampaignsTab.table.deliveryRate")}:{" "}
                               </span>
                               <span className="font-semibold text-green-600">

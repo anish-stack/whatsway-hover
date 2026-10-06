@@ -314,19 +314,19 @@ const MessageItem = ({
           <div
             className={cn(
               "flex items-center space-x-3 p-3 rounded-lg min-w-[200px]",
-              isOutbound ? "bg-[#c5e8b0]" : "bg-gray-100"
+              isOutbound ? "bg-[#c5e8b0]" : "bg-muted"
             )}
           >
             <div
               className={cn(
                 "p-2 rounded-full",
-                isOutbound ? "bg-[#a8d98a]" : "bg-gray-200"
+                isOutbound ? "bg-[#a8d98a]" : "bg-border"
               )}
             >
               <Volume2
                 className={cn(
                   "w-4 h-4",
-                  isOutbound ? "text-gray-700" : "text-gray-600"
+                  isOutbound ? "text-muted-foreground" : "text-muted-foreground"
                 )}
               />
             </div>
@@ -345,14 +345,14 @@ const MessageItem = ({
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
                   "p-1.5 rounded-full transition-colors",
-                  isOutbound ? "hover:bg-[#a8d98a]" : "hover:bg-gray-200"
+                  isOutbound ? "hover:bg-[#a8d98a]" : "hover:bg-border"
                 )}
                 title="Download audio"
               >
                 <Download
                   className={cn(
                     "w-4 h-4",
-                    isOutbound ? "text-gray-700" : "text-gray-600"
+                    isOutbound ? "text-muted-foreground" : "text-muted-foreground"
                   )}
                 />
               </a>
@@ -382,7 +382,7 @@ const MessageItem = ({
                 "flex items-center space-x-3 p-3 rounded-lg border",
                 isOutbound
                   ? "bg-[#c5e8b0] border-[#a8d98a]"
-                  : "bg-white border-gray-200"
+                  : "bg-background border-border"
               )}
             >
               <div
@@ -394,7 +394,7 @@ const MessageItem = ({
                 <FileText
                   className={cn(
                     "w-5 h-5",
-                    isOutbound ? "text-gray-700" : "text-blue-600"
+                    isOutbound ? "text-muted-foreground" : "text-blue-600"
                   )}
                 />
               </div>
@@ -402,7 +402,7 @@ const MessageItem = ({
                 <p
                   className={cn(
                     "text-sm font-medium truncate",
-                    isOutbound ? "text-gray-900" : "text-gray-900"
+                    isOutbound ? "text-foreground" : "text-foreground"
                   )}
                 >
                   {fileName}
@@ -412,7 +412,7 @@ const MessageItem = ({
                     <p
                       className={cn(
                         "text-xs",
-                        isOutbound ? "text-gray-600" : "text-gray-500"
+                        isOutbound ? "text-muted-foreground" : "text-muted-foreground"
                       )}
                     >
                       {fileSize}
@@ -422,7 +422,7 @@ const MessageItem = ({
                     <p
                       className={cn(
                         "text-xs",
-                        isOutbound ? "text-gray-600" : "text-gray-500"
+                        isOutbound ? "text-muted-foreground" : "text-muted-foreground"
                       )}
                     >
                       {mimeType.split("/")[1]?.toUpperCase() || "FILE"}
@@ -436,7 +436,7 @@ const MessageItem = ({
                   download={fileName}
                   className={cn(
                     "p-1.5 rounded-full hover:bg-opacity-80 transition-colors",
-                    isOutbound ? "hover:bg-[#a8d98a]" : "hover:bg-gray-100"
+                    isOutbound ? "hover:bg-[#a8d98a]" : "hover:bg-muted"
                   )}
                   onClick={(e) => e.stopPropagation()}
                   title="Download file"
@@ -444,7 +444,7 @@ const MessageItem = ({
                   <Download
                     className={cn(
                       "w-4 h-4",
-                      isOutbound ? "text-gray-700" : "text-gray-600"
+                      isOutbound ? "text-muted-foreground" : "text-muted-foreground"
                     )}
                   />
                 </a>
@@ -484,8 +484,8 @@ const MessageItem = ({
                       className={cn(
                         "w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors",
                         isOutbound
-                          ? "border-[#a8d98a] text-gray-700 hover:bg-[#c5e8b0]"
-                          : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                          ? "border-[#a8d98a] text-muted-foreground hover:bg-[#c5e8b0]"
+                          : "border-border text-muted-foreground hover:bg-muted"
                       )}
                       onClick={() => {
                         console.log("Button clicked:", button);
@@ -528,7 +528,7 @@ const MessageItem = ({
               <p
                 className={cn(
                   "text-xs font-medium mb-1",
-                  isOutbound ? "text-gray-600" : "text-blue-700"
+                  isOutbound ? "text-muted-foreground" : "text-blue-700"
                 )}
               >
                 Template Message
@@ -539,12 +539,12 @@ const MessageItem = ({
                 </p>
               )}
               {templateLabel && (
-                <p className={cn("text-xs mt-0.5", isOutbound ? "text-gray-500" : "text-blue-500")}>
+                <p className={cn("text-xs mt-0.5", isOutbound ? "text-muted-foreground" : "text-blue-500")}>
                   📋 {templateLabel}
                 </p>
               )}
               {!bodyText && !templateLabel && (
-                <p className={cn("text-xs italic", isOutbound ? "text-gray-500" : "text-blue-500")}>
+                <p className={cn("text-xs italic", isOutbound ? "text-muted-foreground" : "text-blue-500")}>
                   Received template message
                 </p>
               )}
@@ -568,7 +568,7 @@ const MessageItem = ({
                   if (fallback) fallback.style.display = "flex";
                 }}
               />
-              <div className="hidden items-center gap-2 text-sm text-gray-500">
+              <div className="hidden items-center gap-2 text-sm text-muted-foreground">
                 <span>🏷️</span>
                 <span>Sticker</span>
               </div>
@@ -576,7 +576,7 @@ const MessageItem = ({
           );
         }
         return (
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="text-xl">🏷️</span>
             <span>Sticker</span>
           </div>
@@ -600,7 +600,7 @@ const MessageItem = ({
                 rel="noopener noreferrer"
                 className={cn(
                   "block rounded-lg border p-3",
-                  isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-white border-gray-200"
+                  isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-background border-border"
                 )}
               >
                 <div className="flex items-start gap-2">
@@ -608,13 +608,13 @@ const MessageItem = ({
                     "p-1.5 rounded-full mt-0.5",
                     isOutbound ? "bg-[#a8d98a]" : "bg-red-100"
                   )}>
-                    <MapPin className={cn("w-4 h-4", isOutbound ? "text-gray-700" : "text-red-500")} />
+                    <MapPin className={cn("w-4 h-4", isOutbound ? "text-muted-foreground" : "text-red-500")} />
                   </div>
                   <div className="min-w-0 flex-1">
                     {locName && <p className="text-sm font-medium truncate">{locName}</p>}
-                    {locAddress && <p className="text-xs text-gray-500 truncate">{locAddress}</p>}
+                    {locAddress && <p className="text-xs text-muted-foreground truncate">{locAddress}</p>}
                     {lat && lng && (
-                      <p className="text-xs text-gray-400 mt-0.5">{Number(lat).toFixed(4)}, {Number(lng).toFixed(4)}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{Number(lat).toFixed(4)}, {Number(lng).toFixed(4)}</p>
                     )}
                     <p className="text-xs text-blue-600 mt-1">Open in Google Maps</p>
                   </div>
@@ -641,7 +641,7 @@ const MessageItem = ({
         if (!sharedContacts || sharedContacts.length === 0) {
           return (
             <div className="flex items-center gap-2 text-sm">
-              <User className="w-4 h-4 text-gray-500" />
+              <User className="w-4 h-4 text-muted-foreground" />
               <span>{demo ? maskContent(message.content || "") : (message.content || "Contact shared")}</span>
             </div>
           );
@@ -654,7 +654,7 @@ const MessageItem = ({
                 key={idx}
                 className={cn(
                   "rounded-lg border p-3",
-                  isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-white border-gray-200"
+                  isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-background border-border"
                 )}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -662,29 +662,29 @@ const MessageItem = ({
                     "p-1.5 rounded-full",
                     isOutbound ? "bg-[#a8d98a]" : "bg-blue-100"
                   )}>
-                    <User className={cn("w-4 h-4", isOutbound ? "text-gray-700" : "text-blue-600")} />
+                    <User className={cn("w-4 h-4", isOutbound ? "text-muted-foreground" : "text-blue-600")} />
                   </div>
                   <p className="text-sm font-medium">{demo ? maskName(contact.name.formatted_name) : contact.name.formatted_name}</p>
                 </div>
                 {contact.org?.company && (
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                     <Building className="w-3 h-3" />
                     <span>{demo ? maskName(contact.org.company) : contact.org.company}{contact.org.title ? ` - ${demo ? maskName(contact.org.title) : contact.org.title}` : ""}</span>
                   </div>
                 )}
                 {contact.phones?.map((p, pidx) => (
-                  <div key={pidx} className="flex items-center gap-1.5 text-xs text-gray-600 mb-0.5">
+                  <div key={pidx} className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
                     <Phone className="w-3 h-3" />
                     {demo ? (
                       <span>{maskPhone(p.phone)}</span>
                     ) : (
                       <a href={`tel:${p.phone}`} className="hover:underline">{p.phone}</a>
                     )}
-                    {p.type && <span className="text-gray-400">({p.type})</span>}
+                    {p.type && <span className="text-muted-foreground">({p.type})</span>}
                   </div>
                 ))}
                 {contact.emails?.map((e, eidx) => (
-                  <div key={eidx} className="flex items-center gap-1.5 text-xs text-gray-600 mb-0.5">
+                  <div key={eidx} className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
                     <Mail className="w-3 h-3" />
                     {demo ? (
                       <span>{maskEmail(e.email)}</span>
@@ -704,7 +704,7 @@ const MessageItem = ({
         return (
           <div className={cn(
             "flex items-center gap-2 p-2 rounded-lg text-sm",
-            isOutbound ? "bg-[#c5e8b0]" : "bg-gray-50 border border-gray-200"
+            isOutbound ? "bg-[#c5e8b0]" : "bg-muted border border-border"
           )}>
             <span className="text-base">🔘</span>
             <span>{demo ? maskContent(buttonText) : buttonText}</span>
@@ -717,14 +717,14 @@ const MessageItem = ({
         return (
           <div className={cn(
             "rounded-lg border p-3 min-w-[200px]",
-            isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-white border-gray-200"
+            isOutbound ? "bg-[#c5e8b0] border-[#a8d98a]" : "bg-background border-border"
           )}>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-base">🛒</span>
               <p className="text-sm font-medium">Order Received</p>
             </div>
             {orderData?.product_items && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {orderData.product_items.length} item(s)
               </p>
             )}
@@ -736,10 +736,10 @@ const MessageItem = ({
         return (
           <div className={cn(
             "flex items-center gap-2 p-2 rounded-lg text-sm",
-            "bg-gray-50 border border-gray-200"
+            "bg-muted border border-border"
           )}>
             <span className="text-base">⚙️</span>
-            <span className="text-gray-600 italic">
+            <span className="text-muted-foreground italic">
               {demo ? maskContent(message.content || "") : (message.content || "System message")}
             </span>
           </div>
@@ -751,7 +751,7 @@ const MessageItem = ({
           <div className="space-y-1">
             <div className={cn(
               "flex items-center gap-1.5 text-xs",
-              isOutbound ? "text-gray-600" : "text-green-700"
+              isOutbound ? "text-muted-foreground" : "text-green-700"
             )}>
               <span>📢</span>
               <span className="font-medium">Via Referral</span>
@@ -769,9 +769,9 @@ const MessageItem = ({
         return (
           <div className={cn(
             "flex items-center gap-2 p-2 rounded-lg text-sm",
-            isOutbound ? "bg-[#c5e8b0]" : "bg-gray-50 border border-gray-200"
+            isOutbound ? "bg-[#c5e8b0]" : "bg-muted border border-border"
           )}>
-            <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <span>{demo ? maskContent(message.content || "") : (message.content || "Address shared")}</span>
           </div>
         );
@@ -781,10 +781,10 @@ const MessageItem = ({
         return (
           <div className={cn(
             "flex items-center gap-2 p-2 rounded-lg text-sm",
-            isOutbound ? "bg-[#c5e8b0]" : "bg-gray-50 border border-gray-200"
+            isOutbound ? "bg-[#c5e8b0]" : "bg-muted border border-border"
           )}>
             <MapPin className="w-4 h-4 text-blue-500 flex-shrink-0" />
-            <span className="text-gray-600">Location requested</span>
+            <span className="text-muted-foreground">Location requested</span>
           </div>
         );
       }
@@ -799,30 +799,30 @@ const MessageItem = ({
         return (
           <div className={cn(
             "flex flex-col gap-1 p-2 rounded-lg text-sm",
-            isOutbound ? "bg-[#c5e8b0]" : "bg-gray-50"
+            isOutbound ? "bg-[#c5e8b0]" : "bg-muted"
           )}>
             <div className="flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <span className="text-gray-500">
+              <HelpCircle className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <span className="text-muted-foreground">
                 {errorTitle || "This message type is not supported by WhatsApp API"}
               </span>
             </div>
             {(originalType || errorCode || errorDetails) && (
-              <div className="text-xs text-gray-400 pl-6 space-y-0.5">
+              <div className="text-xs text-muted-foreground pl-6 space-y-0.5">
                 {originalType && originalType !== "unsupported" && (
-                  <p>Type: <span className="font-medium text-gray-500">{originalType}</span></p>
+                  <p>Type: <span className="font-medium text-muted-foreground">{originalType}</span></p>
                 )}
                 {errorCode && (
-                  <p>Error code: <span className="font-medium text-gray-500">{errorCode}</span></p>
+                  <p>Error code: <span className="font-medium text-muted-foreground">{errorCode}</span></p>
                 )}
                 {errorDetails && (
-                  <p>Details: <span className="font-medium text-gray-500">{errorDetails}</span></p>
+                  <p>Details: <span className="font-medium text-muted-foreground">{errorDetails}</span></p>
                 )}
               </div>
             )}
             {rawWebhook && (
-              <details className="text-xs text-gray-400 pl-6 mt-1">
-                <summary className="cursor-pointer hover:text-gray-600">View raw webhook data</summary>
+              <details className="text-xs text-muted-foreground pl-6 mt-1">
+                <summary className="cursor-pointer hover:text-muted-foreground">View raw webhook data</summary>
                 <pre className="mt-1 bg-white/60 p-2 rounded text-[10px] overflow-x-auto max-h-32 border">
                   {JSON.stringify(rawWebhook, null, 2)}
                 </pre>
@@ -875,15 +875,15 @@ const MessageItem = ({
   const getMessageStatusIcon = (status: string) => {
     switch (status) {
       case "sent":
-        return <Check className="w-3 h-3 text-gray-400" />;
+        return <Check className="w-3 h-3 text-muted-foreground" />;
       case "delivered":
-        return <CheckCheck className="w-3 h-3 text-gray-400" />;
+        return <CheckCheck className="w-3 h-3 text-muted-foreground" />;
       case "read":
         return <CheckCheck className="w-3 h-3 text-blue-500" />;
       case "failed":
         return <AlertCircle className="w-3 h-3 text-red-500" />;
       default:
-        return <Clock className="w-3 h-3 text-gray-400" />;
+        return <Clock className="w-3 h-3 text-muted-foreground" />;
     }
   };
 
@@ -901,7 +901,7 @@ const MessageItem = ({
 
       {showDate && (
         <div className="flex items-center justify-center my-4">
-          <div className="bg-gray-100 px-3 py-1 rounded-full text-xs text-gray-600">
+          <div className="bg-muted px-3 py-1 rounded-full text-xs text-muted-foreground">
             {formatMessageDateLocal(message.createdAt)}
           </div>
         </div>
@@ -915,7 +915,7 @@ const MessageItem = ({
       >
         {!isOutbound && (
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-gray-200 text-xs">C</AvatarFallback>
+            <AvatarFallback className="bg-border text-xs">C</AvatarFallback>
           </Avatar>
         )}
 
@@ -926,8 +926,8 @@ const MessageItem = ({
             isOutbound
               ? message.status === "failed"
                 ? "bg-red-50 text-red-900 border border-red-200 rounded-br-sm"
-                : "bg-[#dcf8c6] text-gray-900 rounded-br-sm"
-              : "bg-white text-gray-900 border border-gray-100 shadow-sm rounded-bl-sm"
+                : "bg-[#dcf8c6] text-foreground rounded-br-sm"
+              : "bg-background text-foreground border border-border shadow-sm rounded-bl-sm"
           )}
         >
           {renderMediaContent()}
@@ -967,7 +967,7 @@ const MessageItem = ({
             )}
           >
             {(message.metadata as any)?.edited && (
-              <span className="text-[10px] text-gray-400 italic">edited</span>
+              <span className="text-[10px] text-muted-foreground italic">edited</span>
             )}
             <span
               className={cn(
@@ -975,8 +975,8 @@ const MessageItem = ({
                 isOutbound
                   ? message.status === "failed"
                     ? "text-red-400"
-                    : "text-gray-500"
-                  : "text-gray-400"
+                    : "text-muted-foreground"
+                  : "text-muted-foreground"
               )}
             >
               {message.createdAt
@@ -1000,11 +1000,11 @@ const MessageItem = ({
             ).map(([emoji, count]) => (
               <span
                 key={emoji}
-                className="inline-flex items-center bg-white border border-gray-200 rounded-full px-1.5 py-0.5 text-sm shadow-sm"
+                className="inline-flex items-center bg-background border border-border rounded-full px-1.5 py-0.5 text-sm shadow-sm"
               >
                 {emoji}
                 {(count as number) > 1 && (
-                  <span className="text-[10px] text-gray-500 ml-0.5">{count as number}</span>
+                  <span className="text-[10px] text-muted-foreground ml-0.5">{count as number}</span>
                 )}
               </span>
             ))}

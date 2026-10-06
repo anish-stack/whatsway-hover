@@ -42,6 +42,11 @@ import {
     Code,
     BookOpen,
     Smartphone,
+    Wallet,
+    Gauge,
+    Handshake,
+    BadgeCheck,
+    IndianRupee,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -69,7 +74,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
-type Role = "superadmin" | "admin" | "user" | "team";
+type Role = "superadmin" | "admin" | "user" | "team" | "reseller";
 
 interface NavItem {
     href: string;
@@ -83,6 +88,45 @@ interface NavItem {
 }
 
 function getNavItems(role: string): NavItem[] {
+    // A reseller is not a platform operator: it gets its own short menu
+    // rather than the admin one with pieces hidden.
+    if (role === "reseller") {
+        return [
+            {
+                href: "/partner",
+                icon: Handshake,
+                labelKey: "navigation.partner",
+                color: "text-[var(--brand)]",
+                alwaysVisible: true,
+                allowedRoles: ["reseller"],
+            },
+            {
+                href: "/wallet",
+                icon: Wallet,
+                labelKey: "navigation.wallet",
+                color: "text-[var(--brand)]",
+                alwaysVisible: true,
+                allowedRoles: ["reseller"],
+            },
+            {
+                href: "/support-tickets",
+                icon: Bell,
+                labelKey: "navigation.tickets_support",
+                color: "text-blue-400",
+                alwaysVisible: true,
+                allowedRoles: ["reseller"],
+            },
+            {
+                href: "/account",
+                icon: User,
+                labelKey: "navigation.settings",
+                color: "text-muted-foreground",
+                alwaysVisible: true,
+                allowedRoles: ["reseller"],
+            },
+        ];
+    }
+
     if (role === "admin") {
         return [
             {
@@ -125,7 +169,7 @@ function getNavItems(role: string): NavItem[] {
                 href: "/templates",
                 icon: FileText,
                 labelKey: "navigation.templates",
-                color: "text-purple-600",
+                color: "text-[var(--brand)]",
                 allowedRoles: ["superadmin", "admin"],
             },
 
@@ -133,7 +177,7 @@ function getNavItems(role: string): NavItem[] {
                 href: "/automation",
                 icon: Zap,
                 labelKey: "navigation.automations",
-                color: "text-indigo-600",
+                color: "text-[var(--brand)]",
                 allowedRoles: ["superadmin", "admin"],
             },
             {
@@ -163,7 +207,7 @@ function getNavItems(role: string): NavItem[] {
             //   href: "/settings",
             //   icon: Settings,
             //   labelKey: "navigation.settings",
-            //   color: "text-gray-600",
+            //   color: "text-muted-foreground",
             //   alwaysVisible: true,
             //   allowedRoles: ["superadmin", "admin"],
             // },
@@ -186,7 +230,7 @@ function getNavItems(role: string): NavItem[] {
                 href: "/languages",
                 icon: Globe,
                 labelKey: "navigation.languages",
-                color: "text-violet-500",
+                color: "text-[var(--brand)]",
                 allowedRoles: ["superadmin"],
             },
             {
@@ -194,6 +238,42 @@ function getNavItems(role: string): NavItem[] {
                 icon: Bell,
                 labelKey: "navigation.tickets_support",
                 color: "text-blue-400",
+                allowedRoles: ["superadmin"],
+            },
+            {
+                href: "/wallet",
+                icon: Wallet,
+                labelKey: "navigation.wallet",
+                color: "text-[var(--brand)]",
+                alwaysVisible: true,
+                allowedRoles: ["superadmin", "admin", "user"],
+            },
+            {
+                href: "/billing/rates",
+                icon: IndianRupee,
+                labelKey: "navigation.messagePricing",
+                color: "text-[var(--brand)]",
+                allowedRoles: ["superadmin"],
+            },
+            {
+                href: "/billing/caps",
+                icon: Gauge,
+                labelKey: "navigation.sendingCaps",
+                color: "text-[var(--flare)]",
+                allowedRoles: ["superadmin"],
+            },
+            {
+                href: "/resellers",
+                icon: Handshake,
+                labelKey: "navigation.resellers",
+                color: "text-[var(--brand)]",
+                allowedRoles: ["superadmin"],
+            },
+            {
+                href: "/green-tick/review",
+                icon: BadgeCheck,
+                labelKey: "navigation.greenTickReview",
+                color: "text-[var(--ok)]",
                 allowedRoles: ["superadmin"],
             },
         ];
@@ -244,7 +324,7 @@ function getNavItems(role: string): NavItem[] {
                 href: "/templates",
                 icon: FileText,
                 labelKey: "navigation.templates",
-                color: "text-purple-600",
+                color: "text-[var(--brand)]",
                 requiredPrefix: "templates.",
                 allowedRoles: ["team"],
             },
@@ -253,7 +333,7 @@ function getNavItems(role: string): NavItem[] {
                 href: "/automation",
                 icon: Zap,
                 labelKey: "navigation.automations",
-                color: "text-indigo-600",
+                color: "text-[var(--brand)]",
                 requiredPrefix: "automations.",
                 allowedRoles: ["team"],
             },
@@ -280,7 +360,7 @@ function getNavItems(role: string): NavItem[] {
             //   href: "/settings",
             //   icon: Settings,
             //   labelKey: "navigation.settings",
-            //   color: "text-gray-600",
+            //   color: "text-muted-foreground",
             //   alwaysVisible: true,
             //   requiredPrefix: "settings.",
             //   allowedRoles: ["team"],
@@ -301,6 +381,38 @@ function getNavItems(role: string): NavItem[] {
                 color: "text-blue-400",
                 requiredPrefix: "gateway.",
                 allowedRoles: ["team"],
+            },
+            {
+                href: "/wallet",
+                icon: Wallet,
+                labelKey: "navigation.wallet",
+                color: "text-[var(--brand)]",
+                alwaysVisible: true,
+                allowedRoles: ["superadmin", "admin", "user", "team"],
+            },
+            {
+                href: "/billing/caps",
+                icon: Gauge,
+                labelKey: "navigation.sendingCaps",
+                color: "text-[var(--flare)]",
+                alwaysVisible: true,
+                allowedRoles: ["superadmin", "admin", "user", "team"],
+            },
+            {
+                href: "/green-tick",
+                icon: BadgeCheck,
+                labelKey: "navigation.greenTick",
+                color: "text-[var(--ok)]",
+                alwaysVisible: true,
+                allowedRoles: ["superadmin", "admin", "user", "team"],
+            },
+            {
+                href: "/partner",
+                icon: Handshake,
+                labelKey: "navigation.partner",
+                color: "text-[var(--brand)]",
+                alwaysVisible: true,
+                allowedRoles: ["superadmin", "admin", "user", "team"],
             },
         ];
     }
@@ -337,7 +449,7 @@ const sidebarItemsCategories = [
         icon: FileText,
         path: "/templates",
         badge: "",
-        color: "text-purple-600",
+        color: "text-[var(--brand)]",
     },
     {
         name: "navigation.master_contacts",
@@ -562,10 +674,10 @@ export default function Sidebar() {
                 key={path}
                 href={path}
                 className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 group",
+                    "group flex items-center rounded-xl border-l-[3px] px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                     isActive
-                        ? "bg-primary/10 text-primary border-l-4 border-primary"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                        ? "border-[var(--flare)] bg-primary/10 text-primary"
+                        : "border-transparent text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
                 onClick={toggle}
             >
@@ -578,7 +690,7 @@ export default function Sidebar() {
 
                 {name}
                 {badge && (
-                    <span className="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="ml-auto rounded-full bg-[var(--flare)] px-2 py-0.5 text-[11px] font-bold text-[#3d2409]">
                         {badge}
                     </span>
                 )}
@@ -648,19 +760,19 @@ export default function Sidebar() {
         <>
             {isOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+                    className="fixed inset-0 z-40 bg-[var(--ink)]/55 backdrop-blur-sm lg:hidden"
                     onClick={toggle}
                 />
             )}
 
             <div
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-64 bg-background shadow-lg border-r border-gray-100 transform transition-transform duration-300",
+                    "fixed inset-y-0 left-0 z-50 w-64 transform border-r border-border bg-background transition-transform duration-300",
                     isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
                 )}
             >
                 <div className="flex flex-col h-full">
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div className="flex items-center justify-between border-b border-border px-5 py-4">
                         <Link
                             href="/dashboard"
                             className="flex items-center flex-col space-x-2 sm:space-x-3"
@@ -672,8 +784,8 @@ export default function Sidebar() {
                                     className=" h-10 object-contain"
                                 />
                             ) : (
-                                <div className="bg-primary text-primary-foreground rounded-full p-3">
-                                    <MessageSquare className="h-8 w-8" />
+                                <div className="rounded-xl bg-primary p-2.5 text-primary-foreground">
+                                    <MessageSquare className="h-6 w-6" />
                                 </div>
                             )}
                             <span className=" text-[10px] sm:text-xs pl-8">
@@ -682,21 +794,21 @@ export default function Sidebar() {
                         </Link>
                         <button
                             onClick={toggle}
-                            className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+                            className="rounded-xl p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
                         >
                             <X className="w-5 h-5" />
                         </button>
                     </div>
 
                     {isAdmin || user?.role == "team" ? (
-                        <div className="px-6 py-3 border-b border-gray-100">
+                        <div className="border-b border-border px-5 py-3">
                             <ChannelSwitcher />
                         </div>
                     ) : (
                         ""
                     )}
 
-                    <nav className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
+                    <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
                         {isSuper
                             ? sidebarItemsCategories.map((item) =>
                                 renderLink(
@@ -720,7 +832,7 @@ export default function Sidebar() {
                                 )}
                     </nav>
 
-                    <div className="w-[180px] px-4 py-2 border-t border-gray-100 sm:hidden ">
+                    <div className="w-[180px] border-t border-border px-4 py-2 sm:hidden">
                         <LanguageSelector />
                     </div>
                     {/* {isAdmin ? (
@@ -736,16 +848,16 @@ export default function Sidebar() {
 
                     {/* Smaller Toggle Button with Green Color */}
                     {isAdmin && (
-                        <div className="p-2 border-t border-gray-100">
-                            <div className="flex items-center space-x-3 p-3 bg-primary/5 border border-primary/10 rounded-lg">
+                        <div className="p-2 border-t border-border">
+                            <div className="flex items-center space-x-3 rounded-xl border border-primary/15 bg-primary/[0.06] p-3">
                                 {/* Icon Box */}
-                                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                                     <Bot className="w-4 h-4 text-white" />
                                 </div>
 
                                 {/* Text + Status Dot */}
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-gray-900">
+                                    <p className="text-sm font-semibold text-foreground">
                                         {t("common.aiAssistant")}
                                     </p>
                                     <div className="flex items-center space-x-2">
@@ -759,7 +871,7 @@ export default function Sidebar() {
                                             ></div>
 
                                             {/* Status Text */}
-                                            <span className="text-xs text-gray-600">
+                                            <span className="text-xs text-muted-foreground">
                                                 {isAIActive ? t("common.active") : t("common.inactive")}
                                             </span>
 
@@ -771,12 +883,12 @@ export default function Sidebar() {
                                                         ? "bg-gray-300 cursor-not-allowed"
                                                         : isAIActive
                                                             ? "bg-primary"
-                                                            : "bg-gray-200"
+                                                            : "bg-border"
                                                     }
                                                 `}
                                             >
                                                 <span
-                                                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition 
+                                                    className={`inline-block h-3 w-3 transform rounded-full bg-background transition 
         ${isAIActive ? "translate-x-5" : "translate-x-1"}
       `}
                                                 />
@@ -797,17 +909,17 @@ export default function Sidebar() {
                     )}
 
                     {isSuper && versionData?.version && (
-                        <div className="px-4 py-1.5 border-t border-gray-100">
-                            <p className="text-[10px] text-gray-400 text-center">v{versionData.version}</p>
+                        <div className="px-4 py-1.5 border-t border-border">
+                            <p className="text-center text-[10px] text-muted-foreground">v{versionData.version}</p>
                         </div>
                     )}
 
                     {/* User Profile */}
-                    <div className="p-2 border-t border-gray-100">
+                    <div className="p-2 border-t border-border">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="w-full flex items-center space-x-3 hover:bg-primary/5 rounded-lg p-2 transition-colors">
-                                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                                <button className="flex w-full items-center space-x-3 rounded-xl p-2 transition-colors hover:bg-secondary">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
                                         <span className="text-sm font-medium text-white">
                                             {user
                                                 ? (
@@ -817,18 +929,18 @@ export default function Sidebar() {
                                         </span>
                                     </div>
                                     <div className="flex-1 min-w-0 text-left">
-                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                        <p className="text-sm font-semibold text-foreground truncate">
                                             {user
                                                 ? user.firstName && user.lastName
                                                     ? `${user.firstName} ${user.lastName}`
                                                     : user.username
                                                 : t("common.user")}
                                         </p>
-                                        <p className="text-xs text-gray-500 truncate capitalize">
+                                        <p className="truncate text-xs capitalize text-muted-foreground">
                                             {user?.role || t("common.user")}
                                         </p>
                                     </div>
-                                    <Settings className="w-4 h-4 text-gray-400" />
+                                    <Settings className="h-4 w-4 text-muted-foreground" />
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">

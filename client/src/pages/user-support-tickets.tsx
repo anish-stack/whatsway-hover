@@ -363,9 +363,9 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
       case "resolved":
         return "bg-green-100 text-green-800";
       case "closed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -378,9 +378,9 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
       case "resolved":
         return <CheckCircle2 className="w-4 h-4 text-green-500" />;
       case "closed":
-        return <XCircle className="w-4 h-4 text-gray-500" />;
+        return <XCircle className="w-4 h-4 text-muted-foreground" />;
       default:
-        return <AlertCircle className="w-4 h-4 text-gray-500" />;
+        return <AlertCircle className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -395,7 +395,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
       case "low":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -408,7 +408,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
       case "admin":
         return "bg-orange-100 text-orange-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -423,9 +423,9 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
   const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
 
   return (
-    <div className={embedded ? "" : "min-h-screen bg-gray-50 dots-bg"}>
+    <div className={embedded ? "" : "min-h-screen bg-muted dots-bg"}>
       {/* Header */}
-      {/* <header className="bg-white shadow-sm border-b border-gray-200">
+      {/* <header className="bg-background shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 py-3 sm:py-4">
             <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
@@ -433,10 +433,10 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 <Headphones className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+                <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   Support Tickets
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {isAdmin
                     ? "Manage all support tickets from users and listeners"
                     : "View and manage your support tickets"}
@@ -491,22 +491,22 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
           {/* Tickets List */}
           <div className="lg:col-span-1">
             {/* Filters and Search */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div className="bg-background p-4 rounded-xl shadow-sm border border-border mb-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Search tickets..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
               <div className="flex space-x-2 mt-3">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                  className="flex-1 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 >
                   <option value="all">All Status</option>
                   <option value="open">Open</option>
@@ -517,7 +517,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                  className="flex-1 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 >
                   <option value="all">All Priority</option>
                   <option value="low">Low</option>
@@ -530,8 +530,8 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
 
             {/* Tickets */}
             {isLoading ? (
-              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
-                <div className="text-gray-500">Loading tickets...</div>
+              <div className="bg-background p-8 rounded-xl shadow-sm border border-border text-center">
+                <div className="text-muted-foreground">Loading tickets...</div>
               </div>
             ) : (
               <div className="space-y-3">
@@ -539,10 +539,10 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                   <div
                     key={ticket.id}
                     onClick={() => setSelectedTicketId(ticket.id)}
-                    className={`bg-white p-4 rounded-xl shadow-sm border ${
+                    className={`bg-background p-4 rounded-xl shadow-sm border ${
                       selectedTicketId === ticket.id
                         ? "border-green-500 ring-2 ring-green-200"
-                        : "border-gray-200"
+                        : "border-border"
                     } hover:border-green-500 transition-all cursor-pointer`}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -563,12 +563,12 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                           {ticket.priority}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </span>
                     </div>
 
-                    <h3 className="font-medium text-gray-900 mb-2">
+                    <h3 className="font-medium text-foreground mb-2">
                       {ticket.title}
                     </h3>
 
@@ -576,7 +576,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                       <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-semibold">
                         {ticket.creatorName.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         {ticket.creatorName}
                       </span>
                       {isAdmin && (
@@ -590,7 +590,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
                         Updated{" "}
                         {new Date(ticket.updatedAt).toLocaleTimeString()}
@@ -605,12 +605,12 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 ))}
 
                 {tickets.length === 0 && (
-                  <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
-                    <Headphones className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <div className="bg-background p-8 rounded-xl shadow-sm border border-border text-center">
+                    <Headphones className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                       No tickets found
                     </h3>
-                    <p className="text-gray-500 mb-4">
+                    <p className="text-muted-foreground mb-4">
                       {searchQuery ||
                       statusFilter !== "all" ||
                       priorityFilter !== "all"
@@ -623,15 +623,15 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
             )}
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                <div className="text-sm text-gray-600">
+              <div className="flex items-center justify-between mt-4 bg-background p-3 rounded-lg shadow-sm border border-border">
+                <div className="text-sm text-muted-foreground">
                   Page {currentPage} of {totalPages}
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
@@ -640,7 +640,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                       setCurrentPage((p) => Math.min(totalPages, p + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                   </button>
@@ -652,12 +652,12 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
           {/* Ticket Details */}
           <div className="lg:col-span-2">
             {selectedTicketId && selectedTicket ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
                 {/* Ticket Header */}
-                <div className="p-6 border-b border-gray-200">
+                <div className="p-6 border-b border-border">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <h2 className="text-xl font-bold text-gray-900">
+                      <h2 className="text-xl font-bold text-foreground">
                         {selectedTicket.title}
                       </h2>
                       <span
@@ -672,42 +672,42 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">Creator:</span>
+                      <span className="text-muted-foreground">Creator:</span>
                       <div className="flex items-center mt-1">
                         <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-semibold mr-2">
                           {selectedTicket.creatorName.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-foreground">
                           {selectedTicket.creatorName}
                         </span>
                       </div>
-                      <div className="mt-1 text-gray-600">
+                      <div className="mt-1 text-muted-foreground">
                         {getCreatorTypeLabel(selectedTicket.creatorType)}
                       </div>
                     </div>
 
                     <div>
-                      <span className="text-gray-500">Contact:</span>
+                      <span className="text-muted-foreground">Contact:</span>
                       <div className="flex items-center mt-1">
-                        <Mail className="w-4 h-4 text-gray-400 mr-1" />
-                        <span className="text-gray-900 text-xs">
+                        <Mail className="w-4 h-4 text-muted-foreground mr-1" />
+                        <span className="text-foreground text-xs">
                           {selectedTicket.creatorEmail}
                         </span>
                       </div>
                     </div>
 
                     <div>
-                      <span className="text-gray-500">Details:</span>
+                      <span className="text-muted-foreground">Details:</span>
                       <div className="flex items-center mt-1">
-                        <Calendar className="w-4 h-4 text-gray-400 mr-1" />
-                        <span className="text-gray-900">
+                        <Calendar className="w-4 h-4 text-muted-foreground mr-1" />
+                        <span className="text-foreground">
                           {new Date(
                             selectedTicket.createdAt
                           ).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex items-center mt-1">
-                        <Tag className="w-4 h-4 text-gray-400 mr-1" />
+                        <Tag className="w-4 h-4 text-muted-foreground mr-1" />
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(
                             selectedTicket.priority
@@ -721,22 +721,22 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
 
                   {/* Description */}
                   <div className="mt-4">
-                    <span className="text-xs text-gray-500">Description:</span>
-                    <p className="mt-2 text-sm text-gray-900 whitespace-pre-wrap">
+                    <span className="text-xs text-muted-foreground">Description:</span>
+                    <p className="mt-2 text-sm text-foreground whitespace-pre-wrap">
                       {selectedTicket.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Conversation */}
-                <div className="p-6 bg-gray-50 max-h-[300px] overflow-y-auto">
-                  <h3 className="font-medium text-gray-900 mb-4">
+                <div className="p-6 bg-muted max-h-[300px] overflow-y-auto">
+                  <h3 className="font-medium text-foreground mb-4">
                     Conversation
                   </h3>
                   <div className="space-y-4">
                     {!ticketDetails?.messages ||
                     ticketDetails.messages.length === 0 ? (
-                      <p className="text-sm text-gray-500 text-center py-4">
+                      <p className="text-sm text-muted-foreground text-center py-4">
                         No messages yet
                       </p>
                     ) : (
@@ -755,7 +755,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                                 ? "bg-amber-50 border border-amber-200"
                                 : msg.senderType === user?.role
                                 ? "bg-green-500 text-white"
-                                : "bg-white border border-gray-200"
+                                : "bg-background border border-border"
                             } px-4 py-3 rounded-lg shadow-sm`}
                           >
                             <div className="flex items-center gap-2 mb-1">
@@ -764,7 +764,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                                   msg.senderType === user?.role &&
                                   !msg.isInternal
                                     ? "text-green-100"
-                                    : "text-gray-700"
+                                    : "text-muted-foreground"
                                 }`}
                               >
                                 {msg.senderName}
@@ -774,7 +774,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                                   msg.senderType === user?.role &&
                                   !msg.isInternal
                                     ? "bg-green-600 text-green-100"
-                                    : "bg-gray-100 text-gray-600"
+                                    : "bg-muted text-muted-foreground"
                                 }`}
                               >
                                 {getCreatorTypeLabel(msg.senderType)}
@@ -789,7 +789,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                               className={`text-sm whitespace-pre-wrap ${
                                 msg.senderType === user?.role && !msg.isInternal
                                   ? "text-white"
-                                  : "text-gray-900"
+                                  : "text-foreground"
                               }`}
                             >
                               {msg.message}
@@ -798,7 +798,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                               className={`text-xs mt-1 ${
                                 msg.senderType === user?.role && !msg.isInternal
                                   ? "text-green-100"
-                                  : "text-gray-500"
+                                  : "text-muted-foreground"
                               }`}
                             >
                               {new Date(msg.createdAt).toLocaleTimeString()}
@@ -811,14 +811,14 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 </div>
 
                 {/* Reply Box */}
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-border">
                   <div className="flex items-start space-x-2">
                     <textarea
                       placeholder="Type your reply..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       disabled={selectedTicket.status !== "open"}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                      className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                       rows={3}
                     />
                     <button
@@ -840,11 +840,11 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                           id="internal"
                           checked={isInternalNote}
                           onChange={(e) => setIsInternalNote(e.target.checked)}
-                          className="rounded border-gray-300 text-green-500 focus:ring-green-500"
+                          className="rounded border-border text-green-500 focus:ring-green-500"
                         />
                         <label
                           htmlFor="internal"
-                          className="text-sm text-gray-600 cursor-pointer"
+                          className="text-sm text-muted-foreground cursor-pointer"
                         >
                           Internal note (not visible to{" "}
                           {selectedTicket.creatorType})
@@ -865,12 +865,12 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-200 text-center">
-                <Headphones className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <div className="bg-background p-12 rounded-xl shadow-sm border border-border text-center">
+                <Headphones className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   No ticket selected
                 </h3>
-                <p className="text-gray-500 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Select a ticket from the list to view details and respond
                 </p>
               </div>
@@ -922,7 +922,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                 }
                 placeholder="Detailed description of the issue"
                 rows={5}
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full mt-1 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -938,7 +938,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
                     priority: e.target.value as any,
                   })
                 }
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full mt-1 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -950,7 +950,7 @@ export default function UserSupportTicketsNew({ embedded = false }: { embedded?:
           <DialogFooter className="mt-6">
             <button
               onClick={() => setShowCreateDialog(false)}
-              className="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              className="px-4 py-2 text-sm text-muted-foreground bg-muted rounded-lg hover:bg-border"
             >
               Cancel
             </button>

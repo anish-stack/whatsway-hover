@@ -75,19 +75,19 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
 
     return (
       <div className="flex items-center justify-between text-sm mt-1">
-        <span className="text-gray-600">{label}:</span>
+        <span className="text-muted-foreground">{label}:</span>
 
         <div className="flex items-center gap-2">
-          <code className="text-gray-800">{value}</code>
+          <code className="text-foreground">{value}</code>
 
           <button
             onClick={handleCopy}
-            className="p-1 rounded hover:bg-slate-200 transition"
+            className="p-1 rounded hover:bg-border transition"
           >
             {copied ? (
               <Check size={16} className="text-green-600" />
             ) : (
-              <Copy size={16} className="text-gray-500" />
+              <Copy size={16} className="text-muted-foreground" />
             )}
           </button>
         </div>
@@ -123,7 +123,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
         className={`relative z-20 flex min-h-screen w-full items-center justify-center px-4 transition-all duration-700 ease-out 
                 ${fadeIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
-        <div className="flex w-full max-w-2xl  flex-col overflow-hidden rounded-xl bg-white shadow-2xl  ">
+        <div className="flex w-full max-w-2xl  flex-col overflow-hidden rounded-xl bg-background shadow-2xl  ">
           {/* Header */}
           <div
             className="flex flex-col items-center justify-center py-7 px-4"
@@ -134,7 +134,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
             {finalLogo && (
               <img
                 src={finalLogo}
-                className="mb-2 h-10 rounded bg-white border object-contain"
+                className="mb-2 h-10 rounded bg-background border object-contain"
                 alt="Logo"
               />
             )}
@@ -150,7 +150,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
           <div className="p-6">
             {/* Docs Link */}
             {docsLink && (
-              <div className="mb-4 text-base text-gray-700">
+              <div className="mb-4 text-base text-muted-foreground">
                 Visit our docs:{" "}
                 <a
                   href={docsLink}
@@ -173,7 +173,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
             {/* Demo Details */}
 
             {/* Demo Details */}
-            <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-[15px]">
+            <div className="mb-4 rounded-lg border border-border bg-muted p-4 text-[15px]">
               <div className="mb-3">
                 <span className="font-semibold">Demo URL: </span>
                 <a
@@ -188,7 +188,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
                 {/* SUPER ADMIN */}
 
-                <div className="rounded-lg bg-white p-3 shadow-sm border">
+                <div className="rounded-lg bg-background p-3 shadow-sm border">
                   <span className="font-semibold block mb-2">Demo User1</span>
 
                   {/* Email */}
@@ -200,7 +200,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
 
                 {/* TENANT */}
                 {tenant && (
-                  <div className="rounded-lg bg-white p-3 shadow-sm border">
+                  <div className="rounded-lg bg-background p-3 shadow-sm border">
                     <span className="font-semibold block mb-2">Demo User2</span>
 
                     {/* Email */}
@@ -212,7 +212,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
                 )}
               </div>
               {superAdmin && (
-                <div className="rounded-lg bg-white p-3 shadow-sm border mt-2">
+                <div className="rounded-lg bg-background p-3 shadow-sm border mt-2">
                   <span className="font-semibold block mb-2">Demo Admin</span>
 
                   {/* Username */}
@@ -235,7 +235,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
               </a>
             )}
             {/* Helper Text */}
-            <div className="mt-2 text-center text-xs text-gray-500">
+            <div className="mt-2 text-center text-xs text-muted-foreground">
               {bottomHelp ||
                 "This demo resets periodically. All changes are temporary."}
             </div>
@@ -243,7 +243,7 @@ const DemoPreviewModal: React.FC<DemoPreviewModalProps> = ({
 
           {/* Support Email */}
           {supportEmail && (
-            <div className="border-t border-gray-100 py-3 text-center text-sm">
+            <div className="border-t border-border py-3 text-center text-sm">
               Support:{" "}
               <a
                 href={`mailto:${supportEmail}`}

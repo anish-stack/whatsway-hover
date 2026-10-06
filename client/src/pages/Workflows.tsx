@@ -108,9 +108,9 @@ const Workflows = () => {
       case "paused":
         return "bg-yellow-100 text-yellow-800";
       case "draft":
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -131,22 +131,22 @@ const Workflows = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-background shadow-sm border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:justify-between sm:items-center py-3 sm:py-0">
             {/* Left: brand + copy */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-purple-100 p-2 rounded-lg shrink-0">
-                <Workflow className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+              <div className="bg-[var(--brand-100)] p-2 rounded-lg shrink-0">
+                <Workflow className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" />
               </div>
 
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+                <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   Workflows
                 </h1>
-                <p className="text-sm sm:text-base text-gray-600">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Automate your WhatsApp marketing
                 </p>
               </div>
@@ -172,29 +172,29 @@ const Workflows = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters and Search */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="bg-background p-6 rounded-xl shadow-sm border border-border mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search workflows..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
               <option value="paused">Paused</option>
               <option value="draft">Draft</option>
             </select>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+            <button className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors flex items-center">
               <Filter className="w-4 h-4 mr-2" />
               More Filters
             </button>
@@ -221,7 +221,7 @@ const Workflows = () => {
                 </button>
                 <button
                   onClick={() => setSelectedWorkflows([])}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   Clear
                 </button>
@@ -235,7 +235,7 @@ const Workflows = () => {
           {filteredWorkflows.map((workflow) => (
             <div
               key={workflow.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all"
+              className="bg-background rounded-xl shadow-sm border border-border hover:shadow-md transition-all"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -243,7 +243,7 @@ const Workflows = () => {
                     type="checkbox"
                     checked={selectedWorkflows.includes(workflow.id)}
                     onChange={() => handleSelectWorkflow(workflow.id)}
-                    className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 mt-1"
+                    className="w-4 h-4 text-green-600 border-border rounded focus:ring-green-500 mt-1"
                   />
                   <div className="flex items-center space-x-2">
                     <span
@@ -253,21 +253,21 @@ const Workflows = () => {
                     >
                       {workflow.status}
                     </span>
-                    <button className="p-1 text-gray-400 hover:text-gray-600">
+                    <button className="p-1 text-muted-foreground hover:text-muted-foreground">
                       <MoreVertical className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     {workflow.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-3">
+                  <p className="text-muted-foreground text-sm mb-3">
                     {workflow.description}
                   </p>
 
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <Zap className="w-4 h-4 mr-1" />
                       <span>{workflow.trigger}</span>
@@ -281,24 +281,24 @@ const Workflows = () => {
 
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       Contacts Enrolled
                     </span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-foreground">
                       {workflow.contacts.toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       Completion Rate
                     </span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-foreground">
                       {workflow.completionRate}%
                     </span>
                   </div>
 
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-border rounded-full h-2">
                     <div
                       className="bg-green-500 h-2 rounded-full"
                       style={{ width: `${workflow.completionRate}%` }}
@@ -306,7 +306,7 @@ const Workflows = () => {
                   </div>
                 </div>
 
-                <div className="text-xs text-gray-500 mb-4">
+                <div className="text-xs text-muted-foreground mb-4">
                   <div>Created: {workflow.created}</div>
                   <div>Last run: {workflow.lastRun}</div>
                 </div>
@@ -329,12 +329,12 @@ const Workflows = () => {
                     </button>
                   )}
 
-                  <button className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm">
+                  <button className="flex-1 bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors flex items-center justify-center text-sm">
                     <Edit className="w-4 h-4 mr-1" />
                     Edit
                   </button>
 
-                  <button className="bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <button className="bg-muted text-muted-foreground py-2 px-3 rounded-lg hover:bg-border transition-colors">
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
@@ -345,14 +345,14 @@ const Workflows = () => {
 
         {/* Empty State */}
         {filteredWorkflows.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Workflow className="w-8 h-8 text-gray-400" />
+          <div className="bg-background rounded-xl shadow-sm border border-border p-12 text-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Workflow className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-foreground mb-2">
               No workflows found
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-muted-foreground mb-6">
               {searchTerm || filterStatus !== "all"
                 ? "Try adjusting your search or filter criteria"
                 : "Get started by creating your first automated workflow"}

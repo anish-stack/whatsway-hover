@@ -43,14 +43,14 @@ const MinimalLoader: React.FC<MinimalLoaderProps> = ({
 
   const colorClasses = {
     green: {
-      primary: "border-green-600",
-      secondary: "bg-green-600",
-      gradient: "from-green-400 to-emerald-600",
+      primary: "border-[var(--brand)]",
+      secondary: "bg-[var(--brand)]",
+      gradient: "from-[var(--brand)] to-[var(--brand-700)]",
     },
     blue: {
       primary: "border-blue-600",
       secondary: "bg-blue-600",
-      gradient: "from-blue-400 to-indigo-600",
+      gradient: "from-blue-400 to-[var(--brand-700)]",
     },
     gray: {
       primary: "border-gray-600",
@@ -138,7 +138,7 @@ const MinimalLoader: React.FC<MinimalLoaderProps> = ({
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white via-gray-50 to-white">
         <div className="relative w-20 h-20">
           <div
-            className={`absolute inset-0 border-4 border-gray-200 rounded-full`}
+            className={`absolute inset-0 border-4 border-border rounded-full`}
           />
           <div
             className={`absolute inset-0 border-4 border-t-transparent ${colors.primary} rounded-full animate-spin`}

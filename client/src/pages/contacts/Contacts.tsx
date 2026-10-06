@@ -1047,7 +1047,7 @@ export default function Contacts() {
                       <strong>{pendingImport.invalidFormatCount.toLocaleString()}</strong> row{pendingImport.invalidFormatCount !== 1 ? "s" : ""} have an unrecognised phone format and will be skipped.
                     </span>
                   )}
-                  <span className="block mt-2 text-sm text-gray-600">
+                  <span className="block mt-2 text-sm text-muted-foreground">
                     {(pendingImport.validCount - pendingImport.noPhoneCount - pendingImport.invalidFormatCount).toLocaleString()} of {pendingImport.validCount.toLocaleString()} contacts will be imported. Continue?
                   </span>
                 </>

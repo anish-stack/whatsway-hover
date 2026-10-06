@@ -85,7 +85,7 @@ export function ContactsToolbar({
         <CardContent className="p-3 sm:p-4 md:p-6">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder={`${t("contacts.searchContacts")}`}
                 value={searchQuery}
@@ -116,7 +116,7 @@ export function ContactsToolbar({
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem
                     onClick={() => setSelectedGroup(null)}
-                    className={!selectedGroup ? "bg-gray-100" : ""}
+                    className={!selectedGroup ? "bg-muted" : ""}
                   >
                     {t("contacts.allGroups")}
                   </DropdownMenuItem>
@@ -131,7 +131,7 @@ export function ContactsToolbar({
                   {groupsData?.length > 0 && (
                     <>
                       <DropdownMenuItem disabled className="py-1">
-                        <span className="text-xs text-gray-500 uppercase">
+                        <span className="text-xs text-muted-foreground uppercase">
                           {t("contacts.availableGroups")}
                         </span>
                       </DropdownMenuItem>
@@ -141,7 +141,7 @@ export function ContactsToolbar({
                           key={group.id}
                           onClick={() => setSelectedGroup(group.name)}
                           className={
-                            selectedGroup === group.name ? "bg-gray-100" : ""
+                            selectedGroup === group.name ? "bg-muted" : ""
                           }
                         >
                           {group.name}
@@ -169,14 +169,14 @@ export function ContactsToolbar({
                 <DropdownMenuContent align="end" className="w-40">
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus(null)}
-                    className={!selectedStatus ? "bg-gray-100" : ""}
+                    className={!selectedStatus ? "bg-muted" : ""}
                   >
                     {t("contacts.allStatuses")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus("active")}
                     className={
-                      selectedStatus === "active" ? "bg-gray-100" : ""
+                      selectedStatus === "active" ? "bg-muted" : ""
                     }
                   >
                     {t("contacts.active")}
@@ -184,7 +184,7 @@ export function ContactsToolbar({
                   <DropdownMenuItem
                     onClick={() => setSelectedStatus("blocked")}
                     className={
-                      selectedStatus === "blocked" ? "bg-gray-100" : ""
+                      selectedStatus === "blocked" ? "bg-muted" : ""
                     }
                   >
                     {t("contacts.blocked")}

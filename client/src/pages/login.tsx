@@ -165,10 +165,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[var(--ink)] via-slate-800 to-[var(--ink)] relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-green-500/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-[var(--brand)] rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[var(--brand)] rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-16 text-white w-full">
@@ -181,8 +181,8 @@ export default function LoginPage() {
               />
             ) : (
               <div className="flex items-center gap-3">
-                <div className="bg-green-500/10 backdrop-blur-sm rounded-xl p-2.5">
-                  <MessageSquare className="h-7 w-7 text-green-400" />
+                <div className="bg-[var(--brand)] backdrop-blur-sm rounded-xl p-2.5">
+                  <MessageSquare className="h-7 w-7 text-[var(--brand)]" />
                 </div>
                 <span className="text-2xl font-bold">WhatsWay</span>
               </div>
@@ -192,19 +192,19 @@ export default function LoginPage() {
           <h2 className="text-3xl xl:text-4xl font-bold leading-tight mb-4">
             Power your business with WhatsApp Marketing
           </h2>
-          <p className="text-slate-400 text-lg mb-10">
+          <p className="text-[var(--ink-300)] text-lg mb-10">
             Reach your customers where they are. Drive engagement, boost sales, and build relationships.
           </p>
 
           <div className="space-y-5">
             {features.map((feature, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="bg-green-500/10 rounded-lg p-2.5 shrink-0">
-                  <feature.icon className="h-5 w-5 text-green-400" />
+                <div className="bg-[var(--brand)] rounded-lg p-2.5 shrink-0">
+                  <feature.icon className="h-5 w-5 text-[var(--brand)]" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">{feature.title}</h3>
-                  <p className="text-slate-400 text-sm">{feature.description}</p>
+                  <p className="text-[var(--ink-300)] text-sm">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -212,7 +212,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-[var(--canvas)] px-4 py-8 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center lg:text-left">
             <div className="flex justify-center lg:hidden mb-6">
@@ -223,18 +223,18 @@ export default function LoginPage() {
                   className="h-14 object-contain"
                 />
               ) : (
-                <div className="bg-slate-800 text-white rounded-full p-3">
+                <div className="bg-[var(--ink-700)] text-white rounded-full p-3">
                   <MessageSquare className="h-8 w-8" />
                 </div>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--ink)]">
               {step === "login" && "Welcome Back"}
               {step === "forgot" && "Forgot Password"}
               {step === "verify" && "Verify OTP"}
               {step === "reset" && "Reset Password"}
             </h1>
-            <p className="mt-1.5 text-gray-500">
+            <p className="mt-1.5 text-[var(--ink-500)]">
               {step === "login" && "Sign in to your WhatsApp marketing dashboard"}
               {step === "forgot" && "Enter your email to receive a reset code"}
               {step === "verify" && "Enter the code sent to your email"}
@@ -264,7 +264,7 @@ export default function LoginPage() {
                           <FormLabel>Username</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-300)]" />
                               <Input
                                 {...field}
                                 placeholder="Enter your username"
@@ -287,7 +287,7 @@ export default function LoginPage() {
                           <FormLabel>Password</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-300)]" />
                               <Input
                                 {...field}
                                 type={showPassword ? "text" : "password"}
@@ -298,7 +298,7 @@ export default function LoginPage() {
                               <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-300)] hover:text-[var(--ink-500)] transition-colors"
                               >
                                 {showPassword ? (
                                   <EyeOff className="h-4 w-4" />
@@ -316,7 +316,7 @@ export default function LoginPage() {
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        className="text-sm text-green-600 hover:text-green-700 font-medium"
+                        className="text-sm text-[var(--brand)] hover:text-[var(--brand)] font-medium"
                         onClick={() => setStep("forgot")}
                       >
                         Forgot Password?
@@ -325,7 +325,7 @@ export default function LoginPage() {
 
                     <Button
                       type="submit"
-                      className="w-full bg-green-600 hover:bg-green-700 h-11 text-base"
+                      className="w-full bg-[var(--brand)] hover:bg-[var(--brand)] h-11 text-base"
                       disabled={loginMutation.isPending}
                     >
                       {loginMutation.isPending ? (
@@ -371,11 +371,11 @@ export default function LoginPage() {
 
               {step === "login" && (
                 <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[var(--ink-500)]">
                     Don't have an account?{" "}
                     <Link
                       to="/signup"
-                      className="text-green-600 hover:text-green-700 font-semibold"
+                      className="text-[var(--brand)] hover:text-[var(--brand)] font-semibold"
                     >
                       Sign up for free
                     </Link>
@@ -387,9 +387,9 @@ export default function LoginPage() {
           </Card>
 
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-6 text-xs text-gray-400">
+            <div className="flex items-center justify-center space-x-6 text-xs text-[var(--ink-300)]">
               <div className="flex items-center space-x-1.5">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></div>
                 <span>Secure Login</span>
               </div>
               <div className="flex items-center space-x-1.5">
@@ -397,7 +397,7 @@ export default function LoginPage() {
                 <span>GDPR Compliant</span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></div>
                 <span>24/7 Support</span>
               </div>
             </div>

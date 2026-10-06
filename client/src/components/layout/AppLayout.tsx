@@ -105,7 +105,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       };
 
       // Apply primary color
-      const pColor = brandSettings.primaryColor || "#1c781f";
+      const pColor = brandSettings.primaryColor || "#08A957";
       if (pColor && pColor.startsWith('#')) {
         const hsl = hexToHsl(pColor);
         const rgb = hexToRgbNumbers(pColor);
@@ -114,6 +114,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           root.style.setProperty('--ring', hsl);
           if (rgb) root.style.setProperty('--primary-rgb', rgb);
         }
+        // keep the design-system brand scale in sync with the white-label color
+        root.style.setProperty('--brand', pColor);
+        root.style.setProperty('--brand-600', `color-mix(in srgb, ${pColor}, black 10%)`);
+        root.style.setProperty('--brand-700', `color-mix(in srgb, ${pColor}, black 22%)`);
+        root.style.setProperty('--brand-deep', `color-mix(in srgb, ${pColor}, black 40%)`);
+        root.style.setProperty('--brand-100', `color-mix(in srgb, ${pColor}, white 86%)`);
+        root.style.setProperty('--brand-50', `color-mix(in srgb, ${pColor}, white 93%)`);
       }
 
       // Apply background color and handle contrast

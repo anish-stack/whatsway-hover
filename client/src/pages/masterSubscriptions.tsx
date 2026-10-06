@@ -167,7 +167,7 @@ export default function AllSubscriptionsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center">
           <Loader2 className="w-8 h-8 animate-spin text-green-600 mb-3" />
-          <p className="text-gray-600">{t("subscriptions.loading")}</p>
+          <p className="text-muted-foreground">{t("subscriptions.loading")}</p>
         </div>
       </div>
     );
@@ -191,7 +191,7 @@ export default function AllSubscriptionsPage() {
 
   // ------------------- RENDER -------------------
   return (
-    <div className="min-h-screen bg-gray-50 dots-bg">
+    <div className="min-h-screen bg-muted dots-bg">
       <Header
         title={t("subscriptions.title")}
         subtitle={t("subscriptions.subtitle")}
@@ -199,10 +199,10 @@ export default function AllSubscriptionsPage() {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {t("subscriptions.allSubscriptions")}
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             {t("subscriptions.totalSubscriptions")} {total}{" "}
             {total !== 1
               ? t("subscriptions.subscriptions")
@@ -211,46 +211,46 @@ export default function AllSubscriptionsPage() {
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden lg:block overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="hidden lg:block overflow-x-auto bg-background rounded-lg shadow-sm border border-border">
           <table className="min-w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-muted">
               <tr>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.username")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.plan")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.price")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.status")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.startDate")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.endDate")}
                 </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b">
+                <th className="py-3 px-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
                   {t("subscriptions.table.autoRenew")}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {subscriptions.map(({ subscription, user, plan, transaction }) => (
                 <tr
                   key={subscription.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="hover:bg-muted transition-colors"
                 >
-                  <td className="py-3 px-4 text-sm text-gray-900">
+                  <td className="py-3 px-4 text-sm text-foreground">
                     {user?.username ?? "N/A"}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-900">
+                  <td className="py-3 px-4 text-sm text-foreground">
                     {plan.name}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-900 font-medium">
+                  <td className="py-3 px-4 text-sm text-foreground font-medium">
                     {getCurrencySymbol(
                       transaction?.currency || subscription.currency
                     )}
@@ -268,7 +268,7 @@ export default function AllSubscriptionsPage() {
                           : subscription.status === "pending"
                           ? "bg-yellow-100 text-yellow-700"
                           : subscription.status === "cancelled"
-                          ? "bg-gray-100 text-gray-700"
+                          ? "bg-muted text-muted-foreground"
                           : subscription.status === "expired"
                           ? "bg-red-100 text-red-700"
                           : "bg-orange-100 text-orange-700"
@@ -277,18 +277,18 @@ export default function AllSubscriptionsPage() {
                       {subscription.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     {new Date(subscription.startDate).toLocaleDateString()}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     {new Date(subscription.endDate).toLocaleDateString()}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     <span
                       className={`${
                         subscription.autoRenew
                           ? "text-green-600 font-medium"
-                          : "text-gray-500"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {subscription.autoRenew
@@ -307,14 +307,14 @@ export default function AllSubscriptionsPage() {
           {subscriptions.map(({ subscription, user, plan, transaction }) => (
             <div
               key={subscription.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+              className="bg-background rounded-lg shadow-sm border border-border p-4"
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-foreground">
                     {user?.username ?? "N/A"}
                   </h3>
-                  <p className="text-sm text-gray-600">{plan.name}</p>
+                  <p className="text-sm text-muted-foreground">{plan.name}</p>
                 </div>
                 <span
                   className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
@@ -331,10 +331,10 @@ export default function AllSubscriptionsPage() {
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("subscriptions.card.price")}
                   </span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {getCurrencySymbol(
                       transaction?.currency || subscription.currency
                     )}
@@ -346,30 +346,30 @@ export default function AllSubscriptionsPage() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("subscriptions.card.startDate")}
                   </span>
-                  <span className="text-gray-900">
+                  <span className="text-foreground">
                     {new Date(subscription.startDate).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("subscriptions.card.endDate")}
                   </span>
-                  <span className="text-gray-900">
+                  <span className="text-foreground">
                     {new Date(subscription.endDate).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-muted-foreground">
                     {t("subscriptions.card.autoRenew")}
                   </span>
                   <span
                     className={`${
                       subscription.autoRenew
                         ? "text-green-600 font-medium"
-                        : "text-gray-500"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {subscription.autoRenew
@@ -383,27 +383,27 @@ export default function AllSubscriptionsPage() {
         </div>
 
         {/* Pagination Section */}
-        <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="mt-6 bg-background rounded-lg shadow-sm border border-border p-4">
           {/* Desktop Pagination */}
           <div className="hidden md:flex items-center justify-between">
             {/* Left: Showing info */}
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 {t("subscriptions.pagination.showing")}{" "}
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {(page - 1) * limit + 1}
                 </span>{" "}
                 {t("subscriptions.pagination.to")}{" "}
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {Math.min(page * limit, total)}
                 </span>{" "}
                 {t("subscriptions.pagination.of")}{" "}
-                <span className="font-semibold text-gray-900">{total}</span>
+                <span className="font-semibold text-foreground">{total}</span>
               </div>
 
               {/* Page size dropdown */}
               <select
-                className="border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="border border-border rounded-md px-3 py-1.5 text-sm bg-background shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 value={limit}
                 onChange={(e) => handleLimitChange(Number(e.target.value))}
               >
@@ -420,7 +420,7 @@ export default function AllSubscriptionsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-2 text-sm border border-border rounded-md bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 {t("subscriptions.pagination.previous")}
@@ -430,7 +430,7 @@ export default function AllSubscriptionsPage() {
                 pageNum === "..." ? (
                   <span
                     key={`ellipsis-${idx}`}
-                    className="px-3 py-2 text-gray-500"
+                    className="px-3 py-2 text-muted-foreground"
                   >
                     ...
                   </span>
@@ -441,7 +441,7 @@ export default function AllSubscriptionsPage() {
                     className={`px-3 py-2 text-sm border rounded-md transition-colors ${
                       pageNum === page
                         ? "bg-green-600 text-white border-green-600"
-                        : "bg-white border-gray-300 hover:bg-gray-50"
+                        : "bg-background border-border hover:bg-muted"
                     }`}
                   >
                     {pageNum}
@@ -454,7 +454,7 @@ export default function AllSubscriptionsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={page === totalPages}
-                className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-2 text-sm border border-border rounded-md bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {t("subscriptions.pagination.next")}
                 <ChevronRight className="w-4 h-4" />
@@ -466,20 +466,20 @@ export default function AllSubscriptionsPage() {
           <div className="md:hidden space-y-4">
             {/* Info and Dropdown */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="text-sm text-gray-600">
-                <span className="font-semibold text-gray-900">
+              <div className="text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">
                   {(page - 1) * limit + 1}
                 </span>{" "}
                 -{" "}
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {Math.min(page * limit, total)}
                 </span>{" "}
                 {t("subscriptions.pagination.of")}{" "}
-                <span className="font-semibold text-gray-900">{total}</span>
+                <span className="font-semibold text-foreground">{total}</span>
               </div>
 
               <select
-                className="border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white shadow-sm w-full sm:w-auto"
+                className="border border-border rounded-md px-3 py-1.5 text-sm bg-background shadow-sm w-full sm:w-auto"
                 value={limit}
                 onChange={(e) => handleLimitChange(Number(e.target.value))}
               >
@@ -496,7 +496,7 @@ export default function AllSubscriptionsPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex-1 flex items-center justify-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-1 px-4 py-2 text-sm border border-border rounded-md bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
                 {t("subscriptions.pagination.previous")}
@@ -514,7 +514,7 @@ export default function AllSubscriptionsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={page === totalPages}
-                className="flex-1 flex items-center justify-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-1 px-4 py-2 text-sm border border-border rounded-md bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("subscriptions.pagination.next")}
                 <ChevronRight className="w-4 h-4" />
