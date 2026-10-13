@@ -2089,9 +2089,9 @@ Verify Token: my-custom-verify-token-12345</code></pre>
               </tr>
               <tr>
                 <td style="padding:10px 14px;border:1px solid #e2e8f0;"><code>business_management</code></td>
-                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Access Business Manager features, required
-                  during the embedded signup flow to manage business assets</td>
-                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Embedded Signup only</td>
+                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Optional. Only needed to read the customer's business portfolio
+                  (WABA discovery fallback during embedded signup). Not required for messaging or templates.</td>
+                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Embedded Signup fallback only</td>
               </tr>
             </tbody>
           </table>
@@ -2140,7 +2140,9 @@ Verify Token: my-custom-verify-token-12345</code></pre>
                   <div class="doc-info-content" style="color:#166534;">
                     When creating the Embedded Signup configuration in Meta, select these options:<br>
                     &bull; <strong>Permission scope:</strong> Select <code>whatsapp_business_management</code> and
-                    <code>whatsapp_business_messaging</code><br>
+                    <code>whatsapp_business_messaging</code>. To enable the business-portfolio WABA fallback also add <code>business_management</code>
+                    (Configuration &gt; Permissions). Permissions are defined by this configuration, not by code.
+                    <code>public_profile</code> is a Meta default and is not requested by this app<br>
                     &bull; <strong>Allowed phone number types:</strong> Choose based on your needs (new numbers,
                     existing numbers, or both)<br>
                     &bull; <strong>Enable two-step verification:</strong> Recommended for security<br>
@@ -2208,9 +2210,8 @@ Verify Token: my-custom-verify-token-12345</code></pre>
               </tr>
               <tr>
                 <td style="padding:10px 14px;border:1px solid #e2e8f0;"><code>business_management</code></td>
-                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Access Business Manager features for embedded
-                  signup flow</td>
-                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Embedded only</td>
+                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Optional. Business portfolio read for WABA discovery fallback</td>
+                <td style="padding:10px 14px;border:1px solid #e2e8f0;">Embedded fallback only</td>
               </tr>
             </tbody>
           </table>
@@ -2540,8 +2541,8 @@ Verify Token: your_webhook_verify_token</code></pre>
                     webhook</li>
                   <li><code>whatsapp_business_messaging</code> — Required to send and receive messages on behalf of
                     clients</li>
-                  <li><code>business_management</code> — Required to access Business Manager features during embedded
-                    signup</li>
+                  <li><code>business_management</code> — Optional; only for the business-portfolio WABA discovery
+                    fallback. <code>public_profile</code> is added by default with the WhatsApp use case.</li>
                 </ul>
               </div>
             </div>
@@ -3626,7 +3627,7 @@ curl "https://yourdomain.com/api/webhooks/whatsapp?hub.mode=subscribe&amp;hub.ve
           <div class="doc-info-box" style="background:#eff6ff;border-left:4px solid #3b82f6;">
             <strong style="color:#1e40af;">&#127899; Support Portal</strong>
             <div class="doc-info-content" style="color:#1e40af;">
-              <a href="https://diploy.ticksy.com" target="_blank" rel="noopener"
+              <a href="https://hoverbusinessservices.com" target="_blank" rel="noopener"
                 style="color:#2563eb;text-decoration:underline;font-weight:600;font-size:16px;">diploy.ticksy.com</a>
               <br><br>Visit the link above to create a new support ticket. Our team will respond to your query as soon
               as possible.

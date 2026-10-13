@@ -1,17 +1,13 @@
 /**
  * ============================================================
- * © 2025 Diploy — a brand of Bisht Technologies Private Limited
+ *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
  * Original Author: BTPL Engineering Team
- * Website: https://diploy.in
- * Contact: cs@diploy.in
+ * Website: https://hoverbusinessservices.com
+ * Contact: info@hovermedia.in
  *
- * Distributed under the Envato / CodeCanyon License Agreement.
- * Licensed to the purchaser for use as defined by the
- * Envato Market (CodeCanyon) Regular or Extended License.
+  
  *
- * You are NOT permitted to redistribute, resell, sublicense,
- * or share this source code, in whole or in part.
- * Respect the author's rights and Envato licensing terms.
+  
  * ============================================================
  */
 
@@ -59,8 +55,8 @@ export const diployLogger = {
     console.log(`║   ╚═════╝ ╚═╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝      ║`);
     console.log(`║                                                    ║`);
     console.log(`║   WhatsApp Marketing Platform  v${DIPLOY_VERSION.padEnd(18)}║`);
-    console.log(`║   © Bisht Technologies Pvt Ltd                     ║`);
-    console.log(`║   https://diploy.in                                ║`);
+    console.log(`║   © Hover Business Services LLP                     ║`);
+    console.log(`║   https://hoverbusinessservices.com                                ║`);
     console.log(`║                                                    ║`);
     console.log(`╚${line}╝${RESET}\n`);
   },

@@ -1,17 +1,13 @@
 /**
  * ============================================================
- * © 2025 Diploy — a brand of Bisht Technologies Private Limited
+ *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
  * Original Author: BTPL Engineering Team
- * Website: https://diploy.in
- * Contact: cs@diploy.in
+ * Website: https://hoverbusinessservices.com
+ * Contact: info@hovermedia.in
  *
- * Distributed under the Envato / CodeCanyon License Agreement.
- * Licensed to the purchaser for use as defined by the
- * Envato Market (CodeCanyon) Regular or Extended License.
+  
  *
- * You are NOT permitted to redistribute, resell, sublicense,
- * or share this source code, in whole or in part.
- * Respect the author's rights and Envato licensing terms.
+  
  * ============================================================
  */
 
@@ -27,6 +23,12 @@ import { eq, ne, desc, like, or, and, sql, count } from 'drizzle-orm';
 import { getOAuthError } from '@shared/whatsapp-error-codes';
 import { MESSAGING_TIER_LIMITS } from '../utils/messaging-tiers';
 import { WhatsAppApiService } from 'server/services/whatsapp-api';
+import {
+  discoverWabaViaBusinessPortfolio,
+  describeBusinessDiscoveryFailure,
+  hasGrantedScope,
+  type BusinessDiscoveryResult,
+} from 'server/services/meta-business-discovery';
 
 
 
@@ -546,6 +548,7 @@ export const embeddedSignup = asyncHandler(
     console.log(`[EmbeddedSignup] debug_token response (${t3Elapsed}ms) received (body redacted)`);
 
     let wabaId: string | undefined;
+    let businessDiscovery: BusinessDiscoveryResult | undefined;
 
     if (debugData?.data?.error) {
       console.error("[EmbeddedSignup] debug_token returned error:", debugData.data.error);
@@ -572,32 +575,40 @@ export const embeddedSignup = asyncHandler(
 
     // Fallback: try /me/businesses → owned_whatsapp_business_accounts
     if (!wabaId) {
-      console.log("[EmbeddedSignup] debug_token did not yield WABA, trying /me/businesses fallback");
-      const businessRes = await fetch(
-        `https://graph.facebook.com/${WHATSAPP_API_VERSION}/me?fields=businesses&access_token=${longLivedToken}`
-      );
-      const businessData: any = await businessRes.json();
-      console.log("[EmbeddedSignup] /me/businesses response:", JSON.stringify(businessData, null, 2));
-      const businessId = businessData.businesses?.data?.[0]?.id || businessData.id;
-
-      if (businessId) {
-        const wabaRes = await fetch(
-          `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${businessId}/owned_whatsapp_business_accounts?access_token=${longLivedToken}`
+      console.log("[EmbeddedSignup] debug_token did not yield WABA, trying business portfolio fallback");
+      // Only call in the app that needs business_management.
+      // Permissions are defined by the Embedded Signup config (META_EMBEDDED_SIGNUP_CONFIG_ID /
+      // Settings > Embedded Signup > Config ID), not by FB.login options. If the token is known
+      // to lack business_management, skip the Graph calls and report it precisely.
+      businessDiscovery =
+        hasGrantedScope(debugData?.data?.scopes, "business_management") === false
+          ? { failure: "permission_denied" }
+          : await discoverWabaViaBusinessPortfolio(
+              fetch as any,
+              WHATSAPP_API_VERSION,
+              longLivedToken
+            );
+      wabaId = businessDiscovery.wabaId;
+      if (!wabaId) {
+        console.warn(
+          `[EmbeddedSignup] Business portfolio fallback failed: ${businessDiscovery.failure} (graph code ${businessDiscovery.graphErrorCode ?? "n/a"})`
         );
-        const wabaData: any = await wabaRes.json();
-        console.log("[EmbeddedSignup] owned_whatsapp_business_accounts response:", JSON.stringify(wabaData, null, 2));
-        wabaId = wabaData.data?.[0]?.id;
       }
     }
 
     if (!wabaId) {
-      console.error("[EmbeddedSignup] Could not discover WABA. debug_token data:", JSON.stringify(debugData, null, 2));
+      console.error(
+        `[EmbeddedSignup] Could not discover WABA. debug_token error: ${debugData?.data?.error?.code ?? "none"}, granted scopes: ${(debugData?.data?.scopes || []).join(",") || "unknown"}, fallback: ${businessDiscovery?.failure ?? "not attempted"}`
+      );
+      const fallbackHint = businessDiscovery?.failure
+        ? ` ${describeBusinessDiscoveryFailure(businessDiscovery)}`
+        : "";
       const wabaErrCode = debugData?.data?.error?.code;
       const wabaErrLookup = wabaErrCode ? getOAuthError(wabaErrCode, debugData?.data?.error?.type, debugData?.data?.error?.message) : null;
       await updateLog({
         status: "failed",
         step: "waba_discovery",
-        errorMessage: "No WhatsApp Business Account found. Please ensure you completed all signup steps in the Facebook popup.",
+        errorMessage: "No WhatsApp Business Account found. Please ensure you completed all signup steps in the Facebook popup." + fallbackHint,
         errorDetails: debugData?.data?.error ? {
           code: debugData.data.error.code,
           message: debugData.data.error.message,
@@ -606,10 +617,10 @@ export const embeddedSignup = asyncHandler(
           suggestion: wabaErrLookup?.suggestion || "The user should try the signup flow again and ensure they complete all steps in the Facebook popup, including granting all requested permissions.",
         } : {
           description: "The WhatsApp Business Account could not be discovered from the user's granted permissions.",
-          suggestion: "The user should try the signup flow again and ensure they complete all steps in the Facebook popup, including granting all requested permissions.",
+          suggestion: ("The user should try the signup flow again and ensure they complete all steps in the Facebook popup, including granting all requested permissions." + fallbackHint),
         },
       });
-      throw new Error("No WhatsApp Business Account found. Please ensure you completed all signup steps in the Facebook popup.");
+      throw new Error("No WhatsApp Business Account found. Please ensure you completed all signup steps in the Facebook popup." + fallbackHint);
     }
 
     console.log("[EmbeddedSignup] Discovered WABA ID:", wabaId);
@@ -620,7 +631,7 @@ export const embeddedSignup = asyncHandler(
       `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${wabaId}/phone_numbers?access_token=${longLivedToken}`
     );
     const phoneData: any = await phoneRes.json();
-    console.log("[EmbeddedSignup] phone_numbers response:", JSON.stringify(phoneData, null, 2));
+    console.log(`[EmbeddedSignup] phone_numbers fetched: ${phoneData.data?.length ?? 0} number(s)${phoneData.error ? ` | error code ${phoneData.error.code}` : ""}`);
 
     const phoneNumberId = phoneData.data?.[0]?.id;
     const displayPhoneNumber = phoneData.data?.[0]?.display_phone_number;
@@ -1146,31 +1157,96 @@ export const checkAllChannelsHealth = asyncHandler(async (req: Request, res: Res
   });
 });
 
-export const getBusinessProfile = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const channel = await storage.getChannel(id);
-  if (!channel) {
-    return res.status(404).json({ error: 'Channel not found' });
+export const getBusinessProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    console.log("\n========== GET BUSINESS PROFILE ==========");
+    console.log("[BusinessProfile] Channel ID:", id);
+
+    const channel = await storage.getChannel(id);
+
+    if (!channel) {
+      console.error("[BusinessProfile] Channel not found:", id);
+      return res.status(404).json({ error: "Channel not found" });
+    }
+
+    const user = (req.session as any)?.user;
+
+    if (
+      user?.role !== "superadmin" &&
+      channel.createdBy !== user?.id
+    ) {
+      console.error("[BusinessProfile] Access denied:", {
+        channelId: id,
+        userId: user?.id,
+        role: user?.role,
+      });
+
+      return res.status(403).json({ error: "Access denied" });
+    }
+    console.log(channel.accessToken)
+    const url =
+      `https://graph.facebook.com/${WHATSAPP_API_VERSION}/` +
+      `${channel.phoneNumberId}/whatsapp_business_profile` +
+      `?fields=about,address,description,email,profile_picture_url,websites,vertical`;
+
+    console.log("[BusinessProfile] Phone Number ID:", channel.phoneNumberId);
+    console.log("[BusinessProfile] API Version:", WHATSAPP_API_VERSION);
+    console.log("[BusinessProfile] Request URL:", url);
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${channel.accessToken}`,
+        },
+      });
+
+      const data = (await response.json()) as any;
+
+      console.log("[BusinessProfile] HTTP Status:", response.status);
+      console.log(
+        "[BusinessProfile] Meta API Response:",
+        JSON.stringify(data, null, 2)
+      );
+
+      if (!response.ok || data.error) {
+        console.error("[BusinessProfile] Meta API Error:", {
+          status: response.status,
+          code: data.error?.code,
+          errorSubcode: data.error?.error_subcode,
+          type: data.error?.type,
+          message: data.error?.message,
+          fbtraceId: data.error?.fbtrace_id,
+        });
+
+        return res.status(400).json({
+          success: false,
+          error: data.error?.message || "Failed to fetch business profile",
+          code: data.error?.code,
+          errorSubcode: data.error?.error_subcode,
+        });
+      }
+
+      const profile = data.data?.[0] || {};
+
+      console.log("[BusinessProfile] Profile fetched successfully");
+      console.log("==========================================\n");
+
+      return res.json({
+        success: true,
+        profile,
+      });
+    } catch (error: any) {
+      console.error("[BusinessProfile] Request failed:", error.message);
+
+      return res.status(500).json({
+        success: false,
+        error: "Failed to fetch business profile",
+      });
+    }
   }
-
-  const user = (req.session as any)?.user;
-  if (user?.role !== 'superadmin' && channel.createdBy !== user?.id) {
-    return res.status(403).json({ error: 'Access denied' });
-  }
-
-  const url = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${channel.phoneNumberId}/whatsapp_business_profile?fields=about,address,description,email,profile_picture_url,websites,vertical`;
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${channel.accessToken}` },
-  });
-  const data = await response.json() as any;
-
-  if (data.error) {
-    return res.status(400).json({ error: data.error.message });
-  }
-
-  const profile = data.data?.[0] || {};
-  res.json(profile);
-});
+);
 
 export const updateBusinessProfile = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;

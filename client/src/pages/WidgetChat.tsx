@@ -1,9 +1,9 @@
 /**
  * ============================================================
- * © 2025 Diploy — a brand of Bisht Technologies Private Limited
+ *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
  * Original Author: BTPL Engineering Team
- * Website: https://diploy.in
- * Contact: cs@diploy.in
+ * Website: https://hoverbusinessservices.com
+ * Contact: info@hovermedia.in
  * ============================================================
  */
 

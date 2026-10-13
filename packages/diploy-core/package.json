@@ -5,12 +5,12 @@
   "description": "Core utilities and branding for Diploy WhatsApp Marketing Platform",
   "main": "index.ts",
   "types": "index.ts",
-  "author": "BTPL Engineering Team <cs@diploy.in>",
+  "author": "BTPL Engineering Team <info@hovermedia.in>",
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://diploy.in",
+  "homepage": "https://hoverbusinessservices.com",
   "repository": {
     "type": "git",
-    "url": "https://diploy.in"
+    "url": "https://hoverbusinessservices.com"
   },
   "keywords": [
     "diploy",

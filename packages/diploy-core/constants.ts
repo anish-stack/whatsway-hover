@@ -1,17 +1,13 @@
 /**
  * ============================================================
- * © 2025 Diploy — a brand of Bisht Technologies Private Limited
+ *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
  * Original Author: BTPL Engineering Team
- * Website: https://diploy.in
- * Contact: cs@diploy.in
+ * Website: https://hoverbusinessservices.com
+ * Contact: info@hovermedia.in
  *
- * Distributed under the Envato / CodeCanyon License Agreement.
- * Licensed to the purchaser for use as defined by the
- * Envato Market (CodeCanyon) Regular or Extended License.
+  
  *
- * You are NOT permitted to redistribute, resell, sublicense,
- * or share this source code, in whole or in part.
- * Respect the author's rights and Envato licensing terms.
+  
  * ============================================================
  */
 
@@ -37,13 +33,13 @@ function readVersionFile(): string {
   }
 }
 
-export const DIPLOY_PRODUCT_NAME = "Diploy";
+export const DIPLOY_PRODUCT_NAME = "Hover Business Services LLP";
 export const DIPLOY_VERSION = readVersionFile();
-export const DIPLOY_AUTHOR = "Bisht Technologies Private Limited";
-export const DIPLOY_WEBSITE = "https://diploy.in";
-export const DIPLOY_SUPPORT_EMAIL = "cs@diploy.in";
-export const DIPLOY_SUPPORT_URL = "https://diploy.ticksy.com";
-export const DIPLOY_LICENSE = "Envato / CodeCanyon License";
+export const DIPLOY_AUTHOR = "Hover Business Services LLP";
+export const DIPLOY_WEBSITE = "https://hoverbusinessservices.com";
+export const DIPLOY_SUPPORT_EMAIL = "info@hovermedia.in";
+export const DIPLOY_SUPPORT_URL = "https://hoverbusinessservices.com";
+export const DIPLOY_LICENSE = "Hover Business Services LLP";
 
 export const DIPLOY_POWERED_BY = `${DIPLOY_PRODUCT_NAME} v${DIPLOY_VERSION}`;
 export const DIPLOY_HEADER_KEY = "X-Powered-By";
