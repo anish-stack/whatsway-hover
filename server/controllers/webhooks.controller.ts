@@ -418,106 +418,119 @@ function verifyMetaSignature(
 // return the inner Promise, so awaiting the wrapped export resolves
 // immediately and would cause callers to read stale response state.
 export async function handleWebhookInternal(req: Request, res: Response) {
-
-
-   console.log("========== WEBHOOK HIT ==========");
+  console.log("========== WEBHOOK HIT ==========");
   console.log("METHOD:", req.method);
   console.log("URL:", req.originalUrl);
+  console.log("QUERY:", JSON.stringify(req.query));
+  console.log("UA:", req.headers["user-agent"]);
+  console.log("HAS_SIG_HEADER:", !!req.headers["x-hub-signature-256"]);
   console.log("BODY:", JSON.stringify(req.body, null, 2));
-    const {
-      "hub.mode": mode,
-      "hub.challenge": challenge,
-      "hub.verify_token": verifyToken,
-    } = req.query;
 
-    const allConfigs = await storage.getWebhookConfigs();
-    const activeConfig = allConfigs.find((c) => c.isActive);
+  const {
+    "hub.mode": mode,
+    "hub.challenge": challenge,
+    "hub.verify_token": verifyToken,
+  } = req.query;
 
-    if (mode && challenge) {
-      if (
-        mode === "subscribe" &&
-        activeConfig &&
-        verifyToken === activeConfig.verifyToken
-      ) {
-        console.log("Webhook verified successfully");
-        await storage.updateWebhookConfig(activeConfig.id, {
-          lastPingAt: new Date(),
-        });
-        return res.send(challenge);
-      }
+  const allConfigs = await storage.getWebhookConfigs();
+  const activeConfig = allConfigs.find((c) => c.isActive);
+  console.log(
+    `[Webhook] configs=${allConfigs.length} activeConfig=${activeConfig ? activeConfig.id : "none"}`
+  );
 
-     
-      throw new AppError(403, "Verification failed");
-    }
-
-    // X-Hub-Signature-256 verification for POST deliveries from Meta.
-    // If an app secret is configured on the matched webhook config, the
-    // signature header MUST be present and valid; otherwise we respond
-    // 401. When no app secret is configured for any webhook config, we
-    // log a loud warning and allow the request (backwards-compatible
-    // rollout path — operators should set app secrets to enable
-    // enforcement). Superadmin-configured global webhook endpoints that
-    // do not have an app secret are a known deployment footgun.
-    const signatureHeader =
-      req.headers["x-hub-signature-256"] ??
-      req.headers["X-Hub-Signature-256" as unknown as string];
-    const rawBody = (req as unknown as { rawBody?: Buffer }).rawBody;
-    // Single source of truth for the Meta App Secret: the WA Onboarding
-    // row (whatsapp_business_accounts_config), same row used by
-    // channels.controller.ts for the credential test flow.
-    const wabaConfig = await db.query.whatsappBusinessAccountsConfig.findFirst({
-      where: ne(whatsappBusinessAccountsConfig.appSecret, ""),
-    });
-    const configuredSecret = wabaConfig?.appSecret?.trim() || "";
-
-    if (configuredSecret) {
-      if (!verifyMetaSignature(signatureHeader, rawBody, configuredSecret)) {
-        return res.status(401).json({ error: "Invalid webhook signature" });
-      }
-    } else if (process.env.NODE_ENV === "production") {
-      // Fail-closed in production: refuse webhook POSTs when no Meta App
-      // Secret is configured. Set it under Settings → WA Onboarding →
-      // Meta App Credentials before Meta deliveries are accepted in prod.
-      console.error(
-        "[Webhook] Rejecting POST delivery — Meta App Secret not configured. Set it in Settings → WA Onboarding → Meta App Credentials to enable X-Hub-Signature-256 enforcement."
-      );
-      return res.status(401).json({ error: "Webhook signing not configured", hint: "Set Meta App Secret under Settings → WA Onboarding" });
-    }
-
-    const body = req.body;
-    // Avoid logging raw webhook bodies: they may contain PII (phone numbers,
-    // names), message content, and—if signed payloads—secrets. Log only a
-    // structural summary.
-    if (process.env.NODE_ENV !== "production") {
-      const entryCount = Array.isArray(body?.entry) ? body.entry.length : 0;
-      const firstField = body?.entry?.[0]?.changes?.[0]?.field;
-      console.log(`[Webhook] received object=${body?.object ?? "?"} entries=${entryCount} firstField=${firstField ?? "?"}`);
-    }
-
-    if (activeConfig) {
+  if (mode && challenge) {
+    console.log(
+      `[Webhook] VERIFY mode=${mode} tokenMatch=${
+        !!activeConfig && verifyToken === activeConfig.verifyToken
+      }`
+    );
+    if (
+      mode === "subscribe" &&
+      activeConfig &&
+      verifyToken === activeConfig.verifyToken
+    ) {
+      console.log("Webhook verified successfully");
       await storage.updateWebhookConfig(activeConfig.id, {
         lastPingAt: new Date(),
       });
+      return res.send(challenge);
     }
 
-    if (body.entry) {
-      for (const entry of body.entry) {
-        const changes = entry.changes || [];
-        for (const change of changes) {
-          if (change.field === "messages") {
-            await handleMessageChange(change.value);
-          } else if (change.field === "message_template_status_update") {
-            await handleTemplateStatusUpdate(change.value, entry.id);
-          } else if (change.field === "smb_message_echoes") {
-            await handleSmbMessageEchoes(change.value);
-          } else if (change.field === "smb_app_state_sync") {
-            await handleSmbAppStateSync(change.value);
-          }
+    console.error("[Webhook] VERIFY FAILED");
+    throw new AppError(403, "Verification failed");
+  }
+
+  const signatureHeader =
+    req.headers["x-hub-signature-256"] ??
+    req.headers["X-Hub-Signature-256" as unknown as string];
+  const rawBody = (req as unknown as { rawBody?: Buffer }).rawBody;
+
+  const wabaConfig = await db.query.whatsappBusinessAccountsConfig.findFirst({
+    where: ne(whatsappBusinessAccountsConfig.appSecret, ""),
+  });
+  const configuredSecret = wabaConfig?.appSecret?.trim() || "";
+
+  console.log(
+    `[Webhook] SIG sigHeader=${
+      signatureHeader ? String(signatureHeader).slice(0, 14) + "..." : "missing"
+    } rawBody=${rawBody ? rawBody.length + " bytes" : "MISSING"} secretConfigured=${
+      !!configuredSecret
+    } secretLen=${configuredSecret.length} wabaRow=${wabaConfig ? "found" : "none"}`
+  );
+
+  if (configuredSecret) {
+    const ok = verifyMetaSignature(signatureHeader, rawBody, configuredSecret);
+    console.log(`[Webhook] SIG_RESULT valid=${ok}`);
+    if (!ok) {
+      return res.status(401).json({ error: "Invalid webhook signature" });
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    console.error(
+      "[Webhook] Rejecting POST delivery — Meta App Secret not configured. Set it in Settings → WA Onboarding → Meta App Credentials to enable X-Hub-Signature-256 enforcement."
+    );
+    return res.status(401).json({
+      error: "Webhook signing not configured",
+      hint: "Set Meta App Secret under Settings → WA Onboarding",
+    });
+  }
+
+  const body = req.body;
+  const entryCount = Array.isArray(body?.entry) ? body.entry.length : 0;
+  const fields = (body?.entry ?? []).flatMap((e: any) =>
+    (e.changes ?? []).map((c: any) => c.field)
+  );
+  console.log(
+    `[Webhook] received object=${body?.object ?? "?"} entries=${entryCount} fields=${JSON.stringify(fields)}`
+  );
+
+  if (activeConfig) {
+    await storage.updateWebhookConfig(activeConfig.id, {
+      lastPingAt: new Date(),
+    });
+  }
+
+  if (body.entry) {
+    for (const entry of body.entry) {
+      const changes = entry.changes || [];
+      for (const change of changes) {
+        console.log(`[Webhook] handling field=${change.field} entryId=${entry.id}`);
+        if (change.field === "messages") {
+          await handleMessageChange(change.value);
+        } else if (change.field === "message_template_status_update") {
+          await handleTemplateStatusUpdate(change.value, entry.id);
+        } else if (change.field === "smb_message_echoes") {
+          await handleSmbMessageEchoes(change.value);
+        } else if (change.field === "smb_app_state_sync") {
+          await handleSmbAppStateSync(change.value);
+        } else {
+          console.log(`[Webhook] unhandled field=${change.field}`);
         }
       }
     }
+  }
 
-    res.sendStatus(200);
+  console.log("[Webhook] done 200");
+  res.sendStatus(200);
 }
 
 export const handleWebhook = asyncHandler(handleWebhookInternal);
