@@ -70,11 +70,11 @@ server {
 
     # --- Static files served DIRECTLY by nginx (bypasses Node.js) ---
     # Adjust this path to wherever dist/public lives on your server.
-    root /var/www/hoverchat/dist/public;
+    root /root/whatsway-hover/dist/public;
 
     # Uploads served from the uploads directory
     location /uploads/ {
-        alias /var/www/hoverchat/uploads/;
+        alias /root/whatsway-hover/uploads/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         try_files $uri =404;
@@ -82,7 +82,7 @@ server {
 
     # Widget files
     location /widget/ {
-        alias /var/www/hoverchat/public/;
+        alias /root/whatsway-hover/public/;
         add_header Access-Control-Allow-Origin *;
         add_header Access-Control-Allow-Methods "GET, OPTIONS";
         add_header Access-Control-Allow-Headers "Content-Type";
