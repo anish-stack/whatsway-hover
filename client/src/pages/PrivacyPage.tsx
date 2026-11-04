@@ -1,459 +1,238 @@
-/**
- * ============================================================
- *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
- * Original Author: BTPL Engineering Team
- * Website: https://hoverbusinessservices.com
- * Contact: info@hovermedia.in
- *
-  
- *
-  
- * ============================================================
- */
+import { useEffect } from "react";
+import PolicyLayout, { PolicySection } from "@/components/PolicyLayout";
 
-// import Footer from "@/components/Footer";
-// import Header from "@/components/Header";
-
-// export const PrivacyPage = () => {
-//   return (
-//     <div className="min-h-screen bg-background">
-//       {/* Hero Section */}
-//       <section className="py-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand)] via-[var(--brand-600)] to-blue-600 t text-white">
-//         <div className="container mx-auto px-4 text-center">
-//           <h1 className="text-6xl font-bold mb-6">Privacy Policy</h1>
-//         </div>
-//       </section>
-
-//       {/* Privacy Content */}
-//       <section className="py-20 bg-white">
-//         <div className="container mx-auto px-4">
-//           <div className="max-w-4xl mx-auto prose prose-lg">
-//             {/* Intro Section */}
-//             <div className="bg-gradient-to-br from-[var(--brand-50)] to-blue-50 p-8 rounded-2xl mb-12">
-//               <p className="text-lg text-[var(--ink-700)] leading-relaxed m-0">
-//                 At StyleHub, we are committed to protecting your privacy. This
-//                 policy explains how we collect, use, and safeguard your personal
-//                 information when you visit and make purchases from our website
-//               </p>
-//             </div>
-
-//             <div className="space-y-12">
-//               {/* 1. Information We Collect */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   1. Information We Collect
-//                 </h2>
-
-//                 <div className="space-y-4 text-[var(--ink-700)]">
-//                   <p className="leading-relaxed">
-//                     We collect information you directly provide to us:
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">
-//                       Personal Identifiers:
-//                     </strong>{" "}
-//                     Name, shipping address, email address, and phone number when
-//                     you place an order or create an account.
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">
-//                       Payment Information:
-//                     </strong>{" "}
-//                     Credit/debit card details or other payment information.
-//                     Payments are processed securely by our payment processors
-//                     (e.g., Stripe, PayPal). We do not store full card details on
-//                     our servers.
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">Order History:</strong> A
-//                     record of the products you purchase.
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">Communication:</strong>{" "}
-//                     Any communication you send us, including support requests.
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     We also automatically collect certain information when you
-//                     visit our site:
-//                   </p>
-
-//                   <p className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">Technical Data:</strong>{" "}
-//                     IP address, browser type, device info, and your interactions
-//                     with our website (e.g., pages viewed), collected via cookies
-//                     and similar technologies.
-//                   </p>
-//                 </div>
-//               </div>
-
-//               {/* 2. How We Use Your Information */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   2. How We Use Your Information
-//                 </h2>
-
-//                 <ul className="space-y-2 text-[var(--ink-700)]">
-//                   <li className="leading-relaxed">
-//                     To process and fulfill your orders
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     To provide invoices, receipts, and order confirmations
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     To respond to inquiries and provide customer support
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     To analyze site usage and improve our store
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     For marketing (only with your consent). You can opt out
-//                     anytime.
-//                   </li>
-//                 </ul>
-//               </div>
-
-//               {/* 3. Sharing Information */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   3. Sharing Your Information
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed mb-4">
-//                   We do not sell your personal information. We share it only in
-//                   limited circumstances:
-//                 </p>
-
-//                 <ul className="space-y-2 text-[var(--ink-700)]">
-//                   <li className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">
-//                       Service Providers:
-//                     </strong>{" "}
-//                     Shipping carriers, payment processors, email platforms, etc.
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     <strong className="text-[var(--ink)]">
-//                       Legal Obligations:
-//                     </strong>{" "}
-//                     When required by law or legal proceedings.
-//                   </li>
-//                 </ul>
-//               </div>
-
-//               {/* 4. Cookies */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   4. Cookies
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed">
-//                   We use cookies to remember preferences, analyze traffic, and
-//                   improve your shopping experience. You can disable cookies in
-//                   your browser settings, but some site features may not work
-//                   properly.
-//                 </p>
-//               </div>
-
-//               {/* 5. Data Retention */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   5. Data Retention
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed">
-//                   We retain your information only as long as necessary to
-//                   fulfill the purposes for which it was collected, including
-//                   legal, accounting, or reporting requirements.
-//                 </p>
-//               </div>
-
-//               {/* 6. Your Rights */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   6. Your Rights
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed mb-4">
-//                   You may have rights depending on your location:
-//                 </p>
-
-//                 <ul className="space-y-2 text-[var(--ink-700)]">
-//                   <li className="leading-relaxed">
-//                     Access and correct personal information
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     Request deletion of your data
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     Opt out of marketing emails anytime
-//                   </li>
-//                   <li className="leading-relaxed">
-//                     Request your information in a portable format
-//                   </li>
-//                 </ul>
-
-//                 <p className="leading-relaxed text-[var(--ink-700)]">
-//                   To exercise these rights, contact us at:{" "}
-//                 </p>
-//               </div>
-
-//               {/* 7. Data Security */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   7. Data Security
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed">
-//                   We use industry-standard security measures to protect your
-//                   data. However, no method of transmission over the internet is
-//                   100% secure.
-//                 </p>
-//               </div>
-
-//               {/* 8. Changes to Policy */}
-//               <div>
-//                 <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-//                   8. Changes to This Policy
-//                 </h2>
-
-//                 <p className="text-[var(--ink-700)] leading-relaxed">
-//                   We may update this policy from time to time. Updates will be
-//                   shown on this page along with a revised "Last Updated" date.
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// };
-
-import { useTranslation } from "@/lib/i18n";
+const COMPANY = "Hover Business Services LLP";
+const PRODUCT = "HoverChat";
+const EMAIL = "info@hovermedia.in";
+const SITE = "https://hoverbusinessservices.com";
+const APP_URL = "https://hoverchat.hovermessage.com";
 
 export const PrivacyPage = () => {
-  const { t } = useTranslation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="py-40 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--brand)] via-[var(--brand-600)] to-blue-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-6xl font-bold mb-6">
-            {t("privacy_policy.hero.title")}
-          </h1>
-        </div>
-      </section>
+    <PolicyLayout title="Privacy Policy" lastUpdated="November 4, 2026">
+      <PolicySection title="1. Introduction">
+        <p>
+          {PRODUCT} ({APP_URL}) is a WhatsApp Business messaging platform
+          operated by {COMPANY} (&quot;{PRODUCT}&quot;, &quot;we&quot;,
+          &quot;us&quot;, &quot;our&quot;). This Privacy Policy explains what
+          information we collect, how we use it, who we share it with, and the
+          choices you have.
+        </p>
+        <p>
+          By using {PRODUCT} you agree to this policy. If you do not agree,
+          please do not use the service.
+        </p>
+      </PolicySection>
 
-      {/* Privacy Content */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto prose prose-lg">
-            {/* Intro Section */}
-            <div className="bg-gradient-to-br from-[var(--brand-50)] to-blue-50 p-8 rounded-2xl mb-12">
-              <p className="text-lg text-[var(--ink-700)] leading-relaxed m-0">
-                {t("privacy_policy.intro.text")}
-              </p>
-            </div>
+      <PolicySection title="2. Our Role">
+        <p>
+          For information about our own customers (the businesses that
+          register on {PRODUCT}), we act as the data controller.
+        </p>
+        <p>
+          For information about our customers&apos; contacts and
+          conversations (for example, people who message a business on
+          WhatsApp), the business using {PRODUCT} is the data controller and
+          we act as a data processor, handling that data on the
+          business&apos;s instructions. If you are a contact of a business and
+          want to exercise your rights, please contact that business first.
+          You may also write to us at {EMAIL}.
+        </p>
+      </PolicySection>
 
-            <div className="space-y-12">
-              {/* 1. Information We Collect */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.informationWeCollect.title")}
-                </h2>
+      <PolicySection title="3. Information We Collect">
+        <p>
+          <strong>Account information:</strong> name, email address, phone
+          number, password (stored in hashed form), business name, and role
+          within a workspace.
+        </p>
+        <p>
+          <strong>WhatsApp Business information:</strong> when you connect a
+          WhatsApp Business Account, we receive and store identifiers and
+          credentials needed to operate it, such as the WhatsApp Business
+          Account ID, Phone Number ID, display name, phone number, message
+          templates, and access tokens issued by Meta.
+        </p>
+        <p>
+          <strong>Conversation data:</strong> messages sent and received
+          through your connected number, including text, media files, message
+          status (sent, delivered, read, failed), timestamps, and the phone
+          number and WhatsApp profile name of the sender or recipient.
+        </p>
+        <p>
+          <strong>Contact data:</strong> contacts, groups, tags, and custom
+          fields that you or your team add or import.
+        </p>
+        <p>
+          <strong>Payment information:</strong> plan, wallet, and transaction
+          records. Card and bank details are handled by our payment
+          processors; we do not store full card numbers.
+        </p>
+        <p>
+          <strong>Usage and technical data:</strong> IP address, browser and
+          device type, pages visited, activity logs, and error logs.
+        </p>
+        <p>
+          <strong>Cookies:</strong> we use cookies for sign-in sessions,
+          security (CSRF protection), and preferences. See our{" "}
+          <a href="/cookie-policy">Cookie Policy</a>.
+        </p>
+      </PolicySection>
 
-                <div className="space-y-4 text-[var(--ink-700)]">
-                  <p className="leading-relaxed">
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.intro"
-                    )}
-                  </p>
+      <PolicySection title="4. How We Use Information">
+        <ul className="list-disc pl-6 space-y-2">
+          <li>To provide, operate, and maintain the {PRODUCT} service.</li>
+          <li>
+            To send and receive WhatsApp messages on your behalf through the
+            WhatsApp Business Platform (Cloud API).
+          </li>
+          <li>
+            To show conversations in your shared inbox, run campaigns,
+            automations, chatbots, and reports that you configure.
+          </li>
+          <li>To manage accounts, plans, billing, and support requests.</li>
+          <li>
+            To secure the service, prevent abuse and fraud, and comply with
+            legal obligations and Meta platform policies.
+          </li>
+          <li>
+            To send service notices such as verification emails, security
+            alerts, and important product updates.
+          </li>
+        </ul>
+        <p>We do not sell personal information.</p>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    <strong className="text-[var(--ink)]">
-                      {t(
-                        "privacy_policy.sections.informationWeCollect.paragraphs.personalIdentifiers.label"
-                      )}
-                    </strong>{" "}
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.personalIdentifiers.text"
-                    )}
-                  </p>
+      <PolicySection title="5. Meta and WhatsApp">
+        <p>
+          {PRODUCT} uses the WhatsApp Business Platform provided by Meta
+          Platforms, Inc. and its affiliates. When you connect a number
+          (including through Meta&apos;s Embedded Signup or Facebook Login for
+          Business), Meta shares with us the business and account information
+          needed to operate your WhatsApp channel, and Meta sends us webhook
+          events for incoming messages and message status.
+        </p>
+        <p>
+          We use data received from Meta only to provide the {PRODUCT} service
+          to you. We do not use it for advertising and we do not sell it. Meta
+          processes WhatsApp data under its own terms and privacy policy.{" "}
+          {PRODUCT} is an independent service and is not owned by or endorsed
+          by Meta or WhatsApp.
+        </p>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    <strong className="text-[var(--ink)]">
-                      {t(
-                        "privacy_policy.sections.informationWeCollect.paragraphs.paymentInformation.label"
-                      )}
-                    </strong>{" "}
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.paymentInformation.text"
-                    )}
-                  </p>
+      <PolicySection title="6. Who We Share Information With">
+        <ul className="list-disc pl-6 space-y-2">
+          <li>
+            <strong>Meta / WhatsApp</strong> to deliver messages and manage
+            your WhatsApp Business Account.
+          </li>
+          <li>
+            <strong>Payment processors</strong> (such as Razorpay, Stripe,
+            PayPal, Paystack, or Mercado Pago, depending on the gateway
+            enabled) to process payments.
+          </li>
+          <li>
+            <strong>Infrastructure and service providers</strong> such as
+            hosting, storage, email delivery, and network security providers,
+            who process data only on our instructions.
+          </li>
+          <li>
+            <strong>AI providers</strong>, only if you enable AI assistant or
+            chatbot features, in which case the relevant message content is
+            sent to the provider you configure.
+          </li>
+          <li>
+            <strong>Authorities</strong> when required by law, or to protect
+            our rights, users, or the public.
+          </li>
+          <li>
+            <strong>Business transferees</strong> in the event of a merger,
+            acquisition, or sale of assets, subject to this policy.
+          </li>
+        </ul>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    <strong className="text-[var(--ink)]">
-                      {t(
-                        "privacy_policy.sections.informationWeCollect.paragraphs.orderHistory.label"
-                      )}
-                    </strong>{" "}
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.orderHistory.text"
-                    )}
-                  </p>
+      <PolicySection title="7. Data Retention">
+        <p>
+          We keep account and conversation data for as long as your account is
+          active. When you close your account or request deletion, we delete or
+          anonymise your data as described on our{" "}
+          <a href="/data-deletion">Data Deletion</a> page, except where we must
+          keep certain records (for example billing and tax records) to meet
+          legal obligations or resolve disputes.
+        </p>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    <strong className="text-[var(--ink)]">
-                      {t(
-                        "privacy_policy.sections.informationWeCollect.paragraphs.communication.label"
-                      )}
-                    </strong>{" "}
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.communication.text"
-                    )}
-                  </p>
+      <PolicySection title="8. Security">
+        <p>
+          We use measures such as encrypted connections (HTTPS), hashed
+          passwords, role-based access control, webhook signature
+          verification, and access logging. No system is completely secure, so
+          we cannot guarantee absolute security. Please keep your credentials
+          confidential and tell us promptly if you suspect unauthorised access.
+        </p>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.autoIntro"
-                    )}
-                  </p>
+      <PolicySection title="9. International Transfers">
+        <p>
+          Your information may be processed in countries other than your own,
+          including where our service providers and Meta operate. Where
+          required, we use appropriate safeguards for such transfers.
+        </p>
+      </PolicySection>
 
-                  <p className="leading-relaxed">
-                    <strong className="text-[var(--ink)]">
-                      {t(
-                        "privacy_policy.sections.informationWeCollect.paragraphs.technicalData.label"
-                      )}
-                    </strong>{" "}
-                    {t(
-                      "privacy_policy.sections.informationWeCollect.paragraphs.technicalData.text"
-                    )}
-                  </p>
-                </div>
-              </div>
+      <PolicySection title="10. Your Rights">
+        <p>
+          Depending on where you live, you may have the right to access,
+          correct, export, or delete your personal information, to object to or
+          restrict certain processing, and to withdraw consent. To exercise
+          these rights, email {EMAIL}. To request deletion, follow the steps on
+          our <a href="/data-deletion">Data Deletion</a> page. We may need to
+          verify your identity before acting on a request.
+        </p>
+      </PolicySection>
 
-              {/* 2. How We Use Your Information */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.howWeUseInfo.title")}
-                </h2>
+      <PolicySection title="11. Messaging Consent">
+        <p>
+          Businesses using {PRODUCT} are responsible for obtaining valid
+          opt-in consent from their contacts before sending WhatsApp messages,
+          and for honouring opt-out requests, as required by WhatsApp&apos;s
+          policies and applicable law.
+        </p>
+      </PolicySection>
 
-                <ul className="space-y-2 text-[var(--ink-700)]">
-                  {(
-                    t("privacy_policy.sections.howWeUseInfo.list", {
-                      returnObjects: true,
-                    }) as string[]
-                  ).map((item, index) => (
-                    <li key={index} className="leading-relaxed">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+      <PolicySection title="12. Children">
+        <p>
+          {PRODUCT} is intended for businesses and is not directed to anyone
+          under 18. We do not knowingly collect personal information from
+          children. If you believe a child has provided us information, contact
+          us and we will delete it.
+        </p>
+      </PolicySection>
 
-              {/* 3. Sharing Information */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.sharingInfo.title")}
-                </h2>
+      <PolicySection title="13. Changes to This Policy">
+        <p>
+          We may update this policy from time to time. The &quot;last
+          updated&quot; date is shown at the top of this page (November 4,
+          2026). Material changes will be notified through the service or by
+          email.
+        </p>
+      </PolicySection>
 
-                <p className="text-[var(--ink-700)] leading-relaxed mb-4">
-                  {t("privacy_policy.sections.sharingInfo.intro")}
-                </p>
-
-                <ul className="space-y-2 text-[var(--ink-700)]">
-                  {(
-                    t("privacy_policy.sections.sharingInfo.list", {
-                      returnObjects: true,
-                    }) as Array<{ label: string; text: string }>
-                  ).map((item, index) => (
-                    <li key={index} className="leading-relaxed">
-                      <strong className="text-[var(--ink)]">{item.label}</strong>{" "}
-                      {item.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* 4. Cookies */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.cookies.title")}
-                </h2>
-
-                <p className="text-[var(--ink-700)] leading-relaxed">
-                  {t("privacy_policy.sections.cookies.text")}
-                </p>
-              </div>
-
-              {/* 5. Data Retention */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.dataRetention.title")}
-                </h2>
-
-                <p className="text-[var(--ink-700)] leading-relaxed">
-                  {t("privacy_policy.sections.dataRetention.text")}
-                </p>
-              </div>
-
-              {/* 6. Your Rights */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.yourRights.title")}
-                </h2>
-
-                <p className="text-[var(--ink-700)] leading-relaxed mb-4">
-                  {t("privacy_policy.sections.yourRights.intro")}
-                </p>
-
-                <ul className="space-y-2 text-[var(--ink-700)]">
-                  {(
-                    t("privacy_policy.sections.yourRights.list", {
-                      returnObjects: true,
-                    }) as string[]
-                  ).map((item, index) => (
-                    <li key={index} className="leading-relaxed">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="leading-relaxed text-[var(--ink-700)] mt-4">
-                  {t("privacy_policy.sections.yourRights.contact")}
-                </p>
-              </div>
-
-              {/* 7. Data Security */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.dataSecurity.title")}
-                </h2>
-
-                <p className="text-[var(--ink-700)] leading-relaxed">
-                  {t("privacy_policy.sections.dataSecurity.text")}
-                </p>
-              </div>
-
-              {/* 8. Changes to Policy */}
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-[var(--ink)]">
-                  {t("privacy_policy.sections.changes.title")}
-                </h2>
-
-                <p className="text-[var(--ink-700)] leading-relaxed">
-                  {t("privacy_policy.sections.changes.text")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      <PolicySection title="14. Contact Us">
+        <p>
+          {COMPANY}
+          <br />
+          Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+          <br />
+          Website: <a href={SITE}>{SITE}</a>
+        </p>
+      </PolicySection>
+    </PolicyLayout>
   );
 };

@@ -86,6 +86,7 @@ import DemoPage from "./pages/DemoPage";
 import MinimalLoader from "./components/MinimalLoader";
 import { TermsPage } from "./pages/TermsPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
+import { DataDeletionPage } from "./pages/DataDeletionPage";
 import VerifyEmail from "./pages/verify-email";
 import AboutUs from "./pages/AboutUs";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -615,6 +616,13 @@ function Router() {
           <>
             <Header />
             <TermsPage />
+            <Footer />
+          </>
+        </Route>
+        <Route path="/data-deletion">
+          <>
+            <Header />
+            <DataDeletionPage />
             <Footer />
           </>
         </Route>
