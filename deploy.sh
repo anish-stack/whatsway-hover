@@ -1,9 +1,19 @@
 #!/bin/bash
 set -e
 
+# ── HoverChat — by Hover Business Services ──────────────────────
+# Connect. Automate. Grow.
+APP_NAME="${APP_NAME:-hoverchat}"
+APP_DOMAIN="${APP_DOMAIN:-hoverchat.hovermessage.com}"
+APP_URL="https://${APP_DOMAIN}"
+LEGACY_APP_NAME="whatsway"
+
 echo "╔════════════════════════════════════════════════════════════╗"
-echo "║     🚀 WhatsWay Production Deployment                      ║"
+echo "║     🚀 HoverChat Production Deployment                     ║"
+echo "║     By Hover Business Services                             ║"
+echo "║     Connect. Automate. Grow.                               ║"
 echo "╚════════════════════════════════════════════════════════════╝"
+echo "🌐 Domain: ${APP_URL}"
 echo ""
 
 TOTAL_RAM=$(free -m | awk '/^Mem:/{print $2}')
@@ -74,8 +84,15 @@ echo "   ✅ Database schema synced"
 
 echo ""
 echo "🚀 Restarting application with PM2..."
-if pm2 describe whatsway > /dev/null 2>&1; then
-    pm2 restart whatsway
+# Old install used the pm2 name "whatsway" (same port). Remove it so the
+# renamed process does not clash on PORT.
+if [ "$APP_NAME" != "$LEGACY_APP_NAME" ] && pm2 describe "$LEGACY_APP_NAME" > /dev/null 2>&1; then
+    pm2 delete "$LEGACY_APP_NAME"
+    echo "   ♻️  Removed legacy PM2 process '$LEGACY_APP_NAME'"
+fi
+
+if pm2 describe "$APP_NAME" > /dev/null 2>&1; then
+    pm2 restart "$APP_NAME" --update-env
     echo "   ✅ PM2 process restarted"
 else
     pm2 start ecosystem.config.cjs
@@ -102,12 +119,12 @@ fi
 # Confirm pm2 actually restarted (process online + uptime recent).
 sleep 5
 PM2_JSON=$(pm2 jlist 2>/dev/null || echo "[]")
-PM2_STATUS=$(echo "$PM2_JSON" | node -e "
+PM2_STATUS=$(echo "$PM2_JSON" | APP_NAME="$APP_NAME" node -e "
   let raw = ''; process.stdin.on('data', c => raw += c);
   process.stdin.on('end', () => {
     try {
       const list = JSON.parse(raw);
-      const proc = list.find(p => p.name === 'whatsway');
+      const proc = list.find(p => p.name === process.env.APP_NAME);
       if (!proc) { console.log('missing'); return; }
       const status = proc.pm2_env && proc.pm2_env.status;
       const uptime = proc.pm2_env && proc.pm2_env.pm_uptime
@@ -119,7 +136,7 @@ PM2_STATUS=$(echo "$PM2_JSON" | node -e "
 
 case "$PM2_STATUS" in
     missing)
-        echo "   ❌ pm2 has no 'whatsway' process. Restart did not take effect."
+        echo "   ❌ pm2 has no '$APP_NAME' process. Restart did not take effect."
         exit 1
         ;;
     parse_error|node_error|"")
@@ -129,13 +146,13 @@ case "$PM2_STATUS" in
         PROC_STATUS=$(echo "$PM2_STATUS" | sed -n 's/.*"status":"\([^"]*\)".*/\1/p')
         UPTIME_MS=$(echo "$PM2_STATUS" | sed -n 's/.*"uptime_ms":\(-\?[0-9]*\).*/\1/p')
         if [ "$PROC_STATUS" != "online" ]; then
-            echo "   ❌ pm2 process status is '$PROC_STATUS' (expected 'online'). Check 'pm2 logs whatsway'."
+            echo "   ❌ pm2 process status is '$PROC_STATUS' (expected 'online'). Check 'pm2 logs $APP_NAME'."
             exit 1
         fi
         if [ -n "$UPTIME_MS" ] && [ "$UPTIME_MS" -gt 120000 ] 2>/dev/null; then
             echo "   ⚠️  pm2 process uptime is ${UPTIME_MS}ms — restart may not have taken effect."
         else
-            echo "   ✅ pm2 'whatsway' is online (uptime ${UPTIME_MS}ms)."
+            echo "   ✅ pm2 '$APP_NAME' is online (uptime ${UPTIME_MS}ms)."
         fi
         ;;
 esac
@@ -146,7 +163,7 @@ esac
 # rather than fail the deploy. If the response IS parseable and the version
 # differs from package.json, we hard-fail (catches stale-runtime deploys).
 if [ -n "$EXPECTED_VERSION" ]; then
-    STATUS_URL="http://127.0.0.1:${PORT:-5000}/api/app-update/status"
+    STATUS_URL="http://127.0.0.1:${PORT:-6927}/api/app-update/status"
     sleep 5
     HTTP_RESP=$(curl -fsS --max-time 5 "$STATUS_URL" 2>/dev/null || true)
     if [ -z "$HTTP_RESP" ]; then
@@ -159,21 +176,31 @@ if [ -n "$EXPECTED_VERSION" ]; then
             echo "   ✅ Status endpoint reports v${HTTP_VERSION} (matches package.json)."
         else
             echo "   ❌ STALE RUNTIME: status endpoint reports v${HTTP_VERSION}, expected v${EXPECTED_VERSION}."
-            echo "      pm2 may be serving cached code. Try: pm2 delete whatsway && pm2 start ecosystem.config.cjs"
+            echo "      pm2 may be serving cached code. Try: pm2 delete $APP_NAME && pm2 start ecosystem.config.cjs"
             exit 1
         fi
     fi
 fi
 
+# Public domain probe (warn only — DNS/nginx/SSL are outside this script)
+echo ""
+echo "🌐 Checking ${APP_URL} ..."
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$APP_URL" 2>/dev/null || echo "000")
+case "$HTTP_CODE" in
+    2*|3*) echo "   ✅ ${APP_URL} responded with HTTP ${HTTP_CODE}." ;;
+    *)     echo "   ⚠️  ${APP_URL} returned HTTP ${HTTP_CODE}. Check DNS, nginx and SSL for ${APP_DOMAIN}." ;;
+esac
+
 echo ""
 echo "╔════════════════════════════════════════════════════════════╗"
-echo "║     ✅ Deployment completed successfully!                   ║"
+echo "║     ✅ HoverChat deployed successfully!                     ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 echo ""
 echo "Useful commands:"
-echo "  pm2 logs whatsway    — View application logs"
-echo "  pm2 status           — Check process status"
-echo "  pm2 restart whatsway — Restart application"
+echo "  pm2 logs $APP_NAME    — View application logs"
+echo "  pm2 status            — Check process status"
+echo "  pm2 restart $APP_NAME — Restart application"
+echo "  Live: ${APP_URL}"
 echo ""
 
 exit 0

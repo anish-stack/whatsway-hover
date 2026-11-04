@@ -3,14 +3,14 @@ const instances = parseInt(process.env.INSTANCES || "1", 10);
 module.exports = {
   apps: [
     {
-      name: "whatsway",
+      name: "hoverchat",
       script: "./dist/index.js",
       instances: instances,
       exec_mode: instances > 1 ? "cluster" : "fork",
       instance_var: "NODE_APP_INSTANCE",
       env: {
         NODE_ENV: "production",
-        PORT: 5000,
+        PORT: 6927,
       },
       max_memory_restart: "1500M",
       restart_delay: 1000,

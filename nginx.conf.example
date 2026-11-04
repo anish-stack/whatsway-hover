@@ -4,12 +4,12 @@
 #
 # INSTRUCTIONS
 # ------------
-# 1. Copy this file to /etc/nginx/sites-available/whatsway
+# 1. Copy this file to /etc/nginx/sites-available/hoverchat
 # 2. Update the variables marked with <CHANGE ME>:
 #      - server_name    → your actual domain(s)
 #      - root           → absolute path to your dist/public folder
 #      - ssl_certificate / ssl_certificate_key → your TLS cert paths
-# 3. Enable: ln -s /etc/nginx/sites-available/whatsway /etc/nginx/sites-enabled/
+# 3. Enable: ln -s /etc/nginx/sites-available/hoverchat /etc/nginx/sites-enabled/
 # 4. Test:   nginx -t
 # 5. Reload: systemctl reload nginx
 #
@@ -26,7 +26,7 @@
 # =============================================================
 
 upstream whatsway_node {
-    server 127.0.0.1:5000;
+    server 127.0.0.1:6927;
     keepalive 64;
 }
 
@@ -34,7 +34,7 @@ upstream whatsway_node {
 server {
     listen 80;
     listen [::]:80;
-    server_name <CHANGE ME: your-domain.com www.your-domain.com>;
+    server_name hoverchat.hovermessage.com;
 
     return 301 https://$host$request_uri;
 }
@@ -42,11 +42,11 @@ server {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name <CHANGE ME: your-domain.com www.your-domain.com>;
+    server_name hoverchat.hovermessage.com;
 
     # --- TLS ---
-    ssl_certificate     <CHANGE ME: /etc/letsencrypt/live/your-domain.com/fullchain.pem>;
-    ssl_certificate_key <CHANGE ME: /etc/letsencrypt/live/your-domain.com/privkey.pem>;
+    ssl_certificate     /etc/letsencrypt/live/hoverchat.hovermessage.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hoverchat.hovermessage.com/privkey.pem;
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
     ssl_session_cache   shared:SSL:10m;
@@ -54,11 +54,11 @@ server {
 
     # --- Static files served DIRECTLY by nginx (bypasses Node.js) ---
     # Adjust this path to wherever dist/public lives on your server.
-    root <CHANGE ME: /var/www/whatsway/dist/public>;
+    root /var/www/hoverchat/dist/public;
 
     # Uploads served from the uploads directory
     location /uploads/ {
-        alias <CHANGE ME: /var/www/whatsway/uploads/>;
+        alias /var/www/hoverchat/uploads/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         try_files $uri =404;
@@ -66,7 +66,7 @@ server {
 
     # Widget files
     location /widget/ {
-        alias <CHANGE ME: /var/www/whatsway/public/>;
+        alias /var/www/hoverchat/public/;
         add_header Access-Control-Allow-Origin *;
         add_header Access-Control-Allow-Methods "GET, OPTIONS";
         add_header Access-Control-Allow-Headers "Content-Type";

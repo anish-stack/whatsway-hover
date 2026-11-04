@@ -668,10 +668,10 @@ app.use((req, res, next) => {
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
+  // Other ports are firewalled. Default to 6927 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
+  const port = parseInt(process.env.PORT || "6927", 10);
 
 
   const listenOptions: any = {
@@ -822,14 +822,14 @@ app.use((req, res, next) => {
 
       await MessageQueueService.startProcessing();
 
-console.log("✅ Message queue processor started");
+      console.log("✅ Message queue processor started");
 
-startScheduledCampaignCron();
+      startScheduledCampaignCron();
 
-console.log("✅ Scheduled campaign cron started");
+      console.log("✅ Scheduled campaign cron started");
 
-const messageStatusUpdater = new MessageStatusUpdater();
-messageStatusUpdater.startCronJob(60);
+      const messageStatusUpdater = new MessageStatusUpdater();
+      messageStatusUpdater.startCronJob(60);
 
       const { channelHealthMonitor } = await import(
         "./cron/channel-health-monitor"
