@@ -124,8 +124,8 @@ server {
         error_page 502 503 504 = @api_unavailable;
     }
 
-    # --- Webhooks — forwarded to Node.js (higher body limit) ---
-    location /webhooks/ {
+    # --- Webhooks (/webhook/* Meta, /webhooks/* payments) — forwarded to Node.js ---
+    location ~ ^/webhooks?/ {
         proxy_pass         http://whatsway_node;
         proxy_http_version 1.1;
         proxy_set_header   Host              $host;

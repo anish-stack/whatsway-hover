@@ -1341,6 +1341,30 @@ export function ChannelSettings() {
                     <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-green-500 transition-colors mt-1" />
                   </div>
                 </button>
+
+                {/* Manual Option (Phone Number ID + permanent token) */}
+                <button
+                  onClick={() => {
+                    setShowConnectionDialog(false);
+                    setConnectionFlow("choose");
+                    setEditingChannel(null);
+                    setShowChannelDialog(true);
+                  }}
+                  className="w-full text-left p-4 border-2 border-dashed border-border rounded-lg hover:border-gray-400 hover:bg-muted/50 transition-all group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-muted rounded-lg">
+                      <Smartphone className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground mb-1">Enter Details Manually</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Add a channel using Phone Number ID, WABA ID and a permanent System User access token (e.g. Meta test number).
+                      </p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-muted-foreground mt-1" />
+                  </div>
+                </button>
               </div>
             </>
           )}
