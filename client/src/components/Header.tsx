@@ -230,7 +230,7 @@ const Header = () => {
                 <img
                   src={brandSettings?.logo}
                   alt={t("Landing.header.logoAlt")}
-                  className="h-10 object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="h-24 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
                 <div className="bg-gradient-to-br from-[var(--brand)] to-[var(--brand-700)] text-white rounded-xl p-2.5 shadow-lg shadow-[0_14px_30px_-16px_rgba(8,169,87,0.7)] transition-transform duration-300 group-hover:scale-105">
