@@ -30,13 +30,29 @@ upstream whatsway_node {
     keepalive 64;
 }
 
-# Redirect HTTP → HTTPS
+# Redirect HTTP → HTTPS (non-www). www is also redirected to non-www.
 server {
     listen 80;
     listen [::]:80;
-    server_name hoverchat.hovermessage.com;
+    server_name hoverchat.hovermessage.com www.hoverchat.hovermessage.com;
 
-    return 301 https://$host$request_uri;
+    return 301 https://hoverchat.hovermessage.com$request_uri;
+}
+
+# Redirect https://www.hoverchat.hovermessage.com → https://hoverchat.hovermessage.com
+# NOTE: SSL cert must cover the www name too:
+#   certbot --nginx -d hoverchat.hovermessage.com -d www.hoverchat.hovermessage.com
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.hoverchat.hovermessage.com;
+
+    ssl_certificate     /etc/letsencrypt/live/hoverchat.hovermessage.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hoverchat.hovermessage.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    return 301 https://hoverchat.hovermessage.com$request_uri;
 }
 
 server {
