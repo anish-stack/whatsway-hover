@@ -673,6 +673,23 @@ export const refundTransaction = async (req: Request, res: Response) => {
       });
     }
 
+    // Reseller sales: reverse margin via the reseller ledger and adjust the
+    // subscription period instead of the generic cancel below.
+    if ((transaction.metadata as any)?.source === "reseller") {
+      const { resellerSales } = await import("@shared/schema");
+      const { applyRefund } = await import("../services/reseller/sales.service");
+      const [sale] = await db.select().from(resellerSales).where(eq(resellerSales.transactionId, transaction.id));
+      if (sale) {
+        const actor = (req as any).session?.user;
+        await applyRefund(sale.id, Number(transaction.amount), `admin-txn:${transaction.id}`, actor ? { id: actor.id, role: actor.role, ip: req.ip } : null);
+        if (refundReason) {
+          await db.update(transactions).set({ metadata: { ...(transaction.metadata as any), refundReason }, updatedAt: new Date() }).where(eq(transactions.id, id));
+        }
+        const [updated] = await db.select().from(transactions).where(eq(transactions.id, id));
+        return res.status(200).json({ success: true, message: "Transaction refunded successfully", data: updated });
+      }
+    }
+
     const updatedTransaction = await db
       .update(transactions)
       .set({

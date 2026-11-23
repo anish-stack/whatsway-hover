@@ -1,6 +1,8 @@
 export const MESSAGING_TIER_LIMITS: Record<string, number> = {
+  TIER_50: 50,
   TIER_250: 250,
   TIER_1K: 1000,
+  TIER_2K: 2000,
   TIER_10K: 10000,
   TIER_100K: 100000,
   UNLIMITED: Infinity,

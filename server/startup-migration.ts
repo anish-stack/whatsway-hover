@@ -540,6 +540,336 @@ const steps: MigrationStep[] = [
   },
 
   // ────────────────────────────────────────────────────
+  // v3.9 — Meta usage tracking, rate card, account health.
+  // HoverChat only TRACKS and ESTIMATES Meta charges; no wallet.
+  // ────────────────────────────────────────────────────
+  {
+    description: "Create table meta_rate_cards (if not exists)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS meta_rate_cards (
+        id                     VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        country_code           VARCHAR(8)  NOT NULL,
+        country_name           TEXT,
+        category               VARCHAR(40) NOT NULL,
+        rate                   NUMERIC(12,6) NOT NULL,
+        currency               VARCHAR(8)  NOT NULL DEFAULT 'INR',
+        free_monthly_allowance INTEGER,
+        volume_tiers           JSONB,
+        effective_from         TIMESTAMPTZ NOT NULL,
+        effective_to           TIMESTAMPTZ,
+        is_active              BOOLEAN NOT NULL DEFAULT true,
+        pricing_source         TEXT,
+        pricing_version        VARCHAR(64),
+        notes                  TEXT,
+        created_by             VARCHAR,
+        created_at             TIMESTAMPTZ DEFAULT NOW(),
+        updated_at             TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS meta_rate_cards_lookup_idx
+        ON meta_rate_cards (country_code, category, effective_from);
+    `,
+  },
+  {
+    // Seeded ONLY when the table is empty so admin edits are never overwritten.
+    // Initial reference values — validate against Meta's official INR rate card.
+    description: "Seed initial India Meta rate card (only if table empty)",
+    sql: `
+      INSERT INTO meta_rate_cards
+        (country_code, country_name, category, rate, currency, free_monthly_allowance,
+         effective_from, effective_to, is_active, pricing_source, pricing_version, notes)
+      SELECT * FROM (VALUES
+        ('IN', 'India', 'marketing',      0.8631::numeric, 'INR', NULL::int, '2026-01-01T00:00:00Z'::timestamptz, NULL::timestamptz, true,
+          'Meta WhatsApp rate card (INR) — initial reference', 'meta-2026-01-IN', 'Validate against Meta official rate card before relying on it.'),
+        ('IN', 'India', 'utility',        0.115::numeric,  'INR', NULL::int, '2026-01-01T00:00:00Z'::timestamptz, NULL::timestamptz, true,
+          'Meta WhatsApp rate card (INR) — initial reference', 'meta-2026-01-IN', 'Volume tiers apply at business-portfolio level; configure tiers if eligible.'),
+        ('IN', 'India', 'authentication', 0.115::numeric,  'INR', NULL::int, '2026-01-01T00:00:00Z'::timestamptz, NULL::timestamptz, true,
+          'Meta WhatsApp rate card (INR) — initial reference', 'meta-2026-01-IN', 'Volume tiers apply at business-portfolio level; configure tiers if eligible.'),
+        ('IN', 'India', 'service',        0::numeric,      'INR', NULL::int, '2025-07-01T00:00:00Z'::timestamptz, '2026-10-01T00:00:00Z'::timestamptz, true,
+          'Meta per-message pricing — service replies free in CSW', 'meta-2025-07-IN', 'Free inside the customer service window.'),
+        ('IN', 'India', 'service',        0.115::numeric,  'INR', 1000,      '2026-10-01T00:00:00Z'::timestamptz, NULL::timestamptz, true,
+          'Reported Oct-2026 India change — VERIFY on Meta rate card', 'meta-2026-10-IN', 'Applied only when Meta marks a service message billable. Free allowance is per phone number per month.')
+      ) AS seed
+      WHERE NOT EXISTS (SELECT 1 FROM meta_rate_cards);
+    `,
+    logRowCount: true,
+  },
+  {
+    description: "Create table whatsapp_message_usage (if not exists)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS whatsapp_message_usage (
+        id                  VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        customer_id         VARCHAR NOT NULL,
+        channel_id          VARCHAR,
+        waba_id             VARCHAR(64),
+        phone_number_id     VARCHAR(64),
+        message_id          VARCHAR(191) NOT NULL,
+        recipient_country   VARCHAR(8),
+        recipient_dial_code VARCHAR(8),
+        category            VARCHAR(40) NOT NULL DEFAULT 'service',
+        pricing_type        VARCHAR(40),
+        pricing_model       VARCHAR(16),
+        billable            BOOLEAN NOT NULL DEFAULT false,
+        status              VARCHAR(16) NOT NULL,
+        sent_at             TIMESTAMPTZ,
+        delivered_at        TIMESTAMPTZ,
+        read_at             TIMESTAMPTZ,
+        failed_at           TIMESTAMPTZ,
+        error_code          VARCHAR(32),
+        campaign_id         VARCHAR,
+        template_id         VARCHAR,
+        template_name       TEXT,
+        rate_card_id        VARCHAR,
+        applied_rate        NUMERIC(12,6),
+        estimated_cost      NUMERIC(14,6) NOT NULL DEFAULT 0,
+        currency            VARCHAR(8),
+        pricing_version     VARCHAR(64),
+        created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at          TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS wa_usage_message_id_uq ON whatsapp_message_usage (message_id);
+      CREATE INDEX IF NOT EXISTS wa_usage_customer_created_idx ON whatsapp_message_usage (customer_id, created_at);
+      CREATE INDEX IF NOT EXISTS wa_usage_customer_delivered_idx ON whatsapp_message_usage (customer_id, delivered_at);
+      CREATE INDEX IF NOT EXISTS wa_usage_waba_idx ON whatsapp_message_usage (waba_id);
+      CREATE INDEX IF NOT EXISTS wa_usage_phone_idx ON whatsapp_message_usage (phone_number_id);
+      CREATE INDEX IF NOT EXISTS wa_usage_delivered_idx ON whatsapp_message_usage (delivered_at);
+      CREATE INDEX IF NOT EXISTS wa_usage_category_idx ON whatsapp_message_usage (category);
+      CREATE INDEX IF NOT EXISTS wa_usage_campaign_idx ON whatsapp_message_usage (campaign_id);
+      CREATE INDEX IF NOT EXISTS wa_usage_created_idx ON whatsapp_message_usage (created_at);
+    `,
+  },
+  {
+    description: "Create table whatsapp_account_health (if not exists)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS whatsapp_account_health (
+        id                           VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        channel_id                   VARCHAR NOT NULL,
+        customer_id                  VARCHAR,
+        waba_id                      VARCHAR(64),
+        phone_number_id              VARCHAR(64),
+        business_id                  VARCHAR(64),
+        business_name                TEXT,
+        business_verification_status VARCHAR(40),
+        waba_name                    TEXT,
+        waba_review_status           VARCHAR(40),
+        waba_can_send                VARCHAR(16),
+        account_mode                 VARCHAR(20),
+        phone_number                 TEXT,
+        verified_name                TEXT,
+        name_status                  VARCHAR(40),
+        quality_rating               VARCHAR(16),
+        messaging_limit              VARCHAR(40),
+        phone_status                 VARCHAR(40),
+        code_verification_status     VARCHAR(40),
+        phone_can_send               VARCHAR(16),
+        messaging_availability       VARCHAR(16),
+        billing_status               VARCHAR(20),
+        template_counts              JSONB DEFAULT '{}'::jsonb,
+        issues                       JSONB DEFAULT '[]'::jsonb,
+        calling_issues               JSONB DEFAULT '[]'::jsonb,
+        overall_status               VARCHAR(20) NOT NULL DEFAULT 'unknown',
+        raw                          JSONB,
+        last_error                   TEXT,
+        checked_at                   TIMESTAMPTZ,
+        created_at                   TIMESTAMPTZ DEFAULT NOW(),
+        updated_at                   TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS wa_health_channel_uq ON whatsapp_account_health (channel_id);
+      CREATE INDEX IF NOT EXISTS wa_health_customer_idx ON whatsapp_account_health (customer_id);
+      CREATE INDEX IF NOT EXISTS wa_health_overall_idx ON whatsapp_account_health (overall_status);
+    `,
+  },
+
+  // ────────────────────────────────────────────────────
+  // v3.10 — Reseller distribution (profiles, pricing, customers,
+  // sales, immutable ledger, audit, one-time account tokens).
+  // ────────────────────────────────────────────────────
+  {
+    description: "Create reseller tables (if not exist)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS reseller_profiles (
+        id                    VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id               VARCHAR NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+        reseller_code         VARCHAR(16) NOT NULL,
+        business_name         TEXT NOT NULL,
+        contact_person        TEXT NOT NULL,
+        email                 TEXT NOT NULL,
+        mobile                VARCHAR(20) NOT NULL,
+        company_name          TEXT,
+        address               TEXT,
+        status                VARCHAR(24) NOT NULL DEFAULT 'pending_activation',
+        max_customers         INTEGER NOT NULL DEFAULT 0,
+        default_pricing_model VARCHAR(24) NOT NULL DEFAULT 'wholesale',
+        activation_policy     VARCHAR(16) NOT NULL DEFAULT 'on_payment',
+        refund_policy         VARCHAR(16) NOT NULL DEFAULT 'proportional',
+        payout_hold_days      INTEGER NOT NULL DEFAULT 7,
+        permissions           JSONB NOT NULL DEFAULT '{}'::jsonb,
+        valid_until           TIMESTAMPTZ,
+        notes                 TEXT,
+        suspended_reason      TEXT,
+        created_by            VARCHAR,
+        archived_at           TIMESTAMPTZ,
+        created_at            TIMESTAMPTZ DEFAULT NOW(),
+        updated_at            TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_profiles_user_uq ON reseller_profiles (user_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_profiles_code_uq ON reseller_profiles (reseller_code);
+      CREATE INDEX IF NOT EXISTS reseller_profiles_status_idx ON reseller_profiles (status);
+
+      CREATE TABLE IF NOT EXISTS reseller_plan_pricing (
+        id                     VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        reseller_id            VARCHAR NOT NULL REFERENCES reseller_profiles(id) ON DELETE CASCADE,
+        plan_id                VARCHAR NOT NULL REFERENCES plans(id) ON DELETE RESTRICT,
+        billing_cycle          VARCHAR(10) NOT NULL,
+        customer_user_id       VARCHAR REFERENCES users(id) ON DELETE CASCADE,
+        pricing_model          VARCHAR(24) NOT NULL,
+        wholesale_price        NUMERIC(12,2),
+        commission_percent     NUMERIC(6,3),
+        fixed_commission       NUMERIC(12,2),
+        suggested_retail_price NUMERIC(12,2) NOT NULL,
+        min_selling_price      NUMERIC(12,2) NOT NULL,
+        max_selling_price      NUMERIC(12,2),
+        currency               VARCHAR(8) NOT NULL DEFAULT 'INR',
+        is_active              BOOLEAN NOT NULL DEFAULT true,
+        version                INTEGER NOT NULL DEFAULT 1,
+        updated_by             VARCHAR,
+        created_at             TIMESTAMPTZ DEFAULT NOW(),
+        updated_at             TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS reseller_pricing_reseller_idx ON reseller_plan_pricing (reseller_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_pricing_active_uq
+        ON reseller_plan_pricing (reseller_id, plan_id, billing_cycle, COALESCE(customer_user_id, ''))
+        WHERE is_active;
+
+      CREATE TABLE IF NOT EXISTS reseller_customers (
+        id                   VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        reseller_id          VARCHAR NOT NULL REFERENCES reseller_profiles(id) ON DELETE RESTRICT,
+        customer_user_id     VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        business_name        TEXT,
+        mobile               VARCHAR(20),
+        source               VARCHAR(24) NOT NULL DEFAULT 'reseller_created',
+        previous_reseller_id VARCHAR,
+        attributed_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        created_at           TIMESTAMPTZ DEFAULT NOW(),
+        updated_at           TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_customers_customer_uq ON reseller_customers (customer_user_id);
+      CREATE INDEX IF NOT EXISTS reseller_customers_reseller_idx ON reseller_customers (reseller_id);
+
+      CREATE TABLE IF NOT EXISTS reseller_sales (
+        id                       VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        reseller_id              VARCHAR NOT NULL REFERENCES reseller_profiles(id) ON DELETE RESTRICT,
+        customer_user_id         VARCHAR NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+        sale_type                VARCHAR(10) NOT NULL,
+        plan_id                  VARCHAR NOT NULL REFERENCES plans(id) ON DELETE RESTRICT,
+        plan_name                TEXT NOT NULL,
+        billing_cycle            VARCHAR(10) NOT NULL,
+        cycles                   INTEGER NOT NULL DEFAULT 1,
+        period_start             TIMESTAMPTZ NOT NULL,
+        period_end               TIMESTAMPTZ NOT NULL,
+        unit_selling_price       NUMERIC(12,2) NOT NULL,
+        selling_price            NUMERIC(12,2) NOT NULL,
+        wholesale_cost           NUMERIC(12,2),
+        commission_amount        NUMERIC(12,2),
+        reseller_earning         NUMERIC(12,2) NOT NULL,
+        platform_revenue         NUMERIC(12,2) NOT NULL,
+        currency                 VARCHAR(8) NOT NULL DEFAULT 'INR',
+        pricing_model            VARCHAR(24) NOT NULL,
+        pricing_row_id           VARCHAR,
+        pricing_version          INTEGER,
+        pricing_snapshot         JSONB NOT NULL,
+        payment_status           VARCHAR(24) NOT NULL DEFAULT 'pending',
+        activation_policy        VARCHAR(16) NOT NULL,
+        transaction_id           VARCHAR REFERENCES transactions(id) ON DELETE RESTRICT,
+        subscription_id          VARCHAR REFERENCES subscriptions(id) ON DELETE SET NULL,
+        pay_token_hash           VARCHAR(64),
+        razorpay_order_id        VARCHAR(64),
+        payment_reference        TEXT,
+        payment_method           VARCHAR(24),
+        paid_at                  TIMESTAMPTZ,
+        refunded_amount          NUMERIC(12,2) NOT NULL DEFAULT 0,
+        cancelled_at             TIMESTAMPTZ,
+        renewal_reminder_sent_at TIMESTAMPTZ,
+        expiry_notice_sent_at    TIMESTAMPTZ,
+        idempotency_key          VARCHAR(80),
+        notes                    TEXT,
+        created_by               VARCHAR,
+        created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at               TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS reseller_sales_reseller_created_idx ON reseller_sales (reseller_id, created_at);
+      CREATE INDEX IF NOT EXISTS reseller_sales_customer_idx ON reseller_sales (customer_user_id);
+      CREATE INDEX IF NOT EXISTS reseller_sales_status_idx ON reseller_sales (payment_status);
+      CREATE INDEX IF NOT EXISTS reseller_sales_period_end_idx ON reseller_sales (period_end);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_transaction_uq ON reseller_sales (transaction_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_order_uq ON reseller_sales (razorpay_order_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_token_uq ON reseller_sales (pay_token_hash);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_idem_uq ON reseller_sales (reseller_id, idempotency_key);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_open_uq ON reseller_sales (customer_user_id)
+        WHERE payment_status IN ('pending','pending_verification');
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_sales_period_uq ON reseller_sales (customer_user_id, period_start)
+        WHERE payment_status NOT IN ('failed','cancelled');
+
+      CREATE TABLE IF NOT EXISTS reseller_ledger_entries (
+        id           VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        reseller_id  VARCHAR NOT NULL REFERENCES reseller_profiles(id) ON DELETE RESTRICT,
+        sale_id      VARCHAR REFERENCES reseller_sales(id) ON DELETE RESTRICT,
+        entry_type   VARCHAR(16) NOT NULL,
+        amount       NUMERIC(12,2) NOT NULL,
+        currency     VARCHAR(8) NOT NULL DEFAULT 'INR',
+        reference    VARCHAR(120) NOT NULL,
+        available_at TIMESTAMPTZ NOT NULL,
+        description  TEXT,
+        created_by   VARCHAR,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS reseller_ledger_reseller_idx ON reseller_ledger_entries (reseller_id, created_at);
+      CREATE UNIQUE INDEX IF NOT EXISTS reseller_ledger_dedupe_uq ON reseller_ledger_entries (entry_type, reference);
+
+      CREATE TABLE IF NOT EXISTS reseller_audit_logs (
+        id            VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        reseller_id   VARCHAR,
+        actor_user_id VARCHAR,
+        actor_role    VARCHAR(20),
+        action        VARCHAR(64) NOT NULL,
+        entity_type   VARCHAR(32) NOT NULL,
+        entity_id     VARCHAR,
+        before        JSONB,
+        after         JSONB,
+        ip_address    VARCHAR(64),
+        created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS reseller_audit_reseller_idx ON reseller_audit_logs (reseller_id, created_at);
+
+      CREATE TABLE IF NOT EXISTS account_invitations (
+        id         VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id    VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token_hash VARCHAR(64) NOT NULL,
+        purpose    VARCHAR(24) NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        used_at    TIMESTAMPTZ,
+        created_by VARCHAR,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS account_invitations_token_uq ON account_invitations (token_hash);
+      CREATE INDEX IF NOT EXISTS account_invitations_user_idx ON account_invitations (user_id);
+    `,
+  },
+  {
+    // Ledger rows are financial records: block UPDATE/DELETE at DB level.
+    description: "Make reseller_ledger_entries append-only",
+    sql: `
+      CREATE OR REPLACE FUNCTION reseller_ledger_immutable() RETURNS trigger AS $$
+      BEGIN
+        RAISE EXCEPTION 'reseller_ledger_entries is append-only';
+      END;
+      $$ LANGUAGE plpgsql;
+      DROP TRIGGER IF EXISTS reseller_ledger_no_update ON reseller_ledger_entries;
+      CREATE TRIGGER reseller_ledger_no_update BEFORE UPDATE OR DELETE ON reseller_ledger_entries
+        FOR EACH ROW EXECUTE FUNCTION reseller_ledger_immutable();
+    `,
+  },
+
+  // ────────────────────────────────────────────────────
   // Convert every legacy `TIMESTAMP WITHOUT TIME ZONE` column in the
   // public schema to `TIMESTAMPTZ`, interpreting the existing wall-clock
   // value as UTC (the server has always run in UTC).

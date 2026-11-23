@@ -354,6 +354,29 @@ export const createUser = async (req: Request, res: Response) => {
     if (existingUserByEmail.length > 0) {
       const user = existingUserByEmail[0];
 
+      // Accounts created by invitation (resellers, reseller customers) must be
+      // activated through their one-time link — self-signup must never
+      // overwrite their username/password/role while the invite is pending.
+      if (!user.isEmailVerified) {
+        const { accountInvitations, resellerCustomers } = await import("@shared/schema");
+        const [invite] = await db
+          .select({ id: accountInvitations.id })
+          .from(accountInvitations)
+          .where(eq(accountInvitations.userId, user.id))
+          .limit(1);
+        const [mapped] = await db
+          .select({ id: resellerCustomers.id })
+          .from(resellerCustomers)
+          .where(eq(resellerCustomers.customerUserId, user.id))
+          .limit(1);
+        if (invite || mapped || user.role === "reseller") {
+          return res.status(409).json({
+            success: false,
+            message: "This email was invited to HoverChat. Use the activation link in your email (or ask for a new one).",
+          });
+        }
+      }
+
       if (!user.isEmailVerified) {
         // Email unverified → allow updating username, password, etc.
 

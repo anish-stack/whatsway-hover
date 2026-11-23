@@ -55,6 +55,8 @@ import { registerLanguageRoutes } from "./language.routes";
 import { registerClientApiRoutes } from "./client-api.routes";
 import { registerRestApiV1Routes } from "./rest-api-v1.routes";
 import { registerAppUpdateRoutes } from "./app-update.routes";
+import { registerMetaBillingRoutes } from "./meta-billing.routes";
+import { registerResellerRoutes } from "./reseller.routes";
 
 export async function registerRoutes(app: Express, existingServer?: Server): Promise<Server> {
   // Auth routes (no authentication required)
@@ -93,6 +95,8 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerClientApiRoutes(app);
   registerRestApiV1Routes(app);
   registerAppUpdateRoutes(app);
+  registerMetaBillingRoutes(app);
+  registerResellerRoutes(app);
   
   // Team management routes
   app.use("/api/team", teamRoutes);

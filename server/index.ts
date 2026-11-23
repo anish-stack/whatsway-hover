@@ -840,6 +840,9 @@ app.use((req, res, next) => {
         "./cron/payment-reconciler.cron.ts"
       );
       paymentReconciler.start();
+
+      const { startResellerRemindersCron } = await import("./cron/reseller-reminders.cron.ts");
+      startResellerRemindersCron();
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
     }

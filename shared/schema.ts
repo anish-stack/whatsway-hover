@@ -1894,3 +1894,361 @@ export const platformLanguages = pgTable("platform_languages", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
+
+// ─────────────────────────────────────────────────────────────
+// Meta WhatsApp usage, rate card and account health (v3.9)
+//
+// HoverChat never collects Meta messaging charges. These tables only
+// TRACK usage and ESTIMATE what Meta bills the customer directly.
+// Subscription billing stays in `subscriptions` / `transactions`.
+// ─────────────────────────────────────────────────────────────
+
+export const metaRateCards = pgTable(
+  "meta_rate_cards",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    countryCode: varchar("country_code", { length: 8 }).notNull(), // ISO-2, or "*" = Other
+    countryName: text("country_name"),
+    category: varchar("category", { length: 40 }).notNull(), // marketing | utility | authentication | authentication_international | service
+    rate: numeric("rate", { precision: 12, scale: 6 }).notNull(), // per delivered billable message
+    currency: varchar("currency", { length: 8 }).notNull().default("INR"),
+    freeMonthlyAllowance: integer("free_monthly_allowance"), // per business phone number (service)
+    volumeTiers: jsonb("volume_tiers").$type<{ fromVolume: number; rate: number }[]>(),
+    effectiveFrom: timestamp("effective_from", { withTimezone: true }).notNull(),
+    effectiveTo: timestamp("effective_to", { withTimezone: true }),
+    isActive: boolean("is_active").notNull().default(true),
+    pricingSource: text("pricing_source"),
+    pricingVersion: varchar("pricing_version", { length: 64 }),
+    notes: text("notes"),
+    createdBy: varchar("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    rateLookupIdx: index("meta_rate_cards_lookup_idx").on(table.countryCode, table.category, table.effectiveFrom),
+  })
+);
+
+export const whatsappMessageUsage = pgTable(
+  "whatsapp_message_usage",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    customerId: varchar("customer_id").notNull(), // channel owner (tenant)
+    channelId: varchar("channel_id"),
+    wabaId: varchar("waba_id", { length: 64 }),
+    phoneNumberId: varchar("phone_number_id", { length: 64 }),
+    messageId: varchar("message_id", { length: 191 }).notNull(), // Meta wamid
+    recipientCountry: varchar("recipient_country", { length: 8 }),
+    recipientDialCode: varchar("recipient_dial_code", { length: 8 }),
+    category: varchar("category", { length: 40 }).notNull().default("service"),
+    pricingType: varchar("pricing_type", { length: 40 }), // regular | free_customer_service | free_entry_point | unknown
+    pricingModel: varchar("pricing_model", { length: 16 }), // PMP | CBP
+    billable: boolean("billable").notNull().default(false),
+    status: varchar("status", { length: 16 }).notNull(), // sent | delivered | read | failed
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    failedAt: timestamp("failed_at", { withTimezone: true }),
+    errorCode: varchar("error_code", { length: 32 }),
+    campaignId: varchar("campaign_id"),
+    templateId: varchar("template_id"),
+    templateName: text("template_name"),
+    rateCardId: varchar("rate_card_id"),
+    appliedRate: numeric("applied_rate", { precision: 12, scale: 6 }),
+    estimatedCost: numeric("estimated_cost", { precision: 14, scale: 6 }).notNull().default("0"),
+    currency: varchar("currency", { length: 8 }),
+    pricingVersion: varchar("pricing_version", { length: 64 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    usageMessageUnique: uniqueIndex("wa_usage_message_id_uq").on(table.messageId),
+    usageCustomerCreatedIdx: index("wa_usage_customer_created_idx").on(table.customerId, table.createdAt),
+    usageCustomerDeliveredIdx: index("wa_usage_customer_delivered_idx").on(table.customerId, table.deliveredAt),
+    usageWabaIdx: index("wa_usage_waba_idx").on(table.wabaId),
+    usagePhoneIdx: index("wa_usage_phone_idx").on(table.phoneNumberId),
+    usageDeliveredIdx: index("wa_usage_delivered_idx").on(table.deliveredAt),
+    usageCategoryIdx: index("wa_usage_category_idx").on(table.category),
+    usageCampaignIdx: index("wa_usage_campaign_idx").on(table.campaignId),
+    usageCreatedIdx: index("wa_usage_created_idx").on(table.createdAt),
+  })
+);
+
+export const whatsappAccountHealth = pgTable(
+  "whatsapp_account_health",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    channelId: varchar("channel_id").notNull(),
+    customerId: varchar("customer_id"),
+    wabaId: varchar("waba_id", { length: 64 }),
+    phoneNumberId: varchar("phone_number_id", { length: 64 }),
+    businessId: varchar("business_id", { length: 64 }),
+    businessName: text("business_name"),
+    businessVerificationStatus: varchar("business_verification_status", { length: 40 }),
+    wabaName: text("waba_name"),
+    wabaReviewStatus: varchar("waba_review_status", { length: 40 }),
+    wabaCanSend: varchar("waba_can_send", { length: 16 }),
+    accountMode: varchar("account_mode", { length: 20 }),
+    phoneNumber: text("phone_number"),
+    verifiedName: text("verified_name"),
+    nameStatus: varchar("name_status", { length: 40 }),
+    qualityRating: varchar("quality_rating", { length: 16 }),
+    messagingLimit: varchar("messaging_limit", { length: 40 }),
+    phoneStatus: varchar("phone_status", { length: 40 }),
+    codeVerificationStatus: varchar("code_verification_status", { length: 40 }),
+    phoneCanSend: varchar("phone_can_send", { length: 16 }),
+    messagingAvailability: varchar("messaging_availability", { length: 16 }),
+    billingStatus: varchar("billing_status", { length: 20 }), // ok | attention | not_detected | unknown
+    templateCounts: jsonb("template_counts").$type<Record<string, number>>().default({}),
+    issues: jsonb("issues").$type<any[]>().default([]),
+    callingIssues: jsonb("calling_issues").$type<any[]>().default([]),
+    overallStatus: varchar("overall_status", { length: 20 }).notNull().default("unknown"),
+    raw: jsonb("raw"),
+    lastError: text("last_error"),
+    checkedAt: timestamp("checked_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    healthChannelUnique: uniqueIndex("wa_health_channel_uq").on(table.channelId),
+    healthCustomerIdx: index("wa_health_customer_idx").on(table.customerId),
+    healthOverallIdx: index("wa_health_overall_idx").on(table.overallStatus),
+  })
+);
+
+export type MetaRateCard = typeof metaRateCards.$inferSelect;
+export type InsertMetaRateCard = typeof metaRateCards.$inferInsert;
+export type WhatsappMessageUsage = typeof whatsappMessageUsage.$inferSelect;
+export type WhatsappAccountHealth = typeof whatsappAccountHealth.$inferSelect;
+
+// ─────────────────────────────────────────────────────────────
+// Reseller distribution (v3.10)
+//
+// Reseller = users row (role "reseller") + reseller_profiles.
+// Reseller customers are ordinary customer users (role "admin") linked
+// permanently through reseller_customers (one reseller per customer).
+// Subscriptions/payments reuse `subscriptions` + `transactions`.
+// Resellers sell HoverChat subscriptions only — never Meta charges.
+// ─────────────────────────────────────────────────────────────
+
+export const resellerProfiles = pgTable(
+  "reseller_profiles",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
+    resellerCode: varchar("reseller_code", { length: 16 }).notNull(),
+    businessName: text("business_name").notNull(),
+    contactPerson: text("contact_person").notNull(),
+    email: text("email").notNull(),
+    mobile: varchar("mobile", { length: 20 }).notNull(),
+    companyName: text("company_name"),
+    address: text("address"),
+    // pending_activation | active | inactive | suspended | archived
+    status: varchar("status", { length: 24 }).notNull().default("pending_activation"),
+    maxCustomers: integer("max_customers").notNull().default(0),
+    // default model for new plan pricing rows: wholesale | commission_percent | fixed_commission
+    defaultPricingModel: varchar("default_pricing_model", { length: 24 }).notNull().default("wholesale"),
+    // on_payment = subscription activates only after verified payment; immediate = activate on creation
+    activationPolicy: varchar("activation_policy", { length: 16 }).notNull().default("on_payment"),
+    // proportional | full | none — how margin is reversed on refunds
+    refundPolicy: varchar("refund_policy", { length: 16 }).notNull().default("proportional"),
+    payoutHoldDays: integer("payout_hold_days").notNull().default(7),
+    permissions: jsonb("permissions").$type<Record<string, boolean>>().notNull().default({}),
+    validUntil: timestamp("valid_until", { withTimezone: true }),
+    notes: text("notes"),
+    suspendedReason: text("suspended_reason"),
+    createdBy: varchar("created_by"),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => ({
+    resellerUserUq: uniqueIndex("reseller_profiles_user_uq").on(t.userId),
+    resellerCodeUq: uniqueIndex("reseller_profiles_code_uq").on(t.resellerCode),
+    resellerStatusIdx: index("reseller_profiles_status_idx").on(t.status),
+  })
+);
+
+/** Plan pricing per reseller (customerUserId set = customer-specific override). */
+export const resellerPlanPricing = pgTable(
+  "reseller_plan_pricing",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    resellerId: varchar("reseller_id").notNull().references(() => resellerProfiles.id, { onDelete: "cascade" }),
+    planId: varchar("plan_id").notNull().references(() => plans.id, { onDelete: "restrict" }),
+    billingCycle: varchar("billing_cycle", { length: 10 }).notNull(), // monthly | annual
+    customerUserId: varchar("customer_user_id").references(() => users.id, { onDelete: "cascade" }),
+    pricingModel: varchar("pricing_model", { length: 24 }).notNull(), // wholesale | commission_percent | fixed_commission
+    wholesalePrice: numeric("wholesale_price", { precision: 12, scale: 2 }),
+    commissionPercent: numeric("commission_percent", { precision: 6, scale: 3 }),
+    fixedCommission: numeric("fixed_commission", { precision: 12, scale: 2 }),
+    suggestedRetailPrice: numeric("suggested_retail_price", { precision: 12, scale: 2 }).notNull(),
+    minSellingPrice: numeric("min_selling_price", { precision: 12, scale: 2 }).notNull(),
+    maxSellingPrice: numeric("max_selling_price", { precision: 12, scale: 2 }),
+    currency: varchar("currency", { length: 8 }).notNull().default("INR"),
+    isActive: boolean("is_active").notNull().default(true),
+    version: integer("version").notNull().default(1),
+    updatedBy: varchar("updated_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => ({
+    pricingResellerIdx: index("reseller_pricing_reseller_idx").on(t.resellerId),
+    // one ACTIVE row per reseller + plan + cycle (+ customer override)
+    pricingActiveUq: uniqueIndex("reseller_pricing_active_uq")
+      .on(t.resellerId, t.planId, t.billingCycle, sql`COALESCE(${t.customerUserId}, '')`)
+      .where(sql`${t.isActive}`),
+  })
+);
+
+/** Permanent reseller ↔ customer link. One reseller per customer (unique). */
+export const resellerCustomers = pgTable(
+  "reseller_customers",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    resellerId: varchar("reseller_id").notNull().references(() => resellerProfiles.id, { onDelete: "restrict" }),
+    customerUserId: varchar("customer_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    businessName: text("business_name"),
+    mobile: varchar("mobile", { length: 20 }),
+    source: varchar("source", { length: 24 }).notNull().default("reseller_created"), // reseller_created | transfer | admin_attached
+    previousResellerId: varchar("previous_reseller_id"),
+    attributedAt: timestamp("attributed_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => ({
+    rcCustomerUq: uniqueIndex("reseller_customers_customer_uq").on(t.customerUserId),
+    rcResellerIdx: index("reseller_customers_reseller_idx").on(t.resellerId),
+  })
+);
+
+/** One row per reseller sale (new or renewal). Pricing frozen at sale time. */
+export const resellerSales = pgTable(
+  "reseller_sales",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    resellerId: varchar("reseller_id").notNull().references(() => resellerProfiles.id, { onDelete: "restrict" }),
+    customerUserId: varchar("customer_user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
+    saleType: varchar("sale_type", { length: 10 }).notNull(), // new | renewal
+    planId: varchar("plan_id").notNull().references(() => plans.id, { onDelete: "restrict" }),
+    planName: text("plan_name").notNull(),
+    billingCycle: varchar("billing_cycle", { length: 10 }).notNull(),
+    cycles: integer("cycles").notNull().default(1),
+    periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+    periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
+    unitSellingPrice: numeric("unit_selling_price", { precision: 12, scale: 2 }).notNull(),
+    sellingPrice: numeric("selling_price", { precision: 12, scale: 2 }).notNull(), // total charged
+    wholesaleCost: numeric("wholesale_cost", { precision: 12, scale: 2 }), // total, wholesale model
+    commissionAmount: numeric("commission_amount", { precision: 12, scale: 2 }), // total, commission models
+    resellerEarning: numeric("reseller_earning", { precision: 12, scale: 2 }).notNull(), // gross margin / commission
+    platformRevenue: numeric("platform_revenue", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 8 }).notNull().default("INR"),
+    pricingModel: varchar("pricing_model", { length: 24 }).notNull(),
+    pricingRowId: varchar("pricing_row_id"),
+    pricingVersion: integer("pricing_version"),
+    pricingSnapshot: jsonb("pricing_snapshot").notNull(),
+    // pending | pending_verification | paid | failed | refunded | partially_refunded | cancelled
+    paymentStatus: varchar("payment_status", { length: 24 }).notNull().default("pending"),
+    activationPolicy: varchar("activation_policy", { length: 16 }).notNull(),
+    transactionId: varchar("transaction_id").references(() => transactions.id, { onDelete: "restrict" }),
+    subscriptionId: varchar("subscription_id").references(() => subscriptions.id, { onDelete: "set null" }),
+    payTokenHash: varchar("pay_token_hash", { length: 64 }),
+    razorpayOrderId: varchar("razorpay_order_id", { length: 64 }),
+    paymentReference: text("payment_reference"),
+    paymentMethod: varchar("payment_method", { length: 24 }),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    refundedAmount: numeric("refunded_amount", { precision: 12, scale: 2 }).notNull().default("0"),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    renewalReminderSentAt: timestamp("renewal_reminder_sent_at", { withTimezone: true }),
+    expiryNoticeSentAt: timestamp("expiry_notice_sent_at", { withTimezone: true }),
+    idempotencyKey: varchar("idempotency_key", { length: 80 }),
+    notes: text("notes"),
+    createdBy: varchar("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => ({
+    salesResellerCreatedIdx: index("reseller_sales_reseller_created_idx").on(t.resellerId, t.createdAt),
+    salesCustomerIdx: index("reseller_sales_customer_idx").on(t.customerUserId),
+    salesStatusIdx: index("reseller_sales_status_idx").on(t.paymentStatus),
+    salesPeriodEndIdx: index("reseller_sales_period_end_idx").on(t.periodEnd),
+    salesTxnUq: uniqueIndex("reseller_sales_transaction_uq").on(t.transactionId),
+    salesOrderUq: uniqueIndex("reseller_sales_order_uq").on(t.razorpayOrderId),
+    salesTokenUq: uniqueIndex("reseller_sales_token_uq").on(t.payTokenHash),
+    salesIdemUq: uniqueIndex("reseller_sales_idem_uq").on(t.resellerId, t.idempotencyKey),
+    // at most one unpaid sale per customer (blocks duplicate renewals)
+    salesOpenUq: uniqueIndex("reseller_sales_open_uq")
+      .on(t.customerUserId)
+      .where(sql`${t.paymentStatus} IN ('pending','pending_verification')`),
+    // a subscription period can only be sold once
+    salesPeriodUq: uniqueIndex("reseller_sales_period_uq")
+      .on(t.customerUserId, t.periodStart)
+      .where(sql`${t.paymentStatus} NOT IN ('failed','cancelled')`),
+  })
+);
+
+/** Immutable reseller earnings ledger. Never updated; corrections are new rows. */
+export const resellerLedgerEntries = pgTable(
+  "reseller_ledger_entries",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    resellerId: varchar("reseller_id").notNull().references(() => resellerProfiles.id, { onDelete: "restrict" }),
+    saleId: varchar("sale_id").references(() => resellerSales.id, { onDelete: "restrict" }),
+    entryType: varchar("entry_type", { length: 16 }).notNull(), // earning | reversal | payout | adjustment
+    amount: numeric("amount", { precision: 12, scale: 2 }).notNull(), // signed
+    currency: varchar("currency", { length: 8 }).notNull().default("INR"),
+    reference: varchar("reference", { length: 120 }).notNull(), // dedupe key (sale id, refund id, payout ref)
+    availableAt: timestamp("available_at", { withTimezone: true }).notNull(),
+    description: text("description"),
+    createdBy: varchar("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    ledgerResellerIdx: index("reseller_ledger_reseller_idx").on(t.resellerId, t.createdAt),
+    ledgerDedupeUq: uniqueIndex("reseller_ledger_dedupe_uq").on(t.entryType, t.reference),
+  })
+);
+
+export const resellerAuditLogs = pgTable(
+  "reseller_audit_logs",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    resellerId: varchar("reseller_id"),
+    actorUserId: varchar("actor_user_id"),
+    actorRole: varchar("actor_role", { length: 20 }),
+    action: varchar("action", { length: 64 }).notNull(),
+    entityType: varchar("entity_type", { length: 32 }).notNull(),
+    entityId: varchar("entity_id"),
+    before: jsonb("before"),
+    after: jsonb("after"),
+    ipAddress: varchar("ip_address", { length: 64 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    auditResellerIdx: index("reseller_audit_reseller_idx").on(t.resellerId, t.createdAt),
+  })
+);
+
+/** One-time, hashed account tokens (invitation / password set). */
+export const accountInvitations = pgTable(
+  "account_invitations",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+    purpose: varchar("purpose", { length: 24 }).notNull(), // reseller_invite | customer_invite | password_reset
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdBy: varchar("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    invitationTokenUq: uniqueIndex("account_invitations_token_uq").on(t.tokenHash),
+    invitationUserIdx: index("account_invitations_user_idx").on(t.userId),
+  })
+);
+
+export type ResellerProfile = typeof resellerProfiles.$inferSelect;
+export type ResellerPlanPricing = typeof resellerPlanPricing.$inferSelect;
+export type ResellerSale = typeof resellerSales.$inferSelect;
+export type ResellerLedgerEntry = typeof resellerLedgerEntries.$inferSelect;

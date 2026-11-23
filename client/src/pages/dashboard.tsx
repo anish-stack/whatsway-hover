@@ -48,6 +48,7 @@ import { DashboardStarApiDataType } from "./types/type";
 import { useAuth } from "@/contexts/auth-context";
 import { apiRequest } from "@/lib/queryClient";
 import AdminStats from "@/components/AdminStats";
+import ResellerSummaryCard from "@/components/reseller/ResellerSummaryCard";
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -257,6 +258,12 @@ export default function Dashboard() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         <AdminStats />
+
+        {user?.role === "superadmin" && (
+          <div className="mt-6">
+            <ResellerSummaryCard compact />
+          </div>
+        )}
 
         {user?.role !== "superadmin" && stats && (
           <>

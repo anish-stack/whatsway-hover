@@ -35,6 +35,7 @@ import { startAutomationExecutionFunction } from "./automation.controller";
 import { triggerService } from "server/services/automation-execution-service";
 import { WhatsAppApiService } from "server/services/whatsapp-api";
 import { getWhatsAppError } from "@shared/whatsapp-error-codes";
+import { trackStatusUsageSafe } from "../services/meta-billing/usage-tracker.service";
 import { db } from "server/db";
 import { and, desc, eq, ne, sql } from "drizzle-orm";
 import { triggerNotification, triggerThrottledNotification, NOTIFICATION_EVENTS } from "server/services/notification.service";
@@ -1784,6 +1785,10 @@ async function handleMessageStatuses(statuses: any[], metadata: any) {
 
     const eventTime = new Date(parseInt(timestamp, 10) * 1000);
 
+    // Meta usage tracking (estimate only — Meta bills the customer directly).
+    // Idempotent per wamid and isolated: failures never affect messaging.
+    await trackStatusUsageSafe(channel, statusUpdate);
+
     const [queueEntry] = await db
       .select()
       .from(messageQueue)
@@ -2046,6 +2051,13 @@ async function handleTemplateStatusUpdate(value: any, wabaId?: string) {
       status = "APPROVED";
     } else if (event === "REJECTED") {
       status = "REJECTED";
+    } else if (event === "PAUSED" || event === "FLAGGED") {
+      // Previously collapsed into PENDING — account health needs the real state.
+      status = "PAUSED";
+    } else if (event === "DISABLED" || event === "PENDING_DELETION") {
+      status = "DISABLED";
+    } else if (event === "REINSTATED") {
+      status = "APPROVED";
     }
 
     let targetChannelId: string | null = null;
@@ -2241,6 +2253,13 @@ export const razorpayWebhook = async (req: Request, res: Response) => {
     }
 
     console.log('Razorpay Webhook Event:', eventType);
+
+    // Reseller sales use one-time Razorpay orders; handle them separately so the
+    // generic subscription activation below never double-activates them.
+    const { handleResellerRazorpayEvent } = await import("../services/reseller/sales.service");
+    if (await handleResellerRazorpayEvent(eventType, event)) {
+      return res.status(200).json({ success: true, message: 'Webhook received' });
+    }
 
     switch (eventType) {
       case 'payment.authorized':

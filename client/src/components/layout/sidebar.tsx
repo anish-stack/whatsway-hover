@@ -38,11 +38,16 @@ import {
     Code,
     BookOpen,
     Smartphone,
-    Wallet,
     Gauge,
     Handshake,
     BadgeCheck,
     IndianRupee,
+    Activity,
+    CreditCard,
+    Calculator,
+    UserPlus,
+    Receipt,
+    Tag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -73,6 +78,8 @@ import { apiRequest } from "@/lib/queryClient";
 type Role = "superadmin" | "admin" | "user" | "team" | "reseller";
 
 interface NavItem {
+    /** Optional sidebar group heading (customer menu). */
+    section?: string;
     href: string;
     icon: React.ComponentType<{ className?: string }>;
     labelKey: string;
@@ -81,197 +88,56 @@ interface NavItem {
     alwaysVisible?: boolean;
     requiredPrefix?: string;
     allowedRoles?: Role[];
+    /** reseller feature flag required to show this item */
+    resellerPermission?: string;
 }
 
 function getNavItems(role: string): NavItem[] {
     // A reseller is not a platform operator: it gets its own short menu
     // rather than the admin one with pieces hidden.
     if (role === "reseller") {
+        // Reseller portal menu. Items gated by permissions are filtered
+        // in the component using /api/reseller/me (server enforces too).
+        const R: Role[] = ["reseller"];
         return [
-            {
-                href: "/partner",
-                icon: Handshake,
-                labelKey: "navigation.partner",
-                color: "text-[var(--brand)]",
-                alwaysVisible: true,
-                allowedRoles: ["reseller"],
-            },
-            {
-                href: "/wallet",
-                icon: Wallet,
-                labelKey: "navigation.wallet",
-                color: "text-[var(--brand)]",
-                alwaysVisible: true,
-                allowedRoles: ["reseller"],
-            },
-            {
-                href: "/support-tickets",
-                icon: Bell,
-                labelKey: "navigation.tickets_support",
-                color: "text-blue-400",
-                alwaysVisible: true,
-                allowedRoles: ["reseller"],
-            },
-            {
-                href: "/account",
-                icon: User,
-                labelKey: "navigation.settings",
-                color: "text-muted-foreground",
-                alwaysVisible: true,
-                allowedRoles: ["reseller"],
-            },
+            { section: "Reseller", href: "/reseller", icon: LayoutDashboard, labelKey: "Dashboard", color: "text-green-600", alwaysVisible: true, allowedRoles: R },
+            { section: "Reseller", href: "/reseller/customers", icon: Users, labelKey: "My Customers", color: "text-blue-600", alwaysVisible: true, allowedRoles: R },
+            { section: "Reseller", href: "/reseller/customers/new", icon: UserPlus, labelKey: "Add Customer", color: "text-[var(--brand)]", alwaysVisible: true, allowedRoles: R, resellerPermission: "createCustomers" },
+            { section: "Reseller", href: "/reseller/subscriptions", icon: CreditCard, labelKey: "Subscriptions", color: "text-[var(--brand)]", alwaysVisible: true, allowedRoles: R },
+            { section: "Earnings", href: "/reseller/sales", icon: IndianRupee, labelKey: "Sales & Earnings", color: "text-[var(--brand)]", alwaysVisible: true, allowedRoles: R },
+            { section: "Earnings", href: "/reseller/transactions", icon: Receipt, labelKey: "Invoices / Transactions", color: "text-[var(--brand)]", alwaysVisible: true, allowedRoles: R, resellerPermission: "viewTransactions" },
+            { section: "Earnings", href: "/reseller/pricing", icon: Tag, labelKey: "Pricing & Plans", color: "text-[var(--brand)]", alwaysVisible: true, allowedRoles: R },
+            { section: "Account", href: "/user-support-tickets", icon: Bell, labelKey: "Support", color: "text-blue-400", alwaysVisible: true, allowedRoles: R },
+            { section: "Account", href: "/reseller/profile", icon: User, labelKey: "Profile & Settings", color: "text-muted-foreground", alwaysVisible: true, allowedRoles: R },
         ];
     }
 
     if (role === "admin") {
+        // Customer (tenant owner) menu, grouped into sections.
         return [
-            {
-                href: "/dashboard",
-                icon: LayoutDashboard,
-                labelKey: "navigation.dashboard",
-                color: "text-green-600",
-                alwaysVisible: true,
-                allowedRoles: ["superadmin", "admin", "user", "team"],
-            },
-            {
-                href: "/inbox",
-                icon: MessageSquare,
-                labelKey: "navigation.inbox",
-                color: "text-blue-400",
-                allowedRoles: ["admin"],
-            },
-            {
-                href: "/contacts",
-                icon: Users,
-                labelKey: "navigation.contacts",
-                color: "text-blue-600",
-                allowedRoles: ["superadmin", "admin"],
-            },
-            {
-                href: "/groups",
-                icon: MdGroups,
-                labelKey: "navigation.groups",
-                color: "text-blue-400",
-                allowedRoles: ["admin"],
-            },
-            {
-                href: "/campaigns",
-                icon: Megaphone,
-                labelKey: "navigation.campaigns",
-                color: "text-orange-600",
-                allowedRoles: ["superadmin", "admin"],
-            },
-            {
-                href: "/templates",
-                icon: FileText,
-                labelKey: "navigation.templates",
-                color: "text-[var(--brand)]",
-                allowedRoles: ["superadmin", "admin"],
-            },
+            // ── Main ──
+            { section: "Main", href: "/dashboard", icon: LayoutDashboard, labelKey: "navigation.dashboard", color: "text-green-600", alwaysVisible: true, allowedRoles: ["superadmin", "admin", "user", "team"] },
+            { section: "Main", href: "/inbox", icon: MessageSquare, labelKey: "navigation.inbox", color: "text-blue-400", allowedRoles: ["admin"] },
+            { section: "Main", href: "/campaigns", icon: Megaphone, labelKey: "navigation.campaigns", color: "text-orange-600", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/contacts", icon: Users, labelKey: "navigation.contacts", color: "text-blue-600", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/groups", icon: MdGroups, labelKey: "navigation.groups", color: "text-blue-400", allowedRoles: ["admin"] },
+            { section: "Main", href: "/templates", icon: FileText, labelKey: "navigation.templates", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/automation", icon: Zap, labelKey: "navigation.automations", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/settings?tab=ai_setting", icon: Bot, labelKey: "AI Assistant", color: "text-teal-600", allowedRoles: ["admin"] },
+            { section: "Main", href: "/analytics", icon: BarChart3, labelKey: "navigation.analytics", color: "text-pink-600", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/widget-builder", icon: Bot, labelKey: "navigation.widgetBuilder", color: "text-teal-600", alwaysVisible: true, allowedRoles: ["superadmin", "admin", "user"] },
+            { section: "Main", href: "/api-docs", icon: Code, labelKey: "navigation.apiDocs", color: "text-cyan-600", allowedRoles: ["admin"] },
 
-            {
-                href: "/automation",
-                icon: Zap,
-                labelKey: "navigation.automations",
-                color: "text-[var(--brand)]",
-                allowedRoles: ["superadmin", "admin"],
-            },
-            {
-                href: "/analytics",
-                icon: BarChart3,
-                labelKey: "navigation.analytics",
-                color: "text-pink-600",
-                allowedRoles: ["superadmin", "admin"],
-            },
-            {
-                href: "/widget-builder",
-                icon: Bot,
-                labelKey: "navigation.widgetBuilder",
-                color: "text-teal-600",
-                alwaysVisible: true,
-                allowedRoles: ["superadmin", "admin", "user"],
-            },
-            {
-                href: "/api-docs",
-                icon: Code,
-                labelKey: "navigation.apiDocs",
-                color: "text-cyan-600",
-                allowedRoles: ["admin"],
-            },
+            // ── WhatsApp Management ──
+            { section: "WhatsApp Management", href: "/settings?tab=whatsapp", icon: Smartphone, labelKey: "WhatsApp Accounts", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "WhatsApp Management", href: "/account-health", icon: Activity, labelKey: "Account Health", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "WhatsApp Management", href: "/whatsapp-usage", icon: BarChart3, labelKey: "WhatsApp Usage", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "WhatsApp Management", href: "/green-tick", icon: BadgeCheck, labelKey: "navigation.greenTick", color: "text-[var(--ok)]", allowedRoles: ["admin"] },
 
-            // {
-            //   href: "/settings",
-            //   icon: Settings,
-            //   labelKey: "navigation.settings",
-            //   color: "text-muted-foreground",
-            //   alwaysVisible: true,
-            //   allowedRoles: ["superadmin", "admin"],
-            // },
-
-            {
-                href: "/plans",
-                icon: Bell,
-                labelKey: "navigation.plans",
-                color: "text-blue-400",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/gateway",
-                icon: Bell,
-                labelKey: "navigation.plans",
-                color: "text-blue-400",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/languages",
-                icon: Globe,
-                labelKey: "navigation.languages",
-                color: "text-[var(--brand)]",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/support-tickets",
-                icon: Bell,
-                labelKey: "navigation.tickets_support",
-                color: "text-blue-400",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/wallet",
-                icon: Wallet,
-                labelKey: "navigation.wallet",
-                color: "text-[var(--brand)]",
-                alwaysVisible: true,
-                allowedRoles: ["superadmin", "admin", "user"],
-            },
-            {
-                href: "/billing/rates",
-                icon: IndianRupee,
-                labelKey: "navigation.messagePricing",
-                color: "text-[var(--brand)]",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/billing/caps",
-                icon: Gauge,
-                labelKey: "navigation.sendingCaps",
-                color: "text-[var(--flare)]",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/resellers",
-                icon: Handshake,
-                labelKey: "navigation.resellers",
-                color: "text-[var(--brand)]",
-                allowedRoles: ["superadmin"],
-            },
-            {
-                href: "/green-tick/review",
-                icon: BadgeCheck,
-                labelKey: "navigation.greenTickReview",
-                color: "text-[var(--ok)]",
-                allowedRoles: ["superadmin"],
-            },
+            // ── Billing & Settings ──
+            { section: "Billing & Settings", href: "/billing", icon: CreditCard, labelKey: "Subscription & Billing", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Billing & Settings", href: "/cost-calculator", icon: Calculator, labelKey: "Cost Calculator", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Billing & Settings", href: "/settings", icon: Settings, labelKey: "navigation.settings", color: "text-muted-foreground", allowedRoles: ["admin"] },
         ];
     } else {
         // Team or default role
@@ -379,14 +245,6 @@ function getNavItems(role: string): NavItem[] {
                 allowedRoles: ["team"],
             },
             {
-                href: "/wallet",
-                icon: Wallet,
-                labelKey: "navigation.wallet",
-                color: "text-[var(--brand)]",
-                alwaysVisible: true,
-                allowedRoles: ["superadmin", "admin", "user", "team"],
-            },
-            {
                 href: "/billing/caps",
                 icon: Gauge,
                 labelKey: "navigation.sendingCaps",
@@ -395,18 +253,26 @@ function getNavItems(role: string): NavItem[] {
                 allowedRoles: ["superadmin", "admin", "user", "team"],
             },
             {
+                href: "/account-health",
+                icon: Activity,
+                labelKey: "Account Health",
+                color: "text-[var(--brand)]",
+                requiredPrefix: "analytics.",
+                allowedRoles: ["team"],
+            },
+            {
+                href: "/whatsapp-usage",
+                icon: BarChart3,
+                labelKey: "WhatsApp Usage",
+                color: "text-[var(--brand)]",
+                requiredPrefix: "analytics.",
+                allowedRoles: ["team"],
+            },
+            {
                 href: "/green-tick",
                 icon: BadgeCheck,
                 labelKey: "navigation.greenTick",
                 color: "text-[var(--ok)]",
-                alwaysVisible: true,
-                allowedRoles: ["superadmin", "admin", "user", "team"],
-            },
-            {
-                href: "/partner",
-                icon: Handshake,
-                labelKey: "navigation.partner",
-                color: "text-[var(--brand)]",
                 alwaysVisible: true,
                 allowedRoles: ["superadmin", "admin", "user", "team"],
             },
@@ -486,6 +352,30 @@ const sidebarItemsCategories = [
         color: "text-[#00a63e]",
     },
     {
+        name: "Reseller Management",
+        icon: Handshake,
+        path: "/admin/resellers",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Billing & Meta Usage",
+        icon: CreditCard,
+        path: "/admin/billing",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Customer WhatsApp Accounts",
+        icon: Activity,
+        path: "/admin/whatsapp-accounts",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Meta Rate Card",
+        icon: IndianRupee,
+        path: "/admin/meta-rate-cards",
+        color: "text-[var(--brand)]",
+    },
+    {
         name: "navigation.message_logs",
         icon: MessageSquare,
         path: "/message-logs",
@@ -523,6 +413,13 @@ export default function Sidebar() {
     const { toast } = useToast();
 
     const navItems = getNavItems(user?.role || "");
+
+    const { data: resellerMe } = useQuery<any>({
+        queryKey: ["/api/reseller/me"],
+        queryFn: () => apiRequest("GET", "/api/reseller/me").then((r) => r.json()).then((j) => j.data),
+        enabled: user?.role === "reseller",
+        staleTime: 60_000,
+    });
 
     const { data: brandSettings } = useQuery<AppSettings>({
         queryKey: ["/api/brand-settings"],
@@ -567,6 +464,12 @@ export default function Sidebar() {
         if (!user) return false;
 
         const role = user.role as Role;
+
+        if (role === "reseller") {
+            if (!item.allowedRoles?.includes("reseller")) return false;
+            if (item.resellerPermission) return resellerMe?.permissions?.[item.resellerPermission] === true;
+            return true;
+        }
 
         // SUPERADMIN sees everything
         if (role === "superadmin") return true;
@@ -817,15 +720,22 @@ export default function Sidebar() {
                             )
                             : navItems
                                 .filter(canView)
-                                .map((item) =>
-                                    renderLink(
-                                        t(item.labelKey),
-                                        item.icon,
-                                        item.href,
-                                        item.badge,
-                                        item.color
-                                    )
-                                )}
+                                .map((item, idx, arr) => (
+                                    <React.Fragment key={item.href}>
+                                        {item.section && item.section !== arr[idx - 1]?.section && (
+                                            <p className={cn("px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground", idx === 0 ? "pt-0" : "pt-4")}>
+                                                {item.section}
+                                            </p>
+                                        )}
+                                        {renderLink(
+                                            t(item.labelKey),
+                                            item.icon,
+                                            item.href,
+                                            item.badge,
+                                            item.color
+                                        )}
+                                    </React.Fragment>
+                                ))}
                     </nav>
 
                     <div className="w-[180px] border-t border-border px-4 py-2 sm:hidden">

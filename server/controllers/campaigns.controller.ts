@@ -25,6 +25,26 @@ import { db, dbRead } from "../db";
 import { channels, messageQueue, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { parseMessagingTier } from "../utils/messaging-tiers";
+import {
+  checkCampaignReadiness,
+  checkCampaignRowReadiness,
+  resolveOwnerId,
+} from "../services/meta-billing/readiness.service";
+
+/** Owner (tenant) id for readiness; null for superadmin (skips subscription/ownership). */
+async function readinessOwner(user: { id: string; role: string } | undefined): Promise<string | null> {
+  if (!user) return null;
+  if (user.role === "superadmin") return null;
+  return resolveOwnerId(user.id);
+}
+
+function notReady(res: any, readiness: any) {
+  return res.status(409).json({
+    error: readiness.blockingReason || "WhatsApp account is not ready to send campaigns.",
+    code: "WHATSAPP_NOT_READY",
+    readiness,
+  });
+}
 
 export { parseMessagingTier };
 
@@ -326,6 +346,18 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
 
   const createdBy = req.user.id;
 
+  // Server-side WhatsApp readiness gate for campaigns that start right now.
+  // Scheduled campaigns are re-checked when the scheduler fires them.
+  if (data.status === "active" && !data.scheduledAt && data.campaignType !== "api") {
+    const readiness = await checkCampaignReadiness({
+      channelId: data.channelId,
+      templateId: data.templateId,
+      recipientCount: null, // messaging-limit check below keeps its existing message
+      ownerId: await readinessOwner(req.user),
+    });
+    if (!readiness.ready) return notReady(res, readiness);
+  }
+
   let apiKey: string | undefined;
   let apiEndpoint: string | undefined;
   if (data.campaignType === "api") {
@@ -442,6 +474,33 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
       });
     }
 
+    if (status === "sending") {
+      const owner = await readinessOwner(req.user);
+      if (owner) {
+        const ch = existing.channelId ? await storage.getChannel(existing.channelId) : undefined;
+        if (!ch || ch.createdBy !== owner) return res.status(404).json({ error: "Campaign not found" });
+      }
+      const readiness = await checkCampaignRowReadiness(existing.id, { force: true });
+      if (!readiness.ready) return notReady(res, readiness);
+
+      // A scheduled campaign paused by the readiness gate never populated its
+      // queue — resuming it must run the normal start path, not just flip status.
+      const [queued] = await db
+        .select({ id: messageQueue.id })
+        .from(messageQueue)
+        .where(eq(messageQueue.campaignId, existing.id))
+        .limit(1);
+      if (!queued) {
+        const started = await storage.updateCampaign(existing.id, { status: "active", updatedAt: new Date() });
+        res.json(started);
+        void startCampaignExecution(existing.id).catch((err) => {
+          console.error(`[Campaign ${existing.id}] Error from detached startCampaignExecution:`, err);
+          storage.updateCampaign(existing.id, { status: "failed" }).catch(() => {});
+        });
+        return;
+      }
+    }
+
     // Bump updatedAt explicitly so the paused-too-long sweeper can use it
     // as the "paused since" reference timestamp.
     const campaign = await storage.updateCampaign(req.params.id, {
@@ -471,6 +530,16 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
     if (!campaign) {
       return res.status(404).json({ error: "Campaign not found" });
     }
+
+    const owner = await readinessOwner(req.user);
+    const readiness = await checkCampaignReadiness({
+      channelId: campaign.channelId!,
+      templateId: campaign.templateId,
+      recipientCount: null,
+      ownerId: owner,
+      forceHealthRefresh: true,
+    });
+    if (!readiness.ready) return notReady(res, readiness);
 
     await storage.updateCampaign(campaign.id, { status: "active" });
     res.json({ success: true, message: "Campaign queued for sending" });

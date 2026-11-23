@@ -165,10 +165,10 @@ const ERROR_MAP: Record<number, WhatsAppErrorInfo> = {
   },
   131042: {
     code: 131042,
-    title: "Business Account Restricted",
-    description: "The business account has been restricted due to policy violations or has reached its limits.",
-    suggestion: "Check Meta Business Manager for restriction details. Review and fix any policy violations, then request a review.",
-    category: "messaging",
+    title: "Business Eligibility Payment Issue",
+    description: "Message failed because of a problem with the payment method on the WhatsApp Business Account (missing, expired, declined or over its credit line).",
+    suggestion: "Update the payment method in Meta Business Manager → Billing. Meta bills WhatsApp usage directly; HoverChat does not collect these charges.",
+    category: "billing",
   },
   131045: {
     code: 131045,
@@ -362,6 +362,27 @@ const ERROR_MAP: Record<number, WhatsAppErrorInfo> = {
     category: "billing",
   },
 
+  138024: {
+    code: 138024,
+    title: "Calling / SIP Configuration Issue",
+    description: "WhatsApp Business calling or SIP configuration problem for this phone number.",
+    suggestion: "Fix calling/SIP settings in WhatsApp Manager. This is not a messaging payment error and does not block normal messaging on its own.",
+    category: "calling",
+  },
+  141006: {
+    code: 141006,
+    title: "Payment Method Issue",
+    description: "There is a problem with the payment method attached to the WhatsApp Business Account.",
+    suggestion: "Ask the account owner to update the payment method inside Meta Business Manager → Billing.",
+    category: "billing",
+  },
+  141010: {
+    code: 141010,
+    title: "Business Verification Incomplete",
+    description: "The business has not completed Meta Business Verification.",
+    suggestion: "Complete Business Verification in Meta Business Manager → Security Centre. This is separate from payment setup and template approval.",
+    category: "business_verification",
+  },
   136025: {
     code: 136025,
     title: "Generic User Error",

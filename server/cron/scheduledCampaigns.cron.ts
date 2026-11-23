@@ -15,6 +15,7 @@ import cron from "node-cron";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { storage } from "../storage";
 import { startCampaignExecution } from "../controllers/campaigns.controller";
+import { checkCampaignRowReadiness } from "../services/meta-billing/readiness.service";
 import { db } from "../db";
 import { campaigns as campaignsTable, messageQueue } from "@shared/schema";
 import { sql, eq } from "drizzle-orm";
@@ -36,6 +37,19 @@ export function startScheduledCampaignCron() {
         try {
           console.log(`[ScheduledCron] Starting campaign ${campaign.id} ("${campaign.name}") scheduled for ${campaign.scheduledAt?.toISOString()}`);
 
+          // Re-check WhatsApp readiness at fire time. If Meta blocks messaging
+          // (payment, policy, template not approved...) pause instead of failing
+          // so the customer can fix it and resume from the Campaigns page.
+          try {
+            const readiness = await checkCampaignRowReadiness(campaign.id, { force: true });
+            if (!readiness.ready) {
+              console.warn(`[ScheduledCron] Campaign ${campaign.id} not started — ${readiness.blockingReason}`);
+              await storage.updateCampaign(campaign.id, { status: "paused", updatedAt: new Date() });
+              continue;
+            }
+          } catch (readinessErr) {
+            console.error(`[ScheduledCron] Readiness check errored for ${campaign.id}; proceeding:`, readinessErr);
+          }
           await storage.updateCampaign(campaign.id, { status: "active" });
 
           const updated = await storage.getCampaign(campaign.id);

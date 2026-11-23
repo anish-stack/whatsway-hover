@@ -16,6 +16,8 @@ export const Role = {
   MANAGER: "manager",
   AGENT: "agent",
   USER: "user",
+  /** Authorised partner selling HoverChat subscriptions (v3.10). */
+  RESELLER: "reseller",
 } as const;
 
 export type Role = (typeof Role)[keyof typeof Role];
@@ -27,6 +29,7 @@ export const ROLE_VALUES: Role[] = [
   Role.MANAGER,
   Role.AGENT,
   Role.USER,
+  Role.RESELLER,
 ];
 
 export function isRole(value: unknown): value is Role {

@@ -293,10 +293,13 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
 
 router.post("/reset-password", async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
+    const { email, newPassword, otpCode } = req.body;
 
-    if (!email || !newPassword) {
-      return res.status(400).json({ error: "Email and new password are required" });
+    if (!email || !newPassword || !otpCode) {
+      return res.status(400).json({ error: "Email, verification code and new password are required" });
+    }
+    if (String(newPassword).length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
     }
 
     // Find user
@@ -312,18 +315,25 @@ router.post("/reset-password", async (req, res) => {
 
     const userId = existingUser[0].id;
 
-    // Find valid OTP
+    // SECURITY: the reset must be backed by an OTP that (a) matches the code
+    // the user typed, (b) was verified via /verify-otp, and (c) is recent.
+    // Previously any OTP row for the user was accepted without checking the
+    // code, which allowed account takeover.
     const otpRecord = await db
       .select()
       .from(otpVerifications)
       .where(
-        eq(otpVerifications.userId, userId),
-        eq(otpVerifications.isUsed, false)
+        and(
+          eq(otpVerifications.userId, userId),
+          eq(otpVerifications.otpCode, String(otpCode)),
+          eq(otpVerifications.isUsed, true),
+          sql`${otpVerifications.createdAt} > NOW() - INTERVAL '15 minutes'`
+        )
       )
       .limit(1);
 
     if (!otpRecord.length) {
-      return res.status(400).json({ error: "Invalid or already used OTP" });
+      return res.status(400).json({ error: "Invalid or expired verification code. Request a new code." });
     }
 
     // Hash new password
@@ -398,7 +408,8 @@ router.post("/verify-otp", async (req, res) => {
     // OTP valid => mark as used
     await db
       .update(otpVerifications)
-      .set({ isUsed: true })
+      // keep the verified row alive long enough to complete /reset-password
+      .set({ isUsed: true, expiresAt: new Date(Date.now() + 10 * 60 * 1000) })
       .where(eq(otpVerifications.id, otpRecord[0].id));
 
     res.json({ success: true, message: "OTP verified successfully" });

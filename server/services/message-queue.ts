@@ -18,6 +18,8 @@ import { eq, and, lte, or, isNull, sql, inArray, notInArray, gt, asc } from "dri
 import { WhatsAppApiService } from "./whatsapp-api";
 import { storage } from '../storage';
 import { getWhatsAppError } from '@shared/whatsapp-error-codes';
+import { isAccountBlockingSendError } from '@shared/meta-billing';
+import { pauseCampaignForAccountBlock } from './meta-billing/readiness.service';
 import { cacheGet, CACHE_KEYS, CACHE_TTL } from './cache';
 import { initBullQueue, isBullQueueAvailable, addBulkMessagesToBullQueue, getBullQueueStats, addMessageToBullQueue } from './bull-queue';
 import { onRedisStateChange } from './redis';
@@ -1230,6 +1232,13 @@ private static async processMessage(message: any, channelCache?: Map<string, any
           failedCount: sql`${campaigns.failedCount} + 1`
         })
         .where(eq(campaigns.id, message.campaignId));
+    }
+
+    // Account-level Meta block (payment, lock, policy, token): pause the
+    // campaign instead of burning through every recipient. Subscription and
+    // inbound messaging are untouched.
+    if (message.campaignId && isAccountBlockingSendError(err?.metaErrorCode)) {
+      await pauseCampaignForAccountBlock(message.campaignId, message.channelId ?? null, String(err.metaErrorCode));
     }
 
     // ✅ FIXED: attempts === 0 pe INSERT, final attempt pe sirf UPDATE

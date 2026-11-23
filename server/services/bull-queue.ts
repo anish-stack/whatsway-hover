@@ -1,4 +1,6 @@
 import { Queue, Worker, Job, QueueEvents } from "bullmq";
+import { isAccountBlockingSendError } from "@shared/meta-billing";
+import { pauseCampaignForAccountBlock } from "./meta-billing/readiness.service";
 import { isRedisAvailable, getRedisClient } from "./redis";
 import { db } from "../db";
 import { messageQueue, channels, campaigns } from "@shared/schema";
@@ -404,6 +406,12 @@ export async function processMessageJob(job: Job) {
       })
       .where(eq(messageQueue.id, messageId));
     console.log(`[DB] fail/processing update result:`, JSON.stringify(failUpdate));
+
+    // ── STEP E1b: Pause campaign on account-level Meta block ───────────────
+    const metaCode = (error as any)?.metaErrorCode;
+    if (campaignId && isAccountBlockingSendError(metaCode)) {
+      await pauseCampaignForAccountBlock(campaignId, channelId ?? null, String(metaCode));
+    }
 
     // ── STEP E2: Increment failedCount ──────────────────────────────────────
     if (campaignId && isFinalAttempt) {

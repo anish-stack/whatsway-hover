@@ -38,11 +38,21 @@ import Team from "@/pages/team";
 import Sidebar from "@/components/layout/sidebar";
 import Account from "./pages/account";
 import { AppLayout } from "./components/layout/AppLayout";
-import WalletPage from "@/pages/billing/wallet";
-import RateCardPage from "@/pages/billing/rates";
+import BillingOverviewPage from "@/pages/billing/overview";
+import CostCalculatorPage from "@/pages/billing/cost-calculator";
+import WhatsAppUsagePage from "@/pages/whatsapp/usage";
+import AccountHealthPage from "@/pages/whatsapp/account-health";
+import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
+import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
+import AdminMetaBillingPage from "@/pages/admin/meta-billing";
 import CapsPage from "@/pages/billing/caps";
-import ResellerPanel from "@/pages/reseller/panel";
-import ResellerAdmin from "@/pages/reseller/admin";
+import ResellerDashboard from "@/pages/reseller-portal/dashboard";
+import { ResellerAddCustomerPage, ResellerCustomerDetailPage, ResellerCustomersPage } from "@/pages/reseller-portal/customers";
+import { ResellerPricingPage, ResellerProfilePage, ResellerSalesPage, ResellerSubscriptionsPage, ResellerTransactionsPage } from "@/pages/reseller-portal/other";
+import AdminResellersPage from "@/pages/admin/resellers";
+import AdminResellerDetailPage from "@/pages/admin/reseller-detail";
+import AcceptInvitePage from "@/pages/accept-invite";
+import PayPage from "@/pages/pay";
 import BlueTickPage from "@/pages/blue-tick";
 import BlueTickAdmin from "@/pages/blue-tick-admin";
 import ChatbotBuilder from "./pages/chatbot-builder";
@@ -68,7 +78,6 @@ import CRMSystem from "./pages/CRMSystem";
 import LeadManagement from "./pages/LeadManagement";
 import BulkImport from "./pages/BulkImport";
 import Segmentation from "./pages/Segmentation";
-import HealthMonitor from "./pages/HealthMonitor";
 import Reports from "./pages/Reports";
 import Notifications from "./pages/Notifications";
 import UserNotifications from "./pages/UserNotifications";
@@ -79,7 +88,6 @@ import ContactsManagements from "./pages/contacts-managements";
 import SupportTicketsNew from "./pages/support-tickets";
 import userDetails from "./pages/userDetails";
 import UserSupportTicketsNew from "./pages/user-support-tickets";
-import BillingSubscriptionPage from "./components/billing-subscription-page";
 import GroupsUI from "./pages/group-list";
 import AllSubscriptionsPage from "./pages/masterSubscriptions";
 import DemoPage from "./pages/DemoPage";
@@ -113,11 +121,29 @@ import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 const ROUTE_PERMISSIONS: Record<string, string> = {
   "/dashboard": "",
   // v3.8 — billing, partner panel and verification
-  "/wallet": "",
   "/billing/rates": "",
+  // v3.9 — Meta usage, account health, cost calculator (no Meta wallet)
+  "/whatsapp-usage": "",
+  "/account-health": "",
+  "/cost-calculator": "",
+  "/admin/billing": "",
+  "/admin/whatsapp-accounts": "",
+  "/admin/meta-rate-cards": "",
   "/billing/caps": "",
   "/partner": "",
   "/resellers": "",
+  // v3.10 — reseller portal + super-admin reseller management
+  "/reseller": "",
+  "/reseller/customers": "",
+  "/reseller/customers/new": "",
+  "/reseller/customers/:id": "",
+  "/reseller/subscriptions": "",
+  "/reseller/sales": "",
+  "/reseller/transactions": "",
+  "/reseller/pricing": "",
+  "/reseller/profile": "",
+  "/admin/resellers": "",
+  "/admin/resellers/:id": "",
   "/green-tick": "",
   "/green-tick/review": "",
   "/contacts": "contacts.view",
@@ -178,6 +204,8 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
 const DYNAMIC_ROUTE_PATTERNS: Array<{ pattern: RegExp; key: string }> = [
   { pattern: /^\/analytics\/campaign\/[^/]+$/, key: "/analytics/campaign/:campaignId" },
   { pattern: /^\/users\/[^/]+$/, key: "/users" },
+  { pattern: /^\/reseller\/customers\/[^/]+$/, key: "/reseller/customers/:id" },
+  { pattern: /^\/admin\/resellers\/[^/]+$/, key: "/admin/resellers/:id" },
 ];
 
 function resolveRouteKey(location: string): string | undefined {
@@ -272,10 +300,14 @@ function ProtectedRoutes() {
   // A reseller has no use for the operator dashboard — send it to the
   // partner panel, which is that role's home screen.
   useEffect(() => {
-    if (isAuthenticated && user?.role === "reseller") {
-      if (location === "/" || location === "/dashboard") {
-        setLocation("/partner");
-      }
+    if (!isAuthenticated || !user) return;
+    const path = location.split("?")[0];
+    if (user.role === "reseller") {
+      // Resellers only see the reseller portal (+ support/notifications).
+      const allowed = path.startsWith("/reseller") || ["/user-support-tickets", "/user-notifications"].includes(path);
+      if (!allowed) setLocation("/reseller");
+    } else if (path === "/reseller" || path.startsWith("/reseller/") || path === "/partner") {
+      setLocation("/dashboard");
     }
   }, [location, isAuthenticated, user, setLocation]);
 
@@ -329,7 +361,7 @@ function ProtectedRoutes() {
   return (
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
       <Sidebar />
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1 min-w-0 lg:ml-64">
         <Switch>
           <Route path="/dashboard">
             <Dashboard />
@@ -370,20 +402,68 @@ function ProtectedRoutes() {
           <Route path="/plans">
             <PermissionRoute component={Plans} />
           </Route>
-          <Route path="/wallet">
-            <PermissionRoute component={WalletPage} />
-          </Route>
           <Route path="/billing/rates">
-            <PermissionRoute component={RateCardPage} />
+            <PermissionRoute component={MetaRateCardsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/meta-rate-cards">
+            <PermissionRoute component={MetaRateCardsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/whatsapp-accounts">
+            <PermissionRoute component={AdminWhatsAppAccountsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/billing">
+            <PermissionRoute component={AdminMetaBillingPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/whatsapp-usage">
+            <PermissionRoute component={WhatsAppUsagePage} />
+          </Route>
+          <Route path="/account-health">
+            <PermissionRoute component={AccountHealthPage} />
+          </Route>
+          <Route path="/cost-calculator">
+            <PermissionRoute component={CostCalculatorPage} />
           </Route>
           <Route path="/billing/caps">
             <PermissionRoute component={CapsPage} />
           </Route>
           <Route path="/partner">
-            <PermissionRoute component={ResellerPanel} />
+            <PermissionRoute component={ResellerDashboard} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller">
+            <PermissionRoute component={ResellerDashboard} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/customers/new">
+            <PermissionRoute component={ResellerAddCustomerPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/customers/:id">
+            <PermissionRoute component={ResellerCustomerDetailPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/customers">
+            <PermissionRoute component={ResellerCustomersPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/subscriptions">
+            <PermissionRoute component={ResellerSubscriptionsPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/sales">
+            <PermissionRoute component={ResellerSalesPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/transactions">
+            <PermissionRoute component={ResellerTransactionsPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/pricing">
+            <PermissionRoute component={ResellerPricingPage} requiredRoles={["reseller"]} />
+          </Route>
+          <Route path="/reseller/profile">
+            <PermissionRoute component={ResellerProfilePage} requiredRoles={["reseller"]} />
           </Route>
           <Route path="/resellers">
-            <PermissionRoute component={ResellerAdmin} requiredRoles={["superadmin"]} />
+            <PermissionRoute component={AdminResellersPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/resellers/:id">
+            <PermissionRoute component={AdminResellerDetailPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/resellers">
+            <PermissionRoute component={AdminResellersPage} requiredRoles={["superadmin"]} />
           </Route>
           <Route path="/green-tick">
             <PermissionRoute component={BlueTickPage} />
@@ -476,7 +556,7 @@ function ProtectedRoutes() {
             <PermissionRoute component={SuperadminMessageLogs} requiredRoles={["superadmin"]} />
           </Route>
           <Route path="/health-monitor">
-            <PermissionRoute component={HealthMonitor} />
+            <PermissionRoute component={AccountHealthPage} />
           </Route>
           <Route path="/reports">
             <PermissionRoute component={Reports} />
@@ -503,7 +583,7 @@ function ProtectedRoutes() {
             <PermissionRoute component={Plans} />
           </Route>
           <Route path="/billing">
-            <PermissionRoute component={BillingSubscriptionPage} />
+            <PermissionRoute component={BillingOverviewPage} />
           </Route>
           <Route path="/payment/success">
             <PermissionRoute component={PaymentSuccessPage} />
@@ -597,6 +677,8 @@ function Router() {
           </>
         </Route>
         <Route path="/login" component={LoginPage} />
+        <Route path="/accept-invite" component={AcceptInvitePage} />
+        <Route path="/pay/:token" component={PayPage} />
         <Route path="/verify-email">
           <>
             <Header />
