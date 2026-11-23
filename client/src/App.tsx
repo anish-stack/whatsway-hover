@@ -44,6 +44,8 @@ import WhatsAppUsagePage from "@/pages/whatsapp/usage";
 import AccountHealthPage from "@/pages/whatsapp/account-health";
 import TemplateLibraryPage from "@/pages/template-library";
 import WhatsAppFlowsPage from "@/pages/whatsapp-flows";
+import AppIntegrationsPage from "@/pages/app-integrations";
+import MiniStorePage from "@/pages/mini-store";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -153,6 +155,10 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/channels-management": "",
   "/campaigns": "campaigns.view",
   "/templates": "templates.view",
+  "/template-library": "templates.view",
+  "/whatsapp-flows": "templates.view",
+  "/app-integrations": "",
+  "/store": "",
   "/inbox": "inbox.view",
   "/plans": "",
   "/plan-upgrade": "",
@@ -340,7 +346,7 @@ function ProtectedRoutes() {
   if (isLoading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
-        <MinimalLoader onComplete={() => { }} duration={1500} color="green" />
+        <MinimalLoader variant="ring" color="green" />
       </div>
     );
   }
@@ -391,6 +397,12 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/template-library">
             <PermissionRoute component={TemplateLibraryPage} requiredPermission="templates:view" />
+          </Route>
+          <Route path="/store">
+            <PermissionRoute component={MiniStorePage} />
+          </Route>
+          <Route path="/app-integrations">
+            <PermissionRoute component={AppIntegrationsPage} />
           </Route>
           <Route path="/whatsapp-flows">
             <PermissionRoute component={WhatsAppFlowsPage} requiredPermission="templates:view" />

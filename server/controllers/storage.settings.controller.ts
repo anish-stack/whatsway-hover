@@ -49,6 +49,9 @@ export const updateStorageSetting = async (req: Request, res: Response) => {
     if ((provider === "r2" || provider === "digitalocean") && !endpoint) {
       return res.status(400).json({ error: "Endpoint required for this provider" });
     }
+    if (provider === "r2" && !publicUrl) {
+      return res.status(400).json({ error: "Public URL required for Cloudflare R2 (enable the r2.dev subdomain or connect a custom domain on the bucket)" });
+    }
 
     const values = {
       provider,

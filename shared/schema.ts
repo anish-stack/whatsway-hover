@@ -2252,3 +2252,152 @@ export type ResellerProfile = typeof resellerProfiles.$inferSelect;
 export type ResellerPlanPricing = typeof resellerPlanPricing.$inferSelect;
 export type ResellerSale = typeof resellerSales.$inferSelect;
 export type ResellerLedgerEntry = typeof resellerLedgerEntries.$inferSelect;
+
+// ───────────────────────── Integrations (Shopify, WooCommerce, Sheets, CRM) ─────────────────────────
+export const integrations = pgTable(
+  "integrations",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    type: varchar("type", { length: 32 }).notNull(), // shopify | woocommerce | google_sheets | crm_webhook
+    name: varchar("name", { length: 120 }).notNull(),
+    status: varchar("status", { length: 16 }).notNull().default("active"), // active | paused
+    token: varchar("token", { length: 64 }).notNull(), // secret part of the inbound URL
+    config: jsonb("config").notNull().default({}), // { signingSecret, outboundUrl, outboundEvents[], defaultCountryCode, storeUrl }
+    lastEventAt: timestamp("last_event_at", { withTimezone: true }),
+    eventCount: integer("event_count").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    integrationsOwnerIdx: index("integrations_owner_idx").on(t.ownerId),
+    integrationsTokenUq: uniqueIndex("integrations_token_uq").on(t.token),
+  })
+);
+
+export const integrationRules = pgTable(
+  "integration_rules",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    integrationId: varchar("integration_id").notNull().references(() => integrations.id, { onDelete: "cascade" }),
+    event: varchar("event", { length: 80 }).notNull(), // e.g. orders/create, order.created, row.added
+    templateName: varchar("template_name", { length: 512 }).notNull(),
+    language: varchar("language", { length: 16 }).notNull().default("en_US"),
+    phonePath: varchar("phone_path", { length: 200 }), // null = auto-detect
+    variables: jsonb("variables").notNull().default([]), // ["customer.first_name", "static:Hover", ...] for {{1}}..
+    headerVariable: varchar("header_variable", { length: 200 }),
+    buttonVariable: varchar("button_variable", { length: 200 }),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ integrationRulesIntIdx: index("integration_rules_int_idx").on(t.integrationId) })
+);
+
+export const integrationLogs = pgTable(
+  "integration_logs",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    integrationId: varchar("integration_id").notNull().references(() => integrations.id, { onDelete: "cascade" }),
+    direction: varchar("direction", { length: 8 }).notNull().default("in"), // in | out
+    event: varchar("event", { length: 80 }).notNull(),
+    status: varchar("status", { length: 16 }).notNull(), // sent | skipped | failed | received | delivered
+    phone: varchar("phone", { length: 24 }),
+    detail: text("detail"),
+    payload: jsonb("payload"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ integrationLogsIntIdx: index("integration_logs_int_idx").on(t.integrationId, t.createdAt) })
+);
+
+export type Integration = typeof integrations.$inferSelect;
+export type IntegrationRule = typeof integrationRules.$inferSelect;
+export type IntegrationLog = typeof integrationLogs.$inferSelect;
+
+// ───────────────────────── WhatsApp Mini Store ─────────────────────────
+export const storeSettings = pgTable("store_settings", {
+  channelId: varchar("channel_id").primaryKey().references(() => channels.id, { onDelete: "cascade" }),
+  ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  enabled: boolean("enabled").notNull().default(false),
+  storeName: varchar("store_name", { length: 80 }).notNull().default("Our store"),
+  keywords: jsonb("keywords").notNull().default(["shop", "store", "menu", "order", "catalog"]),
+  welcomeText: text("welcome_text").notNull().default("Welcome! 👋 Browse our products below and order right here on WhatsApp."),
+  currency: varchar("currency", { length: 3 }).notNull().default("INR"),
+  askAddress: boolean("ask_address").notNull().default(true),
+  codEnabled: boolean("cod_enabled").notNull().default(true),
+  upiId: varchar("upi_id", { length: 100 }),
+  razorpayKeyId: varchar("razorpay_key_id", { length: 100 }),
+  razorpayKeySecret: text("razorpay_key_secret"),
+  razorpayWebhookSecret: text("razorpay_webhook_secret"),
+  deliveryFee: numeric("delivery_fee", { precision: 12, scale: 2 }).notNull().default("0"),
+  minOrder: numeric("min_order", { precision: 12, scale: 2 }).notNull().default("0"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const storeProducts = pgTable(
+  "store_products",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 120 }).notNull(),
+    description: text("description"),
+    category: varchar("category", { length: 60 }).notNull().default("All"),
+    price: numeric("price", { precision: 12, scale: 2 }).notNull(),
+    imageUrl: text("image_url"),
+    stock: integer("stock"), // null = unlimited
+    isActive: boolean("is_active").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ storeProductsChannelIdx: index("store_products_channel_idx").on(t.channelId) })
+);
+
+export const storeCarts = pgTable(
+  "store_carts",
+  {
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    items: jsonb("items").notNull().default([]), // [{productId, qty}]
+    state: varchar("state", { length: 32 }).notNull().default("browsing"), // browsing | awaiting_address
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ storeCartsPk: uniqueIndex("store_carts_channel_phone_uq").on(t.channelId, t.phone) })
+);
+
+export const storeOrders = pgTable(
+  "store_orders",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    orderNumber: varchar("order_number", { length: 32 }).notNull(),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    ownerId: varchar("owner_id").notNull(),
+    conversationId: varchar("conversation_id"),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    customerName: varchar("customer_name", { length: 120 }),
+    items: jsonb("items").notNull(), // [{productId, name, price, qty, lineTotal}]
+    subtotal: numeric("subtotal", { precision: 12, scale: 2 }).notNull(),
+    deliveryFee: numeric("delivery_fee", { precision: 12, scale: 2 }).notNull().default("0"),
+    total: numeric("total", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).notNull().default("INR"),
+    address: text("address"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // pending | confirmed | packed | shipped | delivered | cancelled
+    paymentMethod: varchar("payment_method", { length: 16 }), // online | cod | upi
+    paymentStatus: varchar("payment_status", { length: 16 }).notNull().default("unpaid"), // unpaid | paid | refunded
+    paymentLinkId: varchar("payment_link_id", { length: 64 }),
+    paymentLinkUrl: text("payment_link_url"),
+    trackingUrl: text("tracking_url"),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    storeOrdersChannelIdx: index("store_orders_channel_idx").on(t.channelId, t.createdAt),
+    storeOrdersNumberUq: uniqueIndex("store_orders_number_uq").on(t.orderNumber),
+    storeOrdersPhoneIdx: index("store_orders_phone_idx").on(t.channelId, t.phone),
+  })
+);
+
+export type StoreSettings = typeof storeSettings.$inferSelect;
+export type StoreProduct = typeof storeProducts.$inferSelect;
+export type StoreOrder = typeof storeOrders.$inferSelect;

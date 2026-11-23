@@ -49,6 +49,8 @@ import {
     Receipt,
     Tag,
   Workflow,
+  Plug,
+  Store,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -125,6 +127,8 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/templates", icon: FileText, labelKey: "navigation.templates", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/template-library", icon: BookOpen, labelKey: "Template Library", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "WhatsApp Flows", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/store", icon: Store, labelKey: "WhatsApp Store", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/app-integrations", icon: Plug, labelKey: "Integrations", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/automation", icon: Zap, labelKey: "navigation.automations", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/settings?tab=ai_setting", icon: Bot, labelKey: "AI Assistant", color: "text-teal-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/analytics", icon: BarChart3, labelKey: "navigation.analytics", color: "text-pink-600", allowedRoles: ["superadmin", "admin"] },

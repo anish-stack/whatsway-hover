@@ -942,6 +942,22 @@ async function handleMessageChange(value: any) {
       mediaSha256,
     });
 
+    // Integrations: push to Google Sheets / CRM outbound URLs (non-blocking)
+    try {
+      const { emitIntegrationEvent } = await import("../services/integrations/integrations.service");
+      const base = { phone: from, name: contact.name || from, channelId: channel.id, conversationId: conversation.id, messageId: newMessage?.id, type };
+      if (isNewConversation) emitIntegrationEvent(channel.id, "contact.created", base);
+      if (interactiveData?.type === "nfm_reply") {
+        let flowResponse: any = interactiveData.flowResponse;
+        try { flowResponse = typeof flowResponse === "string" ? JSON.parse(flowResponse) : flowResponse; } catch { /* keep raw */ }
+        emitIntegrationEvent(channel.id, "flow.response", { ...base, flowResponse });
+      } else {
+        emitIntegrationEvent(channel.id, "message.received", { ...base, text: messageContent, mediaUrl: mediaUrl || undefined });
+      }
+    } catch (e) {
+      console.warn("[Integrations] emit skipped", (e as Error).message);
+    }
+
 // ================================
 //  🔥 REALTIME SEND USING IO
 // ================================
@@ -1033,9 +1049,21 @@ const uniqueUserIds = [...new Set(targetUserIds)];
       console.error("❌ Error sending new message notification:", notifError);
     }
 
-    // Automations (run first — takes priority over AI)
-    let automationHandled = false;
+    // WhatsApp Mini Store (catalogue / cart / orders) — handles its own keywords & "st:" buttons
+    let storeHandled = false;
     try {
+      const { handleStoreMessage } = await import("../services/store/store.service");
+      storeHandled = await handleStoreMessage({
+        channel, conversationId: conversation.id, phone: from, name: contact?.name || null,
+        type: storedMessageType, text: messageContent, interactive: interactiveData,
+      });
+    } catch (storeErr) {
+      console.error("[Store] handler error:", storeErr);
+    }
+
+    // Automations (run first — takes priority over AI)
+    let automationHandled = storeHandled;
+    if (!storeHandled) try {
       const hasPendingExecution =
         await triggerService.getExecutionService().hasPendingExecutionAsync(conversation.id);
 

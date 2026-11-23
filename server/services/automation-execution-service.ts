@@ -1122,10 +1122,13 @@ private getMediaFileInfo(nodeData: any): { file: any; mediaType: string } | null
 private async readMediaBuffer(filePath: string): Promise<Buffer> {
   if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
     const publicOrigin = await resolvePublicOrigin();
+    const { getStorageHosts } = await import("../config/storageConfig");
     const allowedHosts = [
       publicOrigin,
       process.env.DO_SPACES_BUCKET ? `${process.env.DO_SPACES_BUCKET}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com` : null,
       process.env.DO_SPACES_BUCKET ? `${process.env.DO_SPACES_REGION}.digitaloceanspaces.com` : null,
+      // Active cloud storage (S3 / Cloudflare R2 public domain / Cloudinary / DO)
+      ...(await getStorageHosts()),
     ].filter(Boolean);
 
     if (allowedHosts.length === 0) {

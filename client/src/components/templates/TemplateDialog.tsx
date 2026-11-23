@@ -11,7 +11,8 @@
  * ============================================================
  */
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { AiTemplateWizard, type AiTemplateResult } from "./AiTemplateWizard";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -71,6 +72,7 @@ import {
   Clipboard,
   Timer,
   Workflow,
+  Sparkles,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -266,6 +268,8 @@ interface TemplateDialogProps {
   initialDraft?: TemplateDraft | null;
   onDraftSaved?: () => void;
   channelId?: string;
+  /** Open the "Make with AI" assistant as soon as the dialog opens. */
+  startWithAi?: boolean;
 }
 
 function LanguageSearch({
@@ -356,8 +360,12 @@ export function TemplateDialog({
   initialDraft,
   onDraftSaved,
   channelId,
+  startWithAi = false,
 }: TemplateDialogProps) {
   const { user } = useAuth();
+  const [aiOpen, setAiOpen] = useState(false);
+  const pendingSamples = useRef<string[] | null>(null);
+  useEffect(() => { if (open && startWithAi && !template) setAiOpen(true); }, [open, startWithAi, template]);
   const [submitted, setSubmitted] = useState(false);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
 
@@ -640,11 +648,39 @@ export function TemplateDialog({
   useEffect(() => {
     if (isAuthentication) return;
     const vars = extractVariables(watchedValues.body || "");
+    // Keep samples already typed (or provided by AI) when the body changes.
+    const prev = form.getValues("variables") || [];
+    const pending = pendingSamples.current;
     form.setValue(
       "variables",
-      vars.map(() => "")
+      vars.map((_: any, i: number) => pending?.[i] ?? prev[i] ?? "")
     );
+    if (pending) pendingSamples.current = null;
   }, [watchedValues.body]);
+
+  const applyAiTemplate = (t: AiTemplateResult) => {
+    pendingSamples.current = t.samples;
+    form.setValue("category", t.category);
+    form.setValue("marketingSubType", "CUSTOM");
+    form.setValue("mediaType", "text");
+    form.setValue("name", t.name, { shouldValidate: true });
+    form.setValue("language", t.language || "en_US");
+    form.setValue("header", t.header || "");
+    form.setValue("headerVariable", t.headerSample || "");
+    form.setValue("footer", t.footer || "");
+    form.setValue(
+      "buttons",
+      t.buttons.map((b) => ({ type: b.type, text: b.text, url: b.url || "", phoneNumber: b.phoneNumber || "", couponCode: "" })) as any,
+    );
+    form.setValue("body", t.body, { shouldValidate: true });
+    // In case the body did not change (effect will not fire), set samples directly.
+    setTimeout(() => {
+      if (pendingSamples.current) {
+        form.setValue("variables", t.samples);
+        pendingSamples.current = null;
+      }
+    }, 0);
+  };
 
   useEffect(() => {
     if (watchedValues.mediaType !== "text") {
@@ -1201,12 +1237,32 @@ export function TemplateDialog({
   );
 
   return (
+    <>
+    <AiTemplateWizard
+      open={aiOpen}
+      onOpenChange={setAiOpen}
+      channelId={channelId}
+      language={form.getValues("language")}
+      onUse={applyAiTemplate}
+    />
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>
-            {template ? "Edit Template" : "Create New Template"}
-          </DialogTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3 pr-8">
+            <DialogTitle>
+              {template ? "Edit Template" : "Create New Template"}
+            </DialogTitle>
+            {!template && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setAiOpen(true)}
+                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-sm hover:from-violet-700 hover:to-fuchsia-700"
+              >
+                <Sparkles className="mr-1.5 h-4 w-4" /> Make with AI
+              </Button>
+            )}
+          </div>
           <DialogDescription>
             Create WhatsApp message templates for marketing, utility, or
             authentication purposes.
@@ -2646,6 +2702,7 @@ export function TemplateDialog({
         </Form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
 

@@ -155,7 +155,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, sql } from "drizzle-orm";
 import { db } from "server/db";
 import { plans, subscriptions, channels, automations, campaigns, contacts, sites } from "@shared/schema";
 
@@ -204,129 +204,9 @@ export const requireSubscription = (
             }
 
 
-            // ------------------------------------------
-            // 🔥 FETCH ACTIVE SUBSCRIPTION (LATEST IF MULTIPLE)
-            // ------------------------------------------
-
-            // ------------------------------------------
-// 🔥 FETCH ACTIVE SUBSCRIPTION (CORRECT FILTER)
-// ------------------------------------------
-const activeSubs = await db
-  .select()
-  .from(subscriptions)
-  .where(
-    and(
-      eq(subscriptions.userId, userId),
-      eq(subscriptions.status, "active")
-    )
-  )
-  .orderBy(desc(subscriptions.createdAt));
-
-// ❌ No Active Subscription
-if (activeSubs.length === 0) {
-  return res.status(403).json({ error: "Subscription required." });
-}
-
-           
-
-            // ⚠️ If more than one, log but pick latest
-            if (activeSubs.length > 1) {
-                console.warn("⚠ Multiple active plans for user:", userId);
-            }
-
-            const sub = activeSubs[0]; // Use latest active plan
-
-
-            // ❌ Expired
-            if (new Date(sub.endDate) < new Date()) {
-                return res.status(403).json({ error: "Subscription expired." });
-            }
-
-
-            // ------------------------------------------
-            // 🔥 FETCH PLAN
-            // ------------------------------------------
-            const [plan] = await db
-                .select()
-                .from(plans)
-                .where(eq(plans.id, sub.planId));
-
-            if (!plan) {
-                return res.status(500).json({ error: "Plan not found." });
-            }
-
-            const permissionValue = plan.permissions?.[requiredPermission];
-
-            if (permissionValue === undefined || permissionValue === null || permissionValue === "" || permissionValue === "0") {
-                return res.status(403).json({
-                    error: `Your plan does not allow ${requiredPermission}.`,
-                });
-            }
-
-            if (String(permissionValue).toLowerCase() === "unlimited") {
-                return next();
-            }
-
-            const limit = Number(permissionValue);
-
-            if (isNaN(limit) || limit <= 0) {
-                return res.status(403).json({
-                    error: `Your plan does not allow ${requiredPermission}.`,
-                });
-            }
-
-
-            // ------------------------------------------
-            // 🔥 COUNT USAGE
-            // ------------------------------------------
-
-            let currentCount = 0;
-
-            if (requiredPermission === "contacts") {
-                const data = await db
-                    .select()
-                    .from(contacts)
-                    .leftJoin(channels, eq(contacts.channelId, channels.id))
-                    .where(eq(channels.createdBy, userId));
-
-                currentCount = data.length;
-            }
-
-            if (requiredPermission === "channel") {
-                const data = await db
-                    .select()
-                    .from(channels)
-                    .where(eq(channels.createdBy, userId));
-
-                currentCount = data.length;
-            }
-
-            if (requiredPermission === "automation") {
-                const data = await db
-                    .select()
-                    .from(automations)
-                    .where(eq(automations.createdBy, userId));
-
-                currentCount = data.length;
-            }
-
-            if (requiredPermission === "campaign") {
-                const data = await db
-                    .select()
-                    .from(campaigns)
-                    .where(eq(campaigns.createdBy, userId));
-
-                currentCount = data.length;
-            }
-
-
-            // ------------------------------------------
-            // 🔥 FINAL LIMIT CHECK
-            // ------------------------------------------
-            if (currentCount >= limit) {
-                return res.status(403).json({
-                    error: `You have reached the limit for ${requiredPermission}. Allowed: ${limit}`,
-                });
+            const check = await checkSubscriptionAllowance(userId!, requiredPermission);
+            if (!check.allowed) {
+                return res.status(check.code === "PLAN_MISSING" ? 500 : 403).json({ error: check.error, code: check.code });
             }
 
             next();
@@ -337,3 +217,61 @@ if (activeSubs.length === 0) {
         }
     };
 };
+
+
+export type SubscriptionFeature = "channel" | "contacts" | "automation" | "campaign";
+export interface AllowanceResult {
+    allowed: boolean;
+    code?: "NO_SUBSCRIPTION" | "EXPIRED" | "PLAN_MISSING" | "NOT_IN_PLAN" | "LIMIT_REACHED";
+    error?: string;
+    planName?: string | null;
+    limit?: number | "unlimited";
+    used?: number;
+    expiresAt?: string | null;
+}
+
+/** Same rules as requireSubscription, usable before starting a flow
+ *  (e.g. check the plan BEFORE the Meta embedded-signup popup opens). */
+export async function checkSubscriptionAllowance(userId: string, feature: SubscriptionFeature): Promise<AllowanceResult> {
+    const activeSubs = await db
+        .select()
+        .from(subscriptions)
+        .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active")))
+        .orderBy(desc(subscriptions.createdAt));
+    if (activeSubs.length === 0) return { allowed: false, code: "NO_SUBSCRIPTION", error: "Subscription required." };
+    if (activeSubs.length > 1) console.warn("⚠ Multiple active plans for user:", userId);
+    const sub = activeSubs[0];
+    const expiresAt = sub.endDate ? new Date(sub.endDate).toISOString() : null;
+    if (new Date(sub.endDate) < new Date()) return { allowed: false, code: "EXPIRED", error: "Subscription expired.", expiresAt };
+
+    const [plan] = await db.select().from(plans).where(eq(plans.id, sub.planId));
+    if (!plan) return { allowed: false, code: "PLAN_MISSING", error: "Plan not found." };
+    const planName = (plan as any).name ?? null;
+
+    const permissionValue = (plan.permissions as any)?.[feature];
+    if (permissionValue === undefined || permissionValue === null || permissionValue === "" || permissionValue === "0") {
+        return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan does not allow ${feature}.`, planName, expiresAt };
+    }
+    if (String(permissionValue).toLowerCase() === "unlimited") return { allowed: true, planName, limit: "unlimited", expiresAt };
+    const limit = Number(permissionValue);
+    if (isNaN(limit) || limit <= 0) return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan does not allow ${feature}.`, planName, expiresAt };
+
+    let used = 0;
+    if (feature === "contacts") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(contacts).leftJoin(channels, eq(contacts.channelId, channels.id)).where(eq(channels.createdBy, userId));
+        used = r?.n ?? 0;
+    } else if (feature === "channel") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(channels).where(eq(channels.createdBy, userId));
+        used = r?.n ?? 0;
+    } else if (feature === "automation") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(automations).where(eq(automations.createdBy, userId));
+        used = r?.n ?? 0;
+    } else if (feature === "campaign") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(campaigns).where(eq(campaigns.createdBy, userId));
+        used = r?.n ?? 0;
+    }
+    if (used >= limit) {
+        return { allowed: false, code: "LIMIT_REACHED", error: `You have reached the limit for ${feature}. Allowed: ${limit}`, planName, limit, used, expiresAt };
+    }
+    return { allowed: true, planName, limit, used, expiresAt };
+}

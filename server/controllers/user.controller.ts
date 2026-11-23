@@ -593,8 +593,11 @@ export const verifyEmailOTP = async (req: Request, res: Response) => {
       createdBy: activated.createdBy || "",
     };
 
+    // Persist the new login before replying so the next request is authenticated.
+    await new Promise<void>((resolve) => (req as any).session.save(() => resolve()));
     return res.json({
       success: true,
+      loggedIn: true,
       message: "Email verified successfully.",
     });
 

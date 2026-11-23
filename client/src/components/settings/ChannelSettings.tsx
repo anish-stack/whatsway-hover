@@ -68,6 +68,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Channel } from "@shared/schema";
 import { Loading } from "@/components/ui/loading";
 import { ChannelDialog } from "./ChannelDialog";
+import { usePlanGate } from "@/components/PlanGate";
 import { BusinessProfileEditor } from "./BusinessProfileEditor";
 import { DisplayNameEditor } from "./DisplayNameEditor";
 import { TestMessageDialog } from "./TestMessageDialog";
@@ -378,6 +379,10 @@ export function ChannelSettings() {
     document.body.appendChild(script);
   }, [config?.appId]);
 
+  // Check the plan BEFORE opening Meta signup, not after the number is linked.
+  const planGate = usePlanGate("channel");
+  const openNewChannel = () => planGate.run(openConnectionChooser);
+
   const openConnectionChooser = () => {
     if (embeddedSignupEnabled) {
       setConnectionFlow("choose");
@@ -496,6 +501,7 @@ export function ChannelSettings() {
 
   return (
     <>
+      {planGate.dialog}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -523,8 +529,8 @@ export function ChannelSettings() {
                   Re-subscribe Webhooks
                 </Button>
               )}
-              <Button onClick={openConnectionChooser} size="sm" className="bg-green-600 hover:bg-green-700">
-                <Plus className="w-4 h-4 mr-2" />
+              <Button onClick={openNewChannel} disabled={planGate.checking} size="sm" className="bg-green-600 hover:bg-green-700">
+                {planGate.spinner || <Plus className="w-4 h-4 mr-2" />}
                 {channels.length > 0 ? "Add New Channel" : "Connect WhatsApp"}
               </Button>
             </div>
@@ -545,8 +551,8 @@ export function ChannelSettings() {
               <p className="text-muted-foreground mb-4">
                 {t("settings.channel_setting.noChannels")}
               </p>
-              <Button onClick={openConnectionChooser}>
-                <Plus className="w-4 h-4 mr-2" />
+              <Button onClick={openNewChannel} disabled={planGate.checking}>
+                {planGate.spinner || <Plus className="w-4 h-4 mr-2" />}
                 {t("settings.channel_setting.addFirstChannel")}
               </Button>
             </div>

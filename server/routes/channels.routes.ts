@@ -17,7 +17,7 @@ import * as channelsController from "../controllers/channels.controller";
 import { validateRequest } from "../middlewares/validation.middleware";
 import { insertChannelSchema } from "@shared/schema";
 import { requireAuth, requireRole } from "server/middlewares/auth.middleware";
-import { requireSubscription } from "server/middlewares/requireSubscription";
+import { requireSubscription, checkSubscriptionAllowance, type SubscriptionFeature } from "server/middlewares/requireSubscription";
 import multer from "multer";
 import { db } from "../db";
 import { whatsappChannels } from "@shared/schema";
@@ -44,6 +44,21 @@ export function registerChannelRoutes(app: Express) {
 
   // Get active channel
   app.get("/api/channels/active",requireAuth, channelsController.getActiveChannel);
+
+  // Pre-flight plan check (UI calls this BEFORE opening Meta signup / forms)
+  app.get("/api/subscription/check", requireAuth, async (req, res) => {
+    try {
+      const u = (req.session as any)?.user;
+      if (u?.role === "superadmin") return res.json({ allowed: true, limit: "unlimited" });
+      const feature = String(req.query.feature || "channel") as SubscriptionFeature;
+      if (!["channel", "contacts", "automation", "campaign"].includes(feature)) return res.status(400).json({ error: "Invalid feature" });
+      const owner = u?.role === "team" && u.createdBy ? u.createdBy : u?.id;
+      res.json(await checkSubscriptionAllowance(owner, feature));
+    } catch (e) {
+      console.error("[subscription/check]", e);
+      res.status(500).json({ error: "Could not check subscription" });
+    }
+  });
 
   // Create channel
   app.post("/api/channels",

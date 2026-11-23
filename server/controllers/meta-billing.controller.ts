@@ -49,6 +49,7 @@ import {
   setRateCardActive,
   updateRateCard,
 } from "../services/meta-billing/rate-card.service";
+import { META_RANGES, metaCharges, type MetaRange } from "../services/meta-billing/meta-pricing.service";
 import {
   adminCustomerAccounts,
   adminSubscriptionRevenue,
@@ -159,6 +160,28 @@ export const getBillingOverview = handle(async (req, res) => {
       metaAccounts: [...wabas.values()],
       notices: { metaDirectBilling: META_DIRECT_BILLING_NOTICE, estimate: ESTIMATE_DISCLAIMER, tax: TAX_DISCLAIMER },
     },
+  });
+});
+
+// ── Meta-reported charges (pricing_analytics) ───────────────
+
+/** What Meta itself reports as charged on the customer's WABA(s), plus
+ *  HoverChat's own rate-card estimate for the same period for comparison. */
+export const getMetaCharges = handle(async (req, res) => {
+  const range = (META_RANGES as string[]).includes(String(req.query.range)) ? (String(req.query.range) as MetaRange) : "this_month";
+  const owner = await ownerIdOf(req);
+  const scope = await scopeOf(req);
+  let chans = await tenantChannels(req);
+  const channelId = typeof req.query.channelId === "string" ? req.query.channelId : undefined;
+  if (channelId) { assertChannel(req, channelId); chans = chans.filter((c) => c.id === channelId); }
+  // Super admin: Meta's numbers are per customer WABA; skip the live calls
+  // across every tenant and return only the platform-wide estimate.
+  const live = owner ? await metaCharges(chans, range) : null;
+  const estimate = await usageSummary(scope, usageFilterSchema.parse({ range, ...(channelId ? { channelId } : {}) }));
+  res.json({
+    success: true,
+    data: { meta: live, estimate: { amount: estimate.estimatedCost.amount, currency: estimate.estimatedCost.currency, billable: estimate.totals.billable, categories: estimate.categories } },
+    notice: META_DIRECT_BILLING_NOTICE,
   });
 });
 

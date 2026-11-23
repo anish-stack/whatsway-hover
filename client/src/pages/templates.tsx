@@ -22,6 +22,7 @@ import {
   FileText, Plus, RefreshCw, Clock, Trash2, Edit3,
   Phone, ExternalLink, Reply, Clipboard, Image, Video,
   FileDown, Megaphone, Wrench, ShieldCheck, Globe, MousePointerClick,
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { WHATSAPP_LANGUAGES } from "@/lib/template-constants";
@@ -406,9 +407,17 @@ const seedTemplateMutation = useMutation({
   },
 });
 
+  const [startWithAi, setStartWithAi] = useState(false);
   const handleCreateTemplate = () => {
     setEditingTemplate(null);
     setActiveDraft(null);
+    setStartWithAi(false);
+    setShowDialog(true);
+  };
+  const handleCreateWithAi = () => {
+    setEditingTemplate(null);
+    setActiveDraft(null);
+    setStartWithAi(true);
     setShowDialog(true);
   };
   const handleEditTemplate = (template: Template) => {
@@ -496,6 +505,13 @@ const seedTemplateMutation = useMutation({
                     {t("templates.sync")}
                   </Button>
 
+                  <Button
+                    onClick={handleCreateWithAi}
+                    className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:from-violet-700 hover:to-fuchsia-700"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Make with AI
+                  </Button>
                   <Button
                     onClick={handleCreateTemplate}
                     className="w-full sm:w-auto"
@@ -850,6 +866,7 @@ const seedTemplateMutation = useMutation({
         initialDraft={activeDraft}
         onDraftSaved={refreshDrafts}
         channelId={channelId}
+        startWithAi={startWithAi}
       />
     </div>
   );

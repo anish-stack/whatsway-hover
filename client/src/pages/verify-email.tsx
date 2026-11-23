@@ -66,8 +66,11 @@ const VerifyEmail = () => {
         return;
       }
 
-      setSuccess("Email verified successfully!");
-      setTimeout(() => setLocation("/dashboard"), 1500);
+      // The server has already signed the user in. Reload into the app so the
+      // cached "not logged in" auth state is replaced by the new session.
+      setSuccess("Email verified! Taking you to your dashboard…");
+      try { sessionStorage.setItem("fromLogin", "true"); } catch { /* ignore */ }
+      setTimeout(() => { window.location.href = "/dashboard"; }, 800);
     } catch (err) {
       setError("Verification failed, try again.");
     } finally {

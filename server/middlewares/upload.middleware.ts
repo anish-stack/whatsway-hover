@@ -16,7 +16,7 @@ import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import path from "path";
 import fs from "fs";
 import { Request, Response, NextFunction } from "express";
-import { getStorageTarget } from "../config/storageConfig";
+import { getStorageTarget, safeStorageKey } from "../config/storageConfig";
 
 
 
@@ -383,7 +383,7 @@ export const handleStorageUpload = async (
         const buffer = fs.readFileSync(file.path);
         const { conversationId } = req.params;
         const userId = (req as any).user?.id || req.body?.userId || conversationId || "guest";
-        const key = `uploads/${userId}/${Date.now()}-${path.basename(file.originalname)}`;
+        const key = safeStorageKey(`uploads/${String(userId).replace(/[^a-zA-Z0-9_-]/g, "")}`, file.originalname);
 
         const url = await target.upload(buffer, key, file.mimetype);
         if (url) {

@@ -36,6 +36,8 @@ export type StorageTarget = {
   upload: (buffer: Buffer, key: string, mime: string) => Promise<string | null>;
   /** Throws on failure */
   test: () => Promise<void>;
+  /** Hostnames this provider serves public files from (for media allow-lists) */
+  hosts: string[];
   destroy: () => void;
 };
 
@@ -73,6 +75,10 @@ function buildS3Target(cfg: StorageConfigInput): StorageTarget {
 
   if (provider === "r2") {
     region = region || "auto";
+    const raw = (cfg.endpoint || "").trim();
+    // Accept a bare Account ID, or an endpoint that includes the bucket path.
+    if (/^[a-f0-9]{32}$/i.test(raw)) endpoint = `https://${raw}.r2.cloudflarestorage.com`;
+    else if (endpoint) { try { const u = new URL(endpoint); endpoint = `${u.protocol}//${u.host}`; } catch { /* keep */ } }
     if (!endpoint) throw new Error("R2 endpoint required (https://<accountid>.r2.cloudflarestorage.com)");
   } else if (provider === "digitalocean") {
     // legacy behaviour: user may paste "bucket.region.digitaloceanspaces.com"
@@ -123,9 +129,23 @@ function buildS3Target(cfg: StorageConfigInput): StorageTarget {
       })
     );
 
+  const hosts = new Set<string>();
+  const addHost = (u?: string | null) => { try { if (u) hosts.add(new URL(withProtocol(u)).hostname); } catch { /* ignore */ } };
+  addHost(cfg.publicUrl);
+  if (provider === "s3") {
+    hosts.add(`${bucket}.s3.${region}.amazonaws.com`);
+    hosts.add(`${bucket}.s3.amazonaws.com`);
+    addHost(endpoint);
+  }
+  if (provider === "digitalocean" && endpoint) {
+    const h = new URL(endpoint).host;
+    hosts.add(h); hosts.add(`${bucket}.${h}`); hosts.add(`${bucket}.${h.replace(".digitaloceanspaces.com", ".cdn.digitaloceanspaces.com")}`);
+  }
+
   return {
     provider,
     bucket,
+    hosts: [...hosts],
     upload: async (buffer, key, mime) => {
       // R2 has no ACLs. Newer AWS buckets block ACLs -> retry without.
       const useAcl = provider === "s3" || provider === "digitalocean";
@@ -168,6 +188,7 @@ function buildCloudinaryTarget(cfg: StorageConfigInput): StorageTarget {
   return {
     provider: "cloudinary",
     bucket: cloudName,
+    hosts: ["res.cloudinary.com"],
     upload: async (buffer, key, mime) => {
       const type = resourceType(mime);
       // raw files keep extension in public_id; image/video get it from format
@@ -296,4 +317,19 @@ export const getStorageTarget = async (): Promise<StorageTarget | null> => {
     cache = { value: null, expiresAt: now + 30_000 };
     return null;
   }
+};
+
+
+/** Hostnames of the active storage provider (empty when using local disk). */
+export const getStorageHosts = async (): Promise<string[]> => {
+  const t = await getStorageTarget();
+  return t?.hosts || [];
+};
+
+/** Object key safe for S3/R2/Cloudinary and for use in a URL. */
+export const safeStorageKey = (prefix: string, originalName: string): string => {
+  const ext = path.extname(originalName || "").toLowerCase().replace(/[^.a-z0-9]/g, "").slice(0, 10);
+  const base = path.basename(originalName || "file", path.extname(originalName || ""))
+    .normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "file";
+  return `${prefix.replace(/\/+$/, "")}/${Date.now()}-${base}${ext}`;
 };

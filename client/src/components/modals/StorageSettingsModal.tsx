@@ -48,10 +48,10 @@ const FIELDS: Record<StorageProvider, FieldDef[]> = {
   ],
   r2: [
     { key: "spaceName", label: "Bucket Name", required: true },
-    { key: "endpoint", label: "Endpoint", placeholder: "https://<accountid>.r2.cloudflarestorage.com", required: true },
+    { key: "endpoint", label: "Account ID or S3 API endpoint", placeholder: "https://<accountid>.r2.cloudflarestorage.com", required: true },
     { key: "accessKey", label: "Access Key ID", required: true },
     { key: "secretKey", label: "Secret Access Key", secret: true, required: true },
-    { key: "publicUrl", label: "Public URL (r.dev or custom domain)", placeholder: "https://pub-xxxx.r2.dev" },
+    { key: "publicUrl", label: "Public URL (r2.dev or custom domain — needed so WhatsApp can fetch media)", placeholder: "https://pub-xxxx.r2.dev", required: true },
   ],
   cloudinary: [
     { key: "spaceName", label: "Cloud Name", required: true },

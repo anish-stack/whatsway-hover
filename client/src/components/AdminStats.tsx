@@ -62,12 +62,12 @@ export default function AdminStats() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto">
-        <div className="px-4 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="space-y-4 lg:space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:gap-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="h-32 bg-muted rounded-lg animate-pulse"
+              className="h-28 bg-muted rounded-2xl animate-pulse"
             />
           ))}
         </div>
@@ -79,8 +79,8 @@ export default function AdminStats() {
 
   if (isTeamOrAdmin) {
     return (
-      <div className="container mx-auto">
-        <div className="px-4 py-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="space-y-4 lg:space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:gap-6">
           <CardStat
             label={t("dashboard.dashboardStates.Total_Contacts")}
             value={stats.totalContacts ?? 0}
@@ -110,7 +110,7 @@ export default function AdminStats() {
             borderColor="border-l-green-500"
           />
         </div>
-        <div className="px-4 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:gap-6">
           <CardStat
             label={t("dashboard.read")}
             value={stats.messagesRead ?? 0}
@@ -145,8 +145,8 @@ export default function AdminStats() {
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="px-4 py-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="space-y-4 lg:space-y-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:gap-6">
         {stats.totalContacts !== undefined && stats.totalContacts !== null && (
           <CardStat
             label={t("dashboard.dashboardStates.Total_Contacts")}

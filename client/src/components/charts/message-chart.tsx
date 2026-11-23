@@ -39,6 +39,14 @@ ChartJS.register(
   Filler
 );
 
+/** Fixed colour per series (validated categorical slots; failed = red). */
+export const MESSAGE_SERIES = [
+  { key: "sent", labelKey: "dashboard.sent", color: "#2a78d6" },
+  { key: "delivered", labelKey: "dashboard.delivered", color: "#1baf7a" },
+  { key: "read", labelKey: "dashboard.read", color: "#6250d6" },
+  { key: "failed", labelKey: "dashboard.failed", color: "#e34948" },
+] as const;
+
 interface MessageChartProps {
   data: Array<{
     date: string;
@@ -53,66 +61,25 @@ export function MessageChart({ data }: MessageChartProps) {
   const { t } = useTranslation();
   const chartRef = useRef<ChartJS<"line">>(null);
 
+  const line = (label: string, key: "sent" | "delivered" | "read" | "failed", color: string) => ({
+    label,
+    data: data.map((d) => d[key] ?? 0),
+    borderColor: color,
+    backgroundColor: color,
+    borderWidth: 2,
+    pointRadius: 0,
+    pointHoverRadius: 5,
+    pointHitRadius: 12,
+    pointBackgroundColor: color,
+    pointBorderColor: "#fff",
+    pointBorderWidth: 2,
+    tension: 0.35,
+    fill: false,
+  });
+
   const chartData: ChartData<"line"> = {
     labels: data.map((d) => d.date),
-    datasets: [
-      {
-        label: t("dashboard.sent"),
-        data: data.map((d) => d.sent ?? 0),
-        borderColor: "#3b82f6",
-        backgroundColor: "rgba(59, 130, 246, 0.1)",
-        borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: "#fff",
-        pointBorderColor: "#3b82f6",
-        pointBorderWidth: 2,
-        tension: 0.3,
-        fill: false,
-      },
-      {
-        label: t("dashboard.delivered"),
-        data: data.map((d) => d.delivered ?? 0),
-        borderColor: "#10b981",
-        backgroundColor: "rgba(16, 185, 129, 0.1)",
-        borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: "#fff",
-        pointBorderColor: "#10b981",
-        pointBorderWidth: 2,
-        tension: 0.3,
-        fill: false,
-      },
-      {
-        label: t("dashboard.read"),
-        data: data.map((d) => d.read ?? 0),
-        borderColor: "#f59e0b",
-        backgroundColor: "rgba(245, 158, 11, 0.1)",
-        borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: "#fff",
-        pointBorderColor: "#f59e0b",
-        pointBorderWidth: 2,
-        tension: 0.3,
-        fill: false,
-      },
-      {
-        label: t("dashboard.failed"),
-        data: data.map((d) => d.failed ?? 0),
-        borderColor: "#ef4444",
-        backgroundColor: "rgba(239, 68, 68, 0.1)",
-        borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: "#fff",
-        pointBorderColor: "#ef4444",
-        pointBorderWidth: 2,
-        tension: 0.3,
-        fill: false,
-      },
-    ],
+    datasets: MESSAGE_SERIES.map((s) => line(t(s.labelKey), s.key, s.color)),
   };
 
   const options: ChartOptions<"line"> = {
@@ -127,40 +94,44 @@ export function MessageChart({ data }: MessageChartProps) {
         display: false,
       },
       tooltip: {
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        titleFont: { size: 13 },
+        backgroundColor: "rgba(17, 17, 17, 0.9)",
+        titleFont: { size: 12, weight: 600 },
         bodyFont: { size: 12 },
         padding: 10,
-        cornerRadius: 6,
+        cornerRadius: 8,
+        boxWidth: 8,
+        boxHeight: 8,
+        usePointStyle: true,
       },
     },
     scales: {
       x: {
-        grid: {
-          color: "rgba(0, 0, 0, 0.06)",
-        },
+        grid: { display: false },
+        border: { display: false },
         ticks: {
           font: { size: 11 },
-          maxRotation: 45,
-          minRotation: 0,
+          color: "#8a8986",
+          maxRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 8,
         },
       },
       y: {
         beginAtZero: true,
-        grid: {
-          color: "rgba(0, 0, 0, 0.06)",
-        },
+        grid: { color: "rgba(120, 120, 120, 0.12)" },
+        border: { display: false },
         ticks: {
           font: { size: 11 },
-          stepSize: 1,
+          color: "#8a8986",
           precision: 0,
+          maxTicksLimit: 5,
         },
       },
     },
   };
 
   return (
-    <div className="w-full" style={{ height: "300px" }}>
+    <div className="w-full" style={{ height: "280px" }}>
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

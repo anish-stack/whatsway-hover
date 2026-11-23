@@ -869,6 +869,129 @@ const steps: MigrationStep[] = [
     `,
   },
 
+  {
+    description: "Create WhatsApp Mini Store tables",
+    sql: `
+      CREATE TABLE IF NOT EXISTS store_settings (
+        channel_id VARCHAR PRIMARY KEY REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        enabled BOOLEAN NOT NULL DEFAULT FALSE,
+        store_name VARCHAR(80) NOT NULL DEFAULT 'Our store',
+        keywords JSONB NOT NULL DEFAULT '["shop","store","menu","order","catalog"]'::jsonb,
+        welcome_text TEXT NOT NULL DEFAULT 'Welcome! 👋 Browse our products below and order right here on WhatsApp.',
+        currency VARCHAR(3) NOT NULL DEFAULT 'INR',
+        ask_address BOOLEAN NOT NULL DEFAULT TRUE,
+        cod_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        upi_id VARCHAR(100),
+        razorpay_key_id VARCHAR(100),
+        razorpay_key_secret TEXT,
+        razorpay_webhook_secret TEXT,
+        delivery_fee NUMERIC(12,2) NOT NULL DEFAULT 0,
+        min_order NUMERIC(12,2) NOT NULL DEFAULT 0,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS store_products (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        name VARCHAR(120) NOT NULL,
+        description TEXT,
+        category VARCHAR(60) NOT NULL DEFAULT 'All',
+        price NUMERIC(12,2) NOT NULL,
+        image_url TEXT,
+        stock INTEGER,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS store_products_channel_idx ON store_products (channel_id);
+      CREATE TABLE IF NOT EXISTS store_carts (
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        phone VARCHAR(24) NOT NULL,
+        items JSONB NOT NULL DEFAULT '[]'::jsonb,
+        state VARCHAR(32) NOT NULL DEFAULT 'browsing',
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS store_carts_channel_phone_uq ON store_carts (channel_id, phone);
+      CREATE TABLE IF NOT EXISTS store_orders (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        order_number VARCHAR(32) NOT NULL,
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id VARCHAR NOT NULL,
+        conversation_id VARCHAR,
+        phone VARCHAR(24) NOT NULL,
+        customer_name VARCHAR(120),
+        items JSONB NOT NULL,
+        subtotal NUMERIC(12,2) NOT NULL,
+        delivery_fee NUMERIC(12,2) NOT NULL DEFAULT 0,
+        total NUMERIC(12,2) NOT NULL,
+        currency VARCHAR(3) NOT NULL DEFAULT 'INR',
+        address TEXT,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        payment_method VARCHAR(16),
+        payment_status VARCHAR(16) NOT NULL DEFAULT 'unpaid',
+        payment_link_id VARCHAR(64),
+        payment_link_url TEXT,
+        tracking_url TEXT,
+        notes TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS store_orders_channel_idx ON store_orders (channel_id, created_at);
+      CREATE UNIQUE INDEX IF NOT EXISTS store_orders_number_uq ON store_orders (order_number);
+      CREATE INDEX IF NOT EXISTS store_orders_phone_idx ON store_orders (channel_id, phone);
+    `,
+  },
+  {
+    description: "Create integrations tables (Shopify, WooCommerce, Google Sheets, CRM)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS integrations (
+        id            VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id      VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        channel_id    VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        type          VARCHAR(32) NOT NULL,
+        name          VARCHAR(120) NOT NULL,
+        status        VARCHAR(16) NOT NULL DEFAULT 'active',
+        token         VARCHAR(64) NOT NULL,
+        config        JSONB NOT NULL DEFAULT '{}'::jsonb,
+        last_event_at TIMESTAMPTZ,
+        event_count   INTEGER NOT NULL DEFAULT 0,
+        created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS integrations_owner_idx ON integrations (owner_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS integrations_token_uq ON integrations (token);
+
+      CREATE TABLE IF NOT EXISTS integration_rules (
+        id              VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        integration_id  VARCHAR NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
+        event           VARCHAR(80) NOT NULL,
+        template_name   VARCHAR(512) NOT NULL,
+        language        VARCHAR(16) NOT NULL DEFAULT 'en_US',
+        phone_path      VARCHAR(200),
+        variables       JSONB NOT NULL DEFAULT '[]'::jsonb,
+        header_variable VARCHAR(200),
+        button_variable VARCHAR(200),
+        is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS integration_rules_int_idx ON integration_rules (integration_id);
+
+      CREATE TABLE IF NOT EXISTS integration_logs (
+        id             VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        integration_id VARCHAR NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
+        direction      VARCHAR(8) NOT NULL DEFAULT 'in',
+        event          VARCHAR(80) NOT NULL,
+        status         VARCHAR(16) NOT NULL,
+        phone          VARCHAR(24),
+        detail         TEXT,
+        payload        JSONB,
+        created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS integration_logs_int_idx ON integration_logs (integration_id, created_at);
+    `,
+  },
+
   // ────────────────────────────────────────────────────
   // Convert every legacy `TIMESTAMP WITHOUT TIME ZONE` column in the
   // public schema to `TIMESTAMPTZ`, interpreting the existing wall-clock

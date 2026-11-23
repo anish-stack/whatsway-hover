@@ -32,6 +32,10 @@ class ErrorBoundary extends React.Component<
   static getDerivedStateFromError() {
     return { hasError: true };
   }
+  componentDidCatch(error: Error) {
+    // console.* is silenced in production; keep the last error inspectable.
+    (window as any).__hcLastError = `${error?.message}\n${error?.stack || ""}`.slice(0, 4000);
+  }
   render() {
     if (this.state.hasError) {
       return (

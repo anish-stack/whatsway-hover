@@ -32,7 +32,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "@/lib/i18n";
 import { Link, useLocation } from "wouter";
 
-const Pricing = () => {
+const Pricing = ({ hideFaq = false }: { hideFaq?: boolean } = {}) => {
   const { t } = useTranslation();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -269,16 +269,16 @@ const Pricing = () => {
                   <div className="space-y-1">
                     <div className="text-sm text-[var(--ink-500)]">
                       {t("Landing.pricingSec.pricing.upTo")}{" "}
-                      {plan.permissions.contacts}{" "}
+                      {(plan.permissions?.contacts ?? "—")}{" "}
                       {t("Landing.pricingSec.pricing.contacts")}
                     </div>
                     <div className="text-sm text-[var(--ink-500)]">
-                      {plan.permissions.channel}{" "}
+                      {(plan.permissions?.channel ?? "—")}{" "}
                       {t("Landing.pricingSec.pricing.channels")}
                     </div>
-                    {plan.permissions.automation && (
+                    {plan.permissions?.automation && (
                       <div className="text-sm text-[var(--ink-500)]">
-                        {plan.permissions.automation}{" "}
+                        {(plan.permissions?.automation ?? "—")}{" "}
                         {t("Landing.pricingSec.pricing.automation")}
                       </div>
                     )}
@@ -313,21 +313,21 @@ const Pricing = () => {
                     <li className="flex items-start space-x-3">
                       <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
                       <span className="text-sm text-[var(--ink-700)]">
-                        {plan.permissions.contacts}{" "}
+                        {(plan.permissions?.contacts ?? "—")}{" "}
                         {t("Landing.pricingSec.pricing.contacts")}
                       </span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
                       <span className="text-sm text-[var(--ink-700)]">
-                        {plan.permissions.channel}{" "}
+                        {(plan.permissions?.channel ?? "—")}{" "}
                         {t("Landing.pricingSec.pricing.channels")}
                       </span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--ok)]" />
                       <span className="text-sm text-[var(--ink-700)]">
-                        {plan.permissions.automation}{" "}
+                        {(plan.permissions?.automation ?? "—")}{" "}
                         {t("Landing.pricingSec.pricing.automation")}
                       </span>
                     </li>
@@ -433,7 +433,7 @@ const Pricing = () => {
           {renderPlansContent()}
 
           {/* FAQ Section */}
-          <div>
+          {!hideFaq && <div>
             <h3 className="display-md text-[var(--ink)]">
               {t("Landing.pricingSec.faq.title")}
             </h3>
@@ -447,7 +447,7 @@ const Pricing = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div>}
 
           {/* Enterprise CTA */}
           <div className="mt-16 flex flex-col items-start gap-6 rounded-2xl bg-[var(--ink)] p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">

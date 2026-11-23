@@ -63,9 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
       try {
+        // Never let the auth check hang the whole app behind a loader.
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 12000);
         const response = await fetch("/api/auth/me", {
           credentials: "include",
-        });
+          signal: ctrl.signal,
+        }).finally(() => clearTimeout(timer));
         if (!response.ok) {
           if (response.status === 401) {
             return null;

@@ -16,6 +16,7 @@ export function registerMetaBillingRoutes(app: Express) {
 
   // Customer — Meta usage (estimates only; Meta bills the customer directly)
   app.get("/api/whatsapp/usage/summary", ...tenant, c.getUsageSummary);
+  app.get("/api/whatsapp/meta-charges", ...tenant, c.getMetaCharges);
   app.get("/api/whatsapp/usage/timeseries", ...tenant, c.getUsageTimeseries);
   app.get("/api/whatsapp/usage/breakdown", ...tenant, c.getUsageBreakdown);
   app.get("/api/whatsapp/usage/history", ...tenant, c.getUsageHistory);
