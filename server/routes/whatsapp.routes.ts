@@ -14,6 +14,7 @@
 import type { Express } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { storage } from "../storage";
+import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
 import { WhatsAppApiService } from "../services/whatsapp-api";
 import { channelHealthMonitor } from "server/cron/channel-health-monitor";
 import { handleDigitalOceanUpload, upload, validateUploadedFiles } from "../middlewares/upload.middleware";
@@ -508,11 +509,23 @@ if (type === "template") {
     });
   }
 
-  // 🔹 BUTTON PARAMETERS (COPY_CODE / dynamic URL)
-  if (Array.isArray(buttonParameters) && buttonParameters.length > 0) {
-    const templateRecord =
-      (await storage.getTemplateByNameAndChannel(templateName, channel.id)) ||
-      (await storage.getTemplatesByName(templateName))[0];
+  // 🔹 BUTTON PARAMETERS (COPY_CODE / dynamic URL / OTP)
+  const templateRecord =
+    (await storage.getTemplateByNameAndChannel(templateName, channel.id)) ||
+    (await storage.getTemplatesByName(templateName))[0];
+  const authTemplate = isAuthTemplate(templateRecord as any);
+
+  if (authTemplate) {
+    // Authentication (OTP) template: Meta needs the code in the body AND the
+    // OTP button, otherwise it fails with (#131008) Required parameter is missing.
+    try {
+      const withButton = ensureOtpButton(components, templateRecord, buttonParameters?.[0]);
+      components.length = 0;
+      components.push(...withButton);
+    } catch (e: any) {
+      return res.status(e.status || 400).json({ success: false, message: e.message });
+    }
+  } else if (Array.isArray(buttonParameters) && buttonParameters.length > 0) {
 
     if (templateRecord?.buttons) {
       let templateButtons: any[] = [];

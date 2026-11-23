@@ -11,6 +11,7 @@
  * ============================================================
  */
 
+import { ensureOtpButton } from "../utils/auth-template";
 import type { Express } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { Request, Response } from "express";
@@ -87,11 +88,16 @@ export function registerRestApiV1Routes(app: Express) {
       }
 
       try {
+        // OTP templates: add the required OTP button parameter if the caller
+        // only sent the body code (prevents Meta error #131008).
+        const [tpl] = await db.select().from(schema.templates)
+          .where(and(eq(schema.templates.channelId, channelId), eq(schema.templates.name, templateName))).limit(1);
+        const finalComponents = ensureOtpButton(Array.isArray(components) ? components : [], tpl);
         const result = await WhatsAppApiService.sendTemplateMessage(
           channel,
           to,
           templateName,
-          components || [],
+          finalComponents,
           language || "en_US"
         );
 

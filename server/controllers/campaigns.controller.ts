@@ -25,6 +25,7 @@ import { db, dbRead } from "../db";
 import { channels, messageQueue, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { parseMessagingTier } from "../utils/messaging-tiers";
+import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
 import {
   checkCampaignReadiness,
   checkCampaignRowReadiness,
@@ -985,6 +986,13 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
         components.push({ type: "button", sub_type: "copy_code", index: index.toString(), parameters: [{ type: "coupon_code", coupon_code: couponCode }] });
       }
     });
+  }
+
+  // Authentication (OTP) templates also need the code on the OTP button.
+  if (isAuthTemplate(template)) {
+    const fixed = ensureOtpButton(components, template);
+    components.length = 0;
+    components.push(...fixed);
   }
 
   if (carouselCards) {

@@ -843,6 +843,9 @@ app.use((req, res, next) => {
 
       const { startResellerRemindersCron } = await import("./cron/reseller-reminders.cron.ts");
       startResellerRemindersCron();
+
+      const { startTemplateStatusPoller } = await import("./cron/template-status-poller.cron.ts");
+      startTemplateStatusPoller();
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
     }
