@@ -11,6 +11,8 @@
  * ============================================================
  */
 
+import { resolveAI } from "../utils/ai-provider";
+import { DEFAULT_AI_PROVIDER } from "@shared/ai-providers";
 import { Request, Response } from "express";
 import { DiployError, asyncHandler as _dHandler, diployLogger, HTTP_STATUS } from "@diploy/core";
 import { db } from "../db";
@@ -171,14 +173,15 @@ export const createAISettings = async (req: Request, res: Response) => {
         .where(eq(aiSettings.channelId, channelId));
     }
 
+    const norm = resolveAI({ provider: provider || DEFAULT_AI_PROVIDER, model, endpoint });
     const [inserted] = await db
       .insert(aiSettings)
       .values({
-        provider: provider || "openai",
+        provider: norm.provider,
         channelId: channelId || null,
         apiKey,
-        model: model || "gpt-4o-mini",
-        endpoint: endpoint || "https://api.openai.com/v1",
+        model: norm.model,
+        endpoint: norm.baseURL,
         temperature: temperature?.toString() || "0.7",
         maxTokens: maxTokens?.toString() || "2048",
         isActive: !!isActive,
@@ -243,14 +246,19 @@ export const updateAISettings = async (req: Request, res: Response) => {
         .where(and(eq(aiSettings.channelId, existing.channelId), ne(aiSettings.id, id)));
     }
 
+    const norm = resolveAI({
+      provider: provider ?? existing.provider,
+      model: model ?? existing.model,
+      endpoint: endpoint ?? existing.endpoint,
+    });
     const [updated] = await db
       .update(aiSettings)
       .set({
-        provider: provider ?? existing.provider,
+        provider: norm.provider,
         apiKey: apiKey ?? existing.apiKey,
         channelId: existing.channelId,
-        model: model ?? existing.model,
-        endpoint: endpoint ?? existing.endpoint,
+        model: norm.model,
+        endpoint: norm.baseURL,
         temperature: temperature?.toString() ?? existing.temperature,
         maxTokens: maxTokens?.toString() ?? existing.maxTokens,
         isActive: isActive ?? existing.isActive,

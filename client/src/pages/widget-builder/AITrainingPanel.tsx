@@ -11,6 +11,7 @@
  * ============================================================
  */
 
+import { AI_PROVIDERS, DEFAULT_AI_PROVIDER, normalizeProvider, type AIProviderId } from "@shared/ai-providers";
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, apiRequestFormData, queryClient } from "@/lib/queryClient";
@@ -126,10 +127,10 @@ export default function AITrainingPanel({
   const [newTriggerWord, setNewTriggerWord] = useState("");
 
   const [aiConfigForm, setAiConfigForm] = useState({
-    provider: "openai",
+    provider: DEFAULT_AI_PROVIDER as string,
     apiKey: "",
-    model: "gpt-4o-mini",
-    endpoint: "https://api.openai.com/v1",
+    model: AI_PROVIDERS[DEFAULT_AI_PROVIDER].defaultModel as string,
+    endpoint: AI_PROVIDERS[DEFAULT_AI_PROVIDER].endpoint as string,
     temperature: 0.7,
     maxTokens: 2048,
     words: [] as string[],
@@ -171,10 +172,10 @@ export default function AITrainingPanel({
     } else if (aiConfigData === null) {
       setAiConfigId(null);
       setAiConfigForm({
-        provider: "openai",
+        provider: DEFAULT_AI_PROVIDER,
         apiKey: "",
-        model: "gpt-4o-mini",
-        endpoint: "https://api.openai.com/v1",
+        model: AI_PROVIDERS[DEFAULT_AI_PROVIDER].defaultModel,
+        endpoint: AI_PROVIDERS[DEFAULT_AI_PROVIDER].endpoint,
         temperature: 0.7,
         maxTokens: 2048,
         words: [],
@@ -871,11 +872,22 @@ export default function AITrainingPanel({
                   <Label className="flex items-center gap-1.5"><Settings className="h-3.5 w-3.5" /> Provider</Label>
                   <Select
                     value={aiConfigForm.provider}
-                    onValueChange={(v) => setAiConfigForm(prev => ({ ...prev, provider: v }))}
+                    onValueChange={(v) => {
+                      const p = normalizeProvider(v);
+                      setAiConfigForm(prev => ({
+                        ...prev,
+                        provider: p,
+                        model: AI_PROVIDERS[p].defaultModel,
+                        endpoint: AI_PROVIDERS[p].endpoint,
+                        apiKey: prev.provider === p ? prev.apiKey : "",
+                      }));
+                    }}
                   >
                     <SelectTrigger><SelectValue placeholder="Select provider" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="openai">OpenAI</SelectItem>
+                      {(Object.keys(AI_PROVIDERS) as AIProviderId[]).map((id) => (
+                        <SelectItem key={id} value={id}>{AI_PROVIDERS[id].label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -886,8 +898,9 @@ export default function AITrainingPanel({
                     type="password"
                     value={aiConfigForm.apiKey}
                     onChange={(e) => setAiConfigForm(prev => ({ ...prev, apiKey: e.target.value }))}
-                    placeholder="sk-..."
+                    placeholder={AI_PROVIDERS[normalizeProvider(aiConfigForm.provider)].keyPlaceholder}
                   />
+                  <p className="text-xs text-muted-foreground">{AI_PROVIDERS[normalizeProvider(aiConfigForm.provider)].keyHelp}</p>
                 </div>
 
                 <div className="space-y-2">
@@ -898,17 +911,12 @@ export default function AITrainingPanel({
                   >
                     <SelectTrigger><SelectValue placeholder="Select model" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gpt-4.1">GPT-4.1</SelectItem>
-                      <SelectItem value="gpt-4.1-mini">GPT-4.1 Mini</SelectItem>
-                      <SelectItem value="gpt-4.1-nano">GPT-4.1 Nano</SelectItem>
-                      <SelectItem value="gpt-4o">GPT-4o</SelectItem>
-                      <SelectItem value="gpt-4o-mini">GPT-4o Mini</SelectItem>
-                      <SelectItem value="o3-mini">o3-mini</SelectItem>
-                      <SelectItem value="o1">o1</SelectItem>
-                      <SelectItem value="o1-mini">o1-mini</SelectItem>
-                      <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
-                      <SelectItem value="gpt-4">GPT-4</SelectItem>
-                      <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+                      {AI_PROVIDERS[normalizeProvider(aiConfigForm.provider)].models.map((m) => (
+                        <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                      ))}
+                      {!AI_PROVIDERS[normalizeProvider(aiConfigForm.provider)].models.some((m) => m.value === aiConfigForm.model) && aiConfigForm.model && (
+                        <SelectItem value={aiConfigForm.model}>{aiConfigForm.model}</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

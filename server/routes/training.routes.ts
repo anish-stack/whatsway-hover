@@ -443,24 +443,19 @@ export function registerTrainingRoutes(app: Express) {
         });
       }
 
-      const client = new (await import("openai")).default({
-        apiKey: activeSetting.apiKey,
-        baseURL: activeSetting.endpoint || "https://api.openai.com/v1",
-      });
-
-      const model = activeSetting.model || "gpt-4o-mini";
-      const temperature = parseFloat(activeSetting.temperature || "0.7");
-      const maxTokens = parseInt(activeSetting.maxTokens || "500");
+      const { createAIClient } = await import("../utils/ai-provider");
+      const { client, resolved } = createAIClient({ ...activeSetting, maxTokens: activeSetting.maxTokens || "500" });
 
       const completion = await client.chat.completions.create({
-        model,
+        model: resolved.model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: message },
         ],
-        temperature,
-        max_tokens: maxTokens,
-      });
+        temperature: resolved.temperature,
+        max_tokens: resolved.maxTokens,
+        ...resolved.extra,
+      } as any);
 
       const response =
         completion.choices?.[0]?.message?.content || "No response generated.";

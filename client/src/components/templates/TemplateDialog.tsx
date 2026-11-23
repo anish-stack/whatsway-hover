@@ -70,7 +70,10 @@ import {
   ExternalLink,
   Clipboard,
   Timer,
+  Workflow,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import type { Template } from "@shared/schema";
 import { useAuth } from "@/contexts/auth-context";
 import {
@@ -193,7 +196,7 @@ const templateFormSchema = z.object({
   buttons: z
     .array(
       z.object({
-        type: z.enum(["QUICK_REPLY", "URL", "PHONE_NUMBER", "COPY_CODE"]),
+        type: z.enum(["QUICK_REPLY", "URL", "PHONE_NUMBER", "COPY_CODE", "FLOW"]),
         text: z
           .string()
           .max(25, "Button text must be less than 25 characters")
@@ -202,7 +205,12 @@ const templateFormSchema = z.object({
         url: z.string().optional(),
         phoneNumber: z.string().optional(),
         couponCode: z.string().optional(),
+        flowId: z.string().optional(),
+        navigateScreen: z.string().optional(),
       }).superRefine((btn, ctx) => {
+        if (btn.type === "FLOW" && (!btn.flowId || !btn.flowId.trim())) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Select a WhatsApp Flow", path: ["flowId"] });
+        }
         if (btn.type !== "COPY_CODE" && (!btn.text || btn.text.trim().length === 0)) {
           ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Button text is required", path: ["text"] });
         }
@@ -688,6 +696,7 @@ export function TemplateDialog({
 
   const canAddButton = () => {
     if (isAuthentication) return false;
+    if (watchedValues.buttons?.some((b) => b.type === "FLOW")) return false;
     if (isCouponCode && copyCodeCount >= 1) return quickReplyCount < 1;
     if (hasQuickReply) return quickReplyCount < 3 && !hasCTA && !hasCopyCode;
     if (hasCTA || hasCopyCode) return ctaCount + copyCodeCount < 2 && !hasQuickReply;
@@ -707,6 +716,11 @@ export function TemplateDialog({
     const localCopyCodeCount = otherButtons.filter((b) => b.type === "COPY_CODE").length;
 
     const types: { value: string; label: string; icon: any }[] = [];
+    // A Flow button must be the only button on the template.
+    if (otherButtons.some((b) => b.type === "FLOW")) return types;
+    if (otherButtons.length === 0 && !isAuthentication) {
+      types.push({ value: "FLOW", label: "WhatsApp Flow (form)", icon: Workflow });
+    }
     if (!localHasCTA && !localHasCopyCode && localQuickReplyCount < 3) {
       types.push({
         value: "QUICK_REPLY",
@@ -746,7 +760,7 @@ export function TemplateDialog({
   const handleAddButton = () => {
     if (!canAddButton()) return;
     const types = getAvailableButtonTypes();
-    const defaultType = types[0]?.value || "QUICK_REPLY";
+    const defaultType = types.find((t) => t.value !== "FLOW")?.value || types[0]?.value || "QUICK_REPLY";
     appendButton({
       type: defaultType as any,
       text: "",
@@ -2483,6 +2497,10 @@ export function TemplateDialog({
                                 )}
                               />
                             )}
+
+                            {watchedValues.buttons?.[index]?.type === "FLOW" && (
+                              <FlowButtonFields form={form} index={index} channelId={channelId} />
+                            )}
                           </div>
                         ))}
                       </div>
@@ -2628,5 +2646,87 @@ export function TemplateDialog({
         </Form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+
+/** Flow picker for a FLOW template button: lists published Flows on the WABA. */
+function FlowButtonFields({ form, index, channelId }: { form: any; index: number; channelId?: string }) {
+  const { data: flows = [], isLoading, error } = useQuery<any[]>({
+    queryKey: ["/api/whatsapp/flows", channelId],
+    enabled: !!channelId,
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/whatsapp/flows?channelId=${channelId}`);
+      const json = await res.json();
+      return json.data || [];
+    },
+  });
+  const flowId = form.watch(`buttons.${index}.flowId`);
+  const { data: details } = useQuery<any>({
+    queryKey: ["/api/whatsapp/flows", channelId, flowId],
+    enabled: !!channelId && !!flowId,
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/whatsapp/flows/${flowId}?channelId=${channelId}`);
+      return res.json();
+    },
+  });
+  const usable = flows.filter((f) => f.status === "PUBLISHED");
+  return (
+    <div className="space-y-3">
+      <FormField
+        control={form.control}
+        name={`buttons.${index}.flowId`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>WhatsApp Flow</FormLabel>
+            <Select onValueChange={(v) => { field.onChange(v); form.setValue(`buttons.${index}.navigateScreen`, ""); }} value={field.value || ""}>
+              <FormControl>
+                <SelectTrigger><SelectValue placeholder={isLoading ? "Loading flows..." : "Select a published Flow"} /></SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {usable.map((f) => (
+                  <SelectItem key={f.id} value={String(f.id)}>{f.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              {error
+                ? "Could not load Flows from Meta. Check the channel token has whatsapp_business_management permission."
+                : usable.length === 0 && !isLoading
+                  ? "No published Flows yet. Create and publish one in WhatsApp Manager → Account tools → Flows."
+                  : "Only PUBLISHED Flows can be used in templates."}
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {details?.screens?.length > 0 && (
+        <FormField
+          control={form.control}
+          name={`buttons.${index}.navigateScreen`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First screen (optional)</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value || ""}>
+                <FormControl>
+                  <SelectTrigger><SelectValue placeholder="Flow default" /></SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {details.screens.map((sc: any) => (
+                    <SelectItem key={sc.id} value={sc.id}>{sc.title ? `${sc.title} (${sc.id})` : sc.id}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+      {details?.previewUrl && (
+        <a href={details.previewUrl} target="_blank" rel="noreferrer" className="text-xs text-primary underline">
+          Preview this Flow
+        </a>
+      )}
+    </div>
   );
 }

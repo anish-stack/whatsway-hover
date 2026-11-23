@@ -48,6 +48,7 @@ import {
     UserPlus,
     Receipt,
     Tag,
+  Workflow,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -122,6 +123,8 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/contacts", icon: Users, labelKey: "navigation.contacts", color: "text-blue-600", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/groups", icon: MdGroups, labelKey: "navigation.groups", color: "text-blue-400", allowedRoles: ["admin"] },
             { section: "Main", href: "/templates", icon: FileText, labelKey: "navigation.templates", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
+            { section: "Main", href: "/template-library", icon: BookOpen, labelKey: "Template Library", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "WhatsApp Flows", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/automation", icon: Zap, labelKey: "navigation.automations", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/settings?tab=ai_setting", icon: Bot, labelKey: "AI Assistant", color: "text-teal-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/analytics", icon: BarChart3, labelKey: "navigation.analytics", color: "text-pink-600", allowedRoles: ["superadmin", "admin"] },
@@ -186,6 +189,14 @@ function getNavItems(role: string): NavItem[] {
                 href: "/templates",
                 icon: FileText,
                 labelKey: "navigation.templates",
+                color: "text-[var(--brand)]",
+                requiredPrefix: "templates.",
+                allowedRoles: ["team"],
+            },
+            {
+                href: "/template-library",
+                icon: BookOpen,
+                labelKey: "Template Library",
                 color: "text-[var(--brand)]",
                 requiredPrefix: "templates.",
                 allowedRoles: ["team"],

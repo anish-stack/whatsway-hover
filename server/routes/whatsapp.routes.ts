@@ -15,6 +15,7 @@ import type { Express } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { storage } from "../storage";
 import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
+import { ensureFlowButton } from "../utils/flow-template";
 import { WhatsAppApiService } from "../services/whatsapp-api";
 import { channelHealthMonitor } from "server/cron/channel-health-monitor";
 import { handleDigitalOceanUpload, upload, validateUploadedFiles } from "../middlewares/upload.middleware";
@@ -562,6 +563,13 @@ if (type === "template") {
         }
       });
     }
+  }
+
+  // FLOW buttons get a flow_token so replies can be traced.
+  {
+    const withFlow = ensureFlowButton(components, templateRecord);
+    components.length = 0;
+    components.push(...withFlow);
   }
 
   payload = {

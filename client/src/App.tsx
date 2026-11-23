@@ -42,6 +42,8 @@ import BillingOverviewPage from "@/pages/billing/overview";
 import CostCalculatorPage from "@/pages/billing/cost-calculator";
 import WhatsAppUsagePage from "@/pages/whatsapp/usage";
 import AccountHealthPage from "@/pages/whatsapp/account-health";
+import TemplateLibraryPage from "@/pages/template-library";
+import WhatsAppFlowsPage from "@/pages/whatsapp-flows";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -386,6 +388,12 @@ function ProtectedRoutes() {
               component={Campaigns}
               requiredPermission="campaigns:view"
             />
+          </Route>
+          <Route path="/template-library">
+            <PermissionRoute component={TemplateLibraryPage} requiredPermission="templates:view" />
+          </Route>
+          <Route path="/whatsapp-flows">
+            <PermissionRoute component={WhatsAppFlowsPage} requiredPermission="templates:view" />
           </Route>
           <Route path="/templates">
             <PermissionRoute

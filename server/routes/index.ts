@@ -23,6 +23,7 @@ import { registerAnalyticsRoutes } from "./analytics.routes";
 import { registerContactRoutes } from "./contacts.routes";
 import { registerCampaignRoutes } from "./campaigns.routes";
 import { registerTemplateRoutes } from "./templates.routes";
+import { registerMetaLibraryFlowsRoutes } from "./meta-library-flows.routes";
 import { registerMediaRoutes } from "./media.routes";
 import { registerConversationRoutes } from "./conversations.routes";
 import { registerAutomationRoutes } from "./automation.routes";
@@ -77,6 +78,7 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerAnalyticsRoutes(app); // Legacy - kept for compatibility
   registerContactRoutes(app);
   registerCampaignRoutes(app);
+  registerMetaLibraryFlowsRoutes(app); // before /api/templates/:id
   registerTemplateRoutes(app);
   registerMediaRoutes(app);
   registerConversationRoutes(app);

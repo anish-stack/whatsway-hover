@@ -18,6 +18,7 @@ import { eq, and } from "drizzle-orm";
 import crypto from "crypto";
 import { triggerThrottledNotification, NOTIFICATION_EVENTS } from "./notification.service";
 import OpenAI from "openai";
+import { createAIClient } from "../utils/ai-provider";
 import { searchTrainingData } from "./training.service";
 import { WhatsAppApiService } from "./whatsapp-api";
 
@@ -815,14 +816,11 @@ ${unansweredCount >= maxAttempts - 1 ? `- The user has had ${unansweredCount} un
 
     const systemPrompt = basePrompt + trainingContext + escalationInstruction;
 
-    const aiClient = new OpenAI({
-      apiKey: activeAI.apiKey,
-      baseURL: activeAI.endpoint || "https://api.openai.com/v1",
-    });
+    const { client: aiClient, resolved: resolvedAI } = createAIClient({ ...activeAI, maxTokens: activeAI.maxTokens || "500" });
 
-    const finalModel = activeAI.model || "gpt-4o-mini";
-    const finalTemp = parseFloat(activeAI.temperature || "0.7");
-    const finalMaxTokens = parseInt(activeAI.maxTokens || "500");
+    const finalModel = resolvedAI.model;
+    const finalTemp = resolvedAI.temperature;
+    const finalMaxTokens = resolvedAI.maxTokens;
 
     try {
       const completion = await aiClient.chat.completions.create({
@@ -834,7 +832,8 @@ ${unansweredCount >= maxAttempts - 1 ? `- The user has had ${unansweredCount} un
         ],
         temperature: finalTemp,
         max_tokens: finalMaxTokens,
-      });
+        ...resolvedAI.extra,
+      } as any);
 
       let aiResponse = completion.choices?.[0]?.message?.content || "";
       if (!aiResponse.trim()) return;

@@ -20,6 +20,7 @@ import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import type { Express } from "express";
 import { storage } from 'server/storage';
 import OpenAI from 'openai';
+import { createAIClient, resolveAI } from '../utils/ai-provider';
 import { requireAuth } from 'server/middlewares/auth.middleware';
 import { aiSettings, insertSiteSchema, panelConfig, sites, trainingQaPairs } from '@shared/schema';
 import { requireSubscription } from 'server/middlewares/requireSubscription';
@@ -56,19 +57,9 @@ function rateLimitWidget(limit: number, bucketScope: (req: any) => string) {
 }
 
 
-function buildAIClient(aiSetting) {
-  if (aiSetting.provider === "openai") {
-    return new OpenAI({
-      apiKey: aiSetting.apiKey,
-      baseURL: aiSetting.endpoint || "https://api.openai.com/v1",
-    });
-  }
-
-  // Future provider support (Anthropic, Gemini, etc.)
-  return new OpenAI({
-    apiKey: aiSetting.apiKey,
-    baseURL: aiSetting.endpoint || "https://api.openai.com/v1",
-  });
+function buildAIClient(aiSetting: any) {
+  // OpenAI and Gemini both go through the OpenAI-compatible client.
+  return createAIClient(aiSetting).client;
 }
 
 
@@ -524,9 +515,17 @@ app.post(
       const aiConfig = (site as any).aiTrainingConfig || {};
       const widgetCfg = (site as any).widgetConfig || {};
 
-      const finalModel = activeAI?.model || aiConfig.model || "gpt-4o-mini";
-      const finalTemp = parseFloat(activeAI?.temperature || aiConfig.temperature || "0.7");
-      const finalMaxTokens = parseInt(activeAI?.maxTokens || aiConfig.maxTokens || "500");
+      const resolvedAI = resolveAI({
+        provider: activeAI?.provider,
+        apiKey: activeAI?.apiKey,
+        endpoint: activeAI?.endpoint,
+        model: activeAI?.model || aiConfig.model,
+        temperature: activeAI?.temperature || aiConfig.temperature,
+        maxTokens: activeAI?.maxTokens || aiConfig.maxTokens || "500",
+      }, 500);
+      const finalModel = resolvedAI.model;
+      const finalTemp = resolvedAI.temperature;
+      const finalMaxTokens = resolvedAI.maxTokens;
 
       let trainingContext = "";
       try {
@@ -591,7 +590,8 @@ ${triggerPhrases.length > 0 ? `- If the user mentions any of these phrases, esca
           ],
           temperature: finalTemp,
           max_tokens: finalMaxTokens,
-        });
+          ...resolvedAI.extra,
+        } as any);
 
         aiResponse =
           completion.choices?.[0]?.message?.content ||

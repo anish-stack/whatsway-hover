@@ -323,6 +323,12 @@ export const createTemplate = asyncHandler(
               if (btn.type === "COPY_CODE") {
                 obj.example = btn.couponCode || "";
               }
+              if (btn.type === "FLOW") {
+                if (!btn.flowId) throw new AppError(400, "Select a WhatsApp Flow for the Flow button");
+                obj.flow_id = String(btn.flowId);
+                obj.flow_action = "navigate";
+                if (btn.navigateScreen) obj.navigate_screen = String(btn.navigateScreen);
+              }
               return obj;
             }),
           });

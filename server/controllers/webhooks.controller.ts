@@ -1371,7 +1371,15 @@ ${triggerPhrases.length > 0 ? `- If the user mentions any of these phrases, esca
     // Call AI API based on provider
     let aiResponse: string | null = null;
 
-    if (provider === "openai") {
+    if (provider === "gemini") {
+      try {
+        const { chatComplete } = await import("../utils/ai-provider");
+        aiResponse = (await chatComplete(aiSettings as any, messages)) || null;
+      } catch (e) {
+        console.error("Gemini API call failed:", (e as Error).message);
+        aiResponse = null;
+      }
+    } else if (provider === "openai") {
       aiResponse = await callOpenAI(
         messages,
         apiKey,

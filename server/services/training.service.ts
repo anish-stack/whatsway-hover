@@ -11,7 +11,7 @@
  * ============================================================
  */
 
-import OpenAI from "openai";
+import { embedText, type AISettingLike } from "../utils/ai-provider";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import * as cheerio from "cheerio";
 import { db } from "../db";
@@ -26,14 +26,7 @@ import {
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 50;
 
-function getAIClient(apiKey: string, endpoint?: string): OpenAI {
-  return new OpenAI({
-    apiKey,
-    baseURL: endpoint || "https://api.openai.com/v1",
-  });
-}
-
-async function getChannelAIClient(channelId: string): Promise<OpenAI | null> {
+async function getChannelAIClient(channelId: string): Promise<AISettingLike | null> {
   const [setting] = await db
     .select()
     .from(aiSettings)
@@ -43,7 +36,7 @@ async function getChannelAIClient(channelId: string): Promise<OpenAI | null> {
     .limit(1);
 
   if (!setting?.apiKey) return null;
-  return getAIClient(setting.apiKey, setting.endpoint || undefined);
+  return setting;
 }
 
 function splitTextIntoChunks(text: string): string[] {
@@ -59,17 +52,15 @@ function splitTextIntoChunks(text: string): string[] {
 }
 
 async function generateEmbedding(
-  client: OpenAI,
+  setting: AISettingLike,
   text: string
 ): Promise<number[]> {
-  const response = await client.embeddings.create({
-    model: "text-embedding-3-small",
-    input: text.substring(0, 8000),
-  });
-  return response.data[0].embedding;
+  return embedText(setting, text);
 }
 
 function cosineSimilarity(a: number[], b: number[]): number {
+  // Vectors from different providers/dimensions are not comparable.
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length || !a.length) return 0;
   let dot = 0,
     normA = 0,
     normB = 0;
@@ -165,7 +156,7 @@ export async function processTrainingSource(sourceId: string): Promise<void> {
 
     const chunks = splitTextIntoChunks(content);
 
-    let aiClient: OpenAI | null = null;
+    let aiClient: AISettingLike | null = null;
     if (source.channelId) {
       aiClient = await getChannelAIClient(source.channelId);
     }

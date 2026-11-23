@@ -26,6 +26,7 @@ import { channels, messageQueue, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { parseMessagingTier } from "../utils/messaging-tiers";
 import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
+import { ensureFlowButton } from "../utils/flow-template";
 import {
   checkCampaignReadiness,
   checkCampaignRowReadiness,
@@ -993,6 +994,11 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
     const fixed = ensureOtpButton(components, template);
     components.length = 0;
     components.push(...fixed);
+  }
+  {
+    const withFlow = ensureFlowButton(components, template);
+    components.length = 0;
+    components.push(...withFlow);
   }
 
   if (carouselCards) {
