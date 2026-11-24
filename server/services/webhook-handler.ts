@@ -269,6 +269,52 @@ export class WebhookHandler {
         }
       }
 
+      // ── Opt-out / opt-in keywords ──
+      const OPT_OUT_KEYWORDS = ["stop","stopall","unsubscribe","cancel","end","quit","optout","opt out","opt-out","band","rok do","बंद","रुको"];
+      const OPT_IN_KEYWORDS = ["start","subscribe","unstop","optin","opt in","shuru"];
+
+      const rawText =
+        message.type === "text" ? (message.text?.body || "")
+        : message.type === "button" ? ((message as any).button?.text || "")
+        : message.type === "interactive"
+          ? ((message as any).interactive?.button_reply?.title || (message as any).interactive?.list_reply?.title || "")
+          : "";
+      const normalizedText = rawText.trim().toLowerCase().replace(/[.!?,]+$/g, "");
+
+      if (OPT_OUT_KEYWORDS.includes(normalizedText) && contact[0].status !== "unsubscribed") {
+        await db.update(contacts)
+          .set({ status: "unsubscribed", updatedAt: new Date() })
+          .where(eq(contacts.id, contact[0].id));
+        contact[0].status = "unsubscribed";
+
+        // cancel pending marketing messages for this number
+        await db.update(messageQueue)
+          .set({ status: "failed", errorMessage: "Cancelled: contact unsubscribed" })
+          .where(and(
+            eq(messageQueue.recipientPhone, message.from),
+            eq(messageQueue.status, "queued"),
+            eq(messageQueue.messageType, "marketing"),
+            ...(channelId ? [eq(messageQueue.channelId, channelId)] : [])
+          ));
+
+        // confirmation (inside 24h window, free-form allowed)
+        try {
+          if (channel.length > 0) {
+            await new WhatsAppApiService(channel[0]).sendTextMessage(
+              message.from,
+              "You have been unsubscribed. Reply START to subscribe again."
+            );
+          }
+        } catch (e) {
+          console.error("Opt-out confirmation failed:", e);
+        }
+      } else if (OPT_IN_KEYWORDS.includes(normalizedText) && contact[0].status === "unsubscribed") {
+        await db.update(contacts)
+          .set({ status: "active", updatedAt: new Date() })
+          .where(eq(contacts.id, contact[0].id));
+        contact[0].status = "active";
+      }
+
       // 3. Find or create conversation scoped to this channel
       let conversation;
       if (channelId) {
@@ -601,7 +647,7 @@ export class WebhookHandler {
       // skip is logged and surfaced via the diagnostics endpoint instead
       // of being silently dropped here.
       try {
-        if (channelId && content) {
+        if (channelId && content && contact[0].status !== "unsubscribed") {
           await this.handleAIAutoReply(
             channelId,
             channel[0],
@@ -736,7 +782,7 @@ export class WebhookHandler {
     }
 
     // 8. Resolve which "Site" (Chatbot Knowledge Base) to use
-    let site: Site | undefined;
+    let site: typeof sites.$inferSelect | undefined;
 
     // A. Priority: Explicitly linked siteId in aiSettings
     if ((activeAI as any).siteId) {
@@ -852,15 +898,15 @@ ${unansweredCount >= maxAttempts - 1 ? `- The user has had ${unansweredCount} un
 
         if (validMembers.length === 0 && channelData?.createdBy) {
           const ownerAndTeam = await db
-            .select({ id: users.id, name: users.name })
+            .select({ id: users.id })
             .from(users)
             .where(eq(users.id, channelData.createdBy));
           const teamUsers = await db
-            .select({ id: users.id, name: users.name })
+            .select({ id: users.id })
             .from(users)
             .where(eq(users.createdBy, channelData.createdBy));
           const allAgents = [...ownerAndTeam, ...teamUsers];
-          validMembers = allAgents.map(u => ({ userId: u.id, name: u.name }));
+          validMembers = allAgents.map(u => ({ userId: u.id, name: "a support agent" }));
         }
 
         if (validMembers.length > 0) {
@@ -931,14 +977,14 @@ ${unansweredCount >= maxAttempts - 1 ? `- The user has had ${unansweredCount} un
 
       if (fallbackMembers.length === 0 && channelData?.createdBy) {
         const ownerAndTeam = await db
-          .select({ id: users.id, name: users.name })
+          .select({ id: users.id })
           .from(users)
           .where(eq(users.id, channelData.createdBy));
         const teamUsers = await db
-          .select({ id: users.id, name: users.name })
+          .select({ id: users.id })
           .from(users)
           .where(eq(users.createdBy, channelData.createdBy));
-        fallbackMembers = [...ownerAndTeam, ...teamUsers].map(u => ({ userId: u.id, name: u.name }));
+        fallbackMembers = [...ownerAndTeam, ...teamUsers].map(u => ({ userId: u.id, name: "a support agent" }));
       }
 
       if (fallbackMembers.length > 0) {

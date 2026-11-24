@@ -1146,6 +1146,7 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
   if ((campaign.campaignType === "contacts" || campaign.campaignType === "csv") && campaign.contactGroups) {
     const contactIds = campaign.contactGroups as string[];
     contacts = await storage.getContactsByIds(contactIds);
+    contacts = contacts.filter(c => c.status !== "unsubscribed" && c.status !== "blocked")
   }
 
   console.log(`[Campaign ${campaignId}] Loaded ${contacts.length} contacts — inserting into queue`);

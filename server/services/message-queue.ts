@@ -13,7 +13,7 @@
 
 import { db } from "../db";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
-import { messageQueue, channels, campaigns, users, conversations, messages, templates } from "@shared/schema";
+import { messageQueue, channels, campaigns, users, conversations, messages, templates, contacts } from "@shared/schema";
 import { eq, and, lte, or, isNull, sql, inArray, notInArray, gt, asc, type SQL } from "drizzle-orm";
 import { WhatsAppApiService } from "./whatsapp-api";
 import { storage } from '../storage';
@@ -1062,6 +1062,21 @@ export class MessageQueueService {
 private static async processMessage(message: any, channelCache?: Map<string, any>) {
   let templateContent = `Template: ${message.templateName}`;
   try {
+    // ── Opt-out guard: never send marketing to unsubscribed/blocked contacts ──
+    if (message.messageType === "marketing" && message.channelId) {
+      const [optContact] = await db
+        .select({ status: contacts.status })
+        .from(contacts)
+        .where(and(eq(contacts.channelId, message.channelId), eq(contacts.phone, message.recipientPhone)))
+        .limit(1);
+      if (optContact?.status === "unsubscribed" || optContact?.status === "blocked") {
+        await db.update(messageQueue)
+          .set({ status: "failed", errorMessage: "Skipped: contact unsubscribed/blocked" })
+          .where(eq(messageQueue.id, message.id));
+        return;
+      }
+    }
+
     if (message.templateName) {
       let tmplRow: { body: string } | undefined;
       if (message.channelId) {

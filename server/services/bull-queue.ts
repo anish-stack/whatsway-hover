@@ -3,8 +3,8 @@ import { isAccountBlockingSendError } from "@shared/meta-billing";
 import { pauseCampaignForAccountBlock } from "./meta-billing/readiness.service";
 import { isRedisAvailable, getRedisClient, bullConnection } from "./redis";
 import { db } from "../db";
-import { messageQueue, channels, campaigns } from "@shared/schema";
-import { eq, sql } from "drizzle-orm";
+import { messageQueue, channels, campaigns, contacts } from "@shared/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { WhatsAppApiService } from "./whatsapp-api";
 import { cacheGet, CACHE_KEYS, CACHE_TTL } from "./cache";
 
@@ -311,6 +311,21 @@ export async function processMessageJob(job: Job) {
       if (camp?.status === "paused") {
         // idle until the campaign is resumed (resume path re-enqueues)
         await db.update(messageQueue).set({ status: "queued", scheduledFor: null }).where(eq(messageQueue.id, messageId));
+        return;
+      }
+    }
+
+    // ── Opt-out guard: never send marketing to unsubscribed/blocked contacts ──
+    if (messageType === "marketing") {
+      const [optContact] = await db
+        .select({ status: contacts.status })
+        .from(contacts)
+        .where(and(eq(contacts.channelId, channelId), eq(contacts.phone, recipientPhone)))
+        .limit(1);
+      if (optContact?.status === "unsubscribed" || optContact?.status === "blocked") {
+        await db.update(messageQueue)
+          .set({ status: "failed", errorMessage: "Skipped: contact unsubscribed/blocked" })
+          .where(eq(messageQueue.id, messageId));
         return;
       }
     }
