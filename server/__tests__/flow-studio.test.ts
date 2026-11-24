@@ -35,6 +35,14 @@ describe("flow studio compiler", () => {
     expect(done.name).toBe("complete");
     expect(done.payload).toEqual({ rating: "${data.rating}", liked: "${data.liked}", issue: "${data.issue}", callback: "${data.callback}", comments: "${form.comments}" });
     expect(c.terminal).toBe(true);
+    // every route spelled out, including both If branches
+    expect(json.routing_model).toEqual({ [a.id]: [c.id, b.id], [b.id]: [c.id], [c.id]: [] });
+    expect(Object.keys(json)).toEqual(["version", "routing_model", "screens"]);
+  });
+
+  it("leaves routing to WhatsApp for flows without rules", () => {
+    const json = compileFlow(FLOW_STARTERS.find((s) => s.id === "lead")!.build().definition);
+    expect(json.routing_model).toBeUndefined();
   });
 
   it("catches common mistakes", () => {

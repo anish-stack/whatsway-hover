@@ -917,6 +917,19 @@ const steps: MigrationStep[] = [
     `,
   },
   {
+    // Flows with rules were uploaded without an explicit routing_model (WhatsApp then
+    // refused the branch at runtime). Mark them once as changed so the next Send /
+    // Publish uploads the fixed JSON.
+    description: "Flow Studio: re-upload flows with rules (routing_model fix)",
+    logRowCount: true,
+    sql: `
+      ALTER TABLE wa_flows ADD COLUMN IF NOT EXISTS compiler_rev INTEGER NOT NULL DEFAULT 1;
+      ALTER TABLE wa_flows ALTER COLUMN compiler_rev SET DEFAULT 2;
+      UPDATE wa_flows SET dirty = TRUE, compiler_rev = 2
+        WHERE compiler_rev < 2 AND status <> 'deprecated' AND definition::text LIKE '%"goTo"%';
+    `,
+  },
+  {
     description: "Create demo_requests table",
     sql: `
       CREATE TABLE IF NOT EXISTS demo_requests (

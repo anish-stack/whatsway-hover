@@ -312,7 +312,18 @@ export function compileFlow(def: FlowDefinition): any {
     out.layout = { type: "SingleColumnLayout", children };
     return out;
   });
+  // Branching (If → two Footers): spell out every route. WhatsApp's auto-generated
+  // routing model misses navigations nested inside If, and the client then refuses
+  // the transition ("doesn't satisfy provided routing_model").
+  if (def.screens.some((s) => s.branch)) {
+    const routing_model = Object.fromEntries(def.screens.map((s) => [s.id, [...new Set(screenTargets(s))]]));
+    return { version: FLOW_JSON_VERSION, routing_model, screens };
+  }
   return { version: FLOW_JSON_VERSION, screens };
+}
+
+export function routeCount(def: FlowDefinition) {
+  return def.screens.reduce((n, s) => n + new Set(screenTargets(s)).size, 0);
 }
 
 // ───────────────────────── validate ─────────────────────────
@@ -417,6 +428,7 @@ export function validateFlow(def: FlowDefinition): FlowIssue[] {
 
   screens.forEach((s, i) => { if (!reach.has(s.id)) err(`Screen ${i + 1} can't be reached from the first screen.`, s.id); });
   if (!screens.some((s) => s.next === COMPLETE)) err("At least one screen must finish the flow.");
+  if (screens.some((s) => s.branch) && routeCount(def) > 10) err("Flows with rules can have at most 10 screen-to-screen connections. Remove a rule or a screen.");
   if (JSON.stringify(compileFlow(def)).length > 9.5 * 1024 * 1024) err("Flow is too large (10 MB limit). Use smaller images.");
   return issues;
 }
@@ -427,7 +439,7 @@ export function validateFlow(def: FlowDefinition): FlowIssue[] {
 export function parseFlowJson(json: any): FlowDefinition | null {
   try {
     if (!json || !Array.isArray(json.screens) || !json.screens.length) return null;
-    if (json.data_api_version || json.routing_model) return null; // endpoint flows
+    if (json.data_api_version) return null; // endpoint flows
     const screens: FlowScreen[] = [];
     for (const raw of json.screens) {
       if (!raw?.id || raw.layout?.type !== "SingleColumnLayout") return null;

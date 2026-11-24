@@ -108,6 +108,16 @@ export async function pushFlow(flowId: string, opts: { publish?: boolean } = {})
     errors = metaErrors(up.validation_errors);
   }
 
+  // If Meta refuses an explicit routing_model on a flow without an endpoint, fall back
+  // to its auto-generated one so the flow still uploads (rules may then misbehave).
+  if (json.routing_model && errors.some((e) => /routing/i.test(e.message))) {
+    const { routing_model, ...plain } = json;
+    const up = await uploadJson(metaId!, ch.accessToken!, plain);
+    const retryErrors = metaErrors(up.validation_errors);
+    if (!retryErrors.length) console.warn(`[FlowStudio] ${flow.id}: Meta rejected routing_model, uploaded without it`);
+    errors = retryErrors;
+  }
+
   let status = "draft";
   let previewUrl: string | null = flow.previewUrl;
   try {

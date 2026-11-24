@@ -2530,6 +2530,7 @@ export const waFlows = pgTable(
     validationErrors: jsonb("validation_errors").notNull().default([]),
     previewUrl: text("preview_url"),
     version: integer("version").notNull().default(0), // number of times published
+    compilerRev: integer("compiler_rev").notNull().default(2), // Flow JSON compiler revision (one-off re-upload markers)
     publishedAt: timestamp("published_at", { withTimezone: true }),
     lastSyncedAt: timestamp("last_synced_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
