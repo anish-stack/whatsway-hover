@@ -28,9 +28,17 @@ import { useTranslation } from "@/lib/i18n";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { AppSettings } from "@/types/types";
+import { useCmsContent } from "@/hooks/useCms";
 
 const AboutUs: React.FC = () => {
   const { t } = useTranslation();
+  const cmsAbout = useCmsContent().by("about_mission");
+  const missionStats = cmsAbout.length
+    ? cmsAbout.map((c) => ({ value: `${c.value || ""}${c.suffix || ""}`, label: c.title }))
+    : [
+        { value: t("aboutUs.mission.stats.businesses"), label: t("aboutUs.mission.stats.businessesLabel") },
+        { value: t("aboutUs.mission.stats.messages"), label: t("aboutUs.mission.stats.messagesLabel") },
+      ];
 
   const { data: brandSettings } = useQuery<AppSettings>({
     queryKey: ["/api/brand-settings"],
@@ -109,22 +117,12 @@ const AboutUs: React.FC = () => {
                 })}
               </p>
               <div className="grid grid-cols-2 gap-5">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-md transition-shadow">
-                  <div className="text-3xl font-extrabold text-[var(--brand)] mb-1">
-                    {t("aboutUs.mission.stats.businesses")}
+                {missionStats.map((st, i) => (
+                  <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-md transition-shadow">
+                    <div className="text-3xl font-extrabold text-[var(--brand)] mb-1">{st.value}</div>
+                    <div className="text-sm text-[var(--ink-500)] font-medium">{st.label}</div>
                   </div>
-                  <div className="text-sm text-[var(--ink-500)] font-medium">
-                    {t("aboutUs.mission.stats.businessesLabel")}
-                  </div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--mist)] hover:shadow-md transition-shadow">
-                  <div className="text-3xl font-extrabold text-[var(--brand)] mb-1">
-                    {t("aboutUs.mission.stats.messages")}
-                  </div>
-                  <div className="text-sm text-[var(--ink-500)] font-medium">
-                    {t("aboutUs.mission.stats.messagesLabel")}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 

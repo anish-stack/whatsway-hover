@@ -28,6 +28,7 @@ import { toast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { AppSettings } from "@/types/types";
 import { apiRequest } from "@/lib/queryClient";
+import { useCmsContent } from "@/hooks/useCms";
 
 const ContactusLanding = () => {
   const [loading, setLoading] = useState(false);
@@ -110,10 +111,13 @@ const ContactusLanding = () => {
     description: string;
   }>;
 
-  const faqQuestions = t("contactUs.faq.questions") as unknown as Array<{
-    q: string;
-    a: string;
-  }>;
+  const cmsFaq = useCmsContent().by("contact");
+  const faqQuestions = cmsFaq.length
+    ? cmsFaq.map((f) => ({ q: f.title, a: f.body || "" }))
+    : (t("contactUs.faq.questions") as unknown as Array<{
+        q: string;
+        a: string;
+      }>);
 
   // order must match contactUs.contactInfo.list: Email, Call, WhatsApp, Visit
   const iconMap = [Mail, Phone, MessageCircle, MapPin];

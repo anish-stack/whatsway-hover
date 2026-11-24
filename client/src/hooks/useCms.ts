@@ -49,3 +49,21 @@ export function useCmsPage(slug: string, enabled = true) {
     staleTime: 60_000,
   });
 }
+
+export type CmsContentItem = {
+  id: string; kind: "stat" | "faq" | "testimonial"; groupKey: string; title: string; body?: string | null;
+  value?: string | null; suffix?: string | null; role?: string | null; company?: string | null; image?: string | null;
+  rating: number; results?: string | null; icon?: string | null; sortOrder: number; isVisible: boolean;
+};
+
+/** Admin-managed stats / FAQs / testimonials. `by(group)` is empty until the admin adds items → callers fall back to built-in text. */
+export function useCmsContent() {
+  const q = useQuery<{ items: CmsContentItem[] }>({
+    queryKey: ["/api/cms/content"],
+    queryFn: async () => (await fetch("/api/cms/content")).json(),
+    staleTime: 60_000,
+  });
+  const items = q.data?.items || [];
+  const by = (group: string) => items.filter((i) => i.groupKey === group).sort((a, b) => a.sortOrder - b.sortOrder);
+  return { loaded: !!q.data, by };
+}

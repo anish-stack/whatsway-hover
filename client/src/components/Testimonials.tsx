@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useCmsContent } from "@/hooks/useCms";
 import { Star, ArrowLeft, ArrowRight } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -19,7 +20,8 @@ const Testimonials: React.FC = () => {
   const { t } = useTranslation();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-  const testimonials = t(
+  const cms = useCmsContent();
+  const defaultTestimonials = t(
     "Landing.testimonialsSec.testimonials"
   ) as unknown as Array<{
     name: string;
@@ -30,6 +32,14 @@ const Testimonials: React.FC = () => {
     text: string;
     results: string;
   }>;
+  const cmsTestimonials = cms.by("testimonials");
+  const testimonials = cmsTestimonials.length
+    ? cmsTestimonials.map((c) => ({
+        name: c.title, role: c.role || "", company: c.company || "", rating: c.rating || 5,
+        image: c.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random`,
+        text: c.body || "", results: c.results || "",
+      }))
+    : defaultTestimonials;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,10 +53,14 @@ const Testimonials: React.FC = () => {
     next: string;
   };
 
-  const statsGrid = t("Landing.testimonialsSec.statsGrid") as unknown as Array<{
+  const defaultStatsGrid = t("Landing.testimonialsSec.statsGrid") as unknown as Array<{
     number: string;
     label: string;
   }>;
+  const cmsGrid = cms.by("testimonials_grid");
+  const statsGrid = cmsGrid.length
+    ? cmsGrid.map((c) => ({ number: `${c.value || ""}${c.suffix || ""}`, label: c.title }))
+    : defaultStatsGrid;
 
   const prevTestimonial = () => {
     setCurrentTestimonial(
@@ -58,7 +72,8 @@ const Testimonials: React.FC = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
   };
 
-  const active = testimonials[currentTestimonial];
+  const active = testimonials[currentTestimonial % Math.max(testimonials.length, 1)] || testimonials[0];
+  if (!active) return null;
 
   return (
     <section className="band bg-background">

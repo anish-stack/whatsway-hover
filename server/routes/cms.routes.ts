@@ -4,7 +4,7 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import sanitizeHtml from "sanitize-html";
 import { db } from "../db";
-import { cmsPages, cmsNavItems } from "@shared/schema";
+import { cmsPages, cmsNavItems, cmsSiteItems } from "@shared/schema";
 import { requireAuth, requireSuperadmin } from "../middlewares/auth.middleware";
 
 // Slugs that belong to the app itself. A CMS page can never take these.
@@ -51,6 +51,34 @@ const clean = (html: string) =>
       a: (tag, attribs) => (attribs.target === "_blank" ? { tagName: tag, attribs: { ...attribs, rel: "noopener noreferrer" } } : { tagName: tag, attribs }),
     },
   });
+
+// Editable content groups (kind decides which fields the website reads)
+export const CONTENT_GROUPS: Record<string, "stat" | "faq" | "testimonial"> = {
+  hero: "stat",
+  testimonials_grid: "stat",
+  cta: "stat",
+  about_mission: "stat",
+  testimonials: "testimonial",
+  pricing: "faq",
+  contact: "faq",
+};
+
+const itemSchema = z.object({
+  kind: z.enum(["stat", "faq", "testimonial"]),
+  groupKey: z.string().trim().max(32),
+  title: z.string().trim().min(1).max(300),
+  body: z.string().trim().max(4000).optional().nullable(),
+  value: z.string().trim().max(40).optional().nullable(),
+  suffix: z.string().trim().max(12).optional().nullable(),
+  role: z.string().trim().max(120).optional().nullable(),
+  company: z.string().trim().max(120).optional().nullable(),
+  image: z.string().trim().max(500).optional().nullable(),
+  rating: z.number().int().min(1).max(5).default(5),
+  results: z.string().trim().max(200).optional().nullable(),
+  icon: z.string().trim().max(40).optional().nullable(),
+  sortOrder: z.number().int().min(0).max(9999).default(0),
+  isVisible: z.boolean().default(true),
+}).refine((v) => CONTENT_GROUPS[v.groupKey] === v.kind, { message: "Invalid group for this content type" });
 
 const slugRe = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -134,6 +162,14 @@ export function registerCmsRoutes(app: Express) {
       const [row] = await db.select().from(cmsPages).where(and(eq(cmsPages.slug, req.params.slug.toLowerCase()), eq(cmsPages.status, "published"))).limit(1);
       if (!row) return res.status(404).json({ error: "Not found" });
       res.json({ data: row });
+    } catch (e) { zerr(res, e); }
+  });
+
+  app.get("/api/cms/content", async (_req, res) => {
+    try {
+      const items = await db.select().from(cmsSiteItems).where(eq(cmsSiteItems.isVisible, true)).orderBy(asc(cmsSiteItems.sortOrder), asc(cmsSiteItems.createdAt));
+      res.set("Cache-Control", "public, max-age=60");
+      res.json({ items });
     } catch (e) { zerr(res, e); }
   });
 
@@ -244,6 +280,53 @@ export function registerCmsRoutes(app: Express) {
       if (n > 0) return res.status(409).json({ error: "Navigation already has items" });
       await db.insert(cmsNavItems).values(DEFAULT_NAV as any);
       res.json({ success: true, count: DEFAULT_NAV.length });
+    } catch (e) { zerr(res, e); }
+  });
+
+  // ───────────── Admin: site content (stats / FAQs / testimonials) ─────────────
+  app.get("/api/admin/cms/content", ...guard, async (req, res) => {
+    try {
+      const g = String(req.query.group || "");
+      const rows = await db.select().from(cmsSiteItems)
+        .where(g ? eq(cmsSiteItems.groupKey, g) : sql`true`)
+        .orderBy(asc(cmsSiteItems.groupKey), asc(cmsSiteItems.sortOrder), asc(cmsSiteItems.createdAt));
+      res.json({ data: rows });
+    } catch (e) { zerr(res, e); }
+  });
+
+  app.post("/api/admin/cms/content", ...guard, async (req, res) => {
+    try {
+      const [row] = await db.insert(cmsSiteItems).values(itemSchema.parse(req.body) as any).returning();
+      res.status(201).json({ data: row });
+    } catch (e) { zerr(res, e); }
+  });
+
+  app.put("/api/admin/cms/content/:id", ...guard, async (req, res) => {
+    try {
+      const [row] = await db.update(cmsSiteItems).set({ ...itemSchema.parse(req.body), updatedAt: new Date() } as any).where(eq(cmsSiteItems.id, req.params.id)).returning();
+      if (!row) return res.status(404).json({ error: "Not found" });
+      res.json({ data: row });
+    } catch (e) { zerr(res, e); }
+  });
+
+  app.delete("/api/admin/cms/content/:id", ...guard, async (req, res) => {
+    try {
+      await db.delete(cmsSiteItems).where(eq(cmsSiteItems.id, req.params.id));
+      res.json({ success: true });
+    } catch (e) { zerr(res, e); }
+  });
+
+  // Import the site's current built-in content for one group (only when that group is empty).
+  app.post("/api/admin/cms/content/import", ...guard, async (req, res) => {
+    try {
+      const body = z.object({ groupKey: z.string(), items: z.array(z.record(z.any())).min(1).max(50) }).parse(req.body);
+      const kind = CONTENT_GROUPS[body.groupKey];
+      if (!kind) return res.status(400).json({ error: "Unknown group" });
+      const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(cmsSiteItems).where(eq(cmsSiteItems.groupKey, body.groupKey));
+      if (n > 0) return res.status(409).json({ error: "This group already has items" });
+      const rows = body.items.map((it, i) => itemSchema.parse({ ...it, kind, groupKey: body.groupKey, sortOrder: i + 1, isVisible: true }));
+      await db.insert(cmsSiteItems).values(rows as any);
+      res.json({ success: true, count: rows.length });
     } catch (e) { zerr(res, e); }
   });
 }

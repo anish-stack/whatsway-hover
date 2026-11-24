@@ -30,6 +30,7 @@ import CheckoutModal from "./modals/CheckoutPage";
 import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "@/lib/i18n";
+import { useCmsContent } from "@/hooks/useCms";
 import { Link, useLocation } from "wouter";
 
 const Pricing = ({ hideFaq = false }: { hideFaq?: boolean } = {}) => {
@@ -357,10 +358,13 @@ const Pricing = ({ hideFaq = false }: { hideFaq?: boolean } = {}) => {
   };
 
   // Get FAQ data from translation
-  const faqData = t("Landing.pricingSec.faq.questions") as unknown as Array<{
-    q: string;
-    a: string;
-  }>;
+  const cmsFaq = useCmsContent().by("pricing");
+  const faqData = cmsFaq.length
+    ? cmsFaq.map((f) => ({ q: f.title, a: f.body || "" }))
+    : (t("Landing.pricingSec.faq.questions") as unknown as Array<{
+        q: string;
+        a: string;
+      }>);
 
   return (
     <>

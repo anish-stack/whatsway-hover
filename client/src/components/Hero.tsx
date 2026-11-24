@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useCmsContent, ICONS } from "@/hooks/useCms";
 import { ArrowRight, Users, TrendingUp, Zap } from "lucide-react";
 import LoadingAnimation from "./LoadingAnimation";
 import { openBookDemo } from "./BookDemoDialog";
@@ -13,11 +14,8 @@ const TYPING_WORDS = [
 
 const Hero = () => {
   const [currentStat, setCurrentStat] = useState(0);
-  const [animatedNumbers, setAnimatedNumbers] = useState({
-    users: 0,
-    delivery: 0,
-    engagement: 0,
-  });
+  const [progress, setProgress] = useState(0);
+  const cmsContent = useCmsContent();
   const { t } = useTranslation();
   const [startTrialLoading, setStartTrialLoading] = useState(false);
 
@@ -48,7 +46,7 @@ const Hero = () => {
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, wordIndex]);
 
-  const stats = [
+  const defaultStats = [
     {
       icon: Users,
       value: 50000,
@@ -68,6 +66,15 @@ const Hero = () => {
       suffix: t("Landing.heroSec.stats.2.suffix"),
     },
   ];
+  const cmsStats = cmsContent.by("hero");
+  const stats: Array<{ icon: any; value: number | string; label: string; suffix?: string }> = cmsStats.length
+    ? cmsStats.map((s, i) => ({
+        icon: (s.icon && ICONS[s.icon]) || defaultStats[i % defaultStats.length].icon,
+        value: /^[\d,]+$/.test(s.value || "") ? Number((s.value || "0").replace(/,/g, "")) : s.value || "",
+        label: s.title,
+        suffix: s.suffix || "",
+      }))
+    : defaultStats;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -87,11 +94,7 @@ const Hero = () => {
         step++;
         const progress = step / steps;
 
-        setAnimatedNumbers({
-          users: Math.floor(50000 * progress),
-          delivery: Math.floor(98 * progress),
-          engagement: Math.floor(5 * progress),
-        });
+        setProgress(progress);
 
         if (step >= steps) clearInterval(timer);
       }, stepDuration);
@@ -107,12 +110,12 @@ const Hero = () => {
     }, 2000);
   };
 
-  const statValue = (index: number) =>
-    index === 0
-      ? animatedNumbers.users.toLocaleString()
-      : index === 1
-      ? animatedNumbers.delivery
-      : animatedNumbers.engagement;
+  const statValue = (index: number) => {
+    const v = stats[index]?.value;
+    if (typeof v !== "number") return v ?? "";
+    const n = Math.floor(v * progress);
+    return v >= 1000 ? n.toLocaleString() : n;
+  };
 
   return (
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-20 canvas-bg">

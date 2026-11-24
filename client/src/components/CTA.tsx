@@ -14,10 +14,12 @@
 import React from "react";
 import { ArrowRight, MessageCircle, Zap, Shield, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { useCmsContent } from "@/hooks/useCms";
 import { Link } from "wouter";
 
 const CTA: React.FC = () => {
   const { t } = useTranslation();
+  const cmsCtaStats = useCmsContent().by("cta");
 
   const iconMap = {
     "Instant Setup": Zap,
@@ -90,7 +92,10 @@ const CTA: React.FC = () => {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-8 border-t border-white/10 pt-8 md:grid-cols-4">
-          {(t("Landing.ctaSec.stats") as unknown as any[]).map(
+          {(cmsCtaStats.length
+            ? cmsCtaStats.map((c) => ({ number: `${c.value || ""}${c.suffix || ""}`, label: c.title }))
+            : (t("Landing.ctaSec.stats") as unknown as any[])
+          ).map(
             (stat: any, index: number) => (
               <div key={`${stat.label}-${index}`}>
                 <div className="font-[family-name:var(--font-display)] text-3xl font-bold tracking-[-0.03em] text-white md:text-4xl">

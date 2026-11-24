@@ -1020,6 +1020,31 @@ const steps: MigrationStep[] = [
     `,
   },
   {
+    description: "Create cms_site_items table (stats, FAQs, testimonials)",
+    sql: `
+      CREATE TABLE IF NOT EXISTS cms_site_items (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        kind VARCHAR(16) NOT NULL,
+        group_key VARCHAR(32) NOT NULL,
+        title VARCHAR(300) NOT NULL,
+        body TEXT,
+        value VARCHAR(40),
+        suffix VARCHAR(12),
+        role VARCHAR(120),
+        company VARCHAR(120),
+        image VARCHAR(500),
+        rating INTEGER NOT NULL DEFAULT 5,
+        results VARCHAR(200),
+        icon VARCHAR(40),
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        is_visible BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS cms_site_items_group_idx ON cms_site_items (group_key, sort_order);
+    `,
+  },
+  {
     description: "Create appointment booking tables",
     sql: `
       CREATE TABLE IF NOT EXISTS appointment_settings (

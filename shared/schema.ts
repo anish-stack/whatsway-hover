@@ -2645,3 +2645,29 @@ export const cmsNavItems = pgTable(
   (t) => ({ cmsNavLocIdx: index("cms_nav_location_idx").on(t.location, t.sortOrder) })
 );
 export type CmsNavItem = typeof cmsNavItems.$inferSelect;
+
+// Website content blocks editable from admin: stats, FAQs, testimonials (grouped by group_key)
+export const cmsSiteItems = pgTable(
+  "cms_site_items",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    kind: varchar("kind", { length: 16 }).notNull(), // stat | faq | testimonial
+    groupKey: varchar("group_key", { length: 32 }).notNull(),
+    title: varchar("title", { length: 300 }).notNull(), // stat label | faq question | testimonial name
+    body: text("body"), // faq answer | testimonial quote
+    value: varchar("value", { length: 40 }), // stat value
+    suffix: varchar("suffix", { length: 12 }), // stat suffix
+    role: varchar("role", { length: 120 }),
+    company: varchar("company", { length: 120 }),
+    image: varchar("image", { length: 500 }),
+    rating: integer("rating").notNull().default(5),
+    results: varchar("results", { length: 200 }),
+    icon: varchar("icon", { length: 40 }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isVisible: boolean("is_visible").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ cmsSiteGroupIdx: index("cms_site_items_group_idx").on(t.groupKey, t.sortOrder) })
+);
+export type CmsSiteItem = typeof cmsSiteItems.$inferSelect;
