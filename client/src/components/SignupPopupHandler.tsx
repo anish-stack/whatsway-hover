@@ -113,17 +113,9 @@ export function SignupPopupHandler() {
 
   // Main popup
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] flex items-center justify-center p-4">
+    <div    onClick={handleClose} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] cursor-pointer flex items-center justify-center p-4">
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90dvh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
-        <div className="flex justify-end p-2 flex-shrink-0">
-          <button
-            onClick={handleClose}
-            aria-label="Close"
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <X className="w-5 h-5 text-muted-foreground" />
-          </button>
-        </div>
+  
 
         <div className="overflow-y-auto flex-1 min-h-0">
           <div className="grid grid-cols-1 md:grid-cols-2">
