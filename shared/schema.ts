@@ -2509,3 +2509,60 @@ export const demoRequests = pgTable(
   (t) => ({ demoRequestsCreatedIdx: index("demo_requests_created_idx").on(t.createdAt) })
 );
 export type DemoRequest = typeof demoRequests.$inferSelect;
+
+// ───────────────────────── Flow Studio (no-code WhatsApp Flows) ─────────────────────────
+export const waFlows = pgTable(
+  "wa_flows",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    ownerId: varchar("owner_id"),
+    name: varchar("name", { length: 120 }).notNull(),
+    categories: jsonb("categories").notNull().default(["OTHER"]),
+    definition: jsonb("definition").notNull(), // FlowDefinition (shared/flow-studio.ts)
+    settings: jsonb("settings").notNull().default({}), // FlowSettings
+    cta: varchar("cta", { length: 30 }).notNull().default("Open"),
+    body: text("body").notNull().default("Please fill this short form."),
+    metaFlowId: varchar("meta_flow_id", { length: 40 }),
+    metaHistory: jsonb("meta_history").notNull().default([]), // earlier Meta flow ids (older published versions)
+    status: varchar("status", { length: 20 }).notNull().default("local"), // local | draft | published | throttled | blocked | deprecated
+    dirty: boolean("dirty").notNull().default(true), // edited since last push to Meta
+    validationErrors: jsonb("validation_errors").notNull().default([]),
+    previewUrl: text("preview_url"),
+    version: integer("version").notNull().default(0), // number of times published
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    lastSyncedAt: timestamp("last_synced_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    waFlowsChannelIdx: index("wa_flows_channel_idx").on(t.channelId),
+    waFlowsMetaIdx: index("wa_flows_meta_idx").on(t.metaFlowId),
+  })
+);
+
+export const waFlowSessions = pgTable(
+  "wa_flow_sessions",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    flowId: varchar("flow_id").references(() => waFlows.id, { onDelete: "set null" }),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    metaFlowId: varchar("meta_flow_id", { length: 40 }),
+    flowToken: varchar("flow_token", { length: 120 }).notNull(),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    contactId: varchar("contact_id"),
+    conversationId: varchar("conversation_id"),
+    status: varchar("status", { length: 16 }).notNull().default("sent"), // sent | completed
+    source: varchar("source", { length: 20 }).notNull().default("studio"), // studio | template | unknown
+    response: jsonb("response"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    waFlowSessTokenUq: uniqueIndex("wa_flow_sessions_token_uq").on(t.flowToken),
+    waFlowSessFlowIdx: index("wa_flow_sessions_flow_idx").on(t.flowId, t.status),
+  })
+);
+export type WaFlow = typeof waFlows.$inferSelect;
+export type WaFlowSession = typeof waFlowSessions.$inferSelect;

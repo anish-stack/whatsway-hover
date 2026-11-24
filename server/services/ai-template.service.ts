@@ -52,7 +52,7 @@ Output format — ALWAYS reply with a single JSON object and nothing else:
 or
 {"type":"template","template":{"name":"","category":"UTILITY","language":"en_US","header":"","headerSample":"","body":"","footer":"","variables":[{"name":"customer_name","sample":"Rahul"}],"buttons":[{"type":"URL","text":"Track order","url":"https://example.com/track/{{1}}"}]},"notes":["one short tip"]}`;
 
-async function resolveSetting(channelId?: string): Promise<AISettingLike | null> {
+export async function resolveSetting(channelId?: string): Promise<AISettingLike | null> {
   if (channelId) {
     const [row] = await db.select().from(aiSettings)
       .where(and(eq(aiSettings.channelId, channelId), eq(aiSettings.isActive, true)))
@@ -66,7 +66,7 @@ async function resolveSetting(channelId?: string): Promise<AISettingLike | null>
   return null;
 }
 
-function extractJson(text: string): any {
+export function extractJson(text: string): any {
   const t = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "").trim();
   try { return JSON.parse(t); } catch { /* fallthrough */ }
   const a = t.indexOf("{"), b = t.lastIndexOf("}");

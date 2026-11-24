@@ -44,6 +44,7 @@ import WhatsAppUsagePage from "@/pages/whatsapp/usage";
 import AccountHealthPage from "@/pages/whatsapp/account-health";
 import TemplateLibraryPage from "@/pages/template-library";
 import WhatsAppFlowsPage from "@/pages/whatsapp-flows";
+import FlowStudioEditor from "@/pages/flow-studio-editor";
 import AppIntegrationsPage from "@/pages/app-integrations";
 import MiniStorePage from "@/pages/mini-store";
 import AppointmentsPage from "@/pages/appointments";
@@ -217,6 +218,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
 const DYNAMIC_ROUTE_PATTERNS: Array<{ pattern: RegExp; key: string }> = [
   { pattern: /^\/analytics\/campaign\/[^/]+$/, key: "/analytics/campaign/:campaignId" },
   { pattern: /^\/users\/[^/]+$/, key: "/users" },
+  { pattern: /^\/whatsapp-flows\/[^/]+$/, key: "/whatsapp-flows" },
   { pattern: /^\/reseller\/customers\/[^/]+$/, key: "/reseller/customers/:id" },
   { pattern: /^\/admin\/resellers\/[^/]+$/, key: "/admin/resellers/:id" },
 ];
@@ -414,6 +416,9 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/app-integrations">
             <PermissionRoute component={AppIntegrationsPage} />
+          </Route>
+          <Route path="/whatsapp-flows/:id">
+            <PermissionRoute component={FlowStudioEditor} requiredPermission="templates:view" />
           </Route>
           <Route path="/whatsapp-flows">
             <PermissionRoute component={WhatsAppFlowsPage} requiredPermission="templates:view" />

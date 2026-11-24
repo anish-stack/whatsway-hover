@@ -101,4 +101,23 @@ describe.skipIf(!RUN)("mini store flow", () => {
     expect(sent.at(-1).interactive.body.text).toContain("Booking OD");
     expect(sent.at(-1).interactive.body.text).not.toContain("📍");
   });
+
+  it("poller confirms a paid Razorpay link and sends the WhatsApp receipt", async () => {
+    const { eq } = await import("drizzle-orm");
+    await db.update(schema.storeSettings).set({ razorpayKeyId: "rzp_test_x", razorpayKeySecret: "sec" }).where(eq(schema.storeSettings.channelId, channel.id));
+    const [o] = await db.insert(schema.storeOrders).values({ channelId: channel.id, ownerId: "demo-admin", orderNumber: "ODTESTPAY1", phone, items: [], subtotal: "100", total: "100", paymentMethod: "online", paymentLinkId: "plink_paid", paymentLinkUrl: "https://rzp.io/x" }).returning();
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: any) => ({ ok: true, json: async () => ({ status: String(url).includes("plink_paid") ? "paid" : "created" }) })) as any;
+    try {
+      const before = sent.length;
+      expect(await svc.pollPendingPayments()).toBeGreaterThanOrEqual(1);
+      const [after] = await db.select().from(schema.storeOrders).where(eq(schema.storeOrders.id, o.id));
+      expect(after.paymentStatus).toBe("paid");
+      expect(after.status).toBe("confirmed");
+      expect(sent.slice(before).some((m) => /Payment received for order \*ODTESTPAY1\*/.test(m.text?.body || ""))).toBe(true);
+      const n = sent.length;
+      await svc.pollPendingPayments(); // already paid → no second receipt
+      expect(sent.length).toBe(n);
+    } finally { globalThis.fetch = realFetch; }
+  });
 });

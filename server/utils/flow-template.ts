@@ -21,6 +21,7 @@ export function flowButtonIndexes(template: { buttons?: unknown } | null | undef
 
 export function ensureFlowButton(components: any[], template: any, flowToken?: string): any[] {
   const idx = flowButtonIndexes(template);
+  const btns = parseButtons(template?.buttons);
   if (!idx.length) return components;
   const out = [...components];
   for (const i of idx) {
@@ -30,7 +31,8 @@ export function ensureFlowButton(components: any[], template: any, flowToken?: s
         type: "button",
         sub_type: "flow",
         index: String(i),
-        parameters: [{ type: "action", action: { flow_token: flowToken || `hc-${randomUUID()}` } }],
+        // hcf_<metaFlowId>_<random>: lets Flow Studio match the reply to its flow
+        parameters: [{ type: "action", action: { flow_token: flowToken || `hcf_${/^\d+$/.test(String(btns[i]?.flowId || btns[i]?.flow_id || "")) ? String(btns[i].flowId || btns[i].flow_id) : "x"}_${randomUUID().replace(/-/g, "").slice(0, 12)}` } }],
       });
     }
   }

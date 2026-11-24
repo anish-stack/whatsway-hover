@@ -27,6 +27,7 @@ import { registerMetaLibraryFlowsRoutes } from "./meta-library-flows.routes";
 import { registerIntegrationRoutes } from "./integrations.routes";
 import { registerStoreRoutes } from "./store.routes";
 import { registerAppointmentRoutes } from "./appointments.routes";
+import { registerFlowStudioRoutes } from "./flow-studio.routes";
 import { registerDemoRequestRoutes } from "./demo-requests.routes";
 import { registerMediaRoutes } from "./media.routes";
 import { registerConversationRoutes } from "./conversations.routes";
@@ -86,6 +87,7 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerIntegrationRoutes(app);
   registerStoreRoutes(app);
   registerAppointmentRoutes(app);
+  registerFlowStudioRoutes(app);
   registerDemoRequestRoutes(app);
   registerTemplateRoutes(app);
   registerMediaRoutes(app);

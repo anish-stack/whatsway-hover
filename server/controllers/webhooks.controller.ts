@@ -677,8 +677,17 @@ async function handleMessageChange(value: any) {
         messageContent = interactive.list_reply.title;
         interactiveData = interactive;
       } else if (interactive.type === "nfm_reply") {
-        messageContent = "[Flow reply]";
         interactiveData = { type: "nfm_reply", flowResponse: interactive.nfm_reply?.response_json };
+        // Readable summary for the inbox: "📝 Form submitted" + answers
+        messageContent = "📝 Form submitted";
+        try {
+          const ans = JSON.parse(String(interactive.nfm_reply?.response_json || "{}"));
+          const lines = Object.entries(ans)
+            .filter(([k, v]) => k !== "flow_token" && v !== "" && v !== null && v !== undefined && !(Array.isArray(v) && !v.length))
+            .slice(0, 25)
+            .map(([k, v]) => `• ${k.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase())}: ${Array.isArray(v) ? v.join(", ") : typeof v === "boolean" ? (v ? "Yes" : "No") : String(v)}`);
+          if (lines.length) messageContent += "\n" + lines.join("\n").slice(0, 3500);
+        } catch { /* keep short label */ }
       } else {
         messageContent = `[Interactive: ${interactive.type || "unknown"}]`;
         interactiveData = interactive;
@@ -1051,8 +1060,20 @@ const uniqueUserIds = [...new Set(targetUserIds)];
 
     // WhatsApp Mini Store (catalogue / cart / orders) — handles its own keywords & "st:" buttons
     let storeHandled = false;
+    // Flow Studio: WhatsApp Flow submissions (save answers, update contact, thank-you, notify)
+    if (interactiveData?.type === "nfm_reply") {
+      try {
+        const { handleFlowReply } = await import("../services/flow-studio/flow-studio.service");
+        storeHandled = await handleFlowReply({
+          channel, phone: from, contactId: contact?.id || null, conversationId: conversation.id,
+          responseJson: interactiveData.flowResponse,
+        });
+      } catch (flowErr) {
+        console.error("[FlowStudio] reply handler error:", flowErr);
+      }
+    }
     // Appointment booking first ("ap:" buttons, "book" keywords), then the store.
-    try {
+    if (!storeHandled) try {
       const { handleAppointmentMessage } = await import("../services/appointments/appointments.service");
       storeHandled = await handleAppointmentMessage({
         channel, conversationId: conversation.id, phone: from, name: contact?.name || null,

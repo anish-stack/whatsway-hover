@@ -206,7 +206,7 @@ export async function sendFlowMessage(req: Request, res: Response) {
     const bodyText = String(body || "").trim();
     if (!bodyText) return res.status(400).json({ error: "Message body is required" });
 
-    const flowToken = `hc-${randomUUID()}`;
+    const flowToken = `hcf_${/^\d+$/.test(String(flowId)) ? String(flowId) : "x"}_${randomUUID().replace(/-/g, "").slice(0, 12)}`;
     const parameters: Record<string, any> = {
       flow_message_version: "3",
       flow_token: flowToken,

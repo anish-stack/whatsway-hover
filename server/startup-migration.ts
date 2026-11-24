@@ -870,6 +870,53 @@ const steps: MigrationStep[] = [
   },
 
   {
+    description: "Create Flow Studio tables",
+    sql: `
+      CREATE TABLE IF NOT EXISTS wa_flows (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id VARCHAR,
+        name VARCHAR(120) NOT NULL,
+        categories JSONB NOT NULL DEFAULT '["OTHER"]'::jsonb,
+        definition JSONB NOT NULL,
+        settings JSONB NOT NULL DEFAULT '{}'::jsonb,
+        cta VARCHAR(30) NOT NULL DEFAULT 'Open',
+        body TEXT NOT NULL DEFAULT 'Please fill this short form.',
+        meta_flow_id VARCHAR(40),
+        meta_history JSONB NOT NULL DEFAULT '[]'::jsonb,
+        status VARCHAR(20) NOT NULL DEFAULT 'local',
+        dirty BOOLEAN NOT NULL DEFAULT TRUE,
+        validation_errors JSONB NOT NULL DEFAULT '[]'::jsonb,
+        preview_url TEXT,
+        version INTEGER NOT NULL DEFAULT 0,
+        published_at TIMESTAMPTZ,
+        last_synced_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS wa_flows_channel_idx ON wa_flows (channel_id);
+      CREATE INDEX IF NOT EXISTS wa_flows_meta_idx ON wa_flows (meta_flow_id);
+      CREATE TABLE IF NOT EXISTS wa_flow_sessions (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        flow_id VARCHAR REFERENCES wa_flows(id) ON DELETE SET NULL,
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        meta_flow_id VARCHAR(40),
+        flow_token VARCHAR(120) NOT NULL,
+        phone VARCHAR(24) NOT NULL,
+        contact_id VARCHAR,
+        conversation_id VARCHAR,
+        status VARCHAR(16) NOT NULL DEFAULT 'sent',
+        source VARCHAR(20) NOT NULL DEFAULT 'studio',
+        response JSONB,
+        sent_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS wa_flow_sessions_token_uq ON wa_flow_sessions (flow_token);
+      CREATE INDEX IF NOT EXISTS wa_flow_sessions_flow_idx ON wa_flow_sessions (flow_id, status);
+    `,
+  },
+  {
     description: "Create demo_requests table",
     sql: `
       CREATE TABLE IF NOT EXISTS demo_requests (

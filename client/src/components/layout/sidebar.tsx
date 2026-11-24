@@ -127,7 +127,7 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/groups", icon: MdGroups, labelKey: "navigation.groups", color: "text-blue-400", allowedRoles: ["admin"] },
             { section: "Main", href: "/templates", icon: FileText, labelKey: "navigation.templates", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/template-library", icon: BookOpen, labelKey: "Template Library", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
-            { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "WhatsApp Flows", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "Flow Studio", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/appointments", icon: CalendarCheck, labelKey: "Appointments", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/store", icon: Store, labelKey: "WhatsApp Store", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/app-integrations", icon: Plug, labelKey: "Integrations", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
@@ -590,7 +590,7 @@ export default function Sidebar() {
         badge?: string | number,
         colorClass?: string
     ) => {
-        const isActive = location === path;
+        const isActive = location === path || (path === "/whatsapp-flows" && location.startsWith("/whatsapp-flows/"));
         return (
             <Link
                 key={path}
