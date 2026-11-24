@@ -1,3 +1,4 @@
+import { resolvePublicOrigin } from "../public-origin";
 /**
  * WhatsApp Mini Store — the in-chat shopping bot.
  *
@@ -131,6 +132,10 @@ function orderNumber() {
 // ───────────── Razorpay payment links (store owner's own keys) ─────────────
 
 async function createPaymentLink(s: StoreSettings, order: StoreOrder) {
+  // After paying, Razorpay sends the customer to our return page, which confirms the
+  // payment on WhatsApp right away and opens the chat again.
+  const origin = ((await resolvePublicOrigin().catch(() => null)) || process.env.APP_URL || "").replace(/\/+$/, "");
+  const callback = /^https:\/\//.test(origin) ? { callback_url: `${origin}/api/store/pay/return/${order.id}`, callback_method: "get" } : {};
   const auth = Buffer.from(`${s.razorpayKeyId}:${s.razorpayKeySecret}`).toString("base64");
   const r = await fetch("https://api.razorpay.com/v1/payment_links", {
     method: "POST",
@@ -144,6 +149,7 @@ async function createPaymentLink(s: StoreSettings, order: StoreOrder) {
       notify: { sms: false, email: false },
       reminder_enable: false,
       notes: { store_order_id: order.id, channel_id: order.channelId },
+      ...callback,
     }),
   });
   const j: any = await r.json().catch(() => ({}));
@@ -162,6 +168,25 @@ export async function refreshPaymentStatus(order: StoreOrder) {
     if (j?.status === "paid") return (await markPaid(order.id)) || order;
   } catch { /* keep current */ }
   return order;
+}
+
+/**
+ * Safety net when the store owner hasn't set up the Razorpay webhook: every minute,
+ * ask Razorpay about unpaid online orders from the last 48h and confirm the paid ones.
+ */
+export async function pollPendingPayments(): Promise<number> {
+  const pending = await db.select().from(storeOrders).where(and(
+    sql`${storeOrders.paymentLinkId} IS NOT NULL`,
+    sql`${storeOrders.paymentStatus} <> 'paid'`,
+    sql`${storeOrders.status} <> 'cancelled'`,
+    sql`${storeOrders.createdAt} > now() - interval '48 hours'`,
+  )).orderBy(desc(storeOrders.createdAt)).limit(100);
+  let n = 0;
+  for (const o of pending) {
+    const r = await refreshPaymentStatus(o);
+    if (r.paymentStatus === "paid") n++;
+  }
+  return n;
 }
 
 export async function markPaid(orderId: string, notify = true) {

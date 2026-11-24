@@ -853,6 +853,12 @@ app.use((req, res, next) => {
       (cronMod.default || cronMod).schedule("*/5 * * * *", () => {
         sendDueReminders().then((n) => n && console.log(`[Appointments] sent ${n} reminder(s)`)).catch((e) => console.error("[Appointments] reminders", e));
       });
+
+      // Store payments: confirm paid Razorpay links even without the owner's webhook (every minute)
+      const { pollPendingPayments } = await import("./services/store/store.service.ts");
+      (cronMod.default || cronMod).schedule("* * * * *", () => {
+        pollPendingPayments().then((n) => n && console.log(`[Store] confirmed ${n} payment(s)`)).catch((e) => console.error("[Store] payment poll", e));
+      });
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
     }

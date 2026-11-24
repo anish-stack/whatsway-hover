@@ -79,6 +79,23 @@ export function registerStoreRoutes(app: Express) {
     }
   });
 
+  // Razorpay sends the customer here after paying (callback_url on the payment link).
+  // Confirm with Razorpay (never trust the query string), send the WhatsApp receipt, reopen the chat.
+  app.get("/api/store/pay/return/:orderId", async (req, res) => {
+    let waLink = "";
+    try {
+      const [o] = await db.select().from(storeOrders).where(eq(storeOrders.id, req.params.orderId)).limit(1);
+      if (o) {
+        await refreshPaymentStatus(o);
+        const [c] = await db.select().from(channels).where(eq(channels.id, o.channelId)).limit(1);
+        const num = String((c as any)?.phoneNumber || "").replace(/\D/g, "");
+        if (num) waLink = `https://wa.me/${num}?text=${encodeURIComponent("track")}`;
+      }
+    } catch (e) { console.error("[Store] pay return", e); }
+    if (waLink) return res.redirect(302, waLink);
+    res.type("html").send(`<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><body style="font-family:system-ui;text-align:center;padding:48px 16px"><h2>Thank you!</h2><p>Your payment is being confirmed. You'll get a WhatsApp message shortly.</p></body>`);
+  });
+
   const auth = [requireAuth, resolveTenantChannels];
 
   app.get("/api/store/settings", ...auth, wrap(async (req, res) => {
