@@ -1601,7 +1601,7 @@
         "legal": ["Privacy Policy", "Terms of Service", "Cookie Policy", "GDPR"]
       },
       "bottomBar": {
-        "copyrightText": "© 2025 {{appName}}. All rights reserved.",
+        "copyrightText": "© 2026 {{appName}}. All rights reserved.",
         "termsLink": "Terms of Service",
         "privacyLink": "Privacy Policy",
         "cookieLink": "Cookie Policy"
