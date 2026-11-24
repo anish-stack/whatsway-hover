@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { EmptyBlock, ErrorBlock, StatCard, getJson } from "@/components/meta-billing/shared";
 import { describePricing, fmtDate, fmtMoney, MODEL_LABEL, SalesFilters, type SalesFilterState, salesQuery, SalesTable, send, StatusPill } from "@/components/reseller/shared";
 import { emptyPricing, PricingFields, pricingPayload, type PricingDraft } from "./resellers";
+import EditResellerDialog from "@/components/reseller/EditResellerDialog";
 
 function useAct() {
   const { toast } = useToast();
@@ -347,6 +348,8 @@ export default function AdminResellerDetailPage() {
   const { data: p, isLoading, isError, error } = useQuery<any>({ queryKey: ["/api/admin/resellers/detail", id], queryFn: () => getJson(`/api/admin/resellers/${id}`), enabled: !!id });
   const [reason, setReason] = useState("");
   const [suspendOpen, setSuspendOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [tab, setTab] = useState(() => new URLSearchParams(window.location.search).get("tab") || "sales");
   if (isLoading) return <div className="flex-1 p-6"><div className="h-64 animate-pulse rounded-xl bg-muted" /></div>;
   if (isError) return <div className="flex-1 p-6"><ErrorBlock error={error} /></div>;
   return (
@@ -358,6 +361,7 @@ export default function AdminResellerDetailPage() {
           <StatusPill status={p.status} className="text-sm" />
           {p.suspendedReason && <span className="text-xs text-muted-foreground">Reason: {p.suspendedReason}</span>}
           <div className="ml-auto flex flex-wrap gap-2">
+            {p.status !== "archived" && <Button size="sm" onClick={() => setEditOpen(true)}><Pencil className="mr-1 h-4 w-4" />Edit details</Button>}
             {p.status === "active" && <Button variant="outline" size="sm" className="text-red-600" onClick={() => { setReason(""); setSuspendOpen(true); }}><Ban className="mr-1 h-4 w-4" />Suspend</Button>}
             {p.status === "active" && <Button variant="outline" size="sm" onClick={() => act(() => send("POST", `/api/admin/resellers/${id}/status`, { status: "inactive" }), "Deactivated")}>Deactivate</Button>}
             {["suspended", "inactive"].includes(p.status) && <Button size="sm" onClick={() => act(() => send("POST", `/api/admin/resellers/${id}/status`, { status: "active" }), "Reseller activated")}><CheckCircle2 className="mr-1 h-4 w-4" />Activate / resume</Button>}
@@ -371,7 +375,7 @@ export default function AdminResellerDetailPage() {
           <StatCard label="Customer limit" value={p.maxCustomers} />
           <StatCard label="Valid until" value={<span className="text-base">{p.validUntil ? fmtDate(p.validUntil) : "No expiry"}</span>} />
         </div>
-        <Tabs defaultValue="sales">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="flex-wrap">
             {["sales", "customers", "pricing", "earnings", "configuration", "audit"].map((t) => <TabsTrigger key={t} value={t} className="capitalize">{t === "audit" ? "Activity & audit" : t}</TabsTrigger>)}
           </TabsList>
@@ -379,10 +383,11 @@ export default function AdminResellerDetailPage() {
           <TabsContent value="customers" className="mt-4"><CustomersTab id={id} /></TabsContent>
           <TabsContent value="pricing" className="mt-4"><PricingTab id={id} /></TabsContent>
           <TabsContent value="earnings" className="mt-4"><EarningsTab id={id} /></TabsContent>
-          <TabsContent value="configuration" className="mt-4"><ConfigTab p={p} /></TabsContent>
+          <TabsContent value="configuration" className="mt-4"><ConfigTab key={p.updatedAt} p={p} /></TabsContent>
           <TabsContent value="audit" className="mt-4"><AuditTab id={id} /></TabsContent>
         </Tabs>
       </main>
+      <EditResellerDialog resellerId={id} open={editOpen} onOpenChange={setEditOpen} />
       <Dialog open={suspendOpen} onOpenChange={setSuspendOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle>Suspend reseller</DialogTitle></DialogHeader>

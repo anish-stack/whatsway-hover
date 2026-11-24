@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
-import { Copy, Plus, Search, Trash2 } from "lucide-react";
+import { Copy, ExternalLink, MoreHorizontal, Pencil, Plus, Search, Tags, Trash2 } from "lucide-react";
 import Header from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,8 @@ import { useToast } from "@/hooks/use-toast";
 import { EmptyBlock, ErrorBlock, getJson } from "@/components/meta-billing/shared";
 import { fmtDate, fmtMoney, MODEL_LABEL, send, StatusPill } from "@/components/reseller/shared";
 import ResellerSummaryCard from "@/components/reseller/ResellerSummaryCard";
+import EditResellerDialog from "@/components/reseller/EditResellerDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export interface PricingDraft {
   planId: string; billingCycle: string; pricingModel: string; wholesalePrice: string; commissionPercent: string;
@@ -186,6 +188,8 @@ export default function AdminResellersPage() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
   const { data, isLoading, isError, error } = useQuery<any>({
     queryKey: ["/api/admin/resellers", q, status, page],
     queryFn: () => getJson(`/api/admin/resellers?search=${encodeURIComponent(q)}&status=${status === "all" ? "" : status}&page=${page}`),
@@ -218,7 +222,7 @@ export default function AdminResellersPage() {
               <table className="w-full min-w-[900px] text-sm">
                 <thead><tr className="border-b border-border text-left text-xs text-muted-foreground">
                   <th className="px-4 py-2 font-medium">Reseller</th><th className="py-2 pr-3 font-medium">Status</th><th className="py-2 pr-3 font-medium">Customers</th>
-                  <th className="py-2 pr-3 text-right font-medium">Revenue</th><th className="py-2 pr-3 text-right font-medium">Gross margin</th><th className="py-2 pr-3 font-medium">Activation</th><th className="py-2 pr-4 font-medium">Valid until</th></tr></thead>
+                  <th className="py-2 pr-3 text-right font-medium">Revenue</th><th className="py-2 pr-3 text-right font-medium">Gross margin</th><th className="py-2 pr-3 font-medium">Activation</th><th className="py-2 pr-3 font-medium">Valid until</th><th className="py-2 pr-4 text-right font-medium"><span className="sr-only">Actions</span></th></tr></thead>
                 <tbody>{data.rows.map((r: any) => (
                   <tr key={r.id} className="border-b border-border/60 last:border-0 hover:bg-muted/30">
                     <td className="px-4 py-2"><Link href={`/admin/resellers/${r.id}`} className="font-medium hover:text-primary">{r.businessName}</Link><div className="text-xs text-muted-foreground"><span className="font-mono">{r.resellerCode}</span> · {r.email}</div></td>
@@ -227,7 +231,20 @@ export default function AdminResellersPage() {
                     <td className="py-2 pr-3 text-right tabular-nums">{fmtMoney(r.revenue)}</td>
                     <td className="py-2 pr-3 text-right tabular-nums">{fmtMoney(r.grossMargin)}</td>
                     <td className="py-2 pr-3 text-xs">{r.activationPolicy === "immediate" ? "Immediate" : "After payment"}</td>
-                    <td className="py-2 pr-4 text-xs">{r.validUntil ? fmtDate(r.validUntil) : "—"}</td>
+                    <td className="py-2 pr-3 text-xs">{r.validUntil ? fmtDate(r.validUntil) : "—"}</td>
+                    <td className="py-2 pr-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {r.status !== "archived" && <Button size="sm" variant="ghost" onClick={() => setEditId(r.id)}><Pencil className="mr-1.5 h-3.5 w-3.5" />Edit</Button>}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild><Button size="icon" variant="ghost" className="h-8 w-8" aria-label={`More actions for ${r.businessName}`}><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setLocation(`/admin/resellers/${r.id}`)}><ExternalLink className="mr-2 h-4 w-4" />Open</DropdownMenuItem>
+                            {r.status !== "archived" && <DropdownMenuItem onClick={() => setEditId(r.id)}><Pencil className="mr-2 h-4 w-4" />Edit details</DropdownMenuItem>}
+                            <DropdownMenuItem onClick={() => setLocation(`/admin/resellers/${r.id}?tab=pricing`)}><Tags className="mr-2 h-4 w-4" />Plans & pricing</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -242,6 +259,7 @@ export default function AdminResellersPage() {
         )}
       </main>
       <CreateResellerDialog open={open} onOpenChange={setOpen} />
+      <EditResellerDialog resellerId={editId} open={!!editId} onOpenChange={(v) => !v && setEditId(null)} />
     </div>
   );
 }
