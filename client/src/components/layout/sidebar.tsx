@@ -51,6 +51,7 @@ import {
   Workflow,
   Plug,
   Store,
+  CalendarCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -127,6 +128,7 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/templates", icon: FileText, labelKey: "navigation.templates", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/template-library", icon: BookOpen, labelKey: "Template Library", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "WhatsApp Flows", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/appointments", icon: CalendarCheck, labelKey: "Appointments", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/store", icon: Store, labelKey: "WhatsApp Store", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/app-integrations", icon: Plug, labelKey: "Integrations", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/automation", icon: Zap, labelKey: "navigation.automations", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
@@ -401,6 +403,12 @@ const sidebarItemsCategories = [
         icon: RiSecurePaymentFill,
         path: "/gateway",
         color: "text-[#ffb900]",
+    },
+    {
+        name: "Demo Requests",
+        icon: CalendarCheck,
+        path: "/demo-requests",
+        color: "text-[var(--brand)]",
     },
     {
         name: "navigation.support_tickets",

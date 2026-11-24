@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  Check, Copy, ExternalLink, ImageOff, Loader2, Package, Pencil, Plus, RefreshCw, ShoppingBag, Store, Trash2, Truck,
+  Check, Copy, ExternalLink, ImageOff, ImagePlus, Loader2, X, Package, Pencil, Plus, RefreshCw, ShoppingBag, Store, Trash2, Truck,
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, apiRequestFormData, queryClient } from "@/lib/queryClient";
 import { useChannelContext } from "@/contexts/channel-context";
 
 const STATUSES = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"] as const;
@@ -189,7 +189,7 @@ function OrderSheet({ channelId, order, onClose }: { channelId: string; order: a
           <div className="space-y-1">
             <p className="font-medium">{order.customerName || "Customer"}</p>
             <p className="text-muted-foreground">+{order.phone}</p>
-            {order.address && <p className="whitespace-pre-wrap rounded-lg bg-muted p-3">{order.address}</p>}
+            {order.address && <div className="rounded-lg bg-muted p-3"><p className="mb-1 text-xs text-muted-foreground">Customer details</p><p className="whitespace-pre-wrap">{order.address}</p></div>}
           </div>
           <div className="rounded-xl border">
             {(order.items || []).map((i: any, k: number) => (
@@ -306,7 +306,10 @@ function ProductDialog({ channelId, product, categories, onClose, onSaved }: { c
             <datalist id="store-cats">{categories.map((c) => <option key={c} value={c} />)}</datalist>
           </div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Description</Label><Textarea rows={3} maxLength={500} value={f.description || ""} onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-          <div className="space-y-1.5 sm:col-span-2"><Label>Photo link (https)</Label><Input value={f.imageUrl || ""} onChange={(e) => setF({ ...f, imageUrl: e.target.value })} placeholder="https://yourshop.com/images/cake.jpg" /></div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label>Photo</Label>
+            <PhotoPicker channelId={channelId} value={f.imageUrl || ""} onChange={(url) => setF({ ...f, imageUrl: url })} />
+          </div>
           <div className="space-y-1.5"><Label>Stock</Label><Input type="number" min={0} value={f.stock} onChange={(e) => setF({ ...f, stock: e.target.value })} placeholder="Leave empty for unlimited" /></div>
           <label className="flex items-center gap-2 pt-6 text-sm"><Switch checked={f.isActive} onCheckedChange={(v) => setF({ ...f, isActive: v })} />Visible in store</label>
         </div>
@@ -327,14 +330,14 @@ function SettingsTab({ channelId, data }: { channelId: string; data: any }) {
   const [f, setF] = useState<any>({
     enabled: d.enabled ?? false, storeName: d.storeName || "My store", keywords: (d.keywords || ["shop", "store", "menu", "order", "catalog"]).join(", "),
     welcomeText: d.welcomeText || "Welcome! 👋 Browse our products below and order right here on WhatsApp.", currency: d.currency || "INR",
-    askAddress: d.askAddress ?? true, codEnabled: d.codEnabled ?? true, upiId: d.upiId || "", razorpayKeyId: d.razorpayKeyId || "",
+    askAddress: d.askAddress ?? true, storeType: d.storeType || "products", checkoutPrompt: d.checkoutPrompt || "", codEnabled: d.codEnabled ?? true, upiId: d.upiId || "", razorpayKeyId: d.razorpayKeyId || "",
     razorpayKeySecret: d.razorpayKeySecret || "", razorpayWebhookSecret: d.razorpayWebhookSecret || "", deliveryFee: d.deliveryFee ?? 0, minOrder: d.minOrder ?? 0,
   });
   const set = (k: string, v: any) => setF((x: any) => ({ ...x, [k]: v }));
   const save = useMutation({
     mutationFn: async () => (await apiRequest("PUT", "/api/store/settings", {
       channelId, ...f, keywords: String(f.keywords).split(",").map((k: string) => k.trim()).filter(Boolean).slice(0, 10),
-      upiId: f.upiId || null, razorpayKeyId: f.razorpayKeyId || null, razorpayKeySecret: f.razorpayKeySecret || null, razorpayWebhookSecret: f.razorpayWebhookSecret || null,
+      checkoutPrompt: f.checkoutPrompt || null, upiId: f.upiId || null, razorpayKeyId: f.razorpayKeyId || null, razorpayKeySecret: f.razorpayKeySecret || null, razorpayWebhookSecret: f.razorpayWebhookSecret || null,
     })).json(),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/store/settings", channelId] }); toast({ title: "Store settings saved" }); },
     onError: (e: Error) => toast({ title: "Save failed", description: e.message, variant: "destructive" }),
@@ -346,6 +349,21 @@ function SettingsTab({ channelId, data }: { channelId: string; data: any }) {
         <CardHeader><CardTitle className="text-base sm:text-base">Store</CardTitle><CardDescription>What customers see when they start shopping.</CardDescription></CardHeader>
         <CardContent className="space-y-4">
           <label className="flex items-center justify-between rounded-xl border p-3"><span><span className="font-medium">Store is on</span><span className="block text-xs text-muted-foreground">When off, the keywords go to your normal automations and AI.</span></span><Switch checked={f.enabled} onCheckedChange={(v) => set("enabled", v)} /></label>
+          <div className="space-y-1.5">
+            <Label>What do you sell?</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { v: "products", t: "Products", d: "Cart, delivery address, shipping" },
+                { v: "services", t: "Services", d: "Bookings — no address, asks date & time" },
+              ].map((o) => (
+                <button key={o.v} type="button" onClick={() => setF((x: any) => ({ ...x, storeType: o.v, askAddress: o.v === "products" ? x.askAddress : true }))}
+                  className={`rounded-xl border p-3 text-left transition-colors ${f.storeType === o.v ? "border-[var(--brand)] bg-[var(--brand-100)]" : "hover:border-foreground/30"}`}>
+                  <span className="block text-sm font-medium">{o.t}</span>
+                  <span className="block text-xs text-muted-foreground">{o.d}</span>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="space-y-1.5"><Label>Store name</Label><Input maxLength={80} value={f.storeName} onChange={(e) => set("storeName", e.target.value)} /></div>
           <div className="space-y-1.5"><Label>Words that open the store</Label><Input value={f.keywords} onChange={(e) => set("keywords", e.target.value)} /><p className="text-xs text-muted-foreground">Comma separated. Customers can also type “cart” and “track”.</p></div>
           <div className="space-y-1.5"><Label>Welcome message</Label><Textarea rows={3} maxLength={900} value={f.welcomeText} onChange={(e) => set("welcomeText", e.target.value)} /></div>
@@ -354,7 +372,15 @@ function SettingsTab({ channelId, data }: { channelId: string; data: any }) {
             <div className="space-y-1.5"><Label>Delivery fee</Label><Input type="number" min={0} value={f.deliveryFee} onChange={(e) => set("deliveryFee", e.target.value)} /></div>
             <div className="space-y-1.5"><Label>Minimum order</Label><Input type="number" min={0} value={f.minOrder} onChange={(e) => set("minOrder", e.target.value)} /></div>
           </div>
-          <label className="flex items-center gap-2 text-sm"><Switch checked={f.askAddress} onCheckedChange={(v) => set("askAddress", v)} />Ask for delivery address at checkout</label>
+          <label className="flex items-center gap-2 text-sm"><Switch checked={f.askAddress} onCheckedChange={(v) => set("askAddress", v)} />{f.storeType === "services" ? "Ask for booking details at checkout" : "Ask for delivery address at checkout"}</label>
+          {f.askAddress && (
+            <div className="space-y-1.5">
+              <Label>Checkout question (optional)</Label>
+              <Textarea rows={2} maxLength={500} value={f.checkoutPrompt} onChange={(e) => set("checkoutPrompt", e.target.value)}
+                placeholder={f.storeType === "services" ? "Please share your preferred date & time and any details (or type skip)." : "Please type your full delivery address (house no., street, area, city, PIN code)."} />
+              <p className="text-xs text-muted-foreground">Leave empty to use the default. The customer's answer is saved on the order.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
       <Card className="rounded-2xl">
@@ -376,6 +402,68 @@ function SettingsTab({ channelId, data }: { channelId: string; data: any }) {
           <Button className="w-full" onClick={() => save.mutate()} disabled={save.isPending}>{save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Save store settings</Button>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+
+function PhotoPicker({ channelId, value, onChange }: { channelId: string; value: string; onChange: (url: string) => void }) {
+  const { toast } = useToast();
+  const [busy, setBusy] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const [showLink, setShowLink] = useState(false);
+
+  const uploadFile = async (file?: File | null) => {
+    if (!file) return;
+    if (!["image/jpeg", "image/png"].includes(file.type)) return toast({ title: "Use a JPG or PNG photo", description: "WhatsApp product photos must be JPG or PNG.", variant: "destructive" });
+    if (file.size > 5 * 1024 * 1024) return toast({ title: "Photo too large", description: "Keep it under 5 MB.", variant: "destructive" });
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      fd.append("channelId", channelId);
+      const res = await apiRequestFormData("POST", `/api/store/upload-image?channelId=${channelId}`, fd);
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error || "Upload failed");
+      onChange(j.url);
+    } catch (e: any) {
+      toast({ title: "Upload failed", description: e.message, variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      {value ? (
+        <div className="relative overflow-hidden rounded-xl border">
+          <img src={value} alt="" className="h-48 w-full object-cover" />
+          <div className="absolute right-2 top-2 flex gap-1.5">
+            <label className="cursor-pointer rounded-lg bg-background/90 px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-background">
+              Replace
+              <input type="file" accept="image/jpeg,image/png" className="sr-only" onChange={(e) => uploadFile(e.target.files?.[0])} />
+            </label>
+            <button type="button" onClick={() => onChange("")} className="rounded-lg bg-background/90 p-1.5 shadow-sm hover:bg-background" aria-label="Remove photo"><X className="h-3.5 w-3.5" /></button>
+          </div>
+          {busy && <div className="absolute inset-0 flex items-center justify-center bg-background/70"><Loader2 className="h-6 w-6 animate-spin" /></div>}
+        </div>
+      ) : (
+        <label
+          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={(e) => { e.preventDefault(); setDrag(false); uploadFile(e.dataTransfer.files?.[0]); }}
+          className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-center transition-colors ${drag ? "border-[var(--brand)] bg-[var(--brand-100)]" : "hover:border-foreground/30"}`}
+        >
+          {busy ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-7 w-7 text-muted-foreground" />}
+          <span className="text-sm font-medium">{busy ? "Uploading…" : "Upload a photo"}</span>
+          <span className="text-xs text-muted-foreground">Drag & drop or click · JPG or PNG · up to 5 MB</span>
+          <input type="file" accept="image/jpeg,image/png" className="sr-only" disabled={busy} onChange={(e) => uploadFile(e.target.files?.[0])} />
+        </label>
+      )}
+      <button type="button" className="text-xs text-muted-foreground underline" onClick={() => setShowLink((v) => !v)}>
+        {showLink ? "Hide link field" : "Or paste an image link"}
+      </button>
+      {showLink && <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="https://yourshop.com/images/cake.jpg" />}
     </div>
   );
 }

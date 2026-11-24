@@ -374,7 +374,7 @@ export default function Campaigns() {
     );
 
   return (
-    <div className="container mx-auto dots-bg">
+    <div className="flex-1 dots-bg min-h-screen">
       <Header
         title={t("campaigns.title")}
         subtitle={t("campaigns.subtitle")}
@@ -388,11 +388,9 @@ export default function Campaigns() {
         }
       />
 
-      <div className="px-4 py-4">
+      <main className="space-y-6 p-4 sm:p-6">
         <CampaignStatistics campaigns={campaigns} stats={campaignResponse?.stats} />
-      </div>
 
-      <div className="px-4 py-4">
         <Card>
           <CardHeader>
             <CardTitle>{t("campaigns.allCampaigns")}</CardTitle>
@@ -470,7 +468,7 @@ export default function Campaigns() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
 
       <CreateCampaignDialog
         groups={groupsData}

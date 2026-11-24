@@ -34,6 +34,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import LoadingAnimation from "./LoadingAnimation";
+import { openBookDemo } from "./BookDemoDialog";
 import { useAuth } from "@/contexts/auth-context";
 import useStaticData from "@/hooks/useStaticData";
 import { useTranslation } from "@/lib/i18n";
@@ -322,6 +323,13 @@ const Header = () => {
 
               {!isAuthenticated && (
                 <div className="flex items-center gap-2 ml-2">
+                  <button
+                    type="button"
+                    onClick={openBookDemo}
+                    className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[var(--brand)] border border-[var(--brand)]/40 hover:bg-[var(--brand-100)] transition-colors duration-200"
+                  >
+                    Book a Demo
+                  </button>
                   <Link
                     href="/login"
                     className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[var(--ink-500)] hover:text-[var(--brand)] hover:bg-[var(--brand-100)] transition-colors duration-200"
@@ -543,6 +551,13 @@ const Header = () => {
               </div>
               {!isAuthenticated ? (
                 <>
+                  <button
+                    type="button"
+                    onClick={() => { setIsMenuOpen(false); openBookDemo(); }}
+                    className="block w-full text-center px-4 py-3 rounded-xl border border-[var(--brand)]/40 text-[var(--brand)] font-semibold text-sm hover:bg-[var(--brand-100)] transition-colors"
+                  >
+                    Book a Demo
+                  </button>
                   <Link
                     href="/login"
                     onClick={() => {

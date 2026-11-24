@@ -82,4 +82,23 @@ describe.skipIf(!RUN)("mini store flow", () => {
     const [p] = await db.select().from(schema.storeProducts).where(eq(schema.storeProducts.name, "Chocolate Cake"));
     expect(p.stock).toBe(0);
   });
+
+  it("'order done' after a COD order shows status instead of going to the AI", async () => {
+    expect(await say("Order done")).toBe(true);
+    expect(sent.at(-1).interactive.body.text).toMatch(/Your orders/);
+  });
+
+  it("services mode skips the address and uses booking wording", async () => {
+    const { eq } = await import("drizzle-orm");
+    await db.update(schema.storeSettings).set({ storeType: "services" }).where(eq(schema.storeSettings.channelId, channel.id));
+    const [svcItem] = await db.select().from(schema.storeProducts).where(eq(schema.storeProducts.name, "Cookies Box"));
+    await tap(`st:p:${svcItem.id}`);
+    expect(sent.at(-1).interactive.action.buttons[0].reply.title).toBe("Book this");
+    await tap(`st:add:${svcItem.id}`);
+    await tap("st:checkout");
+    expect(sent.at(-1).text.body).toContain("preferred date");
+    expect(await say("skip")).toBe(true);
+    expect(sent.at(-1).interactive.body.text).toContain("Booking OD");
+    expect(sent.at(-1).interactive.body.text).not.toContain("📍");
+  });
 });

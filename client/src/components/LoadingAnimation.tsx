@@ -10,9 +10,26 @@ import { MessageCircle } from "lucide-react";
 interface Props {
   onComplete?: () => void;
   duration?: number;
+  /** Inline button spinner mode (used by landing Header/Hero buttons). */
+  size?: "sm" | "md" | "lg";
+  color?: "white" | "green" | string;
 }
 
-export default function LoadingAnimation({ onComplete, duration = 1100 }: Props) {
+export default function LoadingAnimation(props: Props) {
+  if (props.size) return <InlineSpinner size={props.size} color={props.color} />;
+  return <IntroAnimation {...props} />;
+}
+
+function InlineSpinner({ size, color }: { size: string; color?: string }) {
+  const px = size === "sm" ? 16 : size === "lg" ? 24 : 20;
+  const c = color === "white" ? "#ffffff" : "var(--brand)";
+  return (
+    <span role="status" aria-label="Loading" className="inline-block animate-spin rounded-full border-2 border-current border-t-transparent align-middle"
+      style={{ width: px, height: px, color: c }} />
+  );
+}
+
+function IntroAnimation({ onComplete, duration = 1100 }: Props) {
   const done = useRef(false);
   const cb = useRef(onComplete);
   cb.current = onComplete;

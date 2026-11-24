@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Users, TrendingUp, Zap } from "lucide-react";
 import LoadingAnimation from "./LoadingAnimation";
+import { openBookDemo } from "./BookDemoDialog";
 import { useTranslation } from "@/lib/i18n";
 import { Link } from "wouter";
 
@@ -161,9 +162,16 @@ const Hero = () => {
                   </>
                 )}
               </Link>
+              <button
+                type="button"
+                onClick={openBookDemo}
+                className="btn btn-quiet w-full justify-center sm:w-auto"
+              >
+                Book a Demo
+              </button>
               <a
                 href="#how-it-works"
-                className="btn btn-quiet w-full justify-center sm:w-auto"
+                className="w-full text-center text-sm font-semibold text-[var(--ink-500)] underline-offset-4 hover:text-[var(--brand)] hover:underline sm:w-auto"
               >
                 {t("Landing.howItWorksSec.introTagline")}
               </a>

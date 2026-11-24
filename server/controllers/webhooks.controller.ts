@@ -1051,7 +1051,17 @@ const uniqueUserIds = [...new Set(targetUserIds)];
 
     // WhatsApp Mini Store (catalogue / cart / orders) — handles its own keywords & "st:" buttons
     let storeHandled = false;
+    // Appointment booking first ("ap:" buttons, "book" keywords), then the store.
     try {
+      const { handleAppointmentMessage } = await import("../services/appointments/appointments.service");
+      storeHandled = await handleAppointmentMessage({
+        channel, conversationId: conversation.id, phone: from, name: contact?.name || null,
+        type: storedMessageType, text: messageContent, interactive: interactiveData,
+      });
+    } catch (apptErr) {
+      console.error("[Appointments] handler error:", apptErr);
+    }
+    if (!storeHandled) try {
       const { handleStoreMessage } = await import("../services/store/store.service");
       storeHandled = await handleStoreMessage({
         channel, conversationId: conversation.id, phone: from, name: contact?.name || null,
@@ -1230,7 +1240,7 @@ async function checkAndSendAiReply(
     .then((res) => res[0]);
 
   // Generate AI response with site context
-  const aiResponse = await generateAiResponse(
+  let aiResponse = await generateAiResponse(
     messageContent,
     conversationHistory,
     contact,
@@ -1241,6 +1251,18 @@ async function checkAndSendAiReply(
   if (!aiResponse) {
     console.error("❌ Failed to generate AI response");
     return false;
+  }
+
+  // Internal control marker must never reach the customer.
+  const escalated = /\[\s*ESCALATE_TO_AGENT\s*\]/i.test(aiResponse);
+  aiResponse = aiResponse.replace(/\[\s*ESCALATE_TO_AGENT\s*\]/gi, "").replace(/^\s*[:\-–—]\s*/, "").trim();
+  if (!aiResponse) aiResponse = "Let me connect you with our team — someone will reply here shortly.";
+  if (escalated) {
+    try {
+      await storage.updateConversation(conversation.id, { status: "open", unreadCount: (conversation.unreadCount || 0) + 1 } as any);
+      const io = (global as any).io;
+      io?.to(`channel:${conversation.channelId}`).emit("conversation-escalated", { conversationId: conversation.id });
+    } catch { /* ignore */ }
   }
 
   // Send AI reply via WhatsApp
@@ -1369,7 +1391,24 @@ ${triggerPhrases.length > 0 ? `- If the user mentions any of these phrases, esca
 5. Your response should always be in the same language as the user's message.
 `;
 
-    const systemPrompt = basePrompt + "\n" + trainingContext + "\n" + strictInstruction + escalationInstruction;
+    // WhatsApp Mini Store: let the assistant point customers to the in-chat shop.
+    let storeContext = "";
+    try {
+      const { getSettings } = await import("../services/store/store.service");
+      const st = aiSettings?.channelId ? await getSettings(aiSettings.channelId) : null;
+      if (st?.enabled) {
+        const kw = (Array.isArray(st.keywords) ? (st.keywords as string[])[0] : "shop") || "shop";
+        storeContext = `\n\n[STORE]\nThis business takes orders inside WhatsApp. To browse and order, the customer types "${kw}". To see order or payment status, they type "track". To see the cart, "cart". If the customer talks about ordering, paying or an order they placed, tell them these words instead of escalating.`;
+      }
+      const { getApptSettings } = await import("../services/appointments/appointments.service");
+      const ap = aiSettings?.channelId ? await getApptSettings(aiSettings.channelId) : null;
+      if (ap?.enabled) {
+        const kw = (Array.isArray(ap.keywords) ? (ap.keywords as string[])[0] : "book") || "book";
+        storeContext += `\n\n[APPOINTMENTS]\nPatients can book, reschedule or cancel appointments here. To book they type "${kw}". To see, reschedule or cancel a booking they type "my appointment". Point them to these words instead of escalating.`;
+      }
+    } catch { /* store optional */ }
+
+    const systemPrompt = basePrompt + "\n" + trainingContext + "\n" + strictInstruction + escalationInstruction + storeContext;
 
     // 4. Build message context for AI
     const messages = [

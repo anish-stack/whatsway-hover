@@ -46,6 +46,9 @@ import TemplateLibraryPage from "@/pages/template-library";
 import WhatsAppFlowsPage from "@/pages/whatsapp-flows";
 import AppIntegrationsPage from "@/pages/app-integrations";
 import MiniStorePage from "@/pages/mini-store";
+import AppointmentsPage from "@/pages/appointments";
+import BookDemoDialog from "@/components/BookDemoDialog";
+import DemoRequestsPage from "@/pages/admin/demo-requests";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -159,6 +162,8 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/whatsapp-flows": "templates.view",
   "/app-integrations": "",
   "/store": "",
+  "/appointments": "",
+  "/demo-requests": "",
   "/inbox": "inbox.view",
   "/plans": "",
   "/plan-upgrade": "",
@@ -397,6 +402,12 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/template-library">
             <PermissionRoute component={TemplateLibraryPage} requiredPermission="templates:view" />
+          </Route>
+          <Route path="/demo-requests">
+            <PermissionRoute component={DemoRequestsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/appointments">
+            <PermissionRoute component={AppointmentsPage} />
           </Route>
           <Route path="/store">
             <PermissionRoute component={MiniStorePage} />
@@ -689,6 +700,7 @@ function Router() {
     <>
       <ScrollToTop />
       <SignupPopupHandler />
+      <BookDemoDialog />
       <Switch>
         <Route path="/widget-chat" component={WidgetChat} />
         <Route path="/demo">

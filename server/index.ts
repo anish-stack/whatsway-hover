@@ -846,6 +846,13 @@ app.use((req, res, next) => {
 
       const { startTemplateStatusPoller } = await import("./cron/template-status-poller.cron.ts");
       startTemplateStatusPoller();
+
+      // Appointment reminders (every 5 minutes)
+      const { sendDueReminders } = await import("./services/appointments/appointments.service.ts");
+      const cronMod: any = await import("node-cron");
+      (cronMod.default || cronMod).schedule("*/5 * * * *", () => {
+        sendDueReminders().then((n) => n && console.log(`[Appointments] sent ${n} reminder(s)`)).catch((e) => console.error("[Appointments] reminders", e));
+      });
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
     }

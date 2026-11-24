@@ -33,7 +33,7 @@ export const STATUS_LABEL: Record<string, string> = {
 
 // ───────────── sending helpers (also logged to Team Inbox) ─────────────
 
-async function send(channel: Channel, conversationId: string | null, to: string, payload: any, preview: string) {
+export async function send(channel: Channel, conversationId: string | null, to: string, payload: any, preview: string) {
   const api = new WhatsAppApiService(channel);
   const res = await api.sendDirectMessage({ recipient_type: "individual", to, ...payload });
   if (conversationId) {
@@ -49,9 +49,9 @@ async function send(channel: Channel, conversationId: string | null, to: string,
   return res;
 }
 
-const text = (body: string) => ({ type: "text", text: { body: body.slice(0, 4096), preview_url: true } });
+export const text = (body: string) => ({ type: "text", text: { body: body.slice(0, 4096), preview_url: true } });
 
-function buttons(body: string, btns: Array<{ id: string; title: string }>, header?: { image?: string; text?: string }, footer?: string) {
+export function buttons(body: string, btns: Array<{ id: string; title: string }>, header?: { image?: string; text?: string }, footer?: string) {
   const interactive: any = {
     type: "button",
     body: { text: body.slice(0, 1024) },
@@ -63,7 +63,7 @@ function buttons(body: string, btns: Array<{ id: string; title: string }>, heade
   return { type: "interactive", interactive };
 }
 
-function list(body: string, buttonText: string, rows: Array<{ id: string; title: string; description?: string }>, header?: string, footer?: string) {
+export function list(body: string, buttonText: string, rows: Array<{ id: string; title: string; description?: string }>, header?: string, footer?: string) {
   const interactive: any = {
     type: "list",
     body: { text: body.slice(0, 1024) },
@@ -77,7 +77,7 @@ function list(body: string, buttonText: string, rows: Array<{ id: string; title:
   return { type: "interactive", interactive };
 }
 
-function ctaUrl(body: string, label: string, url: string, footer?: string) {
+export function ctaUrl(body: string, label: string, url: string, footer?: string) {
   return {
     type: "interactive",
     interactive: {
@@ -174,6 +174,26 @@ export async function markPaid(orderId: string, notify = true) {
   return o || null;
 }
 
+// ───────────── wording (products vs services) ─────────────
+
+function terms(s: StoreSettings) {
+  const svc = (s as any).storeType === "services";
+  return {
+    svc,
+    view: svc ? "View services" : "View products",
+    add: svc ? "Book this" : "Add to cart",
+    cart: svc ? "My booking" : "View cart",
+    cartTitle: svc ? "🗓️ *Your booking*" : "🛒 *Your cart*",
+    browseMore: svc ? "More services" : "Browse more",
+    checkout: svc ? "Confirm booking" : "Checkout",
+    empty: svc ? "You haven't picked a service yet." : "Your cart is empty.",
+    order: svc ? "Booking" : "Order",
+    defaultPrompt: svc
+      ? "📝 Please share your preferred date & time and any details we should know (or type *skip*)."
+      : "📍 Please type your full delivery address (house no., street, area, city, PIN code).",
+  };
+}
+
 // ───────────── screens ─────────────
 
 async function showCatalogue(ctx: Ctx, category?: string, page = 0) {
@@ -198,16 +218,17 @@ async function showCatalogue(ctx: Ctx, category?: string, page = 0) {
   }));
   if (inCat.length > (page + 1) * pageSize) rows.push({ id: `st:cat:${category || ""}:${page + 1}`, title: "More products…", description: `${inCat.length - (page + 1) * pageSize} more` });
   const body = page === 0 && !category ? ctx.s.welcomeText : `${category || "Products"} — tap View to pick one.`;
-  await send(ctx.channel, ctx.conversationId, ctx.phone, list(body, "View products", rows, category || ctx.s.storeName, "Type cart or track anytime"), `Store: ${category || "catalogue"}`);
+  await send(ctx.channel, ctx.conversationId, ctx.phone, list(body, terms(ctx.s).view, rows, category || ctx.s.storeName, "Type cart or track anytime"), `Store: ${category || "catalogue"}`);
 }
 
 async function showProduct(ctx: Ctx, id: string) {
   const [p] = await db.select().from(storeProducts).where(and(eq(storeProducts.id, id), eq(storeProducts.channelId, ctx.channel.id))).limit(1);
   if (!p || !p.isActive) return showCatalogue(ctx);
   const body = `*${p.name}*\n${money(p.price, ctx.s.currency)}${p.description ? `\n\n${p.description}` : ""}${p.stock === 0 ? "\n\n_Currently out of stock_" : ""}`;
+  const T = terms(ctx.s);
   const btns = p.stock === 0
-    ? [{ id: "st:menu", title: "Browse more" }, { id: "st:cart", title: "View cart" }]
-    : [{ id: `st:add:${p.id}`, title: "Add to cart" }, { id: "st:cart", title: "View cart" }, { id: "st:menu", title: "Browse more" }];
+    ? [{ id: "st:menu", title: T.browseMore }, { id: "st:cart", title: T.cart }]
+    : [{ id: `st:add:${p.id}`, title: T.add }, { id: "st:cart", title: T.cart }, { id: "st:menu", title: T.browseMore }];
   const header = p.imageUrl && /^https:\/\//.test(p.imageUrl) ? { image: p.imageUrl } : undefined;
   await send(ctx.channel, ctx.conversationId, ctx.phone, buttons(body, btns, header), `Store: ${p.name}`);
 }
@@ -228,7 +249,7 @@ async function addToCart(ctx: Ctx, id: string) {
   const { subtotal, lines } = await cartLines(ctx.channel.id, items);
   const count = lines.reduce((a, l) => a + l.qty, 0);
   await send(ctx.channel, ctx.conversationId, ctx.phone,
-    buttons(`Added *${p.name}* ✅\nCart: ${count} item${count > 1 ? "s" : ""} · ${money(subtotal, ctx.s.currency)}`, [{ id: "st:checkout", title: "Checkout" }, { id: "st:menu", title: "Browse more" }, { id: "st:cart", title: "View cart" }]),
+    buttons(`Added *${p.name}* ✅\n${terms(ctx.s).svc ? "Booking" : "Cart"}: ${count} item${count > 1 ? "s" : ""} · ${money(subtotal, ctx.s.currency)}`, [{ id: "st:checkout", title: terms(ctx.s).checkout }, { id: "st:menu", title: terms(ctx.s).browseMore }, { id: "st:cart", title: terms(ctx.s).cart }]),
     `Store: added ${p.name}`);
 }
 
@@ -236,12 +257,12 @@ async function showCart(ctx: Ctx) {
   const cart = await getCart(ctx.channel.id, ctx.phone);
   const { lines, subtotal } = await cartLines(ctx.channel.id, (cart.items as CartItem[]) || []);
   if (!lines.length) {
-    await send(ctx.channel, ctx.conversationId, ctx.phone, buttons("Your cart is empty.", [{ id: "st:menu", title: "Browse products" }]), "Store: empty cart");
+    await send(ctx.channel, ctx.conversationId, ctx.phone, buttons(terms(ctx.s).empty, [{ id: "st:menu", title: terms(ctx.s).svc ? "See services" : "Browse products" }]), "Store: empty cart");
     return;
   }
   const fee = num(ctx.s.deliveryFee);
-  const body = `🛒 *Your cart*\n\n${lines.map((l) => `${l.qty} × ${l.p.name} — ${money(l.total, ctx.s.currency)}`).join("\n")}\n\nSubtotal: ${money(subtotal, ctx.s.currency)}${fee ? `\nDelivery: ${money(fee, ctx.s.currency)}` : ""}\n*Total: ${money(subtotal + fee, ctx.s.currency)}*`;
-  await send(ctx.channel, ctx.conversationId, ctx.phone, buttons(body, [{ id: "st:checkout", title: "Checkout" }, { id: "st:menu", title: "Add more" }, { id: "st:clear", title: "Clear cart" }]), "Store: cart");
+  const body = `${terms(ctx.s).cartTitle}\n\n${lines.map((l) => `${l.qty} × ${l.p.name} — ${money(l.total, ctx.s.currency)}`).join("\n")}\n\nSubtotal: ${money(subtotal, ctx.s.currency)}${fee ? `\nDelivery: ${money(fee, ctx.s.currency)}` : ""}\n*Total: ${money(subtotal + fee, ctx.s.currency)}*`;
+  await send(ctx.channel, ctx.conversationId, ctx.phone, buttons(body, [{ id: "st:checkout", title: terms(ctx.s).checkout }, { id: "st:menu", title: "Add more" }, { id: "st:clear", title: "Clear" }]), "Store: cart");
 }
 
 async function checkout(ctx: Ctx) {
@@ -255,7 +276,7 @@ async function checkout(ctx: Ctx) {
   }
   if (ctx.s.askAddress) {
     await saveCart(ctx.channel.id, ctx.phone, cart.items as CartItem[], "awaiting_address");
-    await send(ctx.channel, ctx.conversationId, ctx.phone, text("📍 Please type your full delivery address (house no., street, area, city, PIN code)."), "Store: asked for address");
+    await send(ctx.channel, ctx.conversationId, ctx.phone, text((ctx.s as any).checkoutPrompt?.trim() || terms(ctx.s).defaultPrompt), "Store: asked checkout details");
     return;
   }
   await placeOrder(ctx, null);
@@ -278,7 +299,7 @@ async function placeOrder(ctx: Ctx, address: string | null) {
   }
   await saveCart(ctx.channel.id, ctx.phone, [], "browsing");
 
-  const summary = `🧾 *Order ${order.orderNumber}*\n\n${lines.map((l) => `${l.qty} × ${l.p.name} — ${money(l.total, ctx.s.currency)}`).join("\n")}${fee ? `\nDelivery — ${money(fee, ctx.s.currency)}` : ""}\n*Total: ${money(order.total, ctx.s.currency)}*${address ? `\n\n📍 ${address}` : ""}`;
+  const summary = `🧾 *${terms(ctx.s).order} ${order.orderNumber}*\n\n${lines.map((l) => `${l.qty} × ${l.p.name} — ${money(l.total, ctx.s.currency)}`).join("\n")}${fee ? `\nDelivery — ${money(fee, ctx.s.currency)}` : ""}\n*Total: ${money(order.total, ctx.s.currency)}*${address ? `\n\n${terms(ctx.s).svc ? "📝" : "📍"} ${address}` : ""}`;
   const online = !!(ctx.s.razorpayKeyId && ctx.s.razorpayKeySecret);
   const options = [online && "online", ctx.s.upiId && "upi", ctx.s.codEnabled && "cod"].filter(Boolean) as string[];
 
@@ -313,7 +334,7 @@ async function payOnline(ctx: Ctx, orderId: string, prefix = "") {
       url = link.url;
       await db.update(storeOrders).set({ paymentLinkId: link.id, paymentLinkUrl: link.url, paymentMethod: "online", updatedAt: new Date() } as any).where(eq(storeOrders.id, o.id));
     }
-    await send(ctx.channel, ctx.conversationId, ctx.phone, ctaUrl(`${prefix ? `${prefix}\n\n` : ""}Tap below to pay ${money(o.total, o.currency)} securely. Your order is confirmed as soon as payment is received.`, `Pay ${money(o.total, o.currency)}`, url!, "UPI · Cards · Netbanking"), `Payment link for ${o.orderNumber}`);
+    await send(ctx.channel, ctx.conversationId, ctx.phone, ctaUrl(`${prefix ? `${prefix}\n\n` : ""}Tap below to pay ${money(o.total, o.currency)} securely. Your order is confirmed as soon as payment is received.`, "Pay now", url!, "UPI · Cards · Netbanking"), `Payment link for ${o.orderNumber}`);
   } catch (e) {
     console.error("[Store] payment link failed", (e as Error).message);
     if (ctx.s.codEnabled) await choosePayment(ctx, o.id, "cod", `${prefix}\n\nOnline payment is unavailable right now, so we've placed this as Cash on delivery.`);
@@ -410,6 +431,10 @@ export async function handleStoreMessage(m: IncomingForStore): Promise<boolean> 
       await showCatalogue(ctx);
       return true;
     }
+    if (terms(s).svc || (s as any).checkoutPrompt?.trim()) {
+      await placeOrder(ctx, ["skip", "no", "na", "-"].includes(lower) ? null : clip(t, 500));
+      return true;
+    }
     if (t.length < 10) {
       await send(ctx.channel, ctx.conversationId, ctx.phone, text("That looks too short for an address. Please type the full address with city and PIN code, or type *cancel*."), "Store: address too short");
       return true;
@@ -421,7 +446,26 @@ export async function handleStoreMessage(m: IncomingForStore): Promise<boolean> 
   const keywords: string[] = (Array.isArray(s.keywords) ? (s.keywords as string[]) : []).map((k) => String(k).toLowerCase().trim()).filter(Boolean);
   if (keywords.includes(lower)) { await showCatalogue(ctx); return true; }
   if (["cart", "my cart", "view cart"].includes(lower)) { await showCart(ctx); return true; }
-  if (["track", "status", "my order", "my orders", "order status"].includes(lower)) { await track(ctx); return true; }
+  if (["track", "status", "my order", "my orders", "order status", "booking status", "my booking"].includes(lower)) { await track(ctx); return true; }
+
+  // "paid", "order done", "payment kar diya" … right after an order → live status instead of the AI.
+  if (t.length <= 80 && /\b(paid|payment|pay|order done|done|ho gaya|ho gya|kar diya|kr diya|bhej diya|transfer(red)?)\b/i.test(lower)) {
+    const [recent] = await db.select().from(storeOrders)
+      .where(and(eq(storeOrders.channelId, m.channel.id), eq(storeOrders.phone, m.phone), sql`${storeOrders.createdAt} > now() - interval '48 hours'`))
+      .orderBy(desc(storeOrders.createdAt)).limit(1);
+    if (recent && recent.status !== "cancelled") {
+      const o = await refreshPaymentStatus(recent);
+      if (o.paymentStatus === "paid" || o.paymentMethod === "cod") { await track(ctx); return true; }
+      if (o.paymentMethod === "upi") {
+        await send(ctx.channel, ctx.conversationId, ctx.phone, text(`Thanks! 🙏 We'll verify your UPI payment for *${o.orderNumber}* and confirm shortly. If you haven't yet, please send the payment screenshot here.`), `Store: UPI follow-up ${o.orderNumber}`);
+        return true;
+      }
+      if (o.paymentLinkUrl) {
+        await send(ctx.channel, ctx.conversationId, ctx.phone, ctaUrl(`We haven't received the payment for *${o.orderNumber}* yet (${money(o.total, o.currency)}). It can take a minute to show — if you've paid, type *track* again shortly. Otherwise tap below to pay.`, "Pay now", o.paymentLinkUrl), `Store: payment pending ${o.orderNumber}`);
+        return true;
+      }
+    }
+  }
   return false;
 }
 

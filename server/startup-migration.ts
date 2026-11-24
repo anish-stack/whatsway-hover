@@ -870,6 +870,98 @@ const steps: MigrationStep[] = [
   },
 
   {
+    description: "Create demo_requests table",
+    sql: `
+      CREATE TABLE IF NOT EXISTS demo_requests (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(120) NOT NULL,
+        email VARCHAR(200) NOT NULL,
+        phone VARCHAR(30) NOT NULL,
+        company VARCHAR(160),
+        business_type VARCHAR(60),
+        team_size VARCHAR(30),
+        preferred_time VARCHAR(80),
+        message TEXT,
+        status VARCHAR(16) NOT NULL DEFAULT 'new',
+        notes TEXT,
+        source VARCHAR(200),
+        ip VARCHAR(64),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS demo_requests_created_idx ON demo_requests (created_at);
+    `,
+  },
+  {
+    description: "Create appointment booking tables",
+    sql: `
+      CREATE TABLE IF NOT EXISTS appointment_settings (
+        channel_id VARCHAR PRIMARY KEY REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        enabled BOOLEAN NOT NULL DEFAULT FALSE,
+        business_name VARCHAR(80) NOT NULL DEFAULT 'Our clinic',
+        provider_label VARCHAR(24) NOT NULL DEFAULT 'Doctor',
+        keywords JSONB NOT NULL DEFAULT '["book","appointment","doctor","slot"]'::jsonb,
+        welcome_text TEXT NOT NULL DEFAULT 'Book an appointment in a few taps 🩺',
+        timezone VARCHAR(64) NOT NULL DEFAULT 'Asia/Kolkata',
+        booking_window_days INTEGER NOT NULL DEFAULT 7,
+        min_notice_minutes INTEGER NOT NULL DEFAULT 60,
+        ask_reason BOOLEAN NOT NULL DEFAULT TRUE,
+        reminder_minutes INTEGER NOT NULL DEFAULT 120,
+        reminder_template VARCHAR(512),
+        reminder_template_lang VARCHAR(16) DEFAULT 'en_US',
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS appointment_providers (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        name VARCHAR(80) NOT NULL,
+        specialty VARCHAR(80),
+        fee NUMERIC(12,2),
+        slot_minutes INTEGER NOT NULL DEFAULT 15,
+        weekly_hours JSONB NOT NULL DEFAULT '{}'::jsonb,
+        days_off JSONB NOT NULL DEFAULT '[]'::jsonb,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS appointment_providers_channel_idx ON appointment_providers (channel_id);
+      CREATE TABLE IF NOT EXISTS appointments (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        ref VARCHAR(24) NOT NULL,
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id VARCHAR NOT NULL,
+        provider_id VARCHAR NOT NULL REFERENCES appointment_providers(id) ON DELETE CASCADE,
+        conversation_id VARCHAR,
+        phone VARCHAR(24) NOT NULL,
+        patient_name VARCHAR(120),
+        reason TEXT,
+        start_at TIMESTAMPTZ NOT NULL,
+        end_at TIMESTAMPTZ NOT NULL,
+        status VARCHAR(16) NOT NULL DEFAULT 'booked',
+        source VARCHAR(16) NOT NULL DEFAULT 'whatsapp',
+        reminder_sent_at TIMESTAMPTZ,
+        notes TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS appointments_channel_start_idx ON appointments (channel_id, start_at);
+      CREATE INDEX IF NOT EXISTS appointments_phone_idx ON appointments (channel_id, phone);
+      CREATE UNIQUE INDEX IF NOT EXISTS appointments_ref_uq ON appointments (ref);
+      -- one active booking per doctor per slot (prevents double booking)
+      CREATE UNIQUE INDEX IF NOT EXISTS appointments_slot_uq ON appointments (provider_id, start_at) WHERE status <> 'cancelled';
+      CREATE TABLE IF NOT EXISTS appointment_sessions (
+        channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        phone VARCHAR(24) NOT NULL,
+        state VARCHAR(24) NOT NULL DEFAULT 'idle',
+        data JSONB NOT NULL DEFAULT '{}'::jsonb,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS appointment_sessions_uq ON appointment_sessions (channel_id, phone);
+    `,
+  },
+  {
     description: "Create WhatsApp Mini Store tables",
     sql: `
       CREATE TABLE IF NOT EXISTS store_settings (
@@ -890,6 +982,8 @@ const steps: MigrationStep[] = [
         min_order NUMERIC(12,2) NOT NULL DEFAULT 0,
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+      ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS store_type VARCHAR(12) NOT NULL DEFAULT 'products';
+      ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS checkout_prompt TEXT;
       CREATE TABLE IF NOT EXISTS store_products (
         id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
         channel_id VARCHAR NOT NULL REFERENCES channels(id) ON DELETE CASCADE,

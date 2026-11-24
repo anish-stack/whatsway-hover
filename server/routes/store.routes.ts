@@ -6,6 +6,9 @@ import { channels, storeOrders, storeProducts, storeSettings } from "@shared/sch
 import { requireAuth } from "../middlewares/auth.middleware";
 import { resolveTenantChannels, verifyChannelOwnership } from "../middlewares/tenant.middleware";
 import { markPaid, notifyStatus, refreshPaymentStatus, verifyRazorpaySignature } from "../services/store/store.service";
+import { handleStorageUpload, upload, validateUploadedFiles } from "../middlewares/upload.middleware";
+import { resolvePublicOrigin } from "../services/public-origin";
+import fs from "fs";
 
 const owner = (req: Request) => {
   const u = (req.session as any)?.user;
@@ -32,6 +35,8 @@ const settingsSchema = z.object({
   welcomeText: z.string().trim().min(1).max(900).optional(),
   currency: z.string().trim().length(3).optional(),
   askAddress: z.boolean().optional(),
+  storeType: z.enum(["products", "services"]).optional(),
+  checkoutPrompt: z.string().trim().max(500).optional().nullable(),
   codEnabled: z.boolean().optional(),
   upiId: z.string().trim().max(100).optional().nullable(),
   razorpayKeyId: z.string().trim().max(100).optional().nullable(),
@@ -107,6 +112,26 @@ export function registerStoreRoutes(app: Express) {
     if (cur) await db.update(storeSettings).set(values).where(eq(storeSettings.channelId, id));
     else await db.insert(storeSettings).values({ channelId: id, ownerId: owner(req), ...values });
     res.json({ success: true });
+  }));
+
+  // Product photo → active storage (S3/R2/Cloudinary/DO) or local /uploads.
+  app.post("/api/store/upload-image", ...auth, upload.single("image"), validateUploadedFiles, handleStorageUpload, wrap(async (req, res) => {
+    const file = (req as any).file as (Express.Multer.File & { cloudUrl?: string }) | undefined;
+    if (!file) return res.status(400).json({ error: (req as any).fileFilterError || "Choose an image to upload" });
+    if (!["image/jpeg", "image/png"].includes(file.mimetype)) {
+      try { fs.unlinkSync(file.path); } catch { /* ignore */ }
+      return res.status(400).json({ error: "WhatsApp accepts JPG or PNG product photos" });
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      try { fs.unlinkSync(file.path); } catch { /* ignore */ }
+      return res.status(400).json({ error: "Photo must be 5 MB or smaller" });
+    }
+    let url = file.cloudUrl;
+    if (!url) {
+      const origin = ((await resolvePublicOrigin()) || process.env.APP_URL || `${req.protocol}://${req.get("host")}`).replace(/\/+$/, "");
+      url = `${origin}/${file.path.replace(/\\/g, "/").split("/").map(encodeURIComponent).join("/")}`;
+    }
+    res.json({ url, storage: file.cloudUrl ? "cloud" : "local" });
   }));
 
   app.get("/api/store/products", ...auth, wrap(async (req, res) => {

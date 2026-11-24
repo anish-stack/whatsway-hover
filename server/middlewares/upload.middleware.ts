@@ -17,6 +17,7 @@ import path from "path";
 import fs from "fs";
 import { Request, Response, NextFunction } from "express";
 import { getStorageTarget, safeStorageKey } from "../config/storageConfig";
+import { compressUploadedFiles } from "../utils/media-compress";
 
 
 
@@ -298,11 +299,11 @@ export function assertFileMatchesMime(
  * Express middleware: validates magic bytes for every file produced by
  * multer in the current request. Rejects (and unlinks) any spoofed file.
  */
-export const validateUploadedFiles = (
+export const validateUploadedFiles = async (
   req: Request & { fileFilterError?: string },
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   const files: Express.Multer.File[] = [];
   if (req.file) files.push(req.file);
   if (req.files) {
@@ -331,6 +332,8 @@ export const validateUploadedFiles = (
     }
   }
 
+  // Shrink images / convert video & audio to WhatsApp-friendly formats.
+  await compressUploadedFiles(files.filter((f) => !!f.path) as any);
   next();
 };
 
@@ -365,6 +368,8 @@ export const handleStorageUpload = async (
         return;
       }
     }
+
+    await compressUploadedFiles(files as any);
 
     const target = await getStorageTarget();
     if (!target) {

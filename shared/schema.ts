@@ -2324,6 +2324,8 @@ export const storeSettings = pgTable("store_settings", {
   welcomeText: text("welcome_text").notNull().default("Welcome! 👋 Browse our products below and order right here on WhatsApp."),
   currency: varchar("currency", { length: 3 }).notNull().default("INR"),
   askAddress: boolean("ask_address").notNull().default(true),
+  storeType: varchar("store_type", { length: 12 }).notNull().default("products"), // products | services
+  checkoutPrompt: text("checkout_prompt"), // question asked at checkout (null = default address question)
   codEnabled: boolean("cod_enabled").notNull().default(true),
   upiId: varchar("upi_id", { length: 100 }),
   razorpayKeyId: varchar("razorpay_key_id", { length: 100 }),
@@ -2401,3 +2403,109 @@ export const storeOrders = pgTable(
 export type StoreSettings = typeof storeSettings.$inferSelect;
 export type StoreProduct = typeof storeProducts.$inferSelect;
 export type StoreOrder = typeof storeOrders.$inferSelect;
+
+// ───────────────────────── Appointments (clinics, doctors, salons…) ─────────────────────────
+export const appointmentSettings = pgTable("appointment_settings", {
+  channelId: varchar("channel_id").primaryKey().references(() => channels.id, { onDelete: "cascade" }),
+  ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  enabled: boolean("enabled").notNull().default(false),
+  businessName: varchar("business_name", { length: 80 }).notNull().default("Our clinic"),
+  providerLabel: varchar("provider_label", { length: 24 }).notNull().default("Doctor"),
+  keywords: jsonb("keywords").notNull().default(["book", "appointment", "doctor", "slot"]),
+  welcomeText: text("welcome_text").notNull().default("Book an appointment in a few taps 🩺"),
+  timezone: varchar("timezone", { length: 64 }).notNull().default("Asia/Kolkata"),
+  bookingWindowDays: integer("booking_window_days").notNull().default(7),
+  minNoticeMinutes: integer("min_notice_minutes").notNull().default(60),
+  askReason: boolean("ask_reason").notNull().default(true),
+  reminderMinutes: integer("reminder_minutes").notNull().default(120), // 0 = off
+  reminderTemplate: varchar("reminder_template", { length: 512 }),
+  reminderTemplateLang: varchar("reminder_template_lang", { length: 16 }).default("en_US"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const appointmentProviders = pgTable(
+  "appointment_providers",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 80 }).notNull(),
+    specialty: varchar("specialty", { length: 80 }),
+    fee: numeric("fee", { precision: 12, scale: 2 }),
+    slotMinutes: integer("slot_minutes").notNull().default(15),
+    weeklyHours: jsonb("weekly_hours").notNull().default({}), // { mon: [["10:00","13:00"]], … }
+    daysOff: jsonb("days_off").notNull().default([]), // ["2026-12-25"]
+    isActive: boolean("is_active").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ apptProvidersChannelIdx: index("appointment_providers_channel_idx").on(t.channelId) })
+);
+
+export const appointments = pgTable(
+  "appointments",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ref: varchar("ref", { length: 24 }).notNull(),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    ownerId: varchar("owner_id").notNull(),
+    providerId: varchar("provider_id").notNull().references(() => appointmentProviders.id, { onDelete: "cascade" }),
+    conversationId: varchar("conversation_id"),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    patientName: varchar("patient_name", { length: 120 }),
+    reason: text("reason"),
+    startAt: timestamp("start_at", { withTimezone: true }).notNull(),
+    endAt: timestamp("end_at", { withTimezone: true }).notNull(),
+    status: varchar("status", { length: 16 }).notNull().default("booked"), // booked | confirmed | completed | no_show | cancelled
+    source: varchar("source", { length: 16 }).notNull().default("whatsapp"),
+    reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    apptChannelStartIdx: index("appointments_channel_start_idx").on(t.channelId, t.startAt),
+    apptPhoneIdx: index("appointments_phone_idx").on(t.channelId, t.phone),
+    apptRefUq: uniqueIndex("appointments_ref_uq").on(t.ref),
+  })
+);
+
+export const appointmentSessions = pgTable(
+  "appointment_sessions",
+  {
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    state: varchar("state", { length: 24 }).notNull().default("idle"),
+    data: jsonb("data").notNull().default({}),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ apptSessUq: uniqueIndex("appointment_sessions_uq").on(t.channelId, t.phone) })
+);
+
+export type AppointmentSettings = typeof appointmentSettings.$inferSelect;
+export type AppointmentProvider = typeof appointmentProviders.$inferSelect;
+export type Appointment = typeof appointments.$inferSelect;
+
+// ───────────────────────── Book-a-demo requests (public landing form) ─────────────────────────
+export const demoRequests = pgTable(
+  "demo_requests",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    name: varchar("name", { length: 120 }).notNull(),
+    email: varchar("email", { length: 200 }).notNull(),
+    phone: varchar("phone", { length: 30 }).notNull(),
+    company: varchar("company", { length: 160 }),
+    businessType: varchar("business_type", { length: 60 }),
+    teamSize: varchar("team_size", { length: 30 }),
+    preferredTime: varchar("preferred_time", { length: 80 }),
+    message: text("message"),
+    status: varchar("status", { length: 16 }).notNull().default("new"), // new | contacted | scheduled | closed
+    notes: text("notes"),
+    source: varchar("source", { length: 200 }),
+    ip: varchar("ip", { length: 64 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ demoRequestsCreatedIdx: index("demo_requests_created_idx").on(t.createdAt) })
+);
+export type DemoRequest = typeof demoRequests.$inferSelect;
