@@ -53,7 +53,11 @@ const ContactusLanding = () => {
     setLoading(true);
 
     try {
-      const response = await apiRequest("POST", "/api/contact/sendmail", formData);
+      const response = await apiRequest(
+        "POST",
+        "/api/contact/sendmail",
+        formData,
+      );
       const data = await response.json();
 
       if (!data?.success) {
@@ -80,7 +84,8 @@ const ContactusLanding = () => {
     } catch (error: unknown) {
       toast({
         title: "Failed to send message",
-        description: error instanceof Error ? error.message : "Please try again later.",
+        description:
+          error instanceof Error ? error.message : "Please try again later.",
         variant: "destructive",
       });
     } finally {
@@ -91,7 +96,7 @@ const ContactusLanding = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -110,7 +115,8 @@ const ContactusLanding = () => {
     a: string;
   }>;
 
-  const iconMap = [Mail, MapPin];
+  // order must match contactUs.contactInfo.list: Email, Call, WhatsApp, Visit
+  const iconMap = [Mail, Phone, MessageCircle, MapPin];
 
   return (
     <div className="pt-16">
@@ -150,7 +156,8 @@ const ContactusLanding = () => {
                       required
                     />
                     <label className="absolute left-4 -top-2.5 text-xs font-medium text-[var(--ink-500)] bg-white px-1 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--ink-300)] peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[var(--brand)] peer-focus:bg-white">
-                      {t("contactUs.form.fields.name")} {t("contactUs.form.fields.required")}
+                      {t("contactUs.form.fields.name")}{" "}
+                      {t("contactUs.form.fields.required")}
                     </label>
                   </div>
                   <div className="relative">
@@ -164,7 +171,8 @@ const ContactusLanding = () => {
                       required
                     />
                     <label className="absolute left-4 -top-2.5 text-xs font-medium text-[var(--ink-500)] bg-white px-1 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--ink-300)] peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[var(--brand)] peer-focus:bg-white">
-                      {t("contactUs.form.fields.email")} {t("contactUs.form.fields.required")}
+                      {t("contactUs.form.fields.email")}{" "}
+                      {t("contactUs.form.fields.required")}
                     </label>
                   </div>
                 </div>
@@ -228,7 +236,8 @@ const ContactusLanding = () => {
                     required
                   ></textarea>
                   <label className="absolute left-4 -top-2.5 text-xs font-medium text-[var(--ink-500)] bg-white px-1 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--ink-300)] peer-placeholder-shown:bg-transparent peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[var(--brand)] peer-focus:bg-white">
-                    {t("contactUs.form.fields.message")} {t("contactUs.form.fields.required")}
+                    {t("contactUs.form.fields.message")}{" "}
+                    {t("contactUs.form.fields.required")}
                   </label>
                 </div>
 
@@ -256,10 +265,10 @@ const ContactusLanding = () => {
                 </h2>
                 <div className="space-y-4">
                   {contactInfo.map((info, index) => {
-                    const Icon = iconMap[index];
+                    const Icon = iconMap[index] || Mail;
                     const details =
-                      info.title === "Email Us"
-                        ? brandSettings?.supportEmail
+                      index === 0
+                        ? brandSettings?.supportEmail || info.details
                         : info.details;
 
                     return (
@@ -274,7 +283,9 @@ const ContactusLanding = () => {
                           <h3 className="font-semibold text-[var(--ink)] text-sm">
                             {info.title}
                           </h3>
-                          <p className="text-[var(--ink-700)] font-medium text-sm mt-0.5">{details}</p>
+                          <p className="text-[var(--ink-700)] font-medium text-sm mt-0.5">
+                            {details}
+                          </p>
                           <p className="text-[var(--ink-300)] text-xs mt-1">
                             {info.description}
                           </p>
@@ -310,7 +321,9 @@ const ContactusLanding = () => {
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full flex items-center justify-between p-5 text-left"
                 >
-                  <h3 className="font-semibold text-[var(--ink)] text-sm pr-4">{faq.q}</h3>
+                  <h3 className="font-semibold text-[var(--ink)] text-sm pr-4">
+                    {faq.q}
+                  </h3>
                   <ChevronDown
                     className={`w-5 h-5 text-[var(--ink-300)] flex-shrink-0 transition-transform duration-200 ${
                       openFaq === index ? "rotate-180" : ""
@@ -319,7 +332,9 @@ const ContactusLanding = () => {
                 </button>
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    openFaq === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    openFaq === index
+                      ? "max-h-96 opacity-100"
+                      : "max-h-0 opacity-0"
                   }`}
                 >
                   <p className="px-5 pb-5 text-[var(--ink-500)] text-sm leading-relaxed">
