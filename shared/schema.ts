@@ -2597,3 +2597,51 @@ export const platformMessageLogs = pgTable(
   (t) => ({ platformMsgCreatedIdx: index("platform_message_logs_created_idx").on(t.createdAt) })
 );
 export type PlatformWhatsappSettings = typeof platformWhatsappSettings.$inferSelect;
+
+// ───────────────────────── Website CMS (dynamic pages + navigation) ─────────────────────────
+export const cmsPages = pgTable(
+  "cms_pages",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    title: varchar("title", { length: 200 }).notNull(),
+    slug: varchar("slug", { length: 120 }).notNull().unique(),
+    pageType: varchar("page_type", { length: 16 }).notNull().default("page"), // page | policy | seo
+    status: varchar("status", { length: 16 }).notNull().default("draft"), // draft | published
+    content: text("content").notNull().default(""),
+    excerpt: varchar("excerpt", { length: 500 }),
+    template: varchar("template", { length: 16 }).notNull().default("default"), // default | full | legal
+    showTitle: boolean("show_title").notNull().default(true),
+    metaTitle: varchar("meta_title", { length: 120 }),
+    metaDescription: varchar("meta_description", { length: 320 }),
+    metaKeywords: varchar("meta_keywords", { length: 400 }),
+    ogImage: varchar("og_image", { length: 500 }),
+    canonicalUrl: varchar("canonical_url", { length: 500 }),
+    noindex: boolean("noindex").notNull().default(false),
+    schemaJson: text("schema_json"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ cmsPagesStatusIdx: index("cms_pages_status_idx").on(t.status) })
+);
+export type CmsPage = typeof cmsPages.$inferSelect;
+
+export const cmsNavItems = pgTable(
+  "cms_nav_items",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    label: varchar("label", { length: 80 }).notNull(),
+    path: varchar("path", { length: 300 }).notNull(),
+    // header_main | header_about | header_resources | footer_product | footer_company | footer_resources | footer_legal | footer_bottom
+    location: varchar("location", { length: 24 }).notNull(),
+    description: varchar("description", { length: 200 }),
+    icon: varchar("icon", { length: 40 }),
+    image: varchar("image", { length: 500 }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isVisible: boolean("is_visible").notNull().default(true),
+    openInNewTab: boolean("open_in_new_tab").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ cmsNavLocIdx: index("cms_nav_location_idx").on(t.location, t.sortOrder) })
+);
+export type CmsNavItem = typeof cmsNavItems.$inferSelect;

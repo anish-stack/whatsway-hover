@@ -30,6 +30,7 @@ import { registerAppointmentRoutes } from "./appointments.routes";
 import { registerFlowStudioRoutes } from "./flow-studio.routes";
 import { registerPlatformAdminRoutes } from "./platform-admin.routes";
 import { registerDemoRequestRoutes } from "./demo-requests.routes";
+import { registerCmsRoutes } from "./cms.routes";
 import { registerMediaRoutes } from "./media.routes";
 import { registerConversationRoutes } from "./conversations.routes";
 import { registerAutomationRoutes } from "./automation.routes";
@@ -91,6 +92,7 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerFlowStudioRoutes(app);
   registerPlatformAdminRoutes(app);
   registerDemoRequestRoutes(app);
+  registerCmsRoutes(app);
   registerTemplateRoutes(app);
   registerMediaRoutes(app);
   registerConversationRoutes(app);

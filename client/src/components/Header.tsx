@@ -37,6 +37,7 @@ import LoadingAnimation from "./LoadingAnimation";
 import { openBookDemo } from "./BookDemoDialog";
 import { useAuth } from "@/contexts/auth-context";
 import useStaticData from "@/hooks/useStaticData";
+import { useCmsNav, ICONS, DEFAULT_MENU_IMAGE } from "@/hooks/useCms";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSelector } from "./language-selector";
 import { AppSettings } from "@/types/types";
@@ -57,6 +58,21 @@ const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
   const staticData = useStaticData();
+  const cmsNav = useCmsNav();
+  const toMenu = (loc: string, fallback: typeof staticData.header.aboutMenuItems) => {
+    const rows = cmsNav.by(loc);
+    if (rows.length === 0) return fallback;
+    return rows.map((r) => ({
+      title: r.label,
+      path: r.path,
+      description: r.description || "",
+      icon: (r.icon && ICONS[r.icon]) || FileText,
+      image: r.image || DEFAULT_MENU_IMAGE,
+    }));
+  };
+  const aboutItems = toMenu("header_about", staticData.header.aboutMenuItems);
+  const resourcesItems = toMenu("header_resources", staticData.header.resourcesMenuItems);
+  const mainLinks = cmsNav.by("header_main");
   const { t } = useTranslation();
 
   const username = (user?.firstName || "") + " " + (user?.lastName || "");
@@ -278,7 +294,7 @@ const Header = () => {
                 />
 
                 <MegaMenu
-                  items={staticData.header.aboutMenuItems}
+                  items={aboutItems}
                   isVisible={showAboutMega}
                   title={t("Landing.header.megaMenuTitles.about")}
                 />
@@ -311,11 +327,22 @@ const Header = () => {
                 />
 
                 <MegaMenu
-                  items={staticData.header.resourcesMenuItems}
+                  items={resourcesItems}
                   isVisible={showResourcesMega}
                   title={t("Landing.header.megaMenuTitles.resources")}
                 />
               </div>
+
+              {mainLinks.map((l) => (
+                <a
+                  key={l.id}
+                  href={l.path}
+                  {...(l.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[var(--ink-500)] hover:text-[var(--brand)] hover:bg-[var(--canvas)] transition-colors duration-200"
+                >
+                  {l.label}
+                </a>
+              ))}
 
               <div className="mx-1">
                 <LanguageSelector />
@@ -485,7 +512,7 @@ const Header = () => {
               >
                 <div className="overflow-hidden">
                   <div className="space-y-0.5 pl-4 pr-2 pb-2">
-                    {staticData.header.aboutMenuItems.map((item, index) => (
+                    {aboutItems.map((item, index) => (
                       <Link
                         key={`mobile-about-${index}`}
                         href={item.path}
@@ -524,7 +551,7 @@ const Header = () => {
               >
                 <div className="overflow-hidden">
                   <div className="space-y-0.5 pl-4 pr-2 pb-2">
-                    {staticData.header.resourcesMenuItems.map((item, index) => (
+                    {resourcesItems.map((item, index) => (
                       <Link
                         key={`mobile-resources-${index}`}
                         href={item.path}
@@ -541,6 +568,18 @@ const Header = () => {
                 </div>
               </div>
             </div>
+
+            {mainLinks.map((l) => (
+              <a
+                key={`mobile-main-${l.id}`}
+                href={l.path}
+                {...(l.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="block px-4 py-3 rounded-xl font-medium text-sm text-[var(--ink-700)] hover:text-[var(--brand)] hover:bg-[var(--canvas)] transition-all duration-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {l.label}
+              </a>
+            ))}
 
             <div className="pt-4 mt-4 border-t border-[var(--mist)] dark:border-white/10 space-y-2">
               <div className="px-4 py-2 flex items-center justify-between">

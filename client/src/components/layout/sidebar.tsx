@@ -413,6 +413,12 @@ const sidebarItemsCategories = [
         color: "text-[var(--brand)]",
     },
     {
+        name: "Website CMS",
+        icon: FileText,
+        path: "/admin/cms",
+        color: "text-[var(--brand)]",
+    },
+    {
         name: "WhatsApp Notifications",
         icon: MessageCircle,
         path: "/admin/platform-whatsapp",

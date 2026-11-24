@@ -979,6 +979,47 @@ const steps: MigrationStep[] = [
     `,
   },
   {
+    description: "Create CMS pages and navigation tables",
+    sql: `
+      CREATE TABLE IF NOT EXISTS cms_pages (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        title VARCHAR(200) NOT NULL,
+        slug VARCHAR(120) NOT NULL UNIQUE,
+        page_type VARCHAR(16) NOT NULL DEFAULT 'page',
+        status VARCHAR(16) NOT NULL DEFAULT 'draft',
+        content TEXT NOT NULL DEFAULT '',
+        excerpt VARCHAR(500),
+        template VARCHAR(16) NOT NULL DEFAULT 'default',
+        show_title BOOLEAN NOT NULL DEFAULT TRUE,
+        meta_title VARCHAR(120),
+        meta_description VARCHAR(320),
+        meta_keywords VARCHAR(400),
+        og_image VARCHAR(500),
+        canonical_url VARCHAR(500),
+        noindex BOOLEAN NOT NULL DEFAULT FALSE,
+        schema_json TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS cms_pages_status_idx ON cms_pages (status);
+      CREATE TABLE IF NOT EXISTS cms_nav_items (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        label VARCHAR(80) NOT NULL,
+        path VARCHAR(300) NOT NULL,
+        location VARCHAR(24) NOT NULL,
+        description VARCHAR(200),
+        icon VARCHAR(40),
+        image VARCHAR(500),
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        is_visible BOOLEAN NOT NULL DEFAULT TRUE,
+        open_in_new_tab BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS cms_nav_location_idx ON cms_nav_items (location, sort_order);
+    `,
+  },
+  {
     description: "Create appointment booking tables",
     sql: `
       CREATE TABLE IF NOT EXISTS appointment_settings (

@@ -23,6 +23,7 @@ import {
 import { useTranslation } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { AppSettings } from "@/types/types";
+import { useCmsNav } from "@/hooks/useCms";
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
@@ -32,6 +33,12 @@ const Footer: React.FC = () => {
     queryFn: () => fetch("/api/brand-settings").then((res) => res.json()),
     staleTime: 5 * 60 * 1000,
   });
+
+  const cmsNav = useCmsNav();
+  const cms = (loc: string, fallback: Array<{ name: string; href: string; newTab?: boolean }>) => {
+    const rows = cmsNav.by(loc);
+    return rows.length ? rows.map((r) => ({ name: r.label, href: r.path, newTab: r.openInNewTab })) : fallback;
+  };
 
   const productLinks = t(
     "Landing.footerSec.links.product"
@@ -47,7 +54,7 @@ const Footer: React.FC = () => {
   ) as unknown as string[];
   const legalLinks = t("Landing.footerSec.links.legal") as unknown as string[];
 
-  const links = {
+  const defaults = {
     product: [
       { name: productLinks[0], href: "/#features" },
       { name: productLinks[1], href: "/#how-it-works" },
@@ -75,19 +82,38 @@ const Footer: React.FC = () => {
       { name: legalLinks[2], href: "/cookie-policy" },
     ],
   };
+  const links = {
+    product: cms("footer_product", defaults.product),
+    company: cms("footer_company", defaults.company),
+    support: defaults.support,
+    resources: cms("footer_resources", defaults.resources),
+    legal: cms("footer_legal", defaults.legal),
+  };
+  const bottomLinks = cms("footer_bottom", [
+    { name: t("Landing.footerSec.bottomBar.termsLink"), href: "/terms" },
+    { name: t("Landing.footerSec.bottomBar.privacyLink"), href: "/privacy-policy" },
+    { name: t("Landing.footerSec.bottomBar.cookieLink"), href: "/cookie-policy" },
+  ]);
 
-  const renderLink = (link: { name: string; href: string }, index: number) => (
+  const renderLink = (link: { name: string; href: string; newTab?: boolean }, index: number) => (
     <li key={index}>
       {link.href.startsWith("/") ? (
-        <Link
-          to={link.href}
-          className="text-sm text-white/55 transition-colors hover:text-white"
-        >
-          {link.name}
-        </Link>
+        link.newTab ? (
+          <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm text-white/55 transition-colors hover:text-white">
+            {link.name}
+          </a>
+        ) : (
+          <Link
+            to={link.href}
+            className="text-sm text-white/55 transition-colors hover:text-white"
+          >
+            {link.name}
+          </Link>
+        )
       ) : (
         <a
           href={link.href}
+          {...(link.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className="text-sm text-white/55 transition-colors hover:text-white"
         >
           {link.name}
@@ -185,24 +211,15 @@ const Footer: React.FC = () => {
             })}
           </p>
           <div className="flex items-center gap-6">
-            <Link
-              to="/terms"
-              className="text-xs text-white/40 transition-colors hover:text-white"
-            >
-              {t("Landing.footerSec.bottomBar.termsLink")}
-            </Link>
-            <Link
-              to="/privacy-policy"
-              className="text-xs text-white/40 transition-colors hover:text-white"
-            >
-              {t("Landing.footerSec.bottomBar.privacyLink")}
-            </Link>
-            <Link
-              to="/cookie-policy"
-              className="text-xs text-white/40 transition-colors hover:text-white"
-            >
-              {t("Landing.footerSec.bottomBar.cookieLink")}
-            </Link>
+            {bottomLinks.map((l, i) => (
+              <Link
+                key={i}
+                to={l.href}
+                className="text-xs text-white/40 transition-colors hover:text-white"
+              >
+                {l.name}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

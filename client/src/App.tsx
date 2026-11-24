@@ -50,6 +50,8 @@ import MiniStorePage from "@/pages/mini-store";
 import AppointmentsPage from "@/pages/appointments";
 import BookDemoDialog from "@/components/BookDemoDialog";
 import DemoRequestsPage from "@/pages/admin/demo-requests";
+import CmsAdminPage from "@/pages/admin/cms";
+import { CmsOverride, CmsOrApp } from "@/pages/CmsPage";
 import QueuesPage from "@/pages/admin/queues";
 import PlatformWhatsAppPage from "@/pages/admin/platform-whatsapp";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
@@ -167,6 +169,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/store": "",
   "/appointments": "",
   "/demo-requests": "",
+  "/admin/cms": "",
   "/admin/queues": "",
   "/admin/platform-whatsapp": "",
   "/inbox": "inbox.view",
@@ -411,6 +414,9 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/demo-requests">
             <PermissionRoute component={DemoRequestsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/cms">
+            <PermissionRoute component={CmsAdminPage} requiredRoles={["superadmin"]} />
           </Route>
           <Route path="/admin/queues">
             <PermissionRoute component={QueuesPage} requiredRoles={["superadmin"]} />
@@ -737,84 +743,84 @@ function Router() {
         <Route path="/privacy-policy">
           <>
             <Header />
-            <PrivacyPage />
+            <CmsOverride slug="privacy-policy" fallback={<PrivacyPage />} />
             <Footer />
           </>
         </Route>
         <Route path="/terms">
           <>
             <Header />
-            <TermsPage />
+            <CmsOverride slug="terms" fallback={<TermsPage />} />
             <Footer />
           </>
         </Route>
         <Route path="/data-deletion">
           <>
             <Header />
-            <DataDeletionPage />
+            <CmsOverride slug="data-deletion" fallback={<DataDeletionPage />} />
             <Footer />
           </>
         </Route>
         <Route path="/about">
           <>
             <Header />
-            <AboutUs />
+            <CmsOverride slug="about" fallback={<AboutUs />} />
             <Footer />
           </>
         </Route>
         <Route path="/integrations">
           <>
             <Header />
-            <Integrations />
+            <CmsOverride slug="integrations" fallback={<Integrations />} />
             <Footer />
           </>
         </Route>
         <Route path="/press-kit">
           <>
             <Header />
-            <PressKit />
+            <CmsOverride slug="press-kit" fallback={<PressKit />} />
             <Footer />
           </>
         </Route>
         <Route path="/case-studies">
           <>
             <Header />
-            <CaseStudies />
+            <CmsOverride slug="case-studies" fallback={<CaseStudies />} />
             <Footer />
           </>
         </Route>
         <Route path="/whatsapp-guide">
           <>
             <Header />
-            <WhatsAppGuide />
+            <CmsOverride slug="whatsapp-guide" fallback={<WhatsAppGuide />} />
             <Footer />
           </>
         </Route>
         <Route path="/best-practices">
           <>
             <Header />
-            <BestPractices />
+            <CmsOverride slug="best-practices" fallback={<BestPractices />} />
             <Footer />
           </>
         </Route>
         <Route path="/cookie-policy">
           <>
             <Header />
-            <CookiePolicy />
+            <CmsOverride slug="cookie-policy" fallback={<CookiePolicy />} />
             <Footer />
           </>
         </Route>
         <Route path="/contact">
           <>
             <Header />
-            <ContactusLanding />
+            <CmsOverride slug="contact" fallback={<ContactusLanding />} />
             <Footer />
           </>
         </Route>
         <Route path="/careers">
           <>
             <Header />
-            <Careers />
+            <CmsOverride slug="careers" fallback={<Careers />} />
             <Footer />
           </>
         </Route>
@@ -824,6 +830,11 @@ function Router() {
             <Home />
             <Footer />
           </>
+        </Route>
+        <Route path="/:slug">
+          {(params) => (
+            <CmsOrApp slug={params.slug} Header={Header} Footer={Footer} App={ProtectedRoutes} />
+          )}
         </Route>
         <Route component={ProtectedRoutes} />
       </Switch>
