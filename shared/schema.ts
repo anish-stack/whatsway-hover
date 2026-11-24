@@ -2567,3 +2567,33 @@ export const waFlowSessions = pgTable(
 );
 export type WaFlow = typeof waFlows.$inferSelect;
 export type WaFlowSession = typeof waFlowSessions.$inferSelect;
+
+// ───────────────────────── Platform WhatsApp (super admin → customers) ─────────────────────────
+/** One row ("default"): which number and approved templates the platform uses for automatic messages. */
+export const platformWhatsappSettings = pgTable("platform_whatsapp_settings", {
+  id: varchar("id").primaryKey().default("default"),
+  enabled: boolean("enabled").notNull().default(false),
+  channelId: varchar("channel_id").references(() => channels.id, { onDelete: "set null" }),
+  // { [event]: { enabled, templateName, language, body: token[], header?: token, button?: token } }
+  events: jsonb("events").notNull().default({}),
+  updatedBy: varchar("updated_by"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const platformMessageLogs = pgTable(
+  "platform_message_logs",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    event: varchar("event", { length: 40 }).notNull(),
+    toPhone: varchar("to_phone", { length: 24 }).notNull(),
+    userId: varchar("user_id"),
+    templateName: varchar("template_name", { length: 120 }),
+    status: varchar("status", { length: 16 }).notNull(), // sent | failed | skipped
+    error: text("error"),
+    whatsappMessageId: varchar("whatsapp_message_id", { length: 120 }),
+    trigger: varchar("trigger", { length: 16 }).notNull().default("auto"), // auto | manual | test
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ platformMsgCreatedIdx: index("platform_message_logs_created_idx").on(t.createdAt) })
+);
+export type PlatformWhatsappSettings = typeof platformWhatsappSettings.$inferSelect;

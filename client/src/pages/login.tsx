@@ -47,6 +47,9 @@ import {
   BarChart3,
   Shield,
   Users,
+  Mail,
+  MailCheck,
+  MailWarning,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,6 +65,24 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
+  // "Email not verified" → offer to resend the verification email right here
+  const [unverified, setUnverified] = useState(false);
+  const [resendState, setResendState] = useState<{ busy?: boolean; done?: string; err?: string }>({});
+  const resendVerification = async () => {
+    const who = form.getValues("username");
+    setResendState({ busy: true });
+    try {
+      const r = await apiRequest("POST", "/api/auth/resend-verification", { username: who });
+      const j = await r.json();
+      if (j.kind === "otp" && j.email) {
+        setLocation(`/verify-email?email=${encodeURIComponent(j.email)}&sent=1`);
+        return;
+      }
+      setResendState({ done: j.message || "Check your inbox for the activation link." });
+    } catch (e: any) {
+      setResendState({ err: e?.message || "Couldn't send the email. Try again." });
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -123,7 +144,10 @@ export default function LoginPage() {
         errorMessage = "Account is inactive. Please contact administrator.";
       }
 
-      setError(errorMessage);
+      const notVerified = /email not verified/i.test(String(error?.message || ""));
+      setUnverified(notVerified);
+      setResendState({});
+      setError(notVerified ? "Your email isn't verified yet." : errorMessage);
     },
   });
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
@@ -246,10 +270,31 @@ export default function LoginPage() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4"
                   >
-                    {error && (
+                    {error && !unverified && (
                       <Alert variant="destructive">
                         <AlertDescription>{error}</AlertDescription>
                       </Alert>
+                    )}
+                    {unverified && (
+                      <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                        <div className="flex items-start gap-3">
+                          <MailWarning className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <p className="font-semibold">Verify your email to sign in</p>
+                            {resendState.done ? (
+                              <p className="flex items-start gap-1.5 text-emerald-800"><MailCheck className="mt-0.5 h-4 w-4 shrink-0" />{resendState.done} It can take a minute — check spam too.</p>
+                            ) : (
+                              <p className="text-amber-800">We sent a verification email when your account was created. Didn't get it, or it expired?</p>
+                            )}
+                            {resendState.err && <p className="text-red-700">{resendState.err}</p>}
+                            {!resendState.done && (
+                              <Button type="button" size="sm" variant="outline" className="border-amber-300 bg-white text-amber-900 hover:bg-amber-100" onClick={resendVerification} disabled={resendState.busy || !form.watch("username")}>
+                                {resendState.busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}Resend verification email
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     )}
 
                     <FormField

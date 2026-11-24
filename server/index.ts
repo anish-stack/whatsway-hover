@@ -824,6 +824,12 @@ app.use((req, res, next) => {
 
       console.log("✅ Message queue processor started");
 
+      // Background jobs (emails, onboarding WhatsApp…) — workers on the leader
+      try {
+        const { startJobWorkers } = await import("./services/jobs/queue");
+        await startJobWorkers();
+      } catch (e) { console.error("[Jobs] worker start failed:", (e as Error).message); }
+
       startScheduledCampaignCron();
 
       console.log("✅ Scheduled campaign cron started");
@@ -861,6 +867,10 @@ app.use((req, res, next) => {
       });
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
+      if (process.env.JOBS_WORKERS_ALL_INSTANCES === "1") {
+        const { startJobWorkers } = await import("./services/jobs/queue");
+        startJobWorkers().catch((e) => console.error("[Jobs] worker start failed:", e.message));
+      }
     }
   });
 })();

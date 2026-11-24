@@ -101,7 +101,8 @@ describe("GET /api/ai-settings/diagnostics", () => {
     const res = await request(app).get("/api/ai-settings/diagnostics?channelId=ch-1");
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({
+    // the endpoint also reports the linked site (siteId / siteName)
+    expect(res.body).toMatchObject({
       active: true,
       hasApiKey: true,
       model: "gpt-4o-mini",

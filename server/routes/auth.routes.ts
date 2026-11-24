@@ -34,6 +34,63 @@ const router = Router();
 // /api/users/create handler so an unauthenticated visitor can register.
 router.post("/signup", createUser);
 
+// Resend the verification email from the login / verify-email screens.
+//  - normal sign-ups: new 6-digit OTP → /verify-email
+//  - accounts created by a reseller or super admin (no password yet): new set-password link
+// Same reply whether or not the account exists, so it can't be used to probe emails.
+const resendHits = new Map<string, number[]>();
+function resendAllowed(key: string, max: number, windowMs: number) {
+  const now = Date.now();
+  const hits = (resendHits.get(key) || []).filter((t) => now - t < windowMs);
+  if (hits.length >= max) { resendHits.set(key, hits); return false; }
+  hits.push(now); resendHits.set(key, hits);
+  if (resendHits.size > 5000) for (const [k, v] of resendHits) if (!v.some((t) => now - t < windowMs)) resendHits.delete(k);
+  return true;
+}
+
+router.post("/resend-verification", async (req, res) => {
+  const id = String(req.body?.email || req.body?.username || "").trim().toLowerCase().slice(0, 200);
+  if (!id) return res.status(400).json({ success: false, error: "Enter your email or username." });
+  const ip = String(req.headers["x-forwarded-for"] || req.ip || "").split(",")[0].trim();
+  if (!resendAllowed(`id:${id}`, 3, 10 * 60_000) || !resendAllowed(`ip:${ip}`, 10, 10 * 60_000)) {
+    return res.status(429).json({ success: false, error: "Too many requests. Please wait a few minutes and try again." });
+  }
+  const generic = { success: true, kind: "otp" as "otp" | "invite", message: "We've sent a new 6-digit code to your email." };
+  try {
+    const [user] = await db.select().from(users)
+      .where(sql`lower(${users.username}) = ${id} OR lower(${users.email}) = ${id}`).limit(1);
+    if (!user || user.isEmailVerified !== false || !user.email) return res.json({ ...generic, email: id.includes("@") ? id : undefined });
+
+    if (String(user.password || "").startsWith("!invite:")) {
+      // created for them (reseller customer / reseller): they verify by setting a password
+      const { issueToken, sendInviteEmail } = await import("../services/reseller/invitations.service");
+      const { resellerCustomers, resellerProfiles } = await import("@shared/schema");
+      const [rp] = await db.select({ id: resellerProfiles.id }).from(resellerProfiles).where(eq(resellerProfiles.userId, user.id)).limit(1);
+      const purpose = rp ? "reseller_invite" : "customer_invite";
+      let resellerName: string | null = null;
+      if (!rp) {
+        const [m] = await db.select({ name: resellerProfiles.businessName }).from(resellerCustomers)
+          .innerJoin(resellerProfiles, eq(resellerProfiles.id, resellerCustomers.resellerId))
+          .where(eq(resellerCustomers.customerUserId, user.id)).limit(1);
+        resellerName = m?.name ?? null;
+      }
+      const token = await issueToken(db, user.id, purpose, null);
+      await sendInviteEmail({ to: user.email, name: user.firstName, token, purpose, resellerName });
+      return res.json({ success: true, kind: "invite", email: user.email, message: "We've emailed you a link to set your password and activate your account." });
+    }
+
+    await db.delete(otpVerifications).where(eq(otpVerifications.userId, user.id));
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    await db.insert(otpVerifications).values({ userId: user.id, otpCode, expiresAt: new Date(Date.now() + 10 * 60_000), isUsed: false } as any);
+    const { sendOTPEmailVerify } = await import("../services/email.service");
+    await sendOTPEmailVerify(user.email, otpCode, user.firstName || "");
+    return res.json({ ...generic, email: user.email, message: "We've sent a new 6-digit code to your email." });
+  } catch (e) {
+    console.error("[auth] resend verification failed:", (e as Error).message);
+    return res.status(500).json({ success: false, error: "Couldn't send the email right now. Please try again." });
+  }
+});
+
 // Validation schemas
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -74,7 +131,7 @@ router.post("/login", validateRequest(loginSchema), async (req, res) => {
 
     // Check if email is verified
     if (user.isEmailVerified === false) {
-      return res.status(403).json({ error: "Email not verified. Please verify your email first." });
+      return res.status(403).json({ error: "Email not verified. Please verify your email first.", code: "EMAIL_NOT_VERIFIED" });
     }
 
     // Ensure password field exists

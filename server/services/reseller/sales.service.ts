@@ -204,6 +204,11 @@ export async function createCustomerWithSale(profileId: string, input: NewCustom
     inviteUrl = await sendInviteEmail({ to: result.customer.email, name: result.customer.firstName, token: result.inviteToken, purpose: "customer_invite", resellerName: result.profile.businessName });
   }
   await sendEmailTo(result.customer.email, `HoverChat invoice — ${result.sale.planName}`, invoiceEmail(result.sale, payUrl, result.profile.businessName));
+  // Platform WhatsApp welcome (super admin's number + approved template), if configured
+  try {
+    const { enqueue } = await import("../jobs/queue");
+    await enqueue("whatsapp.platform", { event: "customer_onboarded", customerUserId: result.customer.id, extra: { ...(inviteUrl ? { activation_link: inviteUrl } : {}), payment_link: payUrl } }, { jobId: `onboard-${result.customer.id}`, attempts: 3, delayMs: 3000 });
+  } catch (e) { console.warn("[Reseller] WhatsApp welcome not queued:", (e as Error).message); }
   await notifyUsers([result.profile.userId], {
     type: "reseller_customer_created",
     title: "New customer and subscription sale",

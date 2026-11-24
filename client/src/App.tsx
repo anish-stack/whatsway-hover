@@ -50,6 +50,8 @@ import MiniStorePage from "@/pages/mini-store";
 import AppointmentsPage from "@/pages/appointments";
 import BookDemoDialog from "@/components/BookDemoDialog";
 import DemoRequestsPage from "@/pages/admin/demo-requests";
+import QueuesPage from "@/pages/admin/queues";
+import PlatformWhatsAppPage from "@/pages/admin/platform-whatsapp";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -165,6 +167,8 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/store": "",
   "/appointments": "",
   "/demo-requests": "",
+  "/admin/queues": "",
+  "/admin/platform-whatsapp": "",
   "/inbox": "inbox.view",
   "/plans": "",
   "/plan-upgrade": "",
@@ -407,6 +411,12 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/demo-requests">
             <PermissionRoute component={DemoRequestsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/queues">
+            <PermissionRoute component={QueuesPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/platform-whatsapp">
+            <PermissionRoute component={PlatformWhatsAppPage} requiredRoles={["superadmin"]} />
           </Route>
           <Route path="/appointments">
             <PermissionRoute component={AppointmentsPage} />

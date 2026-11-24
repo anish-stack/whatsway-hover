@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRoute } from "wouter";
-import { ArrowLeft, Ban, CheckCircle2, KeyRound, MoreHorizontal, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Ban, CheckCircle2, KeyRound, MessageCircle, MoreHorizontal, Pencil, Plus } from "lucide-react";
 import Header from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -171,7 +171,13 @@ function CustomersTab({ id }: { id: string }) {
                 <td className="py-2 pr-3">{c.subscription?.planName ?? "—"} <StatusPill status={c.subscription?.status ?? "none"} className="ml-1" /></td>
                 <td className="py-2 pr-3 text-xs">{fmtDate(c.subscription?.endDate)}</td>
                 <td className="py-2 pr-3 text-xs capitalize">{String(c.source).replace(/_/g, " ")}</td>
-                <td className="py-2 pr-4 text-right"><Button size="sm" variant="outline" onClick={() => { setTransfer({ customerId: c.id, name: c.businessName || c.email }); setTo(""); setReason(""); }}>Transfer</Button></td>
+                <td className="py-2 pr-4 text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="outline" title="Send the WhatsApp welcome template (WhatsApp Notifications settings)" onClick={() => act(async () => { const r = await send<any>("POST", `/api/admin/resellers/customers/${c.id}/whatsapp-welcome`, {}); if (r?.status !== "sent") throw new Error(r?.reason || r?.error || "Not sent"); return r; }, "WhatsApp welcome sent")}><MessageCircle className="mr-1 h-3.5 w-3.5" />WhatsApp</Button>
+                    {c.invitePending && <Button size="sm" variant="outline" title="Email the set-password link again (also copied to clipboard)" onClick={async () => { const r = await act(() => send("POST", `/api/admin/resellers/customers/${c.id}/resend-invite`), "Activation link sent — also copied to clipboard"); if (r?.link) navigator.clipboard?.writeText(String(r.link).startsWith("/") ? window.location.origin + r.link : r.link); }}><KeyRound className="mr-1 h-3.5 w-3.5" />Resend invite</Button>}
+                    <Button size="sm" variant="outline" onClick={() => { setTransfer({ customerId: c.id, name: c.businessName || c.email }); setTo(""); setReason(""); }}>Transfer</Button>
+                  </div>
+                </td>
               </tr>
             ))}</tbody>
           </table>

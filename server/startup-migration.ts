@@ -930,6 +930,32 @@ const steps: MigrationStep[] = [
     `,
   },
   {
+    description: "Create platform WhatsApp tables",
+    sql: `
+      CREATE TABLE IF NOT EXISTS platform_whatsapp_settings (
+        id VARCHAR PRIMARY KEY DEFAULT 'default',
+        enabled BOOLEAN NOT NULL DEFAULT FALSE,
+        channel_id VARCHAR REFERENCES channels(id) ON DELETE SET NULL,
+        events JSONB NOT NULL DEFAULT '{}'::jsonb,
+        updated_by VARCHAR,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS platform_message_logs (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        event VARCHAR(40) NOT NULL,
+        to_phone VARCHAR(24) NOT NULL,
+        user_id VARCHAR,
+        template_name VARCHAR(120),
+        status VARCHAR(16) NOT NULL,
+        error TEXT,
+        whatsapp_message_id VARCHAR(120),
+        trigger VARCHAR(16) NOT NULL DEFAULT 'auto',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS platform_message_logs_created_idx ON platform_message_logs (created_at);
+    `,
+  },
+  {
     description: "Create demo_requests table",
     sql: `
       CREATE TABLE IF NOT EXISTS demo_requests (

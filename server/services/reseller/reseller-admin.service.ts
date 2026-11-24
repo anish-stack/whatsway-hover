@@ -83,6 +83,10 @@ export async function createReseller(input: z.infer<typeof createResellerSchema>
   });
   for (const p of input.pricing) await upsertPricing(profile.id, p, actor);
   const inviteUrl = token ? await sendInviteEmail({ to: profile.email, name: profile.contactPerson, token, purpose: "reseller_invite" }) : null;
+  try {
+    const { enqueue } = await import("../jobs/queue");
+    await enqueue("whatsapp.platform", { event: "reseller_onboarded", resellerId: profile.id, extra: inviteUrl ? { activation_link: inviteUrl } : {} }, { jobId: `onboard-reseller-${profile.id}`, attempts: 3, delayMs: 3000 });
+  } catch (e) { console.warn("[Reseller] WhatsApp welcome not queued:", (e as Error).message); }
   return { profile, inviteUrl };
 }
 

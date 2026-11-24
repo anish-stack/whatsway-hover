@@ -38,9 +38,9 @@ function initRedis(): Redis | null {
   try {
     redisClient = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
+      // keep reconnecting (a Redis restart must not leave the app on the fallback forever)
       retryStrategy(times: number) {
-        if (times > 5) return null;
-        return Math.min(times * 500, 3000);
+        return Math.min(times * 500, 10_000);
       },
       lazyConnect: false,
     });
@@ -74,6 +74,36 @@ function initRedis(): Redis | null {
   }
 
   return redisClient;
+}
+
+/** Resolves true once Redis is connected (or false after `timeoutMs`). Used at boot so the
+ *  queue engine isn't chosen before the first connection attempt finishes. */
+export async function waitForRedis(timeoutMs = 5000): Promise<boolean> {
+  if (!process.env.REDIS_URL) return false;
+  if (!connectionAttempted) initRedis();
+  const start = Date.now();
+  while (!isConnected && Date.now() - start < timeoutMs) await new Promise((r) => setTimeout(r, 100));
+  return isConnected;
+}
+
+/** Plain connection options for BullMQ (it opens its own connections). */
+export function bullConnection(): Record<string, any> | null {
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) return null;
+  try {
+    const url = new URL(redisUrl);
+    return {
+      host: url.hostname,
+      port: parseInt(url.port || "6379", 10),
+      username: url.username ? decodeURIComponent(url.username) : undefined,
+      password: url.password ? decodeURIComponent(url.password) : undefined,
+      db: url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) || 0 : 0,
+      ...(url.protocol === "rediss:" ? { tls: {} } : {}),
+      maxRetriesPerRequest: null, // required by BullMQ workers
+    };
+  } catch {
+    return null;
+  }
 }
 
 export function getRedisClient(): Redis | null {

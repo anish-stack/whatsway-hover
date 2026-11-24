@@ -187,7 +187,24 @@ export async function sendNotificationEmail(to: string, subject: string, htmlBod
     html: htmlBody,
   };
 
-  return _sendMailWithRetry(mailOptions);
+  // Queued (BullMQ when Redis is up) so a burst of notifications is sent at a steady
+  // rate with retries instead of hammering SMTP from inside the request.
+  try {
+    const { enqueue } = await import("./jobs/queue");
+    const r = await enqueue("email.notification", { mailOptions });
+    return { success: true, queued: true, via: r.via } as { success: boolean; queued?: boolean; via?: string; messageId?: string; error?: any; retryScheduled?: boolean };
+  } catch (e) {
+    console.warn("[Notification Email] queue unavailable, sending directly:", (e as Error).message);
+    return _sendMailWithRetry(mailOptions);
+  }
+}
+
+/** Job handler: one delivery attempt; throws so the queue retries with backoff. */
+export async function deliverNotificationEmail(mailOptions: Record<string, any>) {
+  const transporter = await getEmailTransporter();
+  const info = await transporter.sendMail(mailOptions);
+  console.log(`✉️ [Notification Email] Sent to: ${mailOptions.to}`);
+  return { messageId: info.messageId };
 }
 
 

@@ -14,15 +14,15 @@
 import { db } from "../db";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { messageQueue, channels, campaigns, users, conversations, messages, templates } from "@shared/schema";
-import { eq, and, lte, or, isNull, sql, inArray, notInArray, gt, asc } from "drizzle-orm";
+import { eq, and, lte, or, isNull, sql, inArray, notInArray, gt, asc, type SQL } from "drizzle-orm";
 import { WhatsAppApiService } from "./whatsapp-api";
 import { storage } from '../storage';
 import { getWhatsAppError } from '@shared/whatsapp-error-codes';
 import { isAccountBlockingSendError } from '@shared/meta-billing';
 import { pauseCampaignForAccountBlock } from './meta-billing/readiness.service';
 import { cacheGet, CACHE_KEYS, CACHE_TTL } from './cache';
-import { initBullQueue, isBullQueueAvailable, addBulkMessagesToBullQueue, getBullQueueStats, addMessageToBullQueue } from './bull-queue';
-import { onRedisStateChange } from './redis';
+import { initBullQueue, isBullQueueAvailable, addBulkMessagesToBullQueue, getBullQueueStats, addMessageToBullQueue, ensureBullProducer, isBullWorkerRunning } from './bull-queue';
+import { onRedisStateChange, waitForRedis } from './redis';
 import { triggerNotification, NOTIFICATION_EVENTS } from './notification.service';
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -50,6 +50,7 @@ export class MessageQueueService {
     10
   );
   private static usingBullMQ = false;
+  private static booting = false;
 
   // Cached interval used when (re)starting DB polling on Redis outage.
   private static dbPollIntervalMs = 5000;
@@ -66,12 +67,20 @@ export class MessageQueueService {
 
     this.registerRedisStateListener();
 
-    const bullInitialized = await initBullQueue();
+    // Give Redis a moment to connect before choosing the engine — otherwise a
+    // slow first connection silently left the app on DB polling.
+    this.booting = true; // the Redis listener stays out of the way while we decide here
+    const redisUp = await waitForRedis(parseInt(process.env.REDIS_BOOT_WAIT_MS || "5000", 10));
+    const bullInitialized = redisUp && (await initBullQueue());
+    this.booting = false;
     if (bullInitialized) {
       this.usingBullMQ = true;
       console.log("[MessageQueue] Using BullMQ for message processing (Redis-backed)");
+      await this.reconcileQueuedMessagesToBull();
+      this.startBullSweeper();
       return;
     }
+    if (process.env.REDIS_URL) console.warn("[MessageQueue] REDIS_URL is set but Redis isn't reachable — using DB polling until it is");
 
     this.currentBackoffMs = this.dbPollIntervalMs;
     this.scheduleNext();
@@ -90,6 +99,7 @@ export class MessageQueueService {
     this.redisListenerRegistered = true;
     onRedisStateChange(async (available) => {
       try {
+        if (this.booting) return;
         if (available && !this.usingBullMQ) {
           // Redis came back: stop DB polling and try to bring BullMQ up.
           if (this.processingTimeout) {
@@ -110,6 +120,7 @@ export class MessageQueueService {
             // running on the DB-polling fallback. addMessageToBullQueue uses
             // jobId = messageId, so re-enqueues are idempotent.
             await this.reconcileQueuedMessagesToBull();
+            this.startBullSweeper();
           } else {
             // BullMQ init failed despite Redis reporting available — fall
             // back to DB polling so the queue keeps moving.
@@ -175,8 +186,21 @@ export class MessageQueueService {
    * Idempotent: bull-queue.ts uses `messageId` as the BullMQ jobId, so
    * a re-enqueue of an already-known job is a no-op.
    */
-  static async reconcileQueuedMessagesToBull(): Promise<number> {
-    if (!this.usingBullMQ || !isBullQueueAvailable()) return 0;
+  private static sweeper: NodeJS.Timeout | null = null;
+  /** Safety net on the leader: anything still "queued" after a minute (pushed from an
+   *  instance without Redis, a failed enqueue, …) is handed to BullMQ. Idempotent. */
+  private static startBullSweeper() {
+    if (this.sweeper) return;
+    const every = parseInt(process.env.BULLMQ_SWEEP_MS || "60000", 10);
+    this.sweeper = setInterval(() => {
+      if (!this.usingBullMQ) return;
+      this.reconcileQueuedMessagesToBull({ minAgeSec: 60 }).catch((e) => console.error("[MessageQueue] sweep failed:", (e as Error).message));
+    }, every);
+    this.sweeper.unref?.();
+  }
+
+  static async reconcileQueuedMessagesToBull(opts: { minAgeSec?: number } = {}): Promise<number> {
+    if (!ensureBullProducer() || !isBullQueueAvailable()) return 0;
 
     const MAX_ATTEMPTS = MessageQueueService.MAX_ATTEMPTS;
     let totalEnqueued = 0;
@@ -190,16 +214,20 @@ export class MessageQueueService {
     let lastSeenId: string | null = null;
 
     while (true) {
-      const whereClause = lastSeenId
-        ? and(eq(messageQueue.status, "queued"), gt(messageQueue.id, lastSeenId))
-        : eq(messageQueue.status, "queued");
-      const rows = await db
+      // skip rows of paused campaigns (they wait for "resume") and, for the periodic sweep, very fresh rows
+      const notPaused = sql`(${messageQueue.campaignId} IS NULL OR NOT EXISTS (SELECT 1 FROM campaigns c WHERE c.id = ${messageQueue.campaignId} AND c.status = 'paused'))`;
+      const oldEnough = opts.minAgeSec ? sql`${messageQueue.createdAt} < NOW() - (${opts.minAgeSec} * INTERVAL '1 second')` : sql`TRUE`;
+      const whereClause: SQL | undefined = lastSeenId
+        ? and(eq(messageQueue.status, "queued"), gt(messageQueue.id, lastSeenId), notPaused, oldEnough)
+        : and(eq(messageQueue.status, "queued"), notPaused, oldEnough);
+      const rows: Array<{ id: string; channelId: string | null; recipientPhone: string; templateName: string | null; templateParams: unknown; templateLanguage: string | null; messageType: string; campaignId: string | null; scheduledFor: Date | null; attempts: number | null }> = await db
         .select({
           id: messageQueue.id,
           channelId: messageQueue.channelId,
           recipientPhone: messageQueue.recipientPhone,
           templateName: messageQueue.templateName,
           templateParams: messageQueue.templateParams,
+          templateLanguage: messageQueue.templateLanguage,
           messageType: messageQueue.messageType,
           campaignId: messageQueue.campaignId,
           scheduledFor: messageQueue.scheduledFor,
@@ -249,6 +277,7 @@ export class MessageQueueService {
             recipientPhone: row.recipientPhone,
             templateName: row.templateName ?? "",
             templateParams: (row.templateParams as any[]) || [],
+            templateLanguage: row.templateLanguage ?? undefined,
             messageType: row.messageType ?? "marketing",
             campaignId: row.campaignId ?? undefined,
             scheduledFor: row.scheduledFor ?? undefined,
@@ -285,7 +314,10 @@ export class MessageQueueService {
     return totalEnqueued;
   }
 
+  static isUsingBullMQ() { return this.usingBullMQ; }
+
   static async stopProcessing() {
+    if (this.sweeper) { clearInterval(this.sweeper); this.sweeper = null; }
     if (this.usingBullMQ) {
       const { shutdownBullQueue } = await import('./bull-queue');
       await shutdownBullQueue();
@@ -1457,7 +1489,7 @@ private static async processMessage(message: any, channelCache?: Map<string, any
       const inserted = await db.insert(messageQueue).values(batch).returning({ id: messageQueue.id });
       totalQueued += batch.length;
 
-      if (this.usingBullMQ && isBullQueueAvailable()) {
+      if (ensureBullProducer()) {
         const bullJobs = inserted.map((row, idx) => ({
           messageId: row.id,
           channelId,
@@ -1491,10 +1523,10 @@ private static async processMessage(message: any, channelCache?: Map<string, any
       return acc;
     }, {} as Record<string, number>);
 
-    if (this.usingBullMQ) {
+    if (this.usingBullMQ || ensureBullProducer()) {
       const bullStats = await getBullQueueStats();
       if (bullStats) {
-        return { ...dbStats, bullmq: bullStats, engine: "bullmq" as const };
+        return { ...dbStats, bullmq: bullStats, engine: (this.usingBullMQ ? "bullmq" : "bullmq-producer") as any, workerRunning: isBullWorkerRunning() };
       }
     }
 

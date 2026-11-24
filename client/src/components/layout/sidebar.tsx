@@ -52,6 +52,8 @@ import {
   Plug,
   Store,
   CalendarCheck,
+  MessageCircle,
+  Server,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -408,6 +410,18 @@ const sidebarItemsCategories = [
         name: "Demo Requests",
         icon: CalendarCheck,
         path: "/demo-requests",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "WhatsApp Notifications",
+        icon: MessageCircle,
+        path: "/admin/platform-whatsapp",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Queues & Jobs",
+        icon: Server,
+        path: "/admin/queues",
         color: "text-[var(--brand)]",
     },
     {

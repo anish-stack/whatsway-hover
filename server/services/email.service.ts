@@ -30,6 +30,20 @@ async function resolveLogoUrl(smtpLogo?: string | null, panelLogo?: string | nul
   return `${baseUrl}${path}`;
 }
 
+/** Job handler for queued system emails (OTP, verification). */
+export async function deliverSystemEmail(mailOptions: Record<string, any>) {
+  const mailer = await getTransporter();
+  const sent = await mailer.sendMail(mailOptions);
+  return { messageId: sent.messageId };
+}
+
+/** OTP / verification mail: high priority on the email queue; without Redis it is sent right away (errors reach the caller). */
+async function sendQueued(mailOptions: Record<string, any>) {
+  const { enqueue } = await import("./jobs/queue");
+  const r = await enqueue("email.system", { mailOptions }, { priority: 1, fallback: "inline" });
+  return { messageId: r.id ? `queued:${r.id}` : undefined };
+}
+
 async function getTransporter() {
   if (transporter) return transporter;
 
@@ -277,7 +291,7 @@ export async function sendOTPEmail(
   };
 
   try {
-    const info = await mailer.sendMail(mailOptions);
+    const info = await sendQueued(mailOptions);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("[Email] Failed to send OTP:", error);
@@ -382,7 +396,7 @@ export async function sendOTPEmailVerify(
   };
 
   try {
-    const info = await mailer.sendMail(mailOptions);
+    const info = await sendQueued(mailOptions);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("[Email] Failed to send OTP:", error);

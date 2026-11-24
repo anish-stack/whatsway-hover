@@ -19,56 +19,8 @@ import ResellerSummaryCard from "@/components/reseller/ResellerSummaryCard";
 import EditResellerDialog from "@/components/reseller/EditResellerDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-export interface PricingDraft {
-  planId: string; billingCycle: string; pricingModel: string; wholesalePrice: string; commissionPercent: string;
-  fixedCommission: string; suggestedRetailPrice: string; minSellingPrice: string; maxSellingPrice: string; currency: string;
-}
-export const emptyPricing = (model = "wholesale"): PricingDraft => ({
-  planId: "", billingCycle: "monthly", pricingModel: model, wholesalePrice: "", commissionPercent: "", fixedCommission: "",
-  suggestedRetailPrice: "", minSellingPrice: "", maxSellingPrice: "", currency: "INR",
-});
-export function pricingPayload(p: PricingDraft) {
-  const n = (v: string) => (v === "" ? null : Number(v));
-  return { ...p, wholesalePrice: n(p.wholesalePrice), commissionPercent: n(p.commissionPercent), fixedCommission: n(p.fixedCommission), suggestedRetailPrice: Number(p.suggestedRetailPrice), minSellingPrice: Number(p.minSellingPrice), maxSellingPrice: n(p.maxSellingPrice) };
-}
-
-export function PricingFields({ value, onChange, plans, lockKey }: { value: PricingDraft; onChange: (v: PricingDraft) => void; plans: any[]; lockKey?: boolean }) {
-  const set = (k: keyof PricingDraft) => (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, [k]: e.target.value });
-  const srp = Number(value.suggestedRetailPrice || 0);
-  const margin = value.pricingModel === "wholesale" ? srp - Number(value.wholesalePrice || 0) : value.pricingModel === "commission_percent" ? (srp * Number(value.commissionPercent || 0)) / 100 : Number(value.fixedCommission || 0);
-  return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="col-span-2 sm:col-span-1">
-        <Label>Plan</Label>
-        <Select value={value.planId} onValueChange={(v) => onChange({ ...value, planId: v })} disabled={lockKey}>
-          <SelectTrigger className="mt-1"><SelectValue placeholder="Select plan" /></SelectTrigger>
-          <SelectContent>{plans.map((p) => <SelectItem key={p.id} value={p.id}>{p.name} (list ₹{Number(p.monthlyPrice)}/mo)</SelectItem>)}</SelectContent>
-        </Select>
-      </div>
-      <div className="col-span-2 sm:col-span-1">
-        <Label>Billing cycle</Label>
-        <Select value={value.billingCycle} onValueChange={(v) => onChange({ ...value, billingCycle: v })} disabled={lockKey}>
-          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="annual">Yearly</SelectItem></SelectContent>
-        </Select>
-      </div>
-      <div className="col-span-2">
-        <Label>Pricing model</Label>
-        <Select value={value.pricingModel} onValueChange={(v) => onChange({ ...value, pricingModel: v })}>
-          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-          <SelectContent>{Object.entries(MODEL_LABEL).map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent>
-        </Select>
-      </div>
-      {value.pricingModel === "wholesale" && <div><Label>Wholesale price</Label><Input type="number" step="0.01" className="mt-1" value={value.wholesalePrice} onChange={set("wholesalePrice")} /></div>}
-      {value.pricingModel === "commission_percent" && <div><Label>Commission %</Label><Input type="number" step="0.01" className="mt-1" value={value.commissionPercent} onChange={set("commissionPercent")} /></div>}
-      {value.pricingModel === "fixed_commission" && <div><Label>Fixed commission / cycle</Label><Input type="number" step="0.01" className="mt-1" value={value.fixedCommission} onChange={set("fixedCommission")} /></div>}
-      <div><Label>Suggested retail price</Label><Input type="number" step="0.01" className="mt-1" value={value.suggestedRetailPrice} onChange={set("suggestedRetailPrice")} /></div>
-      <div><Label>Minimum selling price</Label><Input type="number" step="0.01" className="mt-1" value={value.minSellingPrice} onChange={set("minSellingPrice")} /></div>
-      <div><Label>Maximum selling price (optional)</Label><Input type="number" step="0.01" className="mt-1" value={value.maxSellingPrice} onChange={set("maxSellingPrice")} /></div>
-      {srp > 0 && <p className="col-span-2 rounded-lg bg-muted/50 p-2 text-xs">Reseller margin at SRP: <strong>{fmtMoney(margin)}</strong> · HoverChat keeps <strong>{fmtMoney(srp - margin)}</strong></p>}
-    </div>
-  );
-}
+export { emptyPricing, pricingPayload, PricingFields, type PricingDraft } from "@/components/reseller/PricingFields";
+import { emptyPricing, pricingPayload, PricingFields, type PricingDraft } from "@/components/reseller/PricingFields";
 
 function CreateResellerDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { toast } = useToast();

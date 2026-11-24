@@ -65,6 +65,7 @@ vi.mock("../services/whatsapp-api", () => ({
 vi.mock("../services/redis", () => ({
   isRedisAvailable: vi.fn(() => true),
   getRedisClient: vi.fn(() => null),
+  bullConnection: vi.fn(() => ({ host: "127.0.0.1", port: 6379 })),
 }));
 
 const queueAddSpy = vi.fn(async () => undefined);
@@ -85,9 +86,9 @@ beforeEach(() => {
 
 describe("processMessageJob — paused campaign behaviour", () => {
   it("leaves the row in queued state with cleared scheduledFor and never re-adds the job when the campaign is paused", async () => {
-    // Order matches the SQL the worker emits: UPDATE processing, SELECT channel,
-    // SELECT campaign status, UPDATE queued.
-    enqueue([]);
+    // Order matches the SQL the worker emits: UPDATE processing (claim, returns the row),
+    // SELECT channel, SELECT campaign status, UPDATE queued.
+    enqueue([{ id: "msg-1", channelId: "ch-1", recipientPhone: "+15555550001", templateName: "promo", templateParams: [], templateLanguage: "en_US", messageType: "marketing", campaignId: "camp-1", status: "processing" }]);
     enqueue([{ id: "ch-1" }]);
     enqueue([{ status: "paused" }]);
     enqueue([]);
@@ -127,8 +128,8 @@ describe("processMessageJob — paused campaign behaviour", () => {
   });
 
   it("proceeds to send when the campaign is active", async () => {
-    // Order: UPDATE processing, SELECT channel, SELECT campaign status, UPDATE sent, UPDATE campaign sentCount.
-    enqueue([]);
+    // Order: UPDATE processing (claim), SELECT channel, SELECT campaign status, UPDATE sent, UPDATE campaign sentCount.
+    enqueue([{ id: "msg-1", channelId: "ch-1", recipientPhone: "+15555550001", templateName: "promo", templateParams: [], templateLanguage: "en_US", messageType: "marketing", campaignId: "camp-1", status: "processing" }]);
     enqueue([{ id: "ch-1" }]);
     enqueue([{ status: "active" }]);
     enqueue([]);

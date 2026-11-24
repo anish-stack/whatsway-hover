@@ -57,6 +57,7 @@ export function registerResellerRoutes(app: Express) {
   app.post("/api/admin/resellers", ...SA, c.adminCreate);
   app.get("/api/admin/resellers/customers/:customerId", ...SA, c.adminCustomerDetail);
   app.post("/api/admin/resellers/customers/:customerId/transfer", ...SA, c.adminTransfer);
+  app.post("/api/admin/resellers/customers/:customerId/resend-invite", ...SA, c.adminResendCustomerInvite);
   app.post("/api/admin/resellers/customers/:customerId/renewals", ...SA, c.adminRenew);
   app.post("/api/admin/resellers/sales/:saleId/mark-paid", ...SA, c.adminMarkPaid);
   app.post("/api/admin/resellers/sales/:saleId/cancel", ...SA, c.adminCancelSale);

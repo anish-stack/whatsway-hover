@@ -1,7 +1,7 @@
 import { Queue, Worker, Job, QueueEvents } from "bullmq";
 import { isAccountBlockingSendError } from "@shared/meta-billing";
 import { pauseCampaignForAccountBlock } from "./meta-billing/readiness.service";
-import { isRedisAvailable, getRedisClient } from "./redis";
+import { isRedisAvailable, getRedisClient, bullConnection } from "./redis";
 import { db } from "../db";
 import { messageQueue, channels, campaigns } from "@shared/schema";
 import { eq, sql } from "drizzle-orm";
@@ -26,19 +26,46 @@ function getRedisConnection() {
 }
 
 function getConnectionFromUrl(): Record<string, any> | null {
-  const redisUrl = process.env.REDIS_URL;
-  if (!redisUrl) return null;
+  return bullConnection();
+}
+
+const JOB_DEFAULTS = {
+  attempts: parseInt(process.env.MESSAGE_QUEUE_MAX_ATTEMPTS || "3", 10),
+  backoff: { type: "exponential", delay: 2000 },
+  removeOnComplete: { count: 1000 },
+  removeOnFail: { count: 5000 },
+};
+
+/**
+ * Producer only (no worker). Every app instance needs this so campaign rows
+ * created on ANY PM2 worker are pushed to Redis — the worker itself runs on
+ * the cron leader. Without it, rows inserted on non-leader instances stayed
+ * "queued" in the DB and were never sent.
+ */
+export function ensureBullProducer(): boolean {
+  if (messageQueueBull) return isRedisAvailable();
+  if (!isRedisAvailable()) return false;
+  const connection = getConnectionFromUrl() || getRedisConnection();
+  if (!connection) return false;
   try {
-    const url = new URL(redisUrl);
-    return {
-      host: url.hostname,
-      port: parseInt(url.port || "6379", 10),
-      password: url.password || undefined,
-      db: url.pathname ? parseInt(url.pathname.slice(1) || "0", 10) : 0,
-    };
-  } catch {
-    return null;
+    messageQueueBull = new Queue(QUEUE_NAME, { connection, defaultJobOptions: JOB_DEFAULTS as any });
+    messageQueueBull.on("error", (e) => console.error("[BullMQ] producer error:", e.message));
+    return true;
+  } catch (e: any) {
+    console.error("[BullMQ] producer init failed:", e.message);
+    messageQueueBull = null;
+    return false;
   }
+}
+
+export function isBullWorkerRunning() {
+  return messageWorker !== null;
+}
+
+/** Workers connected to the message queue across ALL instances (Redis CLIENT LIST). */
+export async function countBullWorkers(): Promise<number> {
+  if (!ensureBullProducer() || !messageQueueBull) return 0;
+  try { return (await messageQueueBull.getWorkers()).length; } catch { return 0; }
 }
 
 export function isBullQueueAvailable(): boolean {
@@ -62,18 +89,8 @@ export async function initBullQueue(): Promise<boolean> {
   }
 
   try {
-    messageQueueBull = new Queue(QUEUE_NAME, {
-      connection,
-      defaultJobOptions: {
-        attempts: parseInt(process.env.MESSAGE_QUEUE_MAX_ATTEMPTS || "3", 10),
-        backoff: {
-          type: "exponential",
-          delay: 2000,
-        },
-        removeOnComplete: { count: 1000 },
-        removeOnFail: { count: 5000 },
-      },
-    });
+    if (messageWorker) return true;
+    if (!messageQueueBull) messageQueueBull = new Queue(QUEUE_NAME, { connection, defaultJobOptions: JOB_DEFAULTS as any });
 
     messageWorker = new Worker(
       QUEUE_NAME,
@@ -82,6 +99,7 @@ export async function initBullQueue(): Promise<boolean> {
       },
       {
         connection,
+        // how many sends run in parallel / how many per second — keeps the server and Meta limits calm
         concurrency: parseInt(process.env.BULLMQ_CONCURRENCY || "10", 10),
         limiter: {
           max: parseInt(process.env.BULLMQ_RATE_MAX || "50", 10),
@@ -91,7 +109,7 @@ export async function initBullQueue(): Promise<boolean> {
     );
 
     messageWorker.on("completed", (job: Job) => {
-      console.log(`[BullMQ] Job ${job.id} completed`);
+      if (process.env.BULLMQ_VERBOSE === "1") console.log(`[BullMQ] Job ${job.id} completed`);
     });
 
     messageWorker.on("failed", (job: Job | undefined, err: Error) => {
@@ -254,185 +272,90 @@ export async function processMessageJobOLLLD(job: Job) {
 
 
 export async function processMessageJob(job: Job) {
-  const { messageId, channelId, recipientPhone, templateName, templateParams, templateLanguage, messageType, campaignId, baseAttempts: rawBaseAttempts } = job.data;
-
-  console.log(`[Job START] jobId=${job.id} messageId=${messageId} campaignId=${campaignId} attempt=${job.attemptsMade + 1}`);
-  console.log(`[Job DATA]`, JSON.stringify(job.data, null, 2));
-
+  const { messageId, baseAttempts: rawBaseAttempts } = job.data;
+  const verbose = process.env.BULLMQ_VERBOSE === "1";
   const baseAttempts = typeof rawBaseAttempts === "number" && rawBaseAttempts > 0 ? rawBaseAttempts : 0;
   const currentAttempt = (job.attemptsMade || 0) + 1;
   const globalAttempt = baseAttempts + currentAttempt;
   const GLOBAL_MAX_ATTEMPTS = parseInt(process.env.MESSAGE_QUEUE_MAX_ATTEMPTS || "3", 10);
 
-  console.log(`[Job ATTEMPTS] base=${baseAttempts} current=${currentAttempt} global=${globalAttempt} maxAllowed=${GLOBAL_MAX_ATTEMPTS}`);
+  // ── Claim the row atomically. The DB row is the source of truth (language,
+  // params, campaign) and the claim stops a second engine/instance from
+  // sending the same message twice. Retries find it in "processing".
+  const [row] = await db
+    .update(messageQueue)
+    .set({ status: "processing", processedAt: new Date() })
+    .where(sql`${messageQueue.id} = ${messageId} AND (${messageQueue.status} = 'queued' OR (${messageQueue.status} = 'processing' AND ${currentAttempt > 1}))`)
+    .returning();
+  if (!row) {
+    if (verbose) console.log(`[BullMQ] ${messageId} already handled elsewhere — skipping`);
+    return;
+  }
+  const channelId = row.channelId as string;
+  const campaignId = row.campaignId || undefined;
+  const recipientPhone = row.recipientPhone;
+  const templateName = row.templateName || job.data.templateName;
+  const templateParams = (row.templateParams as any[]) || job.data.templateParams || [];
+  const templateLanguage = (row as any).templateLanguage || job.data.templateLanguage || "en_US";
+  const messageType = row.messageType || job.data.messageType;
 
   try {
-    // ── STEP 1: Mark as processing ──────────────────────────────────────────
-    console.log(`[DB] Marking messageId=${messageId} as "processing"...`);
-    const processingUpdate = await db
-      .update(messageQueue)
-      .set({ status: "processing", processedAt: new Date() })
-      .where(eq(messageQueue.id, messageId));
-    console.log(`[DB] "processing" update result:`, JSON.stringify(processingUpdate));
+    const channel = await cacheGet(CACHE_KEYS.channel(channelId), CACHE_TTL.channel, async () => {
+      const [ch] = await db.select().from(channels).where(eq(channels.id, channelId)).limit(1);
+      return ch || null;
+    });
+    if (!channel) throw new Error(`Channel not found: ${channelId}`);
 
-    // ── STEP 2: Load channel ────────────────────────────────────────────────
-    console.log(`[Cache] Fetching channel channelId=${channelId}...`);
-    let channel = await cacheGet(
-      CACHE_KEYS.channel(channelId),
-      CACHE_TTL.channel,
-      async () => {
-        const [ch] = await db
-          .select()
-          .from(channels)
-          .where(eq(channels.id, channelId))
-          .limit(1);
-        return ch || null;
-      }
-    );
-    console.log(`[Cache] Channel result:`, channel ? `found id=${channel.id}` : "NOT FOUND");
-
-    if (!channel) {
-      throw new Error(`Channel not found: ${channelId}`);
-    }
-
-    // ── STEP 3: Campaign pause check ────────────────────────────────────────
     if (campaignId) {
-      console.log(`[Campaign] Checking status for campaignId=${campaignId}...`);
-      const [camp] = await db
-        .select({ status: campaigns.status })
-        .from(campaigns)
-        .where(eq(campaigns.id, campaignId))
-        .limit(1);
-      console.log(`[Campaign] DB row:`, JSON.stringify(camp));
-
+      const [camp] = await db.select({ status: campaigns.status }).from(campaigns).where(eq(campaigns.id, campaignId)).limit(1);
       if (camp?.status === "paused") {
-        console.log(`[Campaign] PAUSED — setting messageId=${messageId} back to queued idle`);
-        await db
-          .update(messageQueue)
-          .set({ status: "queued", scheduledFor: null })
-          .where(eq(messageQueue.id, messageId));
-        console.log(`[Campaign] messageId=${messageId} set to idle queued. Returning early.`);
+        // idle until the campaign is resumed (resume path re-enqueues)
+        await db.update(messageQueue).set({ status: "queued", scheduledFor: null }).where(eq(messageQueue.id, messageId));
         return;
       }
-      console.log(`[Campaign] Status is "${camp?.status}" — proceeding`);
     }
 
-    // ── STEP 4: Rate limit check ────────────────────────────────────────────
-    console.log(`[RateLimit] Checking for channelId=${channel.id}...`);
     const canSend = await WhatsAppApiService.checkRateLimit(channel.id);
-    console.log(`[RateLimit] canSend=${canSend}`);
-
-    if (!canSend) {
-      throw new Error("Rate limited — will retry");
-    }
+    if (!canSend) throw new Error("Rate limited — will retry");
 
     const isMarketing = messageType === "marketing";
-    console.log(`[Send] isMarketing=${isMarketing} templateName=${templateName} lang=${templateLanguage} to=${recipientPhone}`);
+    if (!templateName) throw new Error("Non-template messages not yet implemented");
+    const response = await WhatsAppApiService.sendTemplateMessage(channel, recipientPhone, templateName, templateParams, templateLanguage, isMarketing);
 
-    // ── STEP 5: Send message ────────────────────────────────────────────────
-    let response;
-    if (templateName) {
-      console.log(`[Send] Calling sendTemplateMessage...`);
-      response = await WhatsAppApiService.sendTemplateMessage(
-        channel,
-        recipientPhone,
-        templateName,
-        templateParams || [],
-        templateLanguage || "en_US",
-        isMarketing
-      );
-      console.log(`[Send] WhatsApp API response:`, JSON.stringify(response));
-    } else {
-      throw new Error("Non-template messages not yet implemented");
-    }
+    await db.update(messageQueue).set({
+      status: "sent",
+      whatsappMessageId: response.messages?.[0]?.id,
+      sentVia: isMarketing ? "marketing_messages" : "cloud_api",
+      attempts: globalAttempt,
+    }).where(eq(messageQueue.id, messageId));
 
-    const whatsappMsgId = response.messages?.[0]?.id;
-    console.log(`[Send] Extracted whatsappMessageId=${whatsappMsgId}`);
-
-    // ── STEP 6: Mark as sent ────────────────────────────────────────────────
-    console.log(`[DB] Marking messageId=${messageId} as "sent"...`);
-    const sentUpdate = await db
-      .update(messageQueue)
-      .set({
-        status: "sent",
-        whatsappMessageId: whatsappMsgId,
-        sentVia: isMarketing ? "marketing_messages" : "cloud_api",
-        attempts: globalAttempt,
-      })
-      .where(eq(messageQueue.id, messageId));
-    console.log(`[DB] "sent" update result:`, JSON.stringify(sentUpdate));
-
-    // ── STEP 7: Increment campaign sentCount ────────────────────────────────
     if (campaignId) {
-      console.log(`[Campaign] Incrementing sentCount for campaignId=${campaignId}...`);
-      const sentCountUpdate = await db
-        .update(campaigns)
-        .set({ sentCount: sql`${campaigns.sentCount} + 1` })
-        .where(eq(campaigns.id, campaignId));
-      console.log(`[Campaign] sentCount increment result:`, JSON.stringify(sentCountUpdate));
+      await db.update(campaigns).set({ sentCount: sql`${campaigns.sentCount} + 1` }).where(eq(campaigns.id, campaignId));
+      const { MessageQueueService } = await import("./message-queue");
+      await MessageQueueService.checkCampaignCompletions([{ campaignId, justCompletedMessageId: messageId }]);
     }
-
-    console.log(`[BullMQ] Message sent: ${messageId}`);
-
-    // ── STEP 8: Check campaign completion ───────────────────────────────────
-    if (campaignId) {
-  const { MessageQueueService } = await import("./message-queue");
-  await MessageQueueService.checkCampaignCompletions([{
-    campaignId,
-    justCompletedMessageId: messageId
-  }]);
-}
-
+    if (verbose) console.log(`[BullMQ] sent ${messageId}`);
   } catch (error) {
-    console.error(`[BullMQ] CATCH BLOCK — messageId=${messageId} error:`, error);
-    console.error(`[BullMQ] Error name: ${error instanceof Error ? error.name : "unknown"}`);
-    console.error(`[BullMQ] Error message: ${error instanceof Error ? error.message : String(error)}`);
-    console.error(`[BullMQ] Stack:`, error instanceof Error ? error.stack : "no stack");
-
     const bullMaxAttempts = job.opts?.attempts ?? GLOBAL_MAX_ATTEMPTS;
     const isFinalAttempt = currentAttempt >= bullMaxAttempts || globalAttempt >= GLOBAL_MAX_ATTEMPTS;
+    console.error(`[BullMQ] ${messageId} attempt ${currentAttempt}${isFinalAttempt ? " (final)" : ""} failed: ${error instanceof Error ? error.message : String(error)}`);
 
-    console.log(`[BullMQ] isFinalAttempt=${isFinalAttempt} bullMax=${bullMaxAttempts} currentAttempt=${currentAttempt} globalAttempt=${globalAttempt}`);
+    await db.update(messageQueue).set({
+      status: isFinalAttempt ? "failed" : "processing",
+      attempts: globalAttempt,
+      errorCode: error instanceof Error ? error.name : "UNKNOWN_ERROR",
+      errorMessage: error instanceof Error ? error.message : String(error),
+    }).where(eq(messageQueue.id, messageId));
 
-    // ── STEP E1: Update failed/processing status ────────────────────────────
-    console.log(`[DB] Setting messageId=${messageId} status to "${isFinalAttempt ? "failed" : "processing"}"...`);
-    const failUpdate = await db
-      .update(messageQueue)
-      .set({
-        status: isFinalAttempt ? "failed" : "processing",
-        attempts: globalAttempt,
-        errorCode: error instanceof Error ? error.name : "UNKNOWN_ERROR",
-        errorMessage: error instanceof Error ? error.message : String(error),
-      })
-      .where(eq(messageQueue.id, messageId));
-    console.log(`[DB] fail/processing update result:`, JSON.stringify(failUpdate));
-
-    // ── STEP E1b: Pause campaign on account-level Meta block ───────────────
     const metaCode = (error as any)?.metaErrorCode;
     if (campaignId && isAccountBlockingSendError(metaCode)) {
       await pauseCampaignForAccountBlock(campaignId, channelId ?? null, String(metaCode));
     }
-
-    // ── STEP E2: Increment failedCount ──────────────────────────────────────
     if (campaignId && isFinalAttempt) {
-      console.log(`[Campaign] Incrementing failedCount for campaignId=${campaignId}...`);
-      const failedCountUpdate = await db
-        .update(campaigns)
-        .set({ failedCount: sql`${campaigns.failedCount} + 1` })
-        .where(eq(campaigns.id, campaignId));
-      console.log(`[Campaign] failedCount increment result:`, JSON.stringify(failedCountUpdate));
+      await db.update(campaigns).set({ failedCount: sql`${campaigns.failedCount} + 1` }).where(eq(campaigns.id, campaignId));
+      const { MessageQueueService } = await import("./message-queue");
+      await MessageQueueService.checkCampaignCompletions([{ campaignId, justCompletedMessageId: messageId }]);
     }
-
-    // ── STEP E3: Check campaign completion on final failure ─────────────────
-    if (campaignId && isFinalAttempt) {
-  const { MessageQueueService } = await import("./message-queue");
-  await MessageQueueService.checkCampaignCompletions([{
-    campaignId,
-    justCompletedMessageId: messageId   // ← add karo
-  }]);
-}
-
-    console.log(`[BullMQ] Re-throwing error for job retry mechanism`);
     throw error;
   }
 }
@@ -443,6 +366,7 @@ export async function addMessageToBullQueue(messageData: {
   recipientPhone: string;
   templateName: string;
   templateParams?: any[];
+  templateLanguage?: string;
   messageType: string;
   campaignId?: string;
   attempts?: number;
@@ -450,6 +374,7 @@ export async function addMessageToBullQueue(messageData: {
   baseAttempts?: number;
   scheduledFor?: Date;
 }): Promise<boolean> {
+  if (!messageQueueBull) ensureBullProducer();
   if (!messageQueueBull) return false;
 
   try {
@@ -489,11 +414,13 @@ export async function addBulkMessagesToBullQueue(
     recipientPhone: string;
     templateName: string;
     templateParams?: any[];
+    templateLanguage?: string;
     messageType: string;
     campaignId?: string;
     scheduledFor?: Date;
   }>
 ): Promise<number> {
+  if (!messageQueueBull) ensureBullProducer();
   if (!messageQueueBull) return 0;
 
   try {

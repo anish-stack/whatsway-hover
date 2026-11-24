@@ -142,6 +142,20 @@ export const resendCustomerInvite = handle(async (req, res) => {
   ok(res, { link });
 });
 
+/** Super admin: resend the activation (set-password) link to a reseller's customer. */
+export const adminResendCustomerInvite = handle(async (req, res) => {
+  const [m] = await db.select().from(resellerCustomers).where(eq(resellerCustomers.customerUserId, req.params.customerId));
+  if (!m) throw new HttpError(404, "Customer not found");
+  const [u] = await db.select({ email: users.email, firstName: users.firstName, verified: users.isEmailVerified }).from(users).where(eq(users.id, req.params.customerId));
+  if (!u) throw new HttpError(404, "Customer not found");
+  if (u.verified) throw new HttpError(409, "Customer has already activated the account. They can use 'Forgot password'.");
+  const [rp] = await db.select({ businessName: resellerProfiles.businessName }).from(resellerProfiles).where(eq(resellerProfiles.id, m.resellerId));
+  const token = await issueToken(db, req.params.customerId, "customer_invite", actorOf(req).id);
+  const link = await sendInviteEmail({ to: u.email, name: u.firstName, token, purpose: "customer_invite", resellerName: rp?.businessName });
+  await audit(db, { resellerId: m.resellerId, actor: actorOf(req), action: "customer.invite_resent", entityType: "customer", entityId: req.params.customerId });
+  ok(res, { link });
+});
+
 export const renewCustomer = handle(async (req, res) => {
   const p = resellerOf(req);
   const out = await createRenewal(p.id, req.params.id, renewalSchema.parse(req.body), actorOf(req));

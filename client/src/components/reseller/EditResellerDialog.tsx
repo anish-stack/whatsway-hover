@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { getJson } from "@/components/meta-billing/shared";
 import { MODEL_LABEL, send } from "@/components/reseller/shared";
+import { emptyPricing, PricingFields, pricingPayload, type PricingDraft } from "@/components/reseller/PricingFields";
+
+/** A plan row in the dialog: existing (key locked) or new; `removed` = stop selling it on save. */
+type PlanRow = { key: string; id?: string; draft: PricingDraft; original?: string; removed?: boolean; planName?: string };
+const str = (v: unknown) => (v === null || v === undefined ? "" : String(Number(v)));
+const rowFromApi = (r: any): PlanRow => {
+  const draft: PricingDraft = {
+    planId: r.planId, billingCycle: r.billingCycle, pricingModel: r.pricingModel, wholesalePrice: str(r.wholesalePrice),
+    commissionPercent: str(r.commissionPercent), fixedCommission: str(r.fixedCommission), suggestedRetailPrice: str(r.suggestedRetailPrice),
+    minSellingPrice: str(r.minSellingPrice), maxSellingPrice: str(r.maxSellingPrice), currency: r.currency || "INR",
+  };
+  return { key: r.id, id: r.id, draft, original: JSON.stringify(pricingPayload(draft)), planName: r.planName };
+};
+const cycleLabel = (c: string) => (c === "annual" ? "Yearly" : "Monthly");
 
 type Form = {
   businessName: string; contactPerson: string; email: string; mobile: string; companyName: string; address: string;
@@ -36,6 +50,14 @@ export default function EditResellerDialog({ resellerId, open, onOpenChange }: {
   const [f, setF] = useState<Form | null>(null);
   const [perms, setPerms] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
+  const pricingQ = useQuery<any[]>({ queryKey: ["/api/admin/resellers/pricing", resellerId, false], queryFn: () => getJson(`/api/admin/resellers/${resellerId}/pricing`), enabled: open && !!resellerId });
+  const [rows, setRows] = useState<PlanRow[] | null>(null);
+  const overrides = (pricingQ.data || []).filter((r) => r.customerUserId).length;
+  useEffect(() => {
+    if (open && pricingQ.data) setRows(pricingQ.data.filter((r) => !r.customerUserId).map(rowFromApi));
+    if (!open) setRows(null);
+  }, [open, pricingQ.data]);
+  const setRow = (key: string, patch: Partial<PlanRow>) => setRows((rs) => (rs || []).map((r) => (r.key === key ? { ...r, ...patch } : r)));
 
   // fresh form every time the dialog opens for a reseller
   useEffect(() => {
@@ -47,19 +69,41 @@ export default function EditResellerDialog({ resellerId, open, onOpenChange }: {
   const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF((x) => (x ? { ...x, [k]: e.target.value } : x));
   const emailChanged = !!(f && p && f.email.trim().toLowerCase() !== String(p.email).toLowerCase());
 
+  const planLabel = (r: PlanRow) => `${r.planName || opts?.plans?.find((x: any) => x.id === r.draft.planId)?.name || "Plan"} (${cycleLabel(r.draft.billingCycle)})`;
+
   const save = async () => {
     if (!f || !resellerId) return;
+    // same plan + cycle twice would overwrite each other
+    const live = (rows || []).filter((r) => !r.removed && r.draft.planId);
+    const keys = live.map((r) => `${r.draft.planId}:${r.draft.billingCycle}`);
+    const dup = keys.find((k, i) => keys.indexOf(k) !== i);
+    if (dup) { toast({ title: "Same plan added twice", description: "Each plan + billing cycle can be listed only once.", variant: "destructive" }); return; }
     setBusy(true);
+    let step = "details";
     try {
       await send("PATCH", `/api/admin/resellers/${resellerId}`, {
         ...f, email: f.email.trim().toLowerCase(), maxCustomers: Number(f.maxCustomers), payoutHoldDays: Number(f.payoutHoldDays),
         validUntil: f.validUntil || null, companyName: f.companyName || null, address: f.address || null, notes: f.notes || null, permissions: perms,
       });
-      toast({ title: "Reseller updated", description: emailChanged && p?.status === "pending_activation" ? "Login email changed — use “Resend invite” so the new address gets the activation link." : undefined });
+      let changed = 0;
+      for (const r of rows || []) {
+        if (r.removed && r.id) { step = planLabel(r); await send("DELETE", `/api/admin/resellers/${resellerId}/pricing/${r.id}`); changed++; continue; }
+        if (r.removed || !r.draft.planId) continue;
+        const body = pricingPayload(r.draft);
+        if (r.original && JSON.stringify(body) === r.original) continue; // untouched
+        step = planLabel(r);
+        await send("PUT", `/api/admin/resellers/${resellerId}/pricing`, body);
+        changed++;
+      }
+      toast({
+        title: "Reseller updated",
+        description: [changed ? `${changed} plan${changed > 1 ? "s" : ""} updated (new version; past sales keep their price).` : "", emailChanged && p?.status === "pending_activation" ? "Login email changed — use “Resend invite”." : ""].filter(Boolean).join(" ") || undefined,
+      });
       qc.invalidateQueries({ predicate: (q) => String(q.queryKey[0]).startsWith("/api/admin/resellers") });
       onOpenChange(false);
     } catch (e: any) {
-      toast({ title: "Could not save", description: e.message, variant: "destructive" });
+      qc.invalidateQueries({ predicate: (q) => String(q.queryKey[0]).startsWith("/api/admin/resellers") });
+      toast({ title: step === "details" ? "Could not save" : `Couldn't save ${step}`, description: e.message, variant: "destructive" });
     } finally { setBusy(false); }
   };
 
@@ -114,9 +158,33 @@ export default function EditResellerDialog({ resellerId, open, onOpenChange }: {
                 </Select>
               </div>
             </section>
-            <section className="rounded-xl border border-dashed p-3 text-sm">
-              Plans & pricing are edited per plan, with version history.{" "}
-              <Link href={`/admin/resellers/${resellerId}?tab=pricing`} onClick={() => onOpenChange(false)} className="font-medium text-primary hover:underline">Manage plans & pricing →</Link>
+            <section>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm font-semibold">Plans & pricing</p>
+                <Link href={`/admin/resellers/${resellerId}?tab=pricing`} onClick={() => onOpenChange(false)} className="text-xs text-primary hover:underline">Version history →</Link>
+              </div>
+              {!rows ? <div className="h-24 animate-pulse rounded-xl bg-muted" /> : (
+                <div className="space-y-3">
+                  {rows.length === 0 && <p className="rounded-xl border border-dashed p-3 text-sm text-muted-foreground">No plans yet — the reseller can't sell until you add one.</p>}
+                  {rows.map((r) => (
+                    <div key={r.key} className={`rounded-xl border p-3 ${r.removed ? "border-red-200 bg-red-50/50" : "border-border"}`}>
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium">{r.id ? planLabel(r) : "New plan"}{r.id && !r.removed && r.original !== JSON.stringify(pricingPayload(r.draft)) && <span className="ml-2 rounded bg-sky-50 px-1.5 py-0.5 text-[11px] font-normal text-sky-700">changed</span>}</p>
+                        {r.removed ? (
+                          <Button size="sm" variant="ghost" onClick={() => setRow(r.key, { removed: false })}><RotateCcw className="mr-1 h-3.5 w-3.5" />Undo</Button>
+                        ) : (
+                          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => (r.id ? setRow(r.key, { removed: true }) : setRows((rs) => (rs || []).filter((x) => x.key !== r.key)))}><Trash2 className="mr-1 h-3.5 w-3.5" />{r.id ? "Stop selling" : "Remove"}</Button>
+                        )}
+                      </div>
+                      {r.removed
+                        ? <p className="text-xs text-red-700">The reseller won't be able to sell this plan after you save. Existing customers keep their price.</p>
+                        : <PricingFields value={r.draft} onChange={(d) => setRow(r.key, { draft: d })} plans={opts?.plans ?? []} lockKey={!!r.id} />}
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => setRows((rs) => [...(rs || []), { key: `new-${Date.now()}`, draft: emptyPricing(f.defaultPricingModel) }])}><Plus className="mr-1 h-4 w-4" />Add plan</Button>
+                  <p className="text-xs text-muted-foreground">Price changes create a new version: past sales keep the price they were sold at; renewals use the new one.{overrides ? ` ${overrides} customer-specific override${overrides > 1 ? "s are" : " is"} managed in the Pricing tab.` : ""}</p>
+                </div>
+              )}
             </section>
             <section>
               <p className="mb-2 text-sm font-semibold">Permissions</p>

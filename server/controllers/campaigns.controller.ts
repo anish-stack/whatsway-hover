@@ -19,7 +19,7 @@ import type { Contact } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { WhatsAppApiService } from "../services/whatsapp-api";
 import { MessageQueueService } from "../services/message-queue";
-import { addBulkMessagesToBullQueue, isBullQueueAvailable } from "../services/bull-queue";
+import { addBulkMessagesToBullQueue, isBullQueueAvailable, ensureBullProducer } from '../services/bull-queue';
 import { triggerNotification, NOTIFICATION_EVENTS } from "../services/notification.service";
 import { db, dbRead } from "../db";
 import { channels, messageQueue, users } from "@shared/schema";
@@ -1201,18 +1201,23 @@ const inserted = await db
   .values(rows)
   .returning({ id: messageQueue.id });
 
-if (MessageQueueService["usingBullMQ"] && isBullQueueAvailable()) {
-  const bullJobs = inserted.map((row, idx) => ({
-    messageId: row.id,
-    channelId: rows[idx].channelId!,
-    recipientPhone: rows[idx].recipientPhone,
-    templateName: rows[idx].templateName!,
-    templateParams: rows[idx].templateParams || [],
-    messageType: rows[idx].messageType || "marketing",
-    campaignId: rows[idx].campaignId!,
-  }));
-
-  await addBulkMessagesToBullQueue(bullJobs);
+// Push to Redis from whichever instance handled the request (the worker runs on the
+// cron leader). Without Redis the rows stay "queued" and DB polling sends them.
+if (ensureBullProducer()) {
+  const bullJobs = inserted
+    .map((row, idx) => ({ row, r: rows[idx] }))
+    .filter(({ r }) => r.status === "queued")
+    .map(({ row, r }) => ({
+      messageId: row.id,
+      channelId: r.channelId!,
+      recipientPhone: r.recipientPhone,
+      templateName: r.templateName!,
+      templateParams: r.templateParams || [],
+      templateLanguage: r.templateLanguage,
+      messageType: r.messageType || "marketing",
+      campaignId: r.campaignId!,
+    }));
+  if (bullJobs.length) await addBulkMessagesToBullQueue(bullJobs);
 }
     totalQueued += rows.filter(r => r.status === "queued").length;
 
