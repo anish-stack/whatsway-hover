@@ -1,3 +1,4 @@
+import { templateVarKeys } from "../utils/template-params";
 /**
  * ============================================================
  *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
@@ -703,7 +704,7 @@ private static readonly TIER_CONCURRENCY: Record<string, number> = {
         }
 
         const cardBody = card.body || "";
-        const cardBodyVars = cardBody.match(/\{\{\d+\}\}/g) || [];
+        const cardBodyVars = templateVarKeys(cardBody).keys.map((k) => `{{${k}}}`);
         if (cardBodyVars.length > 0) {
           const cardBodyComp: any = { type: "body", parameters: [] };
           for (let varI = 0; varI < cardBodyVars.length; varI++) {

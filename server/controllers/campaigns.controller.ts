@@ -27,6 +27,7 @@ import { eq } from "drizzle-orm";
 import { parseMessagingTier } from "../utils/messaging-tiers";
 import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
 import { ensureFlowButton } from "../utils/flow-template";
+import { fetchLiveTemplate, mergeLiveTemplate, templateVarKeys, textParam } from "../utils/template-params";
 import {
   checkCampaignReadiness,
   checkCampaignRowReadiness,
@@ -690,11 +691,10 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
 
     // BODY variables
     const bodyText = template.body || "";
-    const bodyVarMatches = bodyText.match(/\{\{\d+\}\}/g) || [];
-    if (bodyVarMatches.length > 0) {
+    const apiBodyKeys = templateVarKeys(bodyText);
+    if (apiBodyKeys.keys.length > 0) {
       const bodyComp: any = { type: "body", parameters: [] };
-      for (const varText of bodyVarMatches) {
-        const idx = varText.replace(/\D/g, "");
+      for (const idx of apiBodyKeys.keys) {
         const mapObj = mapping?.[idx];
         let value = "";
         if (mapObj?.type === "custom") {
@@ -704,7 +704,7 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
         } else if (variables) {
           value = variables[idx] || "";
         }
-        bodyComp.parameters.push({ type: "text", text: value });
+        bodyComp.parameters.push(textParam(idx, value, apiBodyKeys.named));
       }
       apiComponents.push(bodyComp);
     }
@@ -761,7 +761,7 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
         }
 
         const cardBody = card.body || "";
-        const cardBodyVars = cardBody.match(/\{\{\d+\}\}/g) || [];
+        const cardBodyVars = templateVarKeys(cardBody).keys.map((k) => `{{${k}}}`);
         if (cardBodyVars.length > 0) {
           const cardBodyComp: any = { type: "body", parameters: [] };
           for (const varText of cardBodyVars) {
@@ -899,12 +899,12 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
   }
 
   const headerText = template.header || "";
-  const headerVars = headerText.match(/\{\{\d+\}\}/g) || [];
-  if (headerVars.length > 0 && !template.mediaUrl && !carouselCards) {
+  const headerKeys = templateVarKeys(headerText);
+  const headerIsText = template.headerFormat ? template.headerFormat === "TEXT" : !template.mediaUrl;
+  if (headerKeys.keys.length > 0 && headerIsText && !carouselCards) {
     const headerComponent: any = { type: "header", parameters: [] };
-    for (const varText of headerVars) {
-      const index = varText.replace(/\D/g, "");
-      const mapObj = campaign.variableMapping?.headerVars?.[index];
+    for (const [pos, index] of headerKeys.keys.entries()) {
+      const mapObj = campaign.variableMapping?.headerVars?.[index] ?? campaign.variableMapping?.headerVars?.[String(pos + 1)];
       let textValue = "";
       if (mapObj) {
         if (mapObj.type === "custom") textValue = mapObj.value || "";
@@ -918,10 +918,7 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
         else if (mapObj.type === "phone") textValue = contact.phone || "";
       }
       
-      if (!textValue || textValue.trim() === "") {
-        textValue = "-";
-      }
-      headerComponent.parameters.push({ type: "text", text: textValue });
+      headerComponent.parameters.push(textParam(index, textValue, headerKeys.named || template.parameterFormat === "NAMED"));
     }
     components.push(headerComponent);
   }
@@ -935,12 +932,12 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
   }
 
   const bodyText = template.body || "";
-  const bodyVars = bodyText.match(/\{\{\d+\}\}/g) || [];
-  if (bodyVars.length > 0) {
+  // distinct keys: a template using {{1}} twice expects ONE parameter (Meta #132000 otherwise)
+  const bodyKeys = templateVarKeys(bodyText);
+  if (bodyKeys.keys.length > 0) {
     const bodyComponent: any = { type: "body", parameters: [] };
-    for (const varText of bodyVars) {
-      const index = varText.replace(/\D/g, "");
-      const mapObj = campaign.variableMapping?.[index];
+    for (const [pos, index] of bodyKeys.keys.entries()) {
+      const mapObj = campaign.variableMapping?.[index] ?? campaign.variableMapping?.[String(pos + 1)];
       let textValue = "";
       if (mapObj) {
         if (mapObj.type === "custom") textValue = mapObj.value || "";
@@ -954,19 +951,16 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
         else if (mapObj.type === "phone") textValue = contact.phone || "";
       }
       
-      // WhatsApp requires non-empty parameters. Use a fallback if value is empty.
-      if (!textValue || textValue.trim() === "") {
-        textValue = "-"; // Small visible fallback to prevent delivery failure
-      }
-
-      bodyComponent.parameters.push({ type: "text", text: textValue });
+      // WhatsApp requires non-empty parameters ("-" fallback inside textParam)
+      bodyComponent.parameters.push(textParam(index, textValue, bodyKeys.named || template.parameterFormat === "NAMED"));
     }
     components.push(bodyComponent);
   }
 
   if (Array.isArray(template.buttons)) {
     template.buttons.forEach((button: any, index: number) => {
-      if (button.type === "URL" && button.url?.includes("{{")) {
+      const bType = String(button.type || "").toUpperCase();
+      if (bType === "URL" && String(button.url || "").includes("{{")) {
         const mapObj = campaign.variableMapping?.buttons?.[index.toString()];
         let textValue = "";
         if (mapObj) {
@@ -981,9 +975,9 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
           textValue = "-";
         }
         components.push({ type: "button", sub_type: "url", index: index.toString(), parameters: [{ type: "text", text: textValue }] });
-      } else if (button.type === "COPY_CODE") {
+      } else if (bType === "COPY_CODE") {
         const mapObj = campaign.variableMapping?.buttons?.[index.toString()];
-        const couponCode = mapObj?.value || button.example?.[0] || "";
+        const couponCode = mapObj?.value || (Array.isArray(button.example) ? button.example[0] : button.example) || button.couponCode || "-";
         components.push({ type: "button", sub_type: "copy_code", index: index.toString(), parameters: [{ type: "coupon_code", coupon_code: couponCode }] });
       }
     });
@@ -1023,11 +1017,10 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
         });
       }
       const cardBody = card.body || "";
-      const cardBodyVars = cardBody.match(/\{\{\d+\}\}/g) || [];
+      const cardBodyVars = templateVarKeys(cardBody).keys;
       if (cardBodyVars.length > 0) {
         const cardBodyComp: any = { type: "body", parameters: [] };
-        for (const varText of cardBodyVars) {
-          const varIdx = varText.replace(/\D/g, "");
+        for (const varIdx of cardBodyVars) {
           const mapObj = campaign.variableMapping?.carouselCards?.[cardIdx]?.bodyVars?.[varIdx];
           let textValue = "";
           if (mapObj) {
@@ -1126,20 +1119,26 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
     return;
   }
 
+  // Use the template exactly as Meta has it (variables, header type, buttons) so every
+  // message carries the right number of parameters.
   let hasLimitedTimeOffer = false;
-  if (template.whatsappTemplateId) {
-    try {
-      const metaResp = await fetch(
-        `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${template.whatsappTemplateId}`,
-        { headers: { Authorization: `Bearer ${channel.accessToken}` } }
-      );
-      const metaData = await metaResp.json();
-      hasLimitedTimeOffer = (metaData.components || []).some(
-        (c: any) => c.type === "LIMITED_TIME_OFFER"
-      );
-    } catch (err) {
-      console.warn(`[Campaign ${campaignId}] Failed to check LTO status from Meta:`, err);
+  let sendTemplate: any = template;
+  try {
+    const live = await fetchLiveTemplate({
+      apiVersion: WHATSAPP_API_VERSION, token: channel.accessToken!, templateId: template.whatsappTemplateId,
+      wabaId: channel.whatsappBusinessAccountId, name: template.name, language: (campaign as any).templateLanguage || template.language,
+    });
+    if (live) {
+      hasLimitedTimeOffer = (live.components || []).some((c: any) => c.type === "LIMITED_TIME_OFFER");
+      sendTemplate = mergeLiveTemplate(template, live);
+      const localBody = templateVarKeys(template.body).keys.join(",");
+      const liveBody = templateVarKeys(sendTemplate.body).keys.join(",");
+      if (localBody !== liveBody) console.warn(`[Campaign ${campaignId}] Stored template "${template.name}" differs from Meta (vars ${localBody || "none"} vs ${liveBody || "none"}) — using Meta's version`);
+    } else {
+      console.warn(`[Campaign ${campaignId}] Couldn't load "${template.name}" from Meta — using the stored copy`);
     }
+  } catch (err) {
+    console.warn(`[Campaign ${campaignId}] Failed to load template from Meta:`, err);
   }
 
   let contacts: Contact[] = [];
@@ -1166,13 +1165,13 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
     const chunk = contacts.slice(i, i + CHUNK_SIZE);
     const rows = chunk.map((contact) => {
       try {
-        const components = buildContactComponents(contact, campaign, template, hasLimitedTimeOffer);
+        const components = buildContactComponents(contact, campaign, sendTemplate, hasLimitedTimeOffer);
         return {
           campaignId,
           channelId: channel.id,
           recipientPhone: contact.phone,
           templateName: template.name,
-          templateLanguage: (campaign as any).templateLanguage || "en_US",
+          templateLanguage: (campaign as any).templateLanguage || sendTemplate.language || "en_US",
           templateParams: components,
           messageType: "marketing",
           status: "queued" as const,
@@ -1185,7 +1184,7 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
           channelId: channel.id,
           recipientPhone: contact.phone,
           templateName: template.name,
-          templateLanguage: (campaign as any).templateLanguage || "en_US",
+          templateLanguage: (campaign as any).templateLanguage || sendTemplate.language || "en_US",
           templateParams: [],
           messageType: "marketing",
           status: "failed" as const,

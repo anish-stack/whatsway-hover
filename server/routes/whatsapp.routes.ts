@@ -1,3 +1,4 @@
+import { templateVarKeys } from "../utils/template-params";
 /**
  * ============================================================
  *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
@@ -718,7 +719,7 @@ app.get(
         if (c.type === "BODY") {
           bodyText = c.text || "";
           bodyVariables =
-            (bodyText.match(/\{\{\d+\}\}/g) || []).length;
+            templateVarKeys(bodyText).keys.length;
         }
 
         if (c.type === "LIMITED_TIME_OFFER") {

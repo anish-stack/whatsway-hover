@@ -1,3 +1,4 @@
+import { templateVarKeys } from "../utils/template-params";
 /**
  * ============================================================
  *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
@@ -1956,8 +1957,8 @@ private async sendInteractiveMessage(
 
 private getBodyParamCount(body: string): number {
   if (!body) return 0;
-  const matches = body.match(/\{\{\d+\}\}/g);
-  return matches ? matches.length : 0;
+  // distinct variables: {{1}} used twice is still one parameter
+  return templateVarKeys(body).keys.length;
 }
 
 

@@ -1,3 +1,4 @@
+import { templateVarKeys } from "../utils/template-params";
 /**
  * ============================================================
  *  © 2026 Hover Business Services LLP — a brand of Hover Business Services LLP
@@ -1919,7 +1920,7 @@ export const syncTemplatesAKKKK = asyncHandler(
 
       // 🔹 Variable count
       const bodyVariables =
-        (bodyText.match(/\{\{\d+\}\}/g) || []).length;
+        templateVarKeys(bodyText).keys.length;
 
       // 🔹 Carousel cards — extract media handles + card content from Meta data
       const carouselComponent = Array.isArray(waTemplate.components)
