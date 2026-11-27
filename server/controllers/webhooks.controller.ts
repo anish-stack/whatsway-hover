@@ -951,6 +951,20 @@ async function handleMessageChange(value: any) {
       mediaSha256,
     });
 
+    // Drip sequences: stop on reply, start on keyword / new contact / flow submit (non-blocking)
+    import("../services/growth/drip.service").then(async (drip) => {
+      const who = { channelId: channel.id, phone: from, name: contact?.name || null, contactId: contact?.id || null };
+      await drip.onIncomingMessage({ ...who, text: type === "text" ? messageContent : null, isNewContact: isNewConversation });
+      if (interactiveData?.type === "nfm_reply") {
+        let token = "";
+        try {
+          const r = typeof interactiveData.flowResponse === "string" ? JSON.parse(interactiveData.flowResponse) : interactiveData.flowResponse;
+          token = String(r?.flow_token || "");
+        } catch { /* ignore */ }
+        await drip.onFlowSubmit({ ...who, metaFlowId: token.match(/^hcf_(\d+)_/)?.[1] || null });
+      }
+    }).catch((e) => console.warn("[Drips] trigger failed", (e as Error).message));
+
     // Integrations: push to Google Sheets / CRM outbound URLs (non-blocking)
     try {
       const { emitIntegrationEvent } = await import("../services/integrations/integrations.service");
@@ -1060,8 +1074,17 @@ const uniqueUserIds = [...new Set(targetUserIds)];
 
     // WhatsApp Mini Store (catalogue / cart / orders) — handles its own keywords & "st:" buttons
     let storeHandled = false;
+    // STOP / START keywords (also Meta's "Stop promotions" quick-reply button)
+    if ((type === "text" || type === "button" || type === "interactive") && messageContent) {
+      try {
+        const { handleOptKeyword } = await import("../services/growth/opt-out.service");
+        storeHandled = await handleOptKeyword(channel, from, messageContent);
+      } catch (optErr) {
+        console.error("[OptOut] handler error:", optErr);
+      }
+    }
     // Flow Studio: WhatsApp Flow submissions (save answers, update contact, thank-you, notify)
-    if (interactiveData?.type === "nfm_reply") {
+    if (!storeHandled && interactiveData?.type === "nfm_reply") {
       try {
         const { handleFlowReply } = await import("../services/flow-studio/flow-studio.service");
         storeHandled = await handleFlowReply({
@@ -1151,6 +1174,16 @@ const uniqueUserIds = [...new Set(targetUserIds)];
           type: "automation-error",
           error: automationError,
         });
+      }
+    }
+
+    // Outside business hours → away message (once per cooldown); skips the AI reply when sent
+    if (!automationHandled) {
+      try {
+        const { maybeSendAway } = await import("../services/growth/business-hours.service");
+        if (await maybeSendAway(channel, from)) automationHandled = true;
+      } catch (awayErr) {
+        console.warn("[Away] failed:", (awayErr as Error).message);
       }
     }
 

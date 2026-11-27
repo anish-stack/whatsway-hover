@@ -72,6 +72,8 @@ function isExemptPath(path: string): boolean {
   if (path.startsWith("/api/widget/")) return true;
   if (path.startsWith("/api/v1/")) return true;
   if (path === "/api/auth/login") return true;
+  if (path === "/api/auth/login/2fa") return true;
+  if (path === "/api/auth/login/2fa/email") return true;
   if (path === "/api/auth/register") return true;
   if (path === "/api/auth/signup") return true;
   if (path === "/api/auth/forgot-password") return true;

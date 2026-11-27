@@ -21,6 +21,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import ResetPassword from "@/components/ResetPassword";
 import VerifyOtp from "@/components/VerifyOtp";
 import ForgotPasswordEmail from "@/components/ForgotPasswordEmail";
+import TwoFactorLoginStep from "@/components/TwoFactorLoginStep";
 import {
   Card,
   CardContent,
@@ -86,9 +87,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [step, setStep] = useState<"login" | "forgot" | "verify" | "reset">(
+  const [step, setStep] = useState<"login" | "forgot" | "verify" | "reset" | "twofa">(
     "login"
   );
+  const [twoFa, setTwoFa] = useState<{ method: "totp" | "email"; emailHint?: string } | null>(null);
+  const finishLogin = () => {
+    try { sessionStorage.setItem("fromLogin", "true"); } catch { /* ignore */ }
+    window.location.href = "/dashboard";
+  };
   const [email, setEmail] = useState("");
   const [otpCode, setOtpCode] = useState("");
 
@@ -124,7 +130,12 @@ export default function LoginPage() {
 
       return json;
     },
-    onSuccess: () => {
+    onSuccess: (json: any) => {
+      if (json?.twoFactorRequired) {
+        setTwoFa({ method: json.method, emailHint: json.emailHint });
+        setStep("twofa");
+        return;
+      }
       try {
         sessionStorage.setItem("fromLogin", "true");
       } catch (e) {
@@ -253,12 +264,14 @@ export default function LoginPage() {
               {step === "forgot" && "Forgot Password"}
               {step === "verify" && "Verify OTP"}
               {step === "reset" && "Reset Password"}
+              {step === "twofa" && "Verify it's you"}
             </h1>
             <p className="mt-1.5 text-[var(--ink-500)]">
               {step === "login" && "Sign in to your WhatsApp marketing dashboard"}
               {step === "forgot" && "Enter your email to receive a reset code"}
               {step === "verify" && "Enter the code sent to your email"}
               {step === "reset" && "Create a new secure password"}
+              {step === "twofa" && "One more step to keep your account safe"}
             </p>
           </div>
 
@@ -380,6 +393,15 @@ export default function LoginPage() {
                     </Button>
                   </form>
                 </Form>
+              )}
+
+              {step === "twofa" && twoFa && (
+                <TwoFactorLoginStep
+                  method={twoFa.method}
+                  emailHint={twoFa.emailHint}
+                  onDone={finishLogin}
+                  onRestart={() => { setTwoFa(null); setStep("login"); form.setValue("password", ""); }}
+                />
               )}
 
               {step === "forgot" && (

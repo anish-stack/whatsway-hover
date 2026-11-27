@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "@/lib/i18n";
 import { apiRequest } from "../../lib/queryClient";
+import { TwoFactorCard } from "./TwoFactorCard";
 import {
   Dialog,
   DialogContent,
@@ -270,6 +271,8 @@ export function AccountSettings() {
           </div>
         </CardContent>
       </Card>
+
+      <TwoFactorCard />
 
       <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
         <DialogContent>

@@ -627,6 +627,7 @@ export const plans = pgTable("plans", {
     campaign?: string;
     apiRequestsPerMonth?: string;
     apiRateLimitPerMinute?: string;
+    teamMembers?: string; // dashboard logins for the client's team ("unlimited", "0" = none)
   }>(),
 
   // Features (Array of objects)
@@ -2362,6 +2363,8 @@ export const storeCarts = pgTable(
     phone: varchar("phone", { length: 24 }).notNull(),
     items: jsonb("items").notNull().default([]), // [{productId, qty}]
     state: varchar("state", { length: 32 }).notNull().default("browsing"), // browsing | awaiting_address
+    reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }), // abandoned-cart reminder (reset on every cart change)
+    lastReminderAt: timestamp("last_reminder_at", { withTimezone: true }), // kept, to count recovered carts
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => ({ storeCartsPk: uniqueIndex("store_carts_channel_phone_uq").on(t.channelId, t.phone) })
@@ -2671,3 +2674,313 @@ export const cmsSiteItems = pgTable(
   (t) => ({ cmsSiteGroupIdx: index("cms_site_items_group_idx").on(t.groupKey, t.sortOrder) })
 );
 export type CmsSiteItem = typeof cmsSiteItems.$inferSelect;
+
+
+// ───────────────────────── Two-factor login (authenticator app or email code) ─────────────────────────
+export const userTwoFactor = pgTable("user_two_factor", {
+  userId: varchar("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
+  method: varchar("method", { length: 10 }).notNull().default("totp"), // totp | email
+  secretEnc: text("secret_enc"), // AES-GCM encrypted base32 secret (totp)
+  pendingSecretEnc: text("pending_secret_enc"), // set during setup, moved to secretEnc once confirmed
+  enabled: boolean("enabled").notNull().default(false),
+  backupCodes: jsonb("backup_codes").$type<string[]>().notNull().default([]), // sha256 hashes, removed once used
+  lastUsedStep: integer("last_used_step"),
+  enabledAt: timestamp("enabled_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export type UserTwoFactor = typeof userTwoFactor.$inferSelect;
+
+// ───────────────────────── Drip / follow-up sequences ─────────────────────────
+export interface DripStep {
+  delayMinutes: number; // wait after the previous step (or after enrolment for step 1)
+  kind: "text" | "template";
+  text?: string; // {{name}} {{phone}} supported
+  templateName?: string;
+  language?: string;
+  params?: string[]; // body values; {{name}} {{phone}} supported
+}
+export const dripSequences = pgTable(
+  "drip_sequences",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    ownerId: varchar("owner_id").notNull(),
+    name: varchar("name", { length: 120 }).notNull(),
+    isActive: boolean("is_active").notNull().default(true),
+    trigger: varchar("trigger", { length: 20 }).notNull().default("manual"), // manual | keyword | flow_submit | new_contact
+    triggerValue: text("trigger_value"), // keywords (comma) | Meta flow id (blank = any flow)
+    stopOnReply: boolean("stop_on_reply").notNull().default(true),
+    steps: jsonb("steps").$type<DripStep[]>().notNull().default([]),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ dripSeqChannelIdx: index("drip_sequences_channel_idx").on(t.channelId) })
+);
+export const dripEnrollments = pgTable(
+  "drip_enrollments",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    sequenceId: varchar("sequence_id").notNull().references(() => dripSequences.id, { onDelete: "cascade" }),
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    contactId: varchar("contact_id"),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    name: varchar("name", { length: 120 }),
+    stepIndex: integer("step_index").notNull().default(0), // next step to send
+    nextRunAt: timestamp("next_run_at", { withTimezone: true }).notNull(),
+    status: varchar("status", { length: 12 }).notNull().default("active"), // active | completed | stopped | failed
+    stopReason: varchar("stop_reason", { length: 120 }),
+    lastError: text("last_error"),
+    source: varchar("source", { length: 20 }).notNull().default("manual"),
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    dripEnrDueIdx: index("drip_enrollments_due_idx").on(t.status, t.nextRunAt),
+    dripEnrSeqIdx: index("drip_enrollments_seq_idx").on(t.sequenceId),
+    dripEnrActiveUq: uniqueIndex("drip_enrollments_active_uq").on(t.sequenceId, t.phone).where(sql`${t.status} = 'active'`),
+  })
+);
+export type DripSequence = typeof dripSequences.$inferSelect;
+export type DripEnrollment = typeof dripEnrollments.$inferSelect;
+
+// ───────────────────────── Short links with click tracking ─────────────────────────
+export const shortLinks = pgTable(
+  "short_links",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(),
+    code: varchar("code", { length: 24 }).notNull(),
+    targetUrl: text("target_url").notNull(),
+    title: varchar("title", { length: 120 }),
+    isActive: boolean("is_active").notNull().default(true),
+    clicks: integer("clicks").notNull().default(0),
+    uniqueClicks: integer("unique_clicks").notNull().default(0),
+    lastClickAt: timestamp("last_click_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    shortLinksCodeUq: uniqueIndex("short_links_code_uq").on(t.code),
+    shortLinksOwnerIdx: index("short_links_owner_idx").on(t.ownerId, t.createdAt),
+  })
+);
+export const linkClicks = pgTable(
+  "link_clicks",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    linkId: varchar("link_id").notNull().references(() => shortLinks.id, { onDelete: "cascade" }),
+    visitorHash: varchar("visitor_hash", { length: 64 }).notNull(),
+    ref: varchar("ref", { length: 40 }), // optional ?r= tag (campaign, contact…)
+    device: varchar("device", { length: 16 }),
+    referer: text("referer"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ linkClicksLinkIdx: index("link_clicks_link_idx").on(t.linkId, t.createdAt) })
+);
+export type ShortLink = typeof shortLinks.$inferSelect;
+
+// ───────────────────────── Growth settings per WhatsApp number ─────────────────────────
+export interface CartRecoveryConfig { enabled?: boolean; delayMinutes?: number; text?: string; templateName?: string; language?: string }
+export const growthSettings = pgTable("growth_settings", {
+  channelId: varchar("channel_id").primaryKey().references(() => channels.id, { onDelete: "cascade" }),
+  ownerId: varchar("owner_id").notNull(),
+  cartRecovery: jsonb("cart_recovery").$type<CartRecoveryConfig>().notNull().default({}),
+  cartRemindersSent: integer("cart_reminders_sent").notNull().default(0),
+  cartRecovered: integer("cart_recovered").notNull().default(0),
+  businessHours: jsonb("business_hours").$type<BusinessHoursConfig>().notNull().default({}),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export interface BusinessHoursConfig {
+  enabled?: boolean;
+  timezone?: string; // IANA, default Asia/Kolkata
+  days?: Partial<Record<"mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun", Array<[string, string]>>>; // [["09:00","18:00"]]; missing/empty = closed
+  awayMessage?: string;
+  cooldownHours?: number; // don't repeat to the same number within this many hours (default 12)
+}
+export type GrowthSettings = typeof growthSettings.$inferSelect;
+
+// ───────────────────────── Social apps (super admin): Instagram + Facebook Ads ─────────────────────────
+export const socialAppSettings = pgTable("social_app_settings", {
+  id: varchar("id").primaryKey().default("default"),
+  igAppId: varchar("ig_app_id", { length: 40 }),
+  igAppSecretEnc: text("ig_app_secret_enc"),
+  fbAppId: varchar("fb_app_id", { length: 40 }), // blank = use the WhatsApp embedded-signup app
+  fbAppSecretEnc: text("fb_app_secret_enc"),
+  webhookVerifyToken: varchar("webhook_verify_token", { length: 80 }),
+  updatedBy: varchar("updated_by"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ───────────────────────── Instagram ─────────────────────────
+export const igAccounts = pgTable(
+  "ig_accounts",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(),
+    igUserId: varchar("ig_user_id", { length: 40 }).notNull(), // professional account id (webhook entry.id)
+    appScopedId: varchar("app_scoped_id", { length: 40 }),
+    username: varchar("username", { length: 80 }).notNull(),
+    name: varchar("name", { length: 120 }),
+    profilePic: text("profile_pic"),
+    accountType: varchar("account_type", { length: 20 }),
+    accessTokenEnc: text("access_token_enc").notNull(),
+    tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }),
+    followers: integer("followers"),
+    follows: integer("follows"),
+    mediaCount: integer("media_count"),
+    status: varchar("status", { length: 16 }).notNull().default("active"), // active | expired | disconnected
+    lastError: text("last_error"),
+    connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
+    lastSyncAt: timestamp("last_sync_at", { withTimezone: true }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    igAccUserUq: uniqueIndex("ig_accounts_ig_user_uq").on(t.igUserId),
+    igAccOwnerIdx: index("ig_accounts_owner_idx").on(t.ownerId),
+  })
+);
+export const igCommentRules = pgTable(
+  "ig_comment_rules",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    accountId: varchar("account_id").notNull().references(() => igAccounts.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 120 }).notNull(),
+    mediaId: varchar("media_id", { length: 40 }), // null = any post / reel
+    mediaThumb: text("media_thumb"),
+    mediaCaption: text("media_caption"),
+    keywords: jsonb("keywords").$type<string[]>().notNull().default([]), // empty = any comment
+    matchMode: varchar("match_mode", { length: 10 }).notNull().default("contains"), // contains | exact
+    publicReplies: jsonb("public_replies").$type<string[]>().notNull().default([]), // one picked at random
+    dmText: text("dm_text").notNull(),
+    dmButtonText: varchar("dm_button_text", { length: 20 }),
+    dmButtonUrl: text("dm_button_url"),
+    oncePerUser: boolean("once_per_user").notNull().default(true),
+    isActive: boolean("is_active").notNull().default(true),
+    triggered: integer("triggered").notNull().default(0),
+    dmsSent: integer("dms_sent").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ igRulesAccIdx: index("ig_comment_rules_account_idx").on(t.accountId) })
+);
+export const igCommentEvents = pgTable(
+  "ig_comment_events",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    accountId: varchar("account_id").notNull().references(() => igAccounts.id, { onDelete: "cascade" }),
+    ruleId: varchar("rule_id"),
+    commentId: varchar("comment_id", { length: 60 }).notNull(),
+    mediaId: varchar("media_id", { length: 40 }),
+    fromId: varchar("from_id", { length: 40 }),
+    fromUsername: varchar("from_username", { length: 80 }),
+    text: text("text"),
+    action: varchar("action", { length: 16 }).notNull(), // dm_sent | skipped | failed | no_match
+    error: text("error"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    igEvCommentUq: uniqueIndex("ig_comment_events_comment_uq").on(t.commentId),
+    igEvAccIdx: index("ig_comment_events_account_idx").on(t.accountId, t.createdAt),
+    igEvRuleUserIdx: index("ig_comment_events_rule_user_idx").on(t.ruleId, t.fromId),
+  })
+);
+export const igThreads = pgTable(
+  "ig_threads",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    accountId: varchar("account_id").notNull().references(() => igAccounts.id, { onDelete: "cascade" }),
+    igsid: varchar("igsid", { length: 40 }).notNull(), // the other person's Instagram-scoped id
+    username: varchar("username", { length: 80 }),
+    name: varchar("name", { length: 120 }),
+    profilePic: text("profile_pic"),
+    lastMessageText: text("last_message_text"),
+    lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
+    lastIncomingAt: timestamp("last_incoming_at", { withTimezone: true }),
+    unread: integer("unread").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    igThreadUq: uniqueIndex("ig_threads_acc_user_uq").on(t.accountId, t.igsid),
+    igThreadLastIdx: index("ig_threads_last_idx").on(t.accountId, t.lastMessageAt),
+  })
+);
+export const igMessages = pgTable(
+  "ig_messages",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    threadId: varchar("thread_id").notNull().references(() => igThreads.id, { onDelete: "cascade" }),
+    accountId: varchar("account_id").notNull(),
+    mid: varchar("mid", { length: 200 }),
+    direction: varchar("direction", { length: 8 }).notNull(), // in | out
+    text: text("text"),
+    attachments: jsonb("attachments"),
+    source: varchar("source", { length: 16 }).notNull().default("inbox"), // inbox | automation | instagram_app
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    igMsgMidUq: uniqueIndex("ig_messages_mid_uq").on(t.mid),
+    igMsgThreadIdx: index("ig_messages_thread_idx").on(t.threadId, t.createdAt),
+  })
+);
+export type IgAccount = typeof igAccounts.$inferSelect;
+export type IgCommentRule = typeof igCommentRules.$inferSelect;
+export type IgThread = typeof igThreads.$inferSelect;
+
+// ───────────────────────── Meta Ads (Facebook ad accounts) ─────────────────────────
+export const adConnections = pgTable(
+  "ad_connections",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(),
+    fbUserId: varchar("fb_user_id", { length: 40 }).notNull(),
+    fbUserName: varchar("fb_user_name", { length: 120 }),
+    accessTokenEnc: text("access_token_enc").notNull(),
+    tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }),
+    adAccountId: varchar("ad_account_id", { length: 40 }), // act_123 chosen by the user
+    adAccountName: varchar("ad_account_name", { length: 160 }),
+    currency: varchar("currency", { length: 8 }),
+    pageId: varchar("page_id", { length: 40 }),
+    pageName: varchar("page_name", { length: 160 }),
+    status: varchar("status", { length: 16 }).notNull().default("active"),
+    connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ adConnOwnerUq: uniqueIndex("ad_connections_owner_uq").on(t.ownerId) })
+);
+export type AdConnection = typeof adConnections.$inferSelect;
+
+
+// ───────────────────────── Canned messages (quick replies for the Team Inbox) ─────────────────────────
+export const cannedMessages = pgTable(
+  "canned_messages",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(), // the client (tenant owner)
+    createdBy: varchar("created_by").notNull(),
+    title: varchar("title", { length: 80 }).notNull(),
+    shortcut: varchar("shortcut", { length: 32 }).notNull(), // without the leading "/"
+    category: varchar("category", { length: 40 }).notNull().default("General"),
+    content: text("content").notNull(),
+    shared: boolean("shared").notNull().default(true), // true = whole team, false = only the creator
+    usageCount: integer("usage_count").notNull().default(0),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    cannedOwnerIdx: index("canned_messages_owner_idx").on(t.ownerId),
+    cannedShortcutUq: uniqueIndex("canned_messages_shortcut_uq").on(t.ownerId, t.shortcut),
+  })
+);
+export type CannedMessage = typeof cannedMessages.$inferSelect;
+
+// Business hours away message: last time we auto-replied to a number (once per cooldown)
+export const awayMessageLog = pgTable(
+  "away_message_log",
+  {
+    channelId: varchar("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ awayLogUq: uniqueIndex("away_message_log_uq").on(t.channelId, t.phone) })
+);

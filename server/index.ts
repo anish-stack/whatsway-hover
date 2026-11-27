@@ -865,6 +865,27 @@ app.use((req, res, next) => {
       (cronMod.default || cronMod).schedule("* * * * *", () => {
         pollPendingPayments().then((n) => n && console.log(`[Store] confirmed ${n} payment(s)`)).catch((e) => console.error("[Store] payment poll", e));
       });
+
+      // Growth: drip steps + abandoned-cart reminders (every minute); Instagram token refresh (daily 03:17)
+      (cronMod.default || cronMod).schedule("* * * * *", async () => {
+        try {
+          const { processDueDrips } = await import("./services/growth/drip.service.ts");
+          const n = await processDueDrips();
+          if (n) console.log(`[Drips] sent ${n} message(s)`);
+        } catch (e) { console.error("[Drips]", (e as Error).message); }
+        try {
+          const { processAbandonedCarts } = await import("./services/growth/cart-recovery.service.ts");
+          const n = await processAbandonedCarts();
+          if (n) console.log(`[CartRecovery] sent ${n} reminder(s)`);
+        } catch (e) { console.error("[CartRecovery]", (e as Error).message); }
+      });
+      (cronMod.default || cronMod).schedule("17 3 * * *", async () => {
+        try {
+          const { refreshExpiringTokens } = await import("./services/instagram/instagram.service.ts");
+          const n = await refreshExpiringTokens();
+          if (n) console.log(`[Instagram] refreshed ${n} token(s)`);
+        } catch (e) { console.error("[Instagram] token refresh", (e as Error).message); }
+      });
     } else {
       diployLogger.success(`Worker ${instanceId} skipping cron jobs (not the leader)`);
       if (process.env.JOBS_WORKERS_ALL_INSTANCES === "1") {

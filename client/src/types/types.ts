@@ -18,6 +18,7 @@ export interface PlanPermissions {
   campaign?: string;
   apiRequestsPerMonth?: string;
   apiRateLimitPerMinute?: string;
+  teamMembers?: string;
 }
 export interface Feature {
   name: string;

@@ -54,6 +54,12 @@ import {
   CalendarCheck,
   MessageCircle,
   Server,
+  Rocket,
+  Instagram,
+  TrendingUp,
+  KeyRound,
+  BadgeInfo,
+  MessageSquareQuote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -132,6 +138,11 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/whatsapp-flows", icon: Workflow, labelKey: "Flow Studio", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/appointments", icon: CalendarCheck, labelKey: "Appointments", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/store", icon: Store, labelKey: "WhatsApp Store", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/whatsapp-profile", icon: BadgeInfo, labelKey: "WhatsApp Profile", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/canned-messages", icon: MessageSquareQuote, labelKey: "Saved Replies", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/growth", icon: Rocket, labelKey: "Growth Tools", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/instagram", icon: Instagram, labelKey: "Instagram", color: "text-pink-600", allowedRoles: ["admin"] },
+            { section: "Main", href: "/ads-manager", icon: TrendingUp, labelKey: "AI Ads Manager", color: "text-blue-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/app-integrations", icon: Plug, labelKey: "Integrations", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/automation", icon: Zap, labelKey: "navigation.automations", color: "text-[var(--brand)]", allowedRoles: ["superadmin", "admin"] },
             { section: "Main", href: "/settings?tab=ai_setting", icon: Bot, labelKey: "AI Assistant", color: "text-teal-600", allowedRoles: ["admin"] },
@@ -166,6 +177,14 @@ function getNavItems(role: string): NavItem[] {
                 icon: MessageSquare,
                 labelKey: "navigation.inbox",
                 color: "text-blue-400",
+                requiredPrefix: "inbox.",
+                allowedRoles: ["team"],
+            },
+            {
+                href: "/canned-messages",
+                icon: MessageSquareQuote,
+                labelKey: "Saved Replies",
+                color: "text-[var(--brand)]",
                 requiredPrefix: "inbox.",
                 allowedRoles: ["team"],
             },
@@ -428,6 +447,12 @@ const sidebarItemsCategories = [
         name: "Queues & Jobs",
         icon: Server,
         path: "/admin/queues",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Instagram & Ads apps",
+        icon: KeyRound,
+        path: "/admin/social-apps",
         color: "text-[var(--brand)]",
     },
     {

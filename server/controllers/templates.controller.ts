@@ -143,12 +143,16 @@ export const createTemplate = asyncHandler(
     }
     category = category.toUpperCase();
 
-    const mediaType = validatedTemplate.mediaType
-      ? validatedTemplate.mediaType.toLowerCase()
-      : "text";
+    const marketingSubType = validatedTemplate.marketingSubType || "CUSTOM";
+    const isCarouselTpl = category === "MARKETING" && marketingSubType === "CAROUSEL";
+    // Carousel templates: only a BODY on top; header/footer/buttons live inside each card.
+    const mediaType = isCarouselTpl
+      ? "text"
+      : validatedTemplate.mediaType
+        ? validatedTemplate.mediaType.toLowerCase()
+        : "text";
 
     const isAuthentication = category === "AUTHENTICATION";
-    const marketingSubType = validatedTemplate.marketingSubType || "CUSTOM";
 
     const bodyText = validatedTemplate.body || "";
     const placeholderPattern = /\{\{(\d+)\}\}/g;
@@ -236,7 +240,7 @@ export const createTemplate = asyncHandler(
           components.push({ type: "BUTTONS", buttons: [otpBtn] });
         }
       } else {
-        if (mediaType === "text" && validatedTemplate.header) {
+        if (mediaType === "text" && validatedTemplate.header && !isCarouselTpl) {
           const headerObj: any = {
             type: "HEADER",
             format: "TEXT",
@@ -291,7 +295,7 @@ export const createTemplate = asyncHandler(
         }
         components.push(bodyObj);
 
-        if (validatedTemplate.footer && marketingSubType !== "LIMITED_TIME_OFFER") {
+        if (validatedTemplate.footer && marketingSubType !== "LIMITED_TIME_OFFER" && !isCarouselTpl) {
           components.push({ type: "FOOTER", text: validatedTemplate.footer });
         }
 
@@ -300,7 +304,9 @@ export const createTemplate = asyncHandler(
           try { buttons = JSON.parse(buttons); } catch { buttons = []; }
         }
 
-        if (marketingSubType === "COUPON_CODE") {
+        if (isCarouselTpl) {
+          // top-level buttons are not allowed on carousel templates
+        } else if (marketingSubType === "COUPON_CODE") {
           const couponCode = validatedTemplate.couponCode || "";
           const existingBtns = Array.isArray(buttons) ? buttons : [];
           const copyCodeBtn: any = {
@@ -340,13 +346,30 @@ export const createTemplate = asyncHandler(
           if (typeof carouselCards === "string") {
             try { carouselCards = JSON.parse(carouselCards); } catch { carouselCards = []; }
           }
-          if (Array.isArray(carouselCards) && carouselCards.length >= 2) {
-            const allFiles = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+          if (!Array.isArray(carouselCards) || carouselCards.length < 2 || carouselCards.length > 10) {
+            throw new AppError(400, "A carousel needs 2 to 10 cards.");
+          }
+          const allFiles = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+          {
             for (let idx = 0; idx < carouselCards.length; idx++) {
               if (!allFiles?.[`carouselCardMedia_${idx}`]?.[0]) {
                 throw new AppError(400, `Card ${idx + 1} is missing sample media. Each carousel card requires an image or video for Meta template review.`);
               }
             }
+            // Meta rules: every card has the same header type, a body, and the same buttons (count + types, max 2)
+            const sig = (c: any) => (c.buttons || []).map((b: any) => b.type).join(",");
+            const first = carouselCards[0];
+            for (let idx = 0; idx < carouselCards.length; idx++) {
+              const c = carouselCards[idx];
+              if (!String(c.body || "").trim()) throw new AppError(400, `Card ${idx + 1} needs body text.`);
+              if (String(c.body).length > 160) throw new AppError(400, `Card ${idx + 1} body must be 160 characters or less.`);
+              if ((c.mediaType || "image") !== (first.mediaType || "image")) throw new AppError(400, "All cards must use the same media type (all images or all videos).");
+              if (!(c.buttons || []).length) throw new AppError(400, `Card ${idx + 1} needs at least one button.`);
+              if ((c.buttons || []).length > 2) throw new AppError(400, `Card ${idx + 1} can have at most 2 buttons.`);
+              if (sig(c) !== sig(first)) throw new AppError(400, `Card ${idx + 1} must have the same buttons as card 1 (${sig(first).replace(/_/g, " ").toLowerCase() || "none"}). Meta requires matching buttons on every card.`);
+            }
+          }
+          {
             const cards = [];
             for (let idx = 0; idx < carouselCards.length; idx++) {
               const card = carouselCards[idx];
@@ -376,14 +399,24 @@ export const createTemplate = asyncHandler(
 
               cardComponents.push(headerComp);
               if (card.body) {
-                cardComponents.push({ type: "BODY", text: card.body });
+                const cardBody: any = { type: "BODY", text: card.body };
+                const cardVars = Array.from(String(card.body).matchAll(/\{\{\s*(\d+)\s*\}\}/g)).map((m) => Number(m[1]));
+                const nVars = cardVars.length ? Math.max(...cardVars) : 0;
+                if (nVars > 0) {
+                  const given: string[] = Array.isArray(card.bodySamples) ? card.bodySamples : [];
+                  cardBody.example = { body_text: [Array.from({ length: nVars }, (_, k) => String(given[k] || `Sample ${k + 1}`))] };
+                }
+                cardComponents.push(cardBody);
               }
               if (card.buttons?.length) {
                 cardComponents.push({
                   type: "BUTTONS",
                   buttons: card.buttons.map((btn: any) => {
                     const obj: any = { type: btn.type, text: btn.text };
-                    if (btn.type === "URL" && btn.url) obj.url = btn.url;
+                    if (btn.type === "URL" && btn.url) {
+                      obj.url = btn.url;
+                      if (/\{\{\s*1\s*\}\}/.test(btn.url)) obj.example = [String(btn.url).replace(/\{\{\s*1\s*\}\}/, btn.urlSample || "sample")];
+                    }
                     if (btn.type === "PHONE_NUMBER" && btn.phoneNumber) obj.phone_number = btn.phoneNumber;
                     return obj;
                   }),

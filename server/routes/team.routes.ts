@@ -28,6 +28,20 @@ import bcrypt from "bcryptjs";
 import { validateRequest } from "../middlewares/validateRequest.middleware";
 import { requireAuth, requirePermission } from "../middlewares/auth.middleware";
 import { PERMISSIONS } from "@shared/schema";
+import { checkSubscriptionAllowance } from "../middlewares/requireSubscription";
+
+/** Team seats for the client (owner) — limit from the active plan's "teamMembers". */
+async function seatCheck(reqUser: any) {
+  if (reqUser?.role === "superadmin") return { allowed: true as const, limit: "unlimited" as const, used: 0 };
+  const ownerId = reqUser?.role === "team" ? reqUser.createdBy : reqUser?.id;
+  return checkSubscriptionAllowance(ownerId, "teamMembers");
+}
+function seatError(c: any) {
+  if (c.code === "NO_SUBSCRIPTION" || c.code === "EXPIRED") return "Team access is part of paid plans. Choose or renew a plan to add team members.";
+  if (c.code === "NOT_IN_PLAN") return "Your plan doesn't include team members. Upgrade to give your team access.";
+  if (c.code === "LIMIT_REACHED") return `Your plan allows ${c.limit} team member${c.limit === 1 ? "" : "s"} and all seats are used. Upgrade or deactivate a member first.`;
+  return c.error || "Team limit reached";
+}
 
 
 const router = Router();
@@ -353,6 +367,26 @@ router.get("/members/:id", requireAuth,
 });
 
 // Create team member
+router.get("/seats", requireAuth, async (req, res) => {
+  try {
+    const c: any = await seatCheck(req.user);
+    const ownerId = (req.user as any)?.role === "team" ? (req.user as any).createdBy : (req.user as any)?.id;
+    let used = c.used;
+    if (used === undefined) {
+      const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(users)
+        .where(and(eq(users.createdBy, ownerId), eq(users.role, "team"), eq(users.status, "active")));
+      used = r?.n ?? 0;
+    }
+    res.json({
+      allowed: !!c.allowed, limit: c.limit ?? 0, used, planName: c.planName || null,
+      reason: c.allowed ? null : seatError(c), code: c.code || null,
+    });
+  } catch (e) {
+    console.error("[team] seats", e);
+    res.status(500).json({ error: "Couldn't load team seats" });
+  }
+});
+
 router.post("/members",requireAuth,
 requirePermission(PERMISSIONS.TEAM_CREATE), validateRequest(createUserSchema), async (req, res) => {
   try {
@@ -367,6 +401,11 @@ requirePermission(PERMISSIONS.TEAM_CREATE), validateRequest(createUserSchema), a
       avatar,
       channelId,
     } = req.body;
+
+    const seats: any = await seatCheck(req.user);
+    if (!seats.allowed) {
+      return res.status(403).json({ error: seatError(seats), code: seats.code || "TEAM_LIMIT" });
+    }
 
     if (channelId) {
       const [channel] = await db.select().from(channels).where(eq(channels.id, channelId));
@@ -406,7 +445,8 @@ requirePermission(PERMISSIONS.TEAM_CREATE), validateRequest(createUserSchema), a
         avatar: avatar || null,
         status: "active",
         isEmailVerified: true,
-        createdBy: (req.user as { id: string }).id,
+        // members always belong to the client (owner), even when a manager adds them
+        createdBy: (req.user as any).role === "team" && (req.user as any).createdBy ? (req.user as any).createdBy : (req.user as { id: string }).id,
         channelId: channelId || null,
       })
       .returning();
@@ -504,6 +544,14 @@ router.patch(
       const check = await verifyMemberOwnership(req.user, id);
       if (!check.authorized) {
         return res.status(check.status || 403).json({ error: check.error });
+      }
+
+      if (status === "active") {
+        const [cur] = await db.select({ status: users.status }).from(users).where(eq(users.id, id));
+        if (cur && cur.status !== "active") {
+          const seats: any = await seatCheck(req.user);
+          if (!seats.allowed) return res.status(403).json({ error: seatError(seats), code: seats.code || "TEAM_LIMIT" });
+        }
       }
 
       const [member] = await db

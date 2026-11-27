@@ -1275,6 +1275,245 @@ const steps: MigrationStep[] = [
       END$$;
     `,
   },
+  {
+    description: "Growth + security + social: 2FA, drips, short links, cart recovery, Instagram, Meta Ads",
+    sql: `
+      ALTER TABLE store_carts ADD COLUMN IF NOT EXISTS reminder_sent_at timestamptz;
+      ALTER TABLE store_carts ADD COLUMN IF NOT EXISTS last_reminder_at timestamptz;
+
+      CREATE TABLE IF NOT EXISTS user_two_factor (
+        user_id varchar PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        method varchar(10) NOT NULL DEFAULT 'totp',
+        secret_enc text,
+        pending_secret_enc text,
+        enabled boolean NOT NULL DEFAULT false,
+        backup_codes jsonb NOT NULL DEFAULT '[]'::jsonb,
+        last_used_step integer,
+        enabled_at timestamptz,
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS drip_sequences (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        channel_id varchar NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id varchar NOT NULL,
+        name varchar(120) NOT NULL,
+        is_active boolean NOT NULL DEFAULT true,
+        trigger varchar(20) NOT NULL DEFAULT 'manual',
+        trigger_value text,
+        stop_on_reply boolean NOT NULL DEFAULT true,
+        steps jsonb NOT NULL DEFAULT '[]'::jsonb,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS drip_sequences_channel_idx ON drip_sequences(channel_id);
+
+      CREATE TABLE IF NOT EXISTS drip_enrollments (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        sequence_id varchar NOT NULL REFERENCES drip_sequences(id) ON DELETE CASCADE,
+        channel_id varchar NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        contact_id varchar,
+        phone varchar(24) NOT NULL,
+        name varchar(120),
+        step_index integer NOT NULL DEFAULT 0,
+        next_run_at timestamptz NOT NULL,
+        status varchar(12) NOT NULL DEFAULT 'active',
+        stop_reason varchar(120),
+        last_error text,
+        source varchar(20) NOT NULL DEFAULT 'manual',
+        locked_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS drip_enrollments_due_idx ON drip_enrollments(status, next_run_at);
+      CREATE INDEX IF NOT EXISTS drip_enrollments_seq_idx ON drip_enrollments(sequence_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS drip_enrollments_active_uq ON drip_enrollments(sequence_id, phone) WHERE status = 'active';
+
+      CREATE TABLE IF NOT EXISTS short_links (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        code varchar(24) NOT NULL,
+        target_url text NOT NULL,
+        title varchar(120),
+        is_active boolean NOT NULL DEFAULT true,
+        clicks integer NOT NULL DEFAULT 0,
+        unique_clicks integer NOT NULL DEFAULT 0,
+        last_click_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS short_links_code_uq ON short_links(code);
+      CREATE INDEX IF NOT EXISTS short_links_owner_idx ON short_links(owner_id, created_at);
+
+      CREATE TABLE IF NOT EXISTS link_clicks (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        link_id varchar NOT NULL REFERENCES short_links(id) ON DELETE CASCADE,
+        visitor_hash varchar(64) NOT NULL,
+        ref varchar(40),
+        device varchar(16),
+        referer text,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS link_clicks_link_idx ON link_clicks(link_id, created_at);
+
+      CREATE TABLE IF NOT EXISTS growth_settings (
+        channel_id varchar PRIMARY KEY REFERENCES channels(id) ON DELETE CASCADE,
+        owner_id varchar NOT NULL,
+        cart_recovery jsonb NOT NULL DEFAULT '{}'::jsonb,
+        cart_reminders_sent integer NOT NULL DEFAULT 0,
+        cart_recovered integer NOT NULL DEFAULT 0,
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS social_app_settings (
+        id varchar PRIMARY KEY DEFAULT 'default',
+        ig_app_id varchar(40),
+        ig_app_secret_enc text,
+        fb_app_id varchar(40),
+        fb_app_secret_enc text,
+        webhook_verify_token varchar(80),
+        updated_by varchar,
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS ig_accounts (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        ig_user_id varchar(40) NOT NULL,
+        app_scoped_id varchar(40),
+        username varchar(80) NOT NULL,
+        name varchar(120),
+        profile_pic text,
+        account_type varchar(20),
+        access_token_enc text NOT NULL,
+        token_expires_at timestamptz,
+        followers integer,
+        follows integer,
+        media_count integer,
+        status varchar(16) NOT NULL DEFAULT 'active',
+        last_error text,
+        connected_at timestamptz NOT NULL DEFAULT now(),
+        last_sync_at timestamptz,
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ig_accounts_ig_user_uq ON ig_accounts(ig_user_id);
+      CREATE INDEX IF NOT EXISTS ig_accounts_owner_idx ON ig_accounts(owner_id);
+
+      CREATE TABLE IF NOT EXISTS ig_comment_rules (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        account_id varchar NOT NULL REFERENCES ig_accounts(id) ON DELETE CASCADE,
+        name varchar(120) NOT NULL,
+        media_id varchar(40),
+        media_thumb text,
+        media_caption text,
+        keywords jsonb NOT NULL DEFAULT '[]'::jsonb,
+        match_mode varchar(10) NOT NULL DEFAULT 'contains',
+        public_replies jsonb NOT NULL DEFAULT '[]'::jsonb,
+        dm_text text NOT NULL,
+        dm_button_text varchar(20),
+        dm_button_url text,
+        once_per_user boolean NOT NULL DEFAULT true,
+        is_active boolean NOT NULL DEFAULT true,
+        triggered integer NOT NULL DEFAULT 0,
+        dms_sent integer NOT NULL DEFAULT 0,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS ig_comment_rules_account_idx ON ig_comment_rules(account_id);
+
+      CREATE TABLE IF NOT EXISTS ig_comment_events (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        account_id varchar NOT NULL REFERENCES ig_accounts(id) ON DELETE CASCADE,
+        rule_id varchar,
+        comment_id varchar(60) NOT NULL,
+        media_id varchar(40),
+        from_id varchar(40),
+        from_username varchar(80),
+        text text,
+        action varchar(16) NOT NULL,
+        error text,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ig_comment_events_comment_uq ON ig_comment_events(comment_id);
+      CREATE INDEX IF NOT EXISTS ig_comment_events_account_idx ON ig_comment_events(account_id, created_at);
+      CREATE INDEX IF NOT EXISTS ig_comment_events_rule_user_idx ON ig_comment_events(rule_id, from_id);
+
+      CREATE TABLE IF NOT EXISTS ig_threads (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        account_id varchar NOT NULL REFERENCES ig_accounts(id) ON DELETE CASCADE,
+        igsid varchar(40) NOT NULL,
+        username varchar(80),
+        name varchar(120),
+        profile_pic text,
+        last_message_text text,
+        last_message_at timestamptz,
+        last_incoming_at timestamptz,
+        unread integer NOT NULL DEFAULT 0,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ig_threads_acc_user_uq ON ig_threads(account_id, igsid);
+      CREATE INDEX IF NOT EXISTS ig_threads_last_idx ON ig_threads(account_id, last_message_at);
+
+      CREATE TABLE IF NOT EXISTS ig_messages (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        thread_id varchar NOT NULL REFERENCES ig_threads(id) ON DELETE CASCADE,
+        account_id varchar NOT NULL,
+        mid varchar(200),
+        direction varchar(8) NOT NULL,
+        text text,
+        attachments jsonb,
+        source varchar(16) NOT NULL DEFAULT 'inbox',
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ig_messages_mid_uq ON ig_messages(mid);
+      CREATE INDEX IF NOT EXISTS ig_messages_thread_idx ON ig_messages(thread_id, created_at);
+
+      CREATE TABLE IF NOT EXISTS ad_connections (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        fb_user_id varchar(40) NOT NULL,
+        fb_user_name varchar(120),
+        access_token_enc text NOT NULL,
+        token_expires_at timestamptz,
+        ad_account_id varchar(40),
+        ad_account_name varchar(160),
+        currency varchar(8),
+        page_id varchar(40),
+        page_name varchar(160),
+        status varchar(16) NOT NULL DEFAULT 'active',
+        connected_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ad_connections_owner_uq ON ad_connections(owner_id);
+    `,
+  },
+  {
+    description: "Canned messages, business hours away message",
+    sql: `
+      ALTER TABLE growth_settings ADD COLUMN IF NOT EXISTS business_hours jsonb NOT NULL DEFAULT '{}'::jsonb;
+      CREATE TABLE IF NOT EXISTS canned_messages (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        created_by varchar NOT NULL,
+        title varchar(80) NOT NULL,
+        shortcut varchar(32) NOT NULL,
+        category varchar(40) NOT NULL DEFAULT 'General',
+        content text NOT NULL,
+        shared boolean NOT NULL DEFAULT true,
+        usage_count integer NOT NULL DEFAULT 0,
+        last_used_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS canned_messages_owner_idx ON canned_messages(owner_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS canned_messages_shortcut_uq ON canned_messages(owner_id, shortcut);
+      CREATE TABLE IF NOT EXISTS away_message_log (
+        channel_id varchar NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
+        phone varchar(24) NOT NULL,
+        sent_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS away_message_log_uq ON away_message_log(channel_id, phone);
+    `,
+  },
 ];
 
 /**

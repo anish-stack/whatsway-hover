@@ -25,6 +25,11 @@ import {
 } from "lucide-react";
 import { TemplatePickerDialog } from "@/components/shared/TemplatePickerDialog";
 import type { Conversation } from "@shared/schema";
+import { useRef, useState } from "react";
+import { CannedPickerButton, SlashSuggestions, markCannedUsed, rankCanned, useCanned } from "@/components/canned/CannedPicker";
+import { fillCanned, type CannedMessage } from "@/components/canned/canned";
+import { useAuth } from "@/contexts/auth-context";
+import { useChannelContext } from "@/contexts/channel-context";
 
 
 interface MessageComposerProps {
@@ -54,6 +59,43 @@ const MessageComposer = ({
   sendMessagePending,
   fileInputRef,
 }: MessageComposerProps) => {
+  const { user } = useAuth() as any;
+  const { selectedChannel } = useChannelContext() as any;
+  const canned = useCanned();
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const [slashIndex, setSlashIndex] = useState(0);
+  const [slashClosed, setSlashClosed] = useState(false);
+  const slash = /^\/([\w-]*)$/.exec(messageText || "");
+  const slashRows = slash && !slashClosed ? rankCanned(canned.data?.data || [], slash[1]).slice(0, 8) : [];
+  const showSlash = !!slash && !slashClosed;
+
+  const setText = (value: string) => onTyping({ target: { value } } as React.ChangeEvent<HTMLTextAreaElement>);
+  const insertCanned = (m: CannedMessage) => {
+    const contact = String(selectedConversation.contactName || "").trim();
+    const text = fillCanned(m.content, {
+      customer_name: contact && contact !== selectedConversation.contactPhone ? contact : "",
+      customer_first_name: contact && contact !== selectedConversation.contactPhone ? contact.split(/\s+/)[0] : "",
+      customer_phone: selectedConversation.contactPhone || "",
+      agent_name: [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.username || "",
+      business_name: selectedChannel?.name || "",
+      today: new Date().toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }),
+    });
+    const base = slash ? "" : messageText;
+    setText(base ? `${base}${/\s$/.test(base) ? "" : " "}${text}` : text);
+    setSlashIndex(0);
+    markCannedUsed(m.id);
+    setTimeout(() => {
+      const el = textRef.current;
+      if (!el) return;
+      el.focus();
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 120) + "px";
+      // jump to the first unfilled {{variable}} so the agent can type it
+      const at = el.value.indexOf("{{");
+      if (at >= 0) el.setSelectionRange(at, el.value.indexOf("}}", at) + 2);
+    }, 0);
+  };
+
   return (
     <div className="bg-background border-t border-border p-3 md:p-4">
       {is24HourWindowExpired &&
@@ -108,6 +150,10 @@ const MessageComposer = ({
                 />
             </>
           )}
+          <CannedPickerButton
+            onPick={insertCanned}
+            disabled={is24HourWindowExpired && selectedConversation.type === "whatsapp"}
+          />
 
 
           
@@ -115,16 +161,26 @@ const MessageComposer = ({
 
         
 
+        <div className="relative flex-1">
+        {showSlash && <SlashSuggestions rows={slashRows} query={slash![1]} activeIndex={Math.min(slashIndex, Math.max(slashRows.length - 1, 0))} onPick={insertCanned} />}
         <textarea
+          ref={textRef}
           placeholder={
             is24HourWindowExpired &&
             selectedConversation.type === "whatsapp"
               ? "Templates only"
-              : "Type a message..."
+              : "Type a message, or / for saved replies"
           }
           value={messageText}
-          onChange={onTyping}
+          onChange={(e) => { setSlashClosed(false); setSlashIndex(0); onTyping(e); }}
+          aria-autocomplete="list"
           onKeyDown={(e) => {
+            if (showSlash && slashRows.length) {
+              if (e.key === "ArrowDown") { e.preventDefault(); setSlashIndex((i) => (i + 1) % slashRows.length); return; }
+              if (e.key === "ArrowUp") { e.preventDefault(); setSlashIndex((i) => (i - 1 + slashRows.length) % slashRows.length); return; }
+              if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); insertCanned(slashRows[Math.min(slashIndex, slashRows.length - 1)]); return; }
+            }
+            if (showSlash && e.key === "Escape") { e.preventDefault(); setSlashClosed(true); return; }
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               onSendMessage();
@@ -140,9 +196,10 @@ const MessageComposer = ({
             selectedConversation.type === "whatsapp"
           }
           rows={1}
-          className="flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ minHeight: "36px", maxHeight: "120px" }}
         />
+        </div>
 
         <Button
           onClick={onSendMessage}

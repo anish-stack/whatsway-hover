@@ -65,6 +65,12 @@ import { registerRestApiV1Routes } from "./rest-api-v1.routes";
 import { registerAppUpdateRoutes } from "./app-update.routes";
 import { registerMetaBillingRoutes } from "./meta-billing.routes";
 import { registerResellerRoutes } from "./reseller.routes";
+import { registerGrowthRoutes } from "./growth.routes";
+import { registerInstagramRoutes } from "./instagram.routes";
+import { registerAdsRoutes } from "./ads.routes";
+import { registerSocialAdminRoutes } from "./social-admin.routes";
+import { registerCannedRoutes } from "./canned.routes";
+import { registerWhatsAppProfileRoutes } from "./whatsapp-profile.routes";
 
 export async function registerRoutes(app: Express, existingServer?: Server): Promise<Server> {
   // Auth routes (no authentication required)
@@ -91,6 +97,12 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerAppointmentRoutes(app);
   registerFlowStudioRoutes(app);
   registerPlatformAdminRoutes(app);
+  registerGrowthRoutes(app);
+  registerInstagramRoutes(app);
+  registerAdsRoutes(app);
+  registerSocialAdminRoutes(app);
+  registerCannedRoutes(app);
+  registerWhatsAppProfileRoutes(app);
   registerDemoRequestRoutes(app);
   registerCmsRoutes(app);
   registerTemplateRoutes(app);

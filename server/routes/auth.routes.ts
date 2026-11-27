@@ -146,58 +146,28 @@ router.post("/login", validateRequest(loginSchema), async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    // Update last login
-    await db
-      .update(users)
-      .set({
-        lastLogin: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, user.id));
-
-    // Log activity
-    try {
-      await db.insert(userActivityLogs).values({
-        userId: user.id,
-        action: "login",
-        entityType: "user",
-        entityId: user.id,
-        details: JSON.stringify({
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
-        }),
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      });
-    } catch (logError) {
-      console.error("Failed to log login activity:", logError);
+    // Two-step login: password ok → ask for the authenticator / email code
+    const { loginRequirement, sendEmailCode } = await import("../services/security/two-factor.service");
+    const need = await loginRequirement({ id: user.id, role: user.role });
+    if (need) {
+      let emailHint: string | undefined;
+      let emailCodeHash: string | null = null;
+      if (need.method === "email") {
+        try {
+          const sent = await sendEmailCode(user.id);
+          emailHint = sent.hint; emailCodeHash = sent.hash;
+        } catch (e) {
+          return res.status(500).json({ error: "Couldn't send your login code by email. Check SMTP settings or try again." });
+        }
+      }
+      (req as any).session.pending2fa = {
+        userId: user.id, method: need.method, emailCodeHash, attempts: 0, exp: Date.now() + 10 * 60_000,
+      };
+      (req as any).session.user = undefined;
+      return res.json({ twoFactorRequired: true, method: need.method, emailHint });
     }
 
-    // Store user in session
-    if (!(req as any).session) {
-      console.error("Session not initialized");
-      return res.status(500).json({ error: "Session not initialized" });
-    }
-
-    (req as any).session.user = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      role: user.role,
-      permissions: resolveUserPermissions(user.role, user.permissions as any),
-      avatar: user.avatar,
-      createdBy: user.createdBy || "",
-    };
-
-    // Remove password before sending back
-    const { password: _, ...userData } = user;
-
-    res.json({
-      message: "Login successful",
-      user: userData,
-    });
+    return finalizeLogin(req, res, user);
   } catch (error) {
     console.log("Error during login:", error);
     res.status(500).json({ error: "Login failed", message: (error as Error).message });
@@ -207,6 +177,164 @@ router.post("/login", validateRequest(loginSchema), async (req, res) => {
 
 
 
+
+
+// Finishes a login (after password, and 2FA when on): session + activity log
+async function finalizeLogin(req: Request, res: Response, user: typeof users.$inferSelect) {
+  await db.update(users).set({ lastLogin: new Date(), updatedAt: new Date() }).where(eq(users.id, user.id));
+  try {
+    await db.insert(userActivityLogs).values({
+      userId: user.id,
+      action: "login",
+      entityType: "user",
+      entityId: user.id,
+      details: JSON.stringify({ ipAddress: req.ip, userAgent: req.get("user-agent") }),
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
+  } catch (logError) {
+    console.error("Failed to log login activity:", logError);
+  }
+  if (!(req as any).session) return res.status(500).json({ error: "Session not initialized" });
+  (req as any).session.pending2fa = undefined;
+  (req as any).session.user = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role,
+    permissions: resolveUserPermissions(user.role, user.permissions as any),
+    avatar: user.avatar,
+    createdBy: user.createdBy || "",
+  };
+  const { password: _, ...userData } = user;
+  return res.json({ message: "Login successful", user: userData });
+}
+
+// Step 2 of login: authenticator code, emailed code or a backup code
+router.post("/login/2fa", async (req, res) => {
+  try {
+    const pending = (req as any).session?.pending2fa;
+    if (!pending || pending.exp < Date.now()) {
+      if ((req as any).session) (req as any).session.pending2fa = undefined;
+      return res.status(401).json({ error: "Your sign-in expired. Enter your password again.", code: "LOGIN_EXPIRED" });
+    }
+    if (pending.attempts >= 5) {
+      (req as any).session.pending2fa = undefined;
+      return res.status(429).json({ error: "Too many wrong codes. Enter your password again.", code: "LOGIN_EXPIRED" });
+    }
+    const code = String(req.body?.code || "").trim();
+    const { verifyLoginCode } = await import("../services/security/two-factor.service");
+    const r = await verifyLoginCode(pending.userId, code, pending.emailCodeHash);
+    if (!r.ok) {
+      pending.attempts += 1;
+      return res.status(400).json({ error: `Wrong code. ${5 - pending.attempts} tries left.` });
+    }
+    const [user] = await db.select().from(users).where(eq(users.id, pending.userId)).limit(1);
+    if (!user || (user.status || "").trim().toLowerCase() !== "active") {
+      (req as any).session.pending2fa = undefined;
+      return res.status(403).json({ error: "Account is inactive. Please contact administrator." });
+    }
+    return finalizeLogin(req, res, user);
+  } catch (e) {
+    console.error("[auth] 2fa verify failed", e);
+    res.status(500).json({ error: "Login failed" });
+  }
+});
+
+// Email a login code (email method, or as a fallback for authenticator users)
+router.post("/login/2fa/email", async (req, res) => {
+  try {
+    const pending = (req as any).session?.pending2fa;
+    if (!pending || pending.exp < Date.now()) return res.status(401).json({ error: "Your sign-in expired. Enter your password again.", code: "LOGIN_EXPIRED" });
+    if (pending.lastEmailAt && Date.now() - pending.lastEmailAt < 45_000) return res.status(429).json({ error: "Wait a few seconds before asking for another code." });
+    const { sendEmailCode } = await import("../services/security/two-factor.service");
+    const sent = await sendEmailCode(pending.userId);
+    pending.emailCodeHash = sent.hash;
+    pending.lastEmailAt = Date.now();
+    pending.exp = Date.now() + 10 * 60_000;
+    res.json({ success: true, emailHint: sent.hint });
+  } catch (e: any) {
+    res.status(e?.status || 500).json({ error: e?.message || "Couldn't send the code" });
+  }
+});
+
+// ── Account security: manage two-step login (signed-in user) ──
+function sessionUser(req: Request) { return (req as any).session?.user as { id: string; username: string; email?: string; role: string } | undefined; }
+
+async function checkPassword(userId: string, password: string) {
+  const [u] = await db.select({ password: users.password }).from(users).where(eq(users.id, userId)).limit(1);
+  return !!u?.password && !!password && (await bcrypt.compare(String(password), u.password));
+}
+
+router.get("/2fa", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  const tf = await import("../services/security/two-factor.service");
+  res.json(await tf.status(u.id, u.role));
+});
+
+router.post("/2fa/totp/start", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  if (!(await checkPassword(u.id, req.body?.password))) return res.status(400).json({ error: "Wrong password" });
+  const tf = await import("../services/security/two-factor.service");
+  res.json(await tf.startTotpSetup({ id: u.id, username: u.username, email: u.email }));
+});
+
+router.post("/2fa/totp/confirm", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  try {
+    const tf = await import("../services/security/two-factor.service");
+    res.json(await tf.confirmTotpSetup(u.id, String(req.body?.code || "")));
+  } catch (e: any) { res.status(e?.status || 500).json({ error: e?.message || "Failed" }); }
+});
+
+router.post("/2fa/email/send", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  if (!(await checkPassword(u.id, req.body?.password))) return res.status(400).json({ error: "Wrong password" });
+  try {
+    const tf = await import("../services/security/two-factor.service");
+    const sent = await tf.sendEmailCode(u.id);
+    (req as any).session.setup2faEmail = { hash: sent.hash, exp: Date.now() + 10 * 60_000 };
+    res.json({ success: true, emailHint: sent.hint });
+  } catch (e: any) { res.status(e?.status || 500).json({ error: e?.message || "Couldn't send the code" }); }
+});
+
+router.post("/2fa/email/confirm", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  const pending = (req as any).session?.setup2faEmail;
+  const { sha256 } = await import("../utils/secret-box");
+  if (!pending || pending.exp < Date.now() || sha256(String(req.body?.code || "").trim()) !== pending.hash) {
+    return res.status(400).json({ error: "That code didn't match or has expired." });
+  }
+  (req as any).session.setup2faEmail = undefined;
+  const tf = await import("../services/security/two-factor.service");
+  res.json(await tf.enableEmailMethod(u.id));
+});
+
+router.post("/2fa/backup-codes", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  if (!(await checkPassword(u.id, req.body?.password))) return res.status(400).json({ error: "Wrong password" });
+  try {
+    const tf = await import("../services/security/two-factor.service");
+    res.json(await tf.regenerateBackupCodes(u.id));
+  } catch (e: any) { res.status(e?.status || 500).json({ error: e?.message || "Failed" }); }
+});
+
+router.post("/2fa/disable", async (req, res) => {
+  const u = sessionUser(req);
+  if (!u) return res.status(401).json({ error: "Not signed in" });
+  if (!(await checkPassword(u.id, req.body?.password))) return res.status(400).json({ error: "Wrong password" });
+  const tf = await import("../services/security/two-factor.service");
+  await tf.disable(u.id);
+  res.json({ success: true, stillRequired: tf.requiredRoles().includes(String(u.role).toLowerCase()) });
+});
 
 // Logout endpoint
 router.post("/logout", (req, res) => {

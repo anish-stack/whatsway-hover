@@ -109,11 +109,12 @@ async function getCart(channelId: string, phone: string) {
 }
 
 async function saveCart(channelId: string, phone: string, items: CartItem[], state = "browsing") {
-  await db.insert(storeCarts).values({ channelId, phone, items, state, updatedAt: new Date() })
-    .onConflictDoUpdate({ target: [storeCarts.channelId, storeCarts.phone], set: { items, state, updatedAt: new Date() } });
+  // any cart change restarts the abandoned-cart timer
+  await db.insert(storeCarts).values({ channelId, phone, items, state, updatedAt: new Date(), reminderSentAt: null } as any)
+    .onConflictDoUpdate({ target: [storeCarts.channelId, storeCarts.phone], set: { items, state, updatedAt: new Date(), reminderSentAt: null } as any });
 }
 
-async function cartLines(channelId: string, items: CartItem[]) {
+export async function cartLines(channelId: string, items: CartItem[]) {
   if (!items.length) return { lines: [] as Array<{ p: StoreProduct; qty: number; total: number }>, subtotal: 0 };
   const prods = await db.select().from(storeProducts).where(and(eq(storeProducts.channelId, channelId), inArray(storeProducts.id, items.map((i) => i.productId))));
   const lines = items
@@ -311,6 +312,10 @@ async function placeOrder(ctx: Ctx, address: string | null) {
   const cart = await getCart(ctx.channel.id, ctx.phone);
   const { lines, subtotal } = await cartLines(ctx.channel.id, (cart.items as CartItem[]) || []);
   if (!lines.length) return showCart(ctx);
+  if ((cart as any).lastReminderAt && Date.now() - new Date((cart as any).lastReminderAt).getTime() < 7 * 86400_000) {
+    // order placed after an abandoned-cart reminder → count it as recovered
+    import("../growth/cart-recovery.service").then((m) => m.markRecovered(ctx.channel.id)).catch(() => {});
+  }
   const fee = num(ctx.s.deliveryFee);
   const [order] = await db.insert(storeOrders).values({
     orderNumber: orderNumber(), channelId: ctx.channel.id, ownerId: ctx.s.ownerId, conversationId: ctx.conversationId,

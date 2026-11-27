@@ -157,7 +157,7 @@ import { Request, Response, NextFunction } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { and, eq, desc, sql } from "drizzle-orm";
 import { db } from "server/db";
-import { plans, subscriptions, channels, automations, campaigns, contacts, sites } from "@shared/schema";
+import { plans, subscriptions, channels, automations, campaigns, contacts, sites, users } from "@shared/schema";
 
 export const requireSubscription = (
     requiredPermission: "channel" | "contacts" | "automation" | "campaign"
@@ -219,7 +219,7 @@ export const requireSubscription = (
 };
 
 
-export type SubscriptionFeature = "channel" | "contacts" | "automation" | "campaign";
+export type SubscriptionFeature = "channel" | "contacts" | "automation" | "campaign" | "teamMembers";
 export interface AllowanceResult {
     allowed: boolean;
     code?: "NO_SUBSCRIPTION" | "EXPIRED" | "PLAN_MISSING" | "NOT_IN_PLAN" | "LIMIT_REACHED";
@@ -248,7 +248,11 @@ export async function checkSubscriptionAllowance(userId: string, feature: Subscr
     if (!plan) return { allowed: false, code: "PLAN_MISSING", error: "Plan not found." };
     const planName = (plan as any).name ?? null;
 
-    const permissionValue = (plan.permissions as any)?.[feature];
+    let permissionValue = (plan.permissions as any)?.[feature];
+    // older plans have no team limit yet → DEFAULT_TEAM_MEMBERS (default 2)
+    if (feature === "teamMembers" && (permissionValue === undefined || permissionValue === null || permissionValue === "")) {
+        permissionValue = process.env.DEFAULT_TEAM_MEMBERS ?? "2";
+    }
     if (permissionValue === undefined || permissionValue === null || permissionValue === "" || permissionValue === "0") {
         return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan does not allow ${feature}.`, planName, expiresAt };
     }
@@ -265,6 +269,10 @@ export async function checkSubscriptionAllowance(userId: string, feature: Subscr
         used = r?.n ?? 0;
     } else if (feature === "automation") {
         const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(automations).where(eq(automations.createdBy, userId));
+        used = r?.n ?? 0;
+    } else if (feature === "teamMembers") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(users)
+            .where(and(eq(users.createdBy, userId), eq(users.role, "team"), eq(users.status, "active")));
         used = r?.n ?? 0;
     } else if (feature === "campaign") {
         const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(campaigns).where(eq(campaigns.createdBy, userId));

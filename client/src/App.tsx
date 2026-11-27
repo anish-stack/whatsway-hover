@@ -54,6 +54,12 @@ import CmsAdminPage from "@/pages/admin/cms";
 import { CmsOverride, CmsOrApp } from "@/pages/CmsPage";
 import QueuesPage from "@/pages/admin/queues";
 import PlatformWhatsAppPage from "@/pages/admin/platform-whatsapp";
+import SocialAppsPage from "@/pages/admin/social-apps";
+import GrowthPage from "@/pages/growth";
+import InstagramPage from "@/pages/instagram";
+import AdsManagerPage from "@/pages/ads-manager";
+import WhatsAppProfilePage from "@/pages/whatsapp-profile";
+import CannedMessagesPage from "@/pages/canned-messages";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -172,6 +178,12 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/admin/cms": "",
   "/admin/queues": "",
   "/admin/platform-whatsapp": "",
+  "/admin/social-apps": "",
+  "/growth": "",
+  "/instagram": "",
+  "/ads-manager": "",
+  "/whatsapp-profile": "",
+  "/canned-messages": "",
   "/inbox": "inbox.view",
   "/plans": "",
   "/plan-upgrade": "",
@@ -423,6 +435,24 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/admin/platform-whatsapp">
             <PermissionRoute component={PlatformWhatsAppPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/admin/social-apps">
+            <PermissionRoute component={SocialAppsPage} requiredRoles={["superadmin"]} />
+          </Route>
+          <Route path="/growth">
+            <PermissionRoute component={GrowthPage} />
+          </Route>
+          <Route path="/instagram">
+            <PermissionRoute component={InstagramPage} />
+          </Route>
+          <Route path="/whatsapp-profile">
+            <PermissionRoute component={WhatsAppProfilePage} />
+          </Route>
+          <Route path="/canned-messages">
+            <PermissionRoute component={CannedMessagesPage} />
+          </Route>
+          <Route path="/ads-manager">
+            <PermissionRoute component={AdsManagerPage} />
           </Route>
           <Route path="/appointments">
             <PermissionRoute component={AppointmentsPage} />

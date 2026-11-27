@@ -232,9 +232,19 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
     },
   });
 
+  const { data: seats, refetch: refetchSeats } = useQuery<any>({
+    queryKey: ["/api/team/seats"],
+    enabled: user?.role !== "superadmin",
+  });
+  useEffect(() => { if (!showAddDialog) refetchSeats(); }, [showAddDialog, refetchSeats]);
+  const seatsFull = !!seats && !seats.allowed;
+
   const handleOpenDialog = (member?: User) => {
     if (member) {
       setEditingMember(member);
+    } else if (seatsFull) {
+      toast({ title: "Can't add more team members", description: seats?.reason, variant: "destructive" });
+      return;
     }
     setShowAddDialog(true);
   };
@@ -347,11 +357,27 @@ export default function TeamPage({ embedded = false }: { embedded?: boolean } = 
       className="w-full sm:w-72"
     />
 
-    <Button className="whitespace-nowrap" onClick={() => handleOpenDialog()}>
-      <UserPlus className="mr-2 h-4 w-4" />
-      Add Member
-    </Button>
+    <div className="flex items-center gap-3">
+      {seats && (
+        <div className="text-right text-sm" aria-live="polite">
+          <p className="font-medium tabular-nums">
+            {seats.used} of {seats.limit === "unlimited" ? "unlimited" : seats.limit || 0} seats used
+          </p>
+          <p className="text-xs text-muted-foreground">{seats.planName ? `${seats.planName} plan` : "No active plan"}</p>
+        </div>
+      )}
+      <Button className="whitespace-nowrap" onClick={() => handleOpenDialog()} disabled={seatsFull} title={seatsFull ? seats?.reason : undefined}>
+        <UserPlus className="mr-2 h-4 w-4" />
+        Add Member
+      </Button>
+    </div>
   </div>
+  {seatsFull && (
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+      <span>{seats?.reason}</span>
+      <a href="/plan-upgrade" className="font-medium underline">See plans</a>
+    </div>
+  )}
 </CardHeader>
 
 

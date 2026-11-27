@@ -427,6 +427,7 @@ export default function Plans() {
         campaign: "",
         apiRequestsPerMonth: "",
         apiRateLimitPerMinute: "",
+        teamMembers: "",
         ...(plan.permissions || {}),
       },
       features: (plan.features || []).map((f: any) => {
@@ -458,7 +459,7 @@ export default function Plans() {
       monthlyPrice: "0",
       annualPrice: "0",
       multiCurrencyPrices: {},
-      permissions: { channel: "", contacts: "", automation: "", campaign: "", apiRequestsPerMonth: "", apiRateLimitPerMinute: "" },
+      permissions: { channel: "", contacts: "", automation: "", campaign: "", apiRequestsPerMonth: "", apiRateLimitPerMinute: "", teamMembers: "" },
       features: [],
     });
     setEditingPlan(null);
@@ -1066,6 +1067,23 @@ export default function Plans() {
                         className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        Team members (dashboard logins)
+                      </label>
+                      <input
+                        type="text"
+                        value={(formData.permissions as any).teamMembers || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            permissions: { ...formData.permissions, teamMembers: e.target.value } as any,
+                          })
+                        }
+                        placeholder="e.g. 3, 0 = none, unlimited"
+                        className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      />
+                    </div>
                   </div>
 
                   {/* Popular Toggle */}
@@ -1293,6 +1311,7 @@ export default function Plans() {
                                       campaign: t("plans.form.permissions.campaign"),
                                       apiRequestsPerMonth: t("plans.form.permissions.apiRequestsPerMonth"),
                                       apiRateLimitPerMinute: t("plans.form.permissions.apiRateLimitPerMinute"),
+                                      teamMembers: "Team members",
                                     };
                                     return (
                                       <div

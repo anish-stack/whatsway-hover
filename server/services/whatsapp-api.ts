@@ -13,6 +13,18 @@ import { templateVarKeys } from "../utils/template-params";
  */
 
 import type { Channel } from "@shared/schema";
+
+/** App id for resumable uploads (template samples, profile photo): channel → env → platform embedded-signup app. */
+export async function resolveMetaAppId(channel: { appId?: string | null }): Promise<string | null> {
+  if (channel.appId) return channel.appId;
+  if (process.env.FACEBOOK_APP_ID) return process.env.FACEBOOK_APP_ID;
+  try {
+    const { db } = await import("../db");
+    const { whatsappBusinessAccountsConfig } = await import("@shared/schema");
+    const [cfg] = await db.select({ appId: whatsappBusinessAccountsConfig.appId }).from(whatsappBusinessAccountsConfig).limit(1);
+    return cfg?.appId || null;
+  } catch { return null; }
+}
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import * as fs from "fs";
 import path from "path";
@@ -37,7 +49,7 @@ interface WhatsAppTemplate {
 }
 
 
-const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || "v25.0";
+export const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || "v25.0";
 
 export class WhatsAppApiService {
   private channel: Channel;
@@ -1029,7 +1041,7 @@ private static readonly TIER_CONCURRENCY: Record<string, number> = {
     filename: string
   ): Promise<string> {
 
-    const appId = this.channel.appId || process.env.FACEBOOK_APP_ID;
+    const appId = await resolveMetaAppId(this.channel);
     if (!appId) {
       throw new Error(
         "App ID is required for template media upload. Set FACEBOOK_APP_ID in your environment or configure embedded signup for this channel."

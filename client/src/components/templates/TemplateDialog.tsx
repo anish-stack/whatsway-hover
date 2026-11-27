@@ -844,6 +844,23 @@ export function TemplateDialog({
           return;
         }
       }
+      // Meta: same media type and the same buttons (count + types) on every card, 1-2 buttons each
+      const sig = (c: any) => (c.buttons || []).map((b: any) => b.type).join(",");
+      for (let i = 0; i < cards.length; i++) {
+        const c: any = cards[i];
+        if (!(c.buttons || []).length || (c.buttons || []).length > 2) {
+          form.setError(`carouselCards.${i}.body` as any, { message: `Card ${i + 1} needs 1 or 2 buttons` });
+          return;
+        }
+        if (i > 0 && sig(c) !== sig(cards[0])) {
+          form.setError(`carouselCards.${i}.body` as any, { message: `Card ${i + 1} must have the same buttons as card 1 (Meta rule)` });
+          return;
+        }
+        if (i > 0 && c.mediaType !== (cards[0] as any).mediaType) {
+          form.setError(`carouselCards.${i}.body` as any, { message: "All cards must be images, or all videos" });
+          return;
+        }
+      }
     }
     setSubmitted(true);
     const draftIdToDelete = currentDraftId || initialDraft?.id;
