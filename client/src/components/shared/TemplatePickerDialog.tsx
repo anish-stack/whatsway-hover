@@ -82,7 +82,7 @@ export function getTemplateButtons(template: any) {
   if (template.buttons && Array.isArray(template.buttons)) {
     for (const btn of template.buttons) {
       buttons.push({
-        type: btn.type || "QUICK_REPLY",
+        type: String(btn.type || "QUICK_REPLY").toUpperCase(),
         text: btn.text || "",
         url: btn.url,
         phone_number: btn.phone_number,
@@ -177,10 +177,13 @@ export function TemplatePickerDialog({
       )
     : [];
 
-  const getVariableCount = (body: string) => {
-    const matches = body.match(/\{\{\d+\}\}/g);
-    return matches ? matches.length : 0;
+  // distinct variables: a body using {{1}} twice needs ONE value (Meta #132000 otherwise)
+  const getVariableKeys = (body: string) => {
+    const found = Array.from(String(body || "").matchAll(/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g)).map((m) => m[1]);
+    const distinct = Array.from(new Set(found));
+    return distinct.every((k) => /^\d+$/.test(k)) ? distinct.sort((a, b) => Number(a) - Number(b)) : distinct;
   };
+  const getVariableCount = (body: string) => getVariableKeys(body).length;
 
   const fetchTemplateMeta = async (templateWhatsappId: string) => {
     const res = await fetch(
@@ -663,7 +666,7 @@ export function TemplatePickerDialog({
                 return (
                   <div key={index} className="space-y-2">
                     <label className="text-sm font-medium block">
-                      Value for {"{{" + (index + 1) + "}}"}
+                      Value for {"{{" + (getVariableKeys(selectedTemplate?.body)[index] ?? index + 1) + "}}"}
                     </label>
                     <select
                       className="w-full border rounded-md px-3 py-2 text-sm"
@@ -684,7 +687,7 @@ export function TemplatePickerDialog({
                     </select>
                     {v.type === "custom" && (
                       <Input
-                        placeholder={`Enter value for {{${index + 1}}}`}
+                        placeholder={`Enter value for {{${getVariableKeys(selectedTemplate?.body)[index] ?? index + 1}}}`}
                         value={v.value || ""}
                         onChange={(e) => {
                           const updated = [...variables];

@@ -193,9 +193,14 @@ static async fetchMessagingLimit(channel: Channel): Promise<{
     const responseData = await response.json();
 
     if (!response.ok) {
-      const err: any = new Error(
-        responseData.error?.message || "Failed to send template message"
-      );
+      const baseMsg = responseData.error?.message || "Failed to send template message";
+      const details = responseData.error?.error_data?.details;
+      // Meta's detail says which part is off, e.g. "body: number of localizable_params (2) does not match the expected number of params (1)"
+      const err: any = new Error(details && !baseMsg.includes(details) ? `${baseMsg} — ${details}` : baseMsg);
+      err.metaErrorDetails = details;
+      if (responseData.error?.code === 132000) {
+        console.error(`[WhatsApp] #132000 for template "${templateName}" (${language}). Sent components:`, JSON.stringify(components));
+      }
       err.metaErrorCode = responseData.error?.code;
       err.metaErrorTitle = responseData.error?.error_user_title || responseData.error?.title || "";
       throw err;

@@ -55,6 +55,22 @@ export function registerCampaignRoutes(app: Express) {
 
    
 
+  // Check values / send a test message before creating
+  app.post("/api/campaigns/preview", requireAuth,
+    requirePermission(PERMISSIONS.CAMPAIGNS_CREATE),
+    campaignsController.previewCampaign
+  );
+
+  app.post("/api/campaigns/:id/duplicate", requireAuth,
+    requirePermission(PERMISSIONS.CAMPAIGNS_CREATE),
+    campaignsController.duplicateCampaign
+  );
+
+  app.post("/api/campaigns/:id/rerun", requireAuth,
+    requirePermission(PERMISSIONS.CAMPAIGNS_CREATE),
+    campaignsController.rerunCampaign
+  );
+
   // Update campaign status
   app.patch("/api/campaigns/:id/status", requireAuth,
   requirePermission(PERMISSIONS.CAMPAIGNS_EDIT),

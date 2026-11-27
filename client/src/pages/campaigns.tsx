@@ -366,6 +366,28 @@ export default function Campaigns() {
       deleteCampaignMutation.mutate(id);
   };
 
+  const campaignAction = useMutation({
+    mutationFn: async (a: { id: string; action: "duplicate" | "rerun" | "start"; mode?: "all" | "failed" }) =>
+      (await apiRequest("POST", `/api/campaigns/${a.id}/${a.action}`, a.action === "rerun" ? { mode: a.mode } : {})).json(),
+    onSuccess: (_d, a) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.campaigns.all() });
+      toast({
+        title: a.action === "duplicate" ? "Campaign duplicated" : a.action === "start" ? "Campaign started" : "Re-run started",
+        description: a.action === "duplicate"
+          ? "A draft copy was added. Use Start now from its menu when ready."
+          : "Messages are being queued now.",
+      });
+    },
+    onError: (e: any) => toast({ title: "Couldn't do that", description: e?.message, variant: "destructive" }),
+  });
+  const handleDuplicate = (id: string) => campaignAction.mutate({ id, action: "duplicate" });
+  const handleStart = (id: string) => campaignAction.mutate({ id, action: "start" });
+  const handleRerun = (c: any, mode: "all" | "failed") => {
+    const who = mode === "failed" ? `${c.failedCount} failed number(s)` : `all ${c.recipientCount || ""} recipients`;
+    if (confirm(`Send "${c.name}" again to ${who}? A new campaign will be created.`))
+      campaignAction.mutate({ id: c.id, action: "rerun", mode });
+  };
+
   if (campaignsLoading)
     return (
       <div className="flex items-center justify-center h-96">
@@ -402,6 +424,9 @@ export default function Campaigns() {
               onViewCampaign={setSelectedCampaign}
               onUpdateStatus={handleUpdateStatus}
               onDeleteCampaign={handleDeleteCampaign}
+              onDuplicateCampaign={handleDuplicate}
+              onRerunCampaign={handleRerun}
+              onStartCampaign={handleStart}
             />
 
             {/* Pagination */}

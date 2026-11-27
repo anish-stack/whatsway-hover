@@ -23,11 +23,11 @@ import { addBulkMessagesToBullQueue, isBullQueueAvailable, ensureBullProducer } 
 import { triggerNotification, NOTIFICATION_EVENTS } from "../services/notification.service";
 import { db, dbRead } from "../db";
 import { channels, messageQueue, users } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { parseMessagingTier } from "../utils/messaging-tiers";
 import { ensureOtpButton, isAuthTemplate } from "../utils/auth-template";
 import { ensureFlowButton } from "../utils/flow-template";
-import { fetchLiveTemplate, mergeLiveTemplate, templateVarKeys, textParam } from "../utils/template-params";
+import { fetchLiveTemplate, mergeLiveTemplate, reconcileComponents, templateVarKeys, textParam } from "../utils/template-params";
 import {
   checkCampaignReadiness,
   checkCampaignRowReadiness,
@@ -158,6 +158,28 @@ const updateStatusSchema = z.object({
     errorMap: () => ({ message: "Status must be 'paused' or 'sending'. Use other endpoints for draft/active/completed transitions." }),
   }),
 });
+
+
+async function ownedCampaign(req: any, res: any) {
+  const c = await storage.getCampaign(req.params.id);
+  const owner = await readinessOwner(req.user);
+  if (c && owner) {
+    const ch = c.channelId ? await storage.getChannel(c.channelId) : undefined;
+    if (!ch || ch.createdBy !== owner) { res.status(404).json({ error: "Campaign not found" }); return null; }
+  }
+  if (!c) { res.status(404).json({ error: "Campaign not found" }); return null; }
+  return c;
+}
+
+function cloneCampaignFields(src: any, over: Record<string, any>) {
+  return {
+    channelId: src.channelId, name: src.name, description: src.description, campaignType: src.campaignType,
+    type: src.type, apiType: src.apiType, templateId: src.templateId, templateName: src.templateName,
+    templateLanguage: src.templateLanguage, variableMapping: src.variableMapping || {},
+    contactGroups: src.contactGroups || [], csvData: [], recipientCount: src.recipientCount || 0,
+    scheduledAt: null, ...over,
+  };
+}
 
 export const campaignsController = {
   // Get all campaigns
@@ -428,6 +450,18 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
     });
   }
 
+  // Check the template values against Meta before saving (blocks #132000-type failures)
+  if (data.campaignType !== "api" && data.templateId) {
+    const template = await storage.getTemplate(data.templateId);
+    if (template) {
+      const prepared = await prepareCampaignTemplate(channel, template, data.templateLanguage, "create");
+      const blocking = checkCampaignValues(prepared, data.variableMapping, template).filter((i) => i.level === "error");
+      if (blocking.length) {
+        return res.status(400).json({ error: blocking.map((i) => i.message).join(" "), issues: blocking, code: "TEMPLATE_VALUES_INVALID" });
+      }
+    }
+  }
+
   // Build campaign object (to save + for runner)
   const campaignDataToSave = {
     ...data,
@@ -544,12 +578,124 @@ getCampaignByUserID: asyncHandler(async (req, res) => {
     });
     if (!readiness.ready) return notReady(res, readiness);
 
+    if (campaign.campaignType !== "api" && campaign.templateId) {
+      const ch = await storage.getChannel(campaign.channelId!);
+      const tpl = await storage.getTemplate(campaign.templateId);
+      if (ch && tpl) {
+        const prepared = await prepareCampaignTemplate(ch, tpl, campaign.templateLanguage, campaign.id);
+        const blocking = checkCampaignValues(prepared, campaign.variableMapping, tpl).filter((i) => i.level === "error");
+        if (blocking.length) return res.status(400).json({ error: blocking.map((i) => i.message).join(" "), issues: blocking });
+      }
+    }
+
     await storage.updateCampaign(campaign.id, { status: "active" });
     res.json({ success: true, message: "Campaign queued for sending" });
 
     void startCampaignExecution(campaign.id).catch((err) => {
       console.error(`[Campaign ${campaign.id}] Error from detached startCampaignExecution:`, err);
       storage.updateCampaign(campaign.id, { status: "failed" }).catch(() => {});
+    });
+  }),
+
+  // Check the chosen values against the live Meta template; optionally send one test message.
+  previewCampaign: asyncHandler(async (req, res) => {
+    const body = z.object({
+      channelId: z.string(),
+      templateId: z.string(),
+      templateLanguage: z.string().optional().nullable(),
+      variableMapping: variableMappingSchema.optional(),
+      contactId: z.string().optional().nullable(),
+      testPhone: z.string().trim().max(20).optional().nullable(),
+    }).parse(req.body);
+    const owner = await readinessOwner(req.user);
+    const channel = await storage.getChannel(body.channelId);
+    if (!channel || (owner && channel.createdBy !== owner)) return res.status(404).json({ error: "WhatsApp number not found" });
+    const template = await storage.getTemplate(body.templateId);
+    if (!template || (template.channelId && template.channelId !== channel.id)) return res.status(404).json({ error: "Template not found" });
+
+    const prepared = await prepareCampaignTemplate(channel, template, body.templateLanguage, "preview");
+    const campaignLike = { variableMapping: body.variableMapping || {}, templateLanguage: body.templateLanguage };
+    let contact: any = null;
+    if (body.contactId) {
+      const [c] = await storage.getContactsByIds([body.contactId]);
+      if (c && c.channelId === channel.id) contact = c;
+    }
+    const testPhone = String(body.testPhone || "").replace(/\D/g, "");
+    contact = contact || { id: "preview", name: "Test User", phone: testPhone || "910000000000" };
+    const components = finalComponents(contact, campaignLike, template, prepared);
+    const issues = checkCampaignValues(prepared, body.variableMapping, template);
+    const result: any = {
+      ok: !issues.some((i) => i.level === "error"),
+      issues,
+      components,
+      preview: renderPreview(components, prepared.sendTemplate),
+      liveFromMeta: !!prepared.live,
+      language: body.templateLanguage || template.language,
+    };
+
+    if (testPhone) {
+      if (testPhone.length < 8 || testPhone.length > 15) return res.status(400).json({ error: "Enter the test number with country code, e.g. 919876543210" });
+      try {
+        const sent = await WhatsAppApiService.sendTemplateMessage(channel as any, testPhone, template.name, components, body.templateLanguage || template.language || "en_US", false);
+        result.test = { status: "sent", messageId: sent?.messages?.[0]?.id || null, to: testPhone };
+      } catch (e: any) {
+        result.ok = false;
+        result.test = { status: "failed", error: e?.message || "Send failed", code: e?.metaErrorCode || null, to: testPhone };
+      }
+    }
+    res.json(result);
+  }),
+
+  // Copy a campaign (same template, values and recipients) as a draft
+  duplicateCampaign: asyncHandler(async (req, res) => {
+    const src = await ownedCampaign(req, res);
+    if (!src) return;
+    const copy = await storage.createCampaign(cloneCampaignFields(src, {
+      name: String(req.body?.name || `${src.name} (copy)`).slice(0, 200),
+      status: "draft",
+      createdBy: req.user!.id,
+    }) as any);
+    res.json(copy);
+  }),
+
+  // Run a finished campaign again as a new campaign: everyone, or only the failed numbers
+  rerunCampaign: asyncHandler(async (req, res) => {
+    const { mode } = z.object({ mode: z.enum(["all", "failed"]).default("all") }).parse(req.body || {});
+    const src = await ownedCampaign(req, res);
+    if (!src) return;
+    if (src.campaignType === "api") return res.status(400).json({ error: "API campaigns can't be re-run. Duplicate it instead." });
+    if (["active", "queued", "sending"].includes(String(src.status))) return res.status(409).json({ error: "This campaign is still sending. Pause it or wait until it finishes." });
+
+    let contactIds: string[] = (src.contactGroups as string[]) || [];
+    if (mode === "failed") {
+      const failed = await db.select({ phone: messageQueue.recipientPhone }).from(messageQueue)
+        .where(and(eq(messageQueue.campaignId, src.id), eq(messageQueue.status, "failed")));
+      const phones = new Set(failed.map((f) => String(f.phone).replace(/\D/g, "")));
+      const all = await storage.getContactsByIds(contactIds);
+      contactIds = all.filter((c) => phones.has(String(c.phone).replace(/\D/g, ""))).map((c) => c.id);
+      if (!contactIds.length) return res.status(400).json({ error: "No failed numbers to send again." });
+    }
+
+    const channel = await storage.getChannel(src.channelId!);
+    const template = src.templateId ? await storage.getTemplate(src.templateId) : undefined;
+    if (!channel || !template) return res.status(400).json({ error: "The template or WhatsApp number of this campaign no longer exists." });
+    const readiness = await checkCampaignReadiness({ channelId: channel.id, templateId: template.id, recipientCount: null, ownerId: await readinessOwner(req.user) });
+    if (!readiness.ready) return notReady(res, readiness);
+    const prepared = await prepareCampaignTemplate(channel, template, src.templateLanguage, "rerun");
+    const blocking = checkCampaignValues(prepared, src.variableMapping, template).filter((i) => i.level === "error");
+    if (blocking.length) return res.status(400).json({ error: blocking.map((i) => i.message).join(" "), issues: blocking });
+
+    const created = await storage.createCampaign(cloneCampaignFields(src, {
+      name: `${src.name} (${mode === "failed" ? "failed re-run" : "re-run"})`.slice(0, 200),
+      status: "active",
+      createdBy: req.user!.id,
+      contactGroups: contactIds,
+      recipientCount: contactIds.length,
+    }) as any);
+    res.json(created);
+    void startCampaignExecution(created.id).catch((err) => {
+      console.error(`[Campaign ${created.id}] re-run start failed:`, err);
+      storage.updateCampaign(created.id, { status: "failed" }).catch(() => {});
     });
   }),
 
@@ -986,13 +1132,13 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
   // Authentication (OTP) templates also need the code on the OTP button.
   if (isAuthTemplate(template)) {
     const fixed = ensureOtpButton(components, template);
-    components.length = 0;
-    components.push(...fixed);
+    // copy first: the helpers may return the same array (clearing it would drop every parameter → #132000)
+    components.splice(0, components.length, ...fixed);
   }
   {
     const withFlow = ensureFlowButton(components, template);
-    components.length = 0;
-    components.push(...withFlow);
+    // copy first: the helpers may return the same array (clearing it would drop every parameter → #132000)
+    components.splice(0, components.length, ...withFlow);
   }
 
   if (carouselCards) {
@@ -1068,6 +1214,120 @@ function buildContactComponents(contact: Contact, campaign: any, template: any, 
   return components;
 }
 
+// ───────────── shared send preparation (queue population, preview, test send) ─────────────
+
+export interface PreparedTemplate { sendTemplate: any; live: any | null; hasLimitedTimeOffer: boolean }
+
+export async function prepareCampaignTemplate(channel: any, template: any, language?: string | null, tag = "preview"): Promise<PreparedTemplate> {
+  let live: any = null;
+  let sendTemplate: any = template;
+  try {
+    live = await fetchLiveTemplate({
+      apiVersion: WHATSAPP_API_VERSION, token: channel.accessToken!, templateId: template.whatsappTemplateId,
+      wabaId: channel.whatsappBusinessAccountId, name: template.name, language: language || template.language,
+    });
+    if (live) {
+      sendTemplate = mergeLiveTemplate(template, live);
+      const localBody = templateVarKeys(template.body).keys.join(",");
+      const liveBody = templateVarKeys(sendTemplate.body).keys.join(",");
+      if (localBody !== liveBody) console.warn(`[Campaign ${tag}] Stored template "${template.name}" differs from Meta (vars ${localBody || "none"} vs ${liveBody || "none"}) — using Meta's version`);
+    } else {
+      console.warn(`[Campaign ${tag}] Couldn't load "${template.name}" from Meta — using the stored copy`);
+    }
+  } catch (err) {
+    console.warn(`[Campaign ${tag}] Failed to load template from Meta:`, (err as Error).message);
+  }
+  const hasLimitedTimeOffer = !!live && (live.components || []).some((c: any) => c.type === "LIMITED_TIME_OFFER");
+  return { sendTemplate, live, hasLimitedTimeOffer };
+}
+
+/** Components for one contact, matched to Meta's live definition. */
+export function finalComponents(contact: any, campaign: any, template: any, prepared: PreparedTemplate): any[] {
+  let components = buildContactComponents(contact, campaign, prepared.sendTemplate, prepared.hasLimitedTimeOffer);
+  if (prepared.live) {
+    components = reconcileComponents(prepared.live, components, {
+      mediaId: campaign.variableMapping?.uploadedMediaId || template.mediaUrl,
+      expirationMs: campaign.variableMapping?.expirationTimeMs,
+    });
+  }
+  return components;
+}
+
+export interface CampaignIssue { level: "error" | "warning"; message: string }
+
+/** Checks the values chosen for a template before anything is sent. */
+export function checkCampaignValues(prepared: PreparedTemplate, mapping: any, template: any): CampaignIssue[] {
+  const issues: CampaignIssue[] = [];
+  const live = prepared.live;
+  const m = mapping || {};
+  const emptyVal = (v: any) => !v || (v.type === "custom" && !String(v.value || "").trim()) || (!v.type && !String(v.value || "").trim());
+  if (!live) {
+    issues.push({ level: "warning", message: "Couldn't load this template from Meta, so it was checked against the saved copy. Sync templates if it was edited on Meta." });
+  } else if (live.status && String(live.status).toUpperCase() !== "APPROVED") {
+    issues.push({ level: "error", message: `Template is ${String(live.status).toLowerCase()} on Meta, not approved.` });
+  }
+  const t = prepared.sendTemplate;
+  const comps: any[] = live?.components || [];
+  const header = comps.find((c) => c.type === "HEADER");
+  const fmt = String(header?.format || t.headerFormat || "").toUpperCase();
+  if (["IMAGE", "VIDEO", "DOCUMENT"].includes(fmt)) {
+    const id = m.uploadedMediaId || "";
+    const usable = id && !/[\/.]/.test(id);
+    if (!usable) {
+      const sample = header?.example?.header_handle?.[0];
+      if (sample) issues.push({ level: "warning", message: `No header ${fmt.toLowerCase()} uploaded — the template's sample ${fmt.toLowerCase()} will be sent.` });
+      else issues.push({ level: "error", message: `Upload a header ${fmt.toLowerCase()} for this template.` });
+    }
+  }
+  const hKeys = templateVarKeys(fmt === "TEXT" || !fmt ? (header?.text ?? t.header) : "").keys;
+  hKeys.forEach((k, i) => {
+    if (emptyVal(m.headerVars?.[k] ?? m.headerVars?.[String(i + 1)])) issues.push({ level: "warning", message: `Header {{${k}}} has no value — "-" will be sent.` });
+  });
+  templateVarKeys(t.body).keys.forEach((k, i) => {
+    if (emptyVal(m[k] ?? m[String(i + 1)])) issues.push({ level: "error", message: `Body variable {{${k}}} has no value.` });
+  });
+  const btns: any[] = comps.find((c) => c.type === "BUTTONS")?.buttons || (Array.isArray(t.buttons) ? t.buttons : []);
+  btns.forEach((b, idx) => {
+    const type = String(b.type || "").toUpperCase();
+    const val = m.buttons?.[String(idx)];
+    if (type === "URL" && /\{\{/.test(String(b.url || "")) && emptyVal(val)) {
+      issues.push({ level: "error", message: `Button "${b.text || "URL"}" needs the link value for {{1}}.` });
+    }
+    if (type === "COPY_CODE" && emptyVal(val)) {
+      const ex = Array.isArray(b.example) ? b.example[0] : b.example;
+      issues.push({ level: "warning", message: ex ? `No coupon code set — "${ex}" (template example) will be used.` : "Set the coupon code for the copy-code button." });
+    }
+  });
+  const lto = comps.find((c) => c.type === "LIMITED_TIME_OFFER");
+  if (lto && lto.limited_time_offer?.has_expiration !== false && !(Number(m.expirationTimeMs) > Date.now())) {
+    issues.push({ level: "warning", message: "Offer expiry not set (or in the past) — it will expire 24 hours after sending." });
+  }
+  return issues;
+}
+
+/** Text of the message a contact will receive (for the preview). */
+export function renderPreview(components: any[], template: any) {
+  const fill = (text: string, params: any[] = []) => {
+    const keys = templateVarKeys(text).keys;
+    let out = String(text || "");
+    keys.forEach((k, i) => {
+      const p = params.find((x) => x?.parameter_name === k) || params[i];
+      out = out.split(new RegExp(`\\{\\{\\s*${k}\\s*\\}\\}`, "g")).join(p?.text ?? `{{${k}}}`);
+    });
+    return out;
+  };
+  const header = components.find((c) => c.type === "header");
+  const body = components.find((c) => c.type === "body");
+  const hp = header?.parameters?.[0];
+  return {
+    headerMedia: hp && hp.type !== "text" ? { type: hp.type, ...(hp[hp.type] || {}) } : null,
+    headerText: template.headerFormat === "TEXT" || (!template.headerFormat && template.header) ? fill(template.header || "", header?.parameters) : "",
+    body: fill(template.body || "", body?.parameters),
+    buttons: components.filter((c) => c.type === "button").map((b) => ({ index: Number(b.index), type: b.sub_type, value: b.parameters?.[0]?.text || b.parameters?.[0]?.coupon_code || "" })),
+    hasOffer: components.some((c) => c.type === "limited_time_offer"),
+  };
+}
+
 export async function startCampaignExecution(
   campaignId: string,
   overrideCampaign?: any
@@ -1121,25 +1381,8 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
 
   // Use the template exactly as Meta has it (variables, header type, buttons) so every
   // message carries the right number of parameters.
-  let hasLimitedTimeOffer = false;
-  let sendTemplate: any = template;
-  try {
-    const live = await fetchLiveTemplate({
-      apiVersion: WHATSAPP_API_VERSION, token: channel.accessToken!, templateId: template.whatsappTemplateId,
-      wabaId: channel.whatsappBusinessAccountId, name: template.name, language: (campaign as any).templateLanguage || template.language,
-    });
-    if (live) {
-      hasLimitedTimeOffer = (live.components || []).some((c: any) => c.type === "LIMITED_TIME_OFFER");
-      sendTemplate = mergeLiveTemplate(template, live);
-      const localBody = templateVarKeys(template.body).keys.join(",");
-      const liveBody = templateVarKeys(sendTemplate.body).keys.join(",");
-      if (localBody !== liveBody) console.warn(`[Campaign ${campaignId}] Stored template "${template.name}" differs from Meta (vars ${localBody || "none"} vs ${liveBody || "none"}) — using Meta's version`);
-    } else {
-      console.warn(`[Campaign ${campaignId}] Couldn't load "${template.name}" from Meta — using the stored copy`);
-    }
-  } catch (err) {
-    console.warn(`[Campaign ${campaignId}] Failed to load template from Meta:`, err);
-  }
+  const prepared = await prepareCampaignTemplate(channel, template, (campaign as any).templateLanguage, campaignId);
+  const { sendTemplate, live: liveTemplate } = prepared;
 
   let contacts: Contact[] = [];
   if ((campaign.campaignType === "contacts" || campaign.campaignType === "csv") && campaign.contactGroups) {
@@ -1165,7 +1408,8 @@ async function _runCampaignQueuePopulation(campaignId: string, campaignData: any
     const chunk = contacts.slice(i, i + CHUNK_SIZE);
     const rows = chunk.map((contact) => {
       try {
-        const components = buildContactComponents(contact, campaign, sendTemplate, hasLimitedTimeOffer);
+        const components = finalComponents(contact, campaign, template, prepared);
+        if (i === 0 && contact === chunk[0]) console.log(`[Campaign ${campaignId}] components for "${template.name}" (live=${!!liveTemplate}):`, JSON.stringify(components));
         return {
           campaignId,
           channelId: channel.id,

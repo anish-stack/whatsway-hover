@@ -41,6 +41,8 @@ import {
   CheckCircle,
   MessageSquare,
   XCircle,
+  Copy,
+  RotateCcw,
 } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
@@ -69,6 +71,9 @@ interface CampaignsTableProps {
   onViewCampaign: (campaign: Campaign) => void;
   onUpdateStatus: (id: string, status: string) => void;
   onDeleteCampaign: (id: string) => void;
+  onDuplicateCampaign?: (id: string) => void;
+  onRerunCampaign?: (campaign: Campaign, mode: "all" | "failed") => void;
+  onStartCampaign?: (id: string) => void;
 }
 
 export function CampaignsTable({
@@ -76,6 +81,9 @@ export function CampaignsTable({
   onViewCampaign,
   onUpdateStatus,
   onDeleteCampaign,
+  onDuplicateCampaign,
+  onRerunCampaign,
+  onStartCampaign,
 }: CampaignsTableProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -248,6 +256,33 @@ export function CampaignsTable({
                             {t("campaigns.resume")}
                           </DropdownMenuItem>
                         )}
+                        {campaign.status === "draft" && onStartCampaign && (
+                          <DropdownMenuItem onClick={() => onStartCampaign(campaign.id)}>
+                            <Send className="mr-2 h-4 w-4" />
+                            Start now
+                          </DropdownMenuItem>
+                        )}
+                        {onDuplicateCampaign && (
+                          <DropdownMenuItem onClick={() => onDuplicateCampaign(campaign.id)}>
+                            <Copy className="mr-2 h-4 w-4" />
+                            Duplicate
+                          </DropdownMenuItem>
+                        )}
+                        {onRerunCampaign && (campaign as any).campaignType !== "api" &&
+                          ["completed", "failed", "paused", "cancelled"].includes(String(campaign.status)) && (
+                          <DropdownMenuItem onClick={() => onRerunCampaign(campaign, "all")}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Re-run to everyone
+                          </DropdownMenuItem>
+                        )}
+                        {onRerunCampaign && (campaign as any).campaignType !== "api" &&
+                          ["completed", "failed", "paused", "cancelled"].includes(String(campaign.status)) &&
+                          Number((campaign as any).failedCount || 0) > 0 && (
+                          <DropdownMenuItem onClick={() => onRerunCampaign(campaign, "failed")}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Re-run failed only ({(campaign as any).failedCount})
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem
                           onClick={() => onDeleteCampaign(campaign.id)}
                           className="text-destructive"
@@ -328,6 +363,33 @@ export function CampaignsTable({
                           >
                             <Play className="mr-2 h-4 w-4" />
                             Resume
+                          </DropdownMenuItem>
+                        )}
+                        {campaign.status === "draft" && onStartCampaign && (
+                          <DropdownMenuItem onClick={() => onStartCampaign(campaign.id)}>
+                            <Send className="mr-2 h-4 w-4" />
+                            Start now
+                          </DropdownMenuItem>
+                        )}
+                        {onDuplicateCampaign && (
+                          <DropdownMenuItem onClick={() => onDuplicateCampaign(campaign.id)}>
+                            <Copy className="mr-2 h-4 w-4" />
+                            Duplicate
+                          </DropdownMenuItem>
+                        )}
+                        {onRerunCampaign && (campaign as any).campaignType !== "api" &&
+                          ["completed", "failed", "paused", "cancelled"].includes(String(campaign.status)) && (
+                          <DropdownMenuItem onClick={() => onRerunCampaign(campaign, "all")}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Re-run to everyone
+                          </DropdownMenuItem>
+                        )}
+                        {onRerunCampaign && (campaign as any).campaignType !== "api" &&
+                          ["completed", "failed", "paused", "cancelled"].includes(String(campaign.status)) &&
+                          Number((campaign as any).failedCount || 0) > 0 && (
+                          <DropdownMenuItem onClick={() => onRerunCampaign(campaign, "failed")}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Re-run failed only ({(campaign as any).failedCount})
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuItem

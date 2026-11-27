@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
 import { Info, FileText, Clock, Eye, Check } from "lucide-react";
 import { TemplatePickerDialog, getTemplateButtons } from "@/components/shared/TemplatePickerDialog";
+import { TemplateCheckPanel, type CampaignCheckResult } from "./TemplateCheckPanel";
 
 interface CreateCampaignFormProps {
   onSubmit: (formData: any) => void;
@@ -182,6 +183,9 @@ export function CreateCampaignForm({
   };
 
   const { user } = useAuth();
+  const [checkResult, setCheckResult] = useState<CampaignCheckResult | null>(null);
+  const currentMapping = buildVariableMapping();
+  const checkBlocked = !!checkResult && checkResult.issues.some((i) => i.level === "error");
 
   return (
     <form onSubmit={handleSubmit(onValid)} className="space-y-5 mt-4" noValidate>
@@ -286,6 +290,17 @@ export function CreateCampaignForm({
         </CardContent>
       </Card>
 
+      {selectedTemplate && (
+        <TemplateCheckPanel
+          channelId={channelId}
+          templateId={selectedTemplate.id}
+          language={selectedTemplate.language}
+          mapping={currentMapping}
+          signature={JSON.stringify(currentMapping)}
+          onResult={setCheckResult}
+        />
+      )}
+
       {/* {messagingLimit != null && (
         <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
           <Info className="h-4 w-4 mt-0.5 shrink-0" />
@@ -338,7 +353,11 @@ export function CreateCampaignForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={user?.username === 'demouser' ? true : isCreating || !selectedTemplate}>
+        <Button
+          type="submit"
+          title={checkBlocked ? "Fix the values shown in “Check before sending” first" : undefined}
+          disabled={user?.username === 'demouser' ? true : isCreating || !selectedTemplate || checkBlocked}
+        >
           {scheduledTime ? "Schedule Campaign" : "Start Campaign"}
         </Button>
       </div>

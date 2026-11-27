@@ -65,3 +65,99 @@ export async function fetchLiveTemplate(opts: { apiVersion: string; wabaId?: str
   const list: any[] = Array.isArray(j?.data) ? j.data.filter((t: any) => t.name === opts.name) : [];
   return list.find((t) => !opts.language || t.language === opts.language) || list[0] || null;
 }
+
+/**
+ * Last check before a template message is queued: make the components match the
+ * live Meta definition exactly (one header param for media/text vars, LTO only when
+ * the offer has an expiry, body count = distinct vars, button params only where the
+ * button is dynamic). Anything Meta doesn't expect is dropped; anything missing is
+ * filled ("-", sample media, example coupon) so we never hit #132000.
+ */
+export function reconcileComponents(meta: any, components: any[], opts: { mediaId?: string | null; expirationMs?: number | null } = {}): any[] {
+  const live: any[] = Array.isArray(meta?.components) ? meta.components : [];
+  if (!live.length) return components;
+  if (live.some((c) => c.type === "CAROUSEL")) return components; // carousel built separately
+  const named = meta.parameter_format === "NAMED";
+  const find = (type: string) => components.find((c) => String(c.type).toLowerCase() === type);
+  const out: any[] = [];
+
+  const header = live.find((c) => c.type === "HEADER");
+  if (header) {
+    const fmt = String(header.format || "TEXT").toUpperCase();
+    const given = find("header");
+    if (fmt === "TEXT") {
+      const keys = templateVarKeys(header.text).keys;
+      if (keys.length) {
+        const params = keys.map((k, i) => {
+          const p = given?.parameters?.[i];
+          return textParam(k, p?.text, named);
+        });
+        out.push({ type: "header", parameters: params });
+      }
+    } else if (["IMAGE", "VIDEO", "DOCUMENT"].includes(fmt)) {
+      const kind = fmt.toLowerCase();
+      const p = given?.parameters?.[0];
+      let media = p?.[kind] || p?.image || p?.video || p?.document;
+      // an "id" that is really a URL/path is not a Meta media id
+      if (media?.id && /^https?:\/\//.test(String(media.id))) media = { link: media.id };
+      else if (media?.id && /[\/.]/.test(String(media.id))) media = undefined;
+      if (!media) {
+        if (opts.mediaId && /^https?:\/\//.test(opts.mediaId)) media = { link: opts.mediaId };
+        else if (opts.mediaId && !/[\/.]/.test(opts.mediaId)) media = { id: opts.mediaId };
+        if (!media) {
+          const sample = header.example?.header_handle?.[0] || header.example?.header_url?.[0];
+          if (sample) media = { link: sample };
+        }
+      }
+      if (media) out.push({ type: "header", parameters: [{ type: kind, [kind]: media }] });
+    } else if (given) {
+      out.push(given); // LOCATION etc.
+    }
+  }
+
+  const lto = live.find((c) => c.type === "LIMITED_TIME_OFFER");
+  if (lto && lto.limited_time_offer?.has_expiration !== false) {
+    const exp = Number(opts.expirationMs) > Date.now() ? Number(opts.expirationMs) : Date.now() + 24 * 3600_000;
+    out.push({ type: "limited_time_offer", parameters: [{ type: "limited_time_offer", limited_time_offer: { expiration_time_ms: exp } }] });
+  }
+
+  const body = live.find((c) => c.type === "BODY");
+  const bodyKeys = templateVarKeys(body?.text).keys;
+  if (bodyKeys.length) {
+    const given = find("body");
+    out.push({
+      type: "body",
+      parameters: bodyKeys.map((k, i) => {
+        const p = given?.parameters?.find((x: any) => x?.parameter_name === k) || given?.parameters?.[i];
+        return textParam(k, p?.text, named);
+      }),
+    });
+  }
+
+  const btns: any[] = live.find((c) => c.type === "BUTTONS")?.buttons || [];
+  const givenBtns = components.filter((c) => String(c.type).toLowerCase() === "button");
+  btns.forEach((b, index) => {
+    const t = String(b.type || "").toUpperCase();
+    const given = givenBtns.find((c) => String(c.index) === String(index));
+    if (t === "URL" && /\{\{/.test(String(b.url || ""))) {
+      const v = given?.parameters?.[0]?.text;
+      const ex = Array.isArray(b.example) ? b.example[0] : b.example;
+      const sample = typeof ex === "string" && b.url ? ex.replace(String(b.url).split("{{")[0], "") : "";
+      out.push({ type: "button", sub_type: "url", index: String(index), parameters: [{ type: "text", text: String(v || "").trim() || sample || "-" }] });
+    } else if (t === "COPY_CODE") {
+      const v = given?.parameters?.[0]?.coupon_code;
+      const ex = Array.isArray(b.example) ? b.example[0] : b.example;
+      out.push({ type: "button", sub_type: "copy_code", index: String(index), parameters: [{ type: "coupon_code", coupon_code: String(v || ex || "OFFER").slice(0, 15) }] });
+    } else if (t === "FLOW" || t === "OTP" || t === "CATALOG" || t === "MPM") {
+      if (given) out.push(given);
+    }
+  });
+  return out;
+}
+
+/** Meta's error message plus its detail line (e.g. "body: number of localizable_params (2) does not match… (1)"). */
+export function metaErrorText(err: any): string {
+  const msg = err?.message || "Send failed";
+  const det = err?.error_data?.details || err?.metaErrorDetails;
+  return det && !String(msg).includes(det) ? `${msg} — ${det}` : msg;
+}

@@ -522,8 +522,8 @@ if (type === "template") {
     // OTP button, otherwise it fails with (#131008) Required parameter is missing.
     try {
       const withButton = ensureOtpButton(components, templateRecord, buttonParameters?.[0]);
-      components.length = 0;
-      components.push(...withButton);
+      // copy first: the helpers may return the same array (clearing it would drop every parameter → #132000)
+      components.splice(0, components.length, ...withButton);
     } catch (e: any) {
       return res.status(e.status || 400).json({ success: false, message: e.message });
     }
@@ -569,8 +569,8 @@ if (type === "template") {
   // FLOW buttons get a flow_token so replies can be traced.
   {
     const withFlow = ensureFlowButton(components, templateRecord);
-    components.length = 0;
-    components.push(...withFlow);
+    // copy first: the helpers may return the same array (clearing it would drop every parameter → #132000)
+    components.splice(0, components.length, ...withFlow);
   }
 
   payload = {
