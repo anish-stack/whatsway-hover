@@ -64,15 +64,25 @@ export function registerInstagramRoutes(app: Express) {
     ig.processWebhook(req.body).catch((e) => console.error("[Instagram] webhook", e));
   });
 
-  // ── connect ──
-  app.get("/api/instagram/connect", requireAuth, wrap(async (req, res) => {
-    // at the plan limit you can still reconnect an expired account, not add a new one
-    if ((await remaining(owner(req), "instagramAccounts")) <= 0) {
-      const needsReconnect = (await ig.listAccounts(owner(req))).some((a: any) => a.status !== "active");
-      if (!needsReconnect) await assertPlan(owner(req), "instagramAccounts");
-    }
-    res.json({ url: await ig.authorizeUrl(owner(req), await redirectUri(req)) });
-  }));
+// ── connect ──
+app.get("/api/instagram/connect", requireAuth, wrap(async (req, res) => {
+  console.log("[Instagram] Connect request received");
+
+  if ((await remaining(owner(req), "instagramAccounts")) <= 0) {
+    const needsReconnect = (await ig.listAccounts(owner(req)))
+      .some((a: any) => a.status !== "active");
+
+    if (!needsReconnect) await assertPlan(owner(req), "instagramAccounts");
+  }
+
+  const redirect = await redirectUri(req);
+  console.log("[Instagram] Redirect URI:", redirect);
+
+  const url = await ig.authorizeUrl(owner(req), redirect);
+  console.log("[Instagram] Generated OAuth URL:", url);
+
+  res.json({ url });
+}));
 
   app.get("/api/instagram/oauth/callback", async (req, res) => {
     const back = (q: string) => res.redirect(`/instagram?${q}`);
