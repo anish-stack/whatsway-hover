@@ -55,11 +55,15 @@ import { CmsOverride, CmsOrApp } from "@/pages/CmsPage";
 import QueuesPage from "@/pages/admin/queues";
 import PlatformWhatsAppPage from "@/pages/admin/platform-whatsapp";
 import SocialAppsPage from "@/pages/admin/social-apps";
+import LandingPagesPage from "@/pages/admin/landing-pages";
+import LandingEditorPage from "@/pages/admin/landing-editor";
 import GrowthPage from "@/pages/growth";
 import InstagramPage from "@/pages/instagram";
 import AdsManagerPage from "@/pages/ads-manager";
 import WhatsAppProfilePage from "@/pages/whatsapp-profile";
 import CannedMessagesPage from "@/pages/canned-messages";
+import ContentPlannerPage from "@/pages/content-planner";
+import ContentPlannerPostPage from "@/pages/content-planner-post";
 import MetaRateCardsPage from "@/pages/admin/meta-rate-cards";
 import AdminWhatsAppAccountsPage from "@/pages/admin/whatsapp-accounts";
 import AdminMetaBillingPage from "@/pages/admin/meta-billing";
@@ -179,11 +183,16 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/admin/queues": "",
   "/admin/platform-whatsapp": "",
   "/admin/social-apps": "",
+  "/admin/landing-pages": "website.edit",
+  "/admin/landing-pages/:id": "website.edit",
   "/growth": "",
   "/instagram": "",
   "/ads-manager": "",
   "/whatsapp-profile": "",
   "/canned-messages": "",
+  "/content-planner": "",
+  "/content-planner/new": "",
+  "/content-planner/post/:id": "",
   "/inbox": "inbox.view",
   "/plans": "",
   "/plan-upgrade": "",
@@ -240,6 +249,8 @@ const DYNAMIC_ROUTE_PATTERNS: Array<{ pattern: RegExp; key: string }> = [
   { pattern: /^\/whatsapp-flows\/[^/]+$/, key: "/whatsapp-flows" },
   { pattern: /^\/reseller\/customers\/[^/]+$/, key: "/reseller/customers/:id" },
   { pattern: /^\/admin\/resellers\/[^/]+$/, key: "/admin/resellers/:id" },
+  { pattern: /^\/content-planner\/post\/[^/]+$/, key: "/content-planner/post/:id" },
+  { pattern: /^\/admin\/landing-pages\/[^/]+$/, key: "/admin/landing-pages/:id" },
 ];
 
 function resolveRouteKey(location: string): string | undefined {
@@ -342,6 +353,10 @@ function ProtectedRoutes() {
       if (!allowed) setLocation("/reseller");
     } else if (path === "/reseller" || path.startsWith("/reseller/") || path === "/partner") {
       setLocation("/dashboard");
+    } else if (user.role === "team" && path === "/dashboard") {
+      // website-editor accounts only have the landing page builder
+      const perms = Array.isArray(user.permissions) ? user.permissions : Object.keys(user.permissions || {}).filter((k) => (user.permissions as any)[k]);
+      if (perms.length && perms.every((p: string) => p.startsWith("website"))) setLocation("/admin/landing-pages");
     }
   }, [location, isAuthenticated, user, setLocation]);
 
@@ -436,6 +451,12 @@ function ProtectedRoutes() {
           <Route path="/admin/platform-whatsapp">
             <PermissionRoute component={PlatformWhatsAppPage} requiredRoles={["superadmin"]} />
           </Route>
+          <Route path="/admin/landing-pages/:id">
+            <PermissionRoute component={LandingEditorPage} requiredRoles={["superadmin", "team"]} requiredPermission="website.edit" />
+          </Route>
+          <Route path="/admin/landing-pages">
+            <PermissionRoute component={LandingPagesPage} requiredRoles={["superadmin", "team"]} requiredPermission="website.edit" />
+          </Route>
           <Route path="/admin/social-apps">
             <PermissionRoute component={SocialAppsPage} requiredRoles={["superadmin"]} />
           </Route>
@@ -447,6 +468,15 @@ function ProtectedRoutes() {
           </Route>
           <Route path="/whatsapp-profile">
             <PermissionRoute component={WhatsAppProfilePage} />
+          </Route>
+          <Route path="/content-planner/new">
+            <PermissionRoute component={ContentPlannerPostPage} />
+          </Route>
+          <Route path="/content-planner/post/:id">
+            <PermissionRoute component={ContentPlannerPostPage} />
+          </Route>
+          <Route path="/content-planner">
+            <PermissionRoute component={ContentPlannerPage} />
           </Route>
           <Route path="/canned-messages">
             <PermissionRoute component={CannedMessagesPage} />

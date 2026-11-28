@@ -70,7 +70,9 @@ import { registerInstagramRoutes } from "./instagram.routes";
 import { registerAdsRoutes } from "./ads.routes";
 import { registerSocialAdminRoutes } from "./social-admin.routes";
 import { registerCannedRoutes } from "./canned.routes";
+import { registerSocialRoutes } from "./social.routes";
 import { registerWhatsAppProfileRoutes } from "./whatsapp-profile.routes";
+import { registerLandingRoutes } from "./landing.routes";
 
 export async function registerRoutes(app: Express, existingServer?: Server): Promise<Server> {
   // Auth routes (no authentication required)
@@ -102,7 +104,9 @@ export async function registerRoutes(app: Express, existingServer?: Server): Pro
   registerAdsRoutes(app);
   registerSocialAdminRoutes(app);
   registerCannedRoutes(app);
+  registerSocialRoutes(app);
   registerWhatsAppProfileRoutes(app);
+  registerLandingRoutes(app);
   registerDemoRequestRoutes(app);
   registerCmsRoutes(app);
   registerTemplateRoutes(app);

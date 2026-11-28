@@ -74,7 +74,7 @@ async function markError(acc: IgAccount, e: unknown) {
   }
 }
 
-async function call<T = any>(acc: IgAccount, path: string, init?: Parameters<typeof igFetch>[2]): Promise<T> {
+export async function call<T = any>(acc: IgAccount, path: string, init?: Parameters<typeof igFetch>[2]): Promise<T> {
   try { return await igFetch(path, tokenOf(acc), init); } catch (e) { await markError(acc, e); throw e; }
 }
 
@@ -130,6 +130,11 @@ export async function completeOAuth(code: string, state: string, redirectUri: st
 
   const [existing] = await db.select().from(igAccounts).where(eq(igAccounts.igUserId, igUserId)).limit(1);
   if (existing && existing.ownerId !== ownerId) throw new IgError(`@${me.username} is already connected to another HoverChat account.`, 409);
+  if (!existing) {
+    const { allowanceFor } = await import("../plan-gate");
+    const a = await allowanceFor(ownerId, "instagramAccounts");
+    if (!a.allowed) throw new IgError(a.error || "Your plan doesn't allow more Instagram accounts.", 403);
+  }
   const values = {
     ownerId, igUserId, appScopedId: String(me.id || ""), username: me.username, name: me.name || null,
     profilePic: me.profile_picture_url || null, accountType: me.account_type || null,

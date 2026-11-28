@@ -686,6 +686,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       {plan.permissions.automation} automation
                     </span>
                   </li>
+                  {[
+                    ["instagramAccounts", "Instagram accounts"], ["facebookPages", "Facebook Pages"],
+                  ].filter(([k]) => { const v = String((plan.permissions as any)[k] ?? "").trim(); return v && v !== "0"; }).map(([k, label]) => (
+                    <li key={k} className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+                      <span className="truncate">{(plan.permissions as any)[k]} {label}</span>
+                    </li>
+                  ))}
                 </>
               )}
             </ul>

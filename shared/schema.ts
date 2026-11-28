@@ -628,6 +628,11 @@ export const plans = pgTable("plans", {
     apiRequestsPerMonth?: string;
     apiRateLimitPerMinute?: string;
     teamMembers?: string; // dashboard logins for the client's team ("unlimited", "0" = none)
+    instagramAccounts?: string; // connected IG accounts ("unlimited", "0" = none)
+    facebookPages?: string; // connected FB Pages
+    contentPlanner?: string; // "yes" | "no"
+    instagramAutomation?: string; // "yes" | "no"
+    adsManager?: string; // "yes" | "no"
   }>(),
 
   // Features (Array of objects)
@@ -1330,6 +1335,9 @@ export const PERMISSIONS = {
   AUTOMATIONS_CREATE: "automations:create",
   AUTOMATIONS_EDIT: "automations:edit",
   AUTOMATIONS_DELETE: "automations:delete",
+
+  // Website / landing page builder (platform team only)
+  WEBSITE_EDIT: "website:edit",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -2621,6 +2629,15 @@ export const cmsPages = pgTable(
     canonicalUrl: varchar("canonical_url", { length: 500 }),
     noindex: boolean("noindex").notNull().default(false),
     schemaJson: text("schema_json"),
+    // Landing page builder
+    editor: varchar("editor", { length: 12 }).notNull().default("html"), // html | builder
+    blocks: jsonb("blocks").notNull().default(sql`'[]'::jsonb`),
+    category: varchar("category", { length: 40 }),
+    settings: jsonb("settings").notNull().default(sql`'{}'::jsonb`),
+    views: integer("views").notNull().default(0),
+    leads: integer("leads").notNull().default(0),
+    createdBy: varchar("created_by"),
+    updatedBy: varchar("updated_by"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -2984,3 +3001,105 @@ export const awayMessageLog = pgTable(
   },
   (t) => ({ awayLogUq: uniqueIndex("away_message_log_uq").on(t.channelId, t.phone) })
 );
+
+
+// ───────────────────────── Facebook Pages + social content planner ─────────────────────────
+export const fbPages = pgTable(
+  "fb_pages",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(),
+    pageId: varchar("page_id", { length: 40 }).notNull(),
+    name: varchar("name", { length: 160 }).notNull(),
+    category: varchar("category", { length: 120 }),
+    picture: text("picture"),
+    followers: integer("followers"),
+    accessTokenEnc: text("access_token_enc").notNull(), // page token (does not expire when issued from a long-lived user token)
+    fbUserId: varchar("fb_user_id", { length: 40 }),
+    status: varchar("status", { length: 16 }).notNull().default("active"), // active | expired
+    lastError: text("last_error"),
+    connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ fbPagesOwnerPageUq: uniqueIndex("fb_pages_owner_page_uq").on(t.ownerId, t.pageId) })
+);
+export type FbPage = typeof fbPages.$inferSelect;
+
+export interface SocialMedia { url: string; kind: "image" | "video"; mime?: string; size?: number; width?: number; height?: number; duration?: number; thumbUrl?: string; name?: string }
+
+export const socialPosts = pgTable(
+  "social_posts",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    ownerId: varchar("owner_id").notNull(),
+    createdBy: varchar("created_by").notNull(),
+    mode: varchar("mode", { length: 12 }).notNull().default("instagram"), // instagram | facebook | both
+    postType: varchar("post_type", { length: 12 }).notNull().default("image"), // image | carousel | video | reel | story | text
+    media: jsonb("media").$type<SocialMedia[]>().notNull().default([]),
+    igCaption: text("ig_caption"),
+    igHashtags: text("ig_hashtags"),
+    fbCaption: text("fb_caption"),
+    fbHashtags: text("fb_hashtags"),
+    fbLink: text("fb_link"),
+    firstComment: text("first_comment"), // Instagram: posted as the first comment (good for hashtags)
+    notes: text("notes"),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }), // default time for all destinations
+    status: varchar("status", { length: 12 }).notNull().default("draft"), // draft | scheduled | publishing | published | partial | failed
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ socialPostsOwnerIdx: index("social_posts_owner_idx").on(t.ownerId, t.scheduledAt) })
+);
+
+export const socialPostTargets = pgTable(
+  "social_post_targets",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    postId: varchar("post_id").notNull().references(() => socialPosts.id, { onDelete: "cascade" }),
+    ownerId: varchar("owner_id").notNull(),
+    platform: varchar("platform", { length: 12 }).notNull(), // instagram | facebook
+    accountId: varchar("account_id").notNull(), // ig_accounts.id | fb_pages.id
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    status: varchar("status", { length: 12 }).notNull().default("draft"), // draft | scheduled | publishing | published | failed | cancelled
+    stage: jsonb("stage"), // in-progress publishing state (IG container ids…)
+    attempts: integer("attempts").notNull().default(0),
+    lastError: text("last_error"),
+    remoteId: varchar("remote_id", { length: 80 }),
+    permalink: text("permalink"),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    socialTargetsPostIdx: index("social_post_targets_post_idx").on(t.postId),
+    socialTargetsDueIdx: index("social_post_targets_due_idx").on(t.status, t.scheduledAt),
+    socialTargetsOwnerIdx: index("social_post_targets_owner_idx").on(t.ownerId, t.scheduledAt),
+  })
+);
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type SocialPostTarget = typeof socialPostTargets.$inferSelect;
+
+
+// ───────────────────────── Landing page leads ─────────────────────────
+export const landingLeads = pgTable(
+  "landing_leads",
+  {
+    id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+    pageId: varchar("page_id").references(() => cmsPages.id, { onDelete: "set null" }),
+    slug: varchar("slug", { length: 120 }),
+    name: varchar("name", { length: 120 }).notNull(),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    email: varchar("email", { length: 160 }),
+    company: varchar("company", { length: 160 }),
+    city: varchar("city", { length: 80 }),
+    service: varchar("service", { length: 120 }),
+    message: text("message"),
+    utm: jsonb("utm"),
+    status: varchar("status", { length: 16 }).notNull().default("new"), // new | contacted | won | lost
+    ip: varchar("ip", { length: 64 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ landingLeadsPageIdx: index("landing_leads_page_idx").on(t.pageId, t.createdAt) })
+);
+export type LandingLead = typeof landingLeads.$inferSelect;

@@ -82,6 +82,8 @@ function isExemptPath(path: string): boolean {
   if (path === "/api/auth/request-otp") return true;
   if (path === "/api/auth/verify-otp") return true;
   if (path === "/api/csrf-token") return true;
+  // public landing page lead form + view counter (no session, rate-limited, honeypot)
+  if (/^\/api\/landing\/[a-z0-9-]+\/(lead|view)$/.test(path)) return true;
   // NOTE: /api/brand-settings is NOT exempted — superadmin PUT/POST there
   // is session-authenticated and state-changing, so it must carry CSRF.
   if (path === "/api/version") return true;

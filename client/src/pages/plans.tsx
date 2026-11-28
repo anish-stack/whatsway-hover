@@ -428,6 +428,11 @@ export default function Plans() {
         apiRequestsPerMonth: "",
         apiRateLimitPerMinute: "",
         teamMembers: "",
+        instagramAccounts: "",
+        facebookPages: "",
+        contentPlanner: "",
+        instagramAutomation: "",
+        adsManager: "",
         ...(plan.permissions || {}),
       },
       features: (plan.features || []).map((f: any) => {
@@ -459,7 +464,7 @@ export default function Plans() {
       monthlyPrice: "0",
       annualPrice: "0",
       multiCurrencyPrices: {},
-      permissions: { channel: "", contacts: "", automation: "", campaign: "", apiRequestsPerMonth: "", apiRateLimitPerMinute: "", teamMembers: "" },
+      permissions: { channel: "", contacts: "", automation: "", campaign: "", apiRequestsPerMonth: "", apiRateLimitPerMinute: "", teamMembers: "", instagramAccounts: "", facebookPages: "", contentPlanner: "", instagramAutomation: "", adsManager: "" },
       features: [],
     });
     setEditingPlan(null);
@@ -1086,6 +1091,43 @@ export default function Plans() {
                     </div>
                   </div>
 
+                  {/* Instagram, Facebook & Ads */}
+                  <div className="rounded-lg border border-border p-4 space-y-4">
+                    <div>
+                      <h4 className="text-sm font-semibold">Instagram, Facebook & Ads</h4>
+                      <p className="text-xs text-muted-foreground">Numbers cap how many can be connected ("unlimited", 0 = not included). Empty on older plans = 1 account / 1 Page and all features on.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {([
+                        ["instagramAccounts", "Instagram accounts", "e.g. 1, 3, unlimited, 0"],
+                        ["facebookPages", "Facebook Pages", "e.g. 1, 5, unlimited, 0"],
+                      ] as const).map(([key, label, ph]) => (
+                        <div key={key}>
+                          <label htmlFor={`perm-${key}`} className="block text-sm font-medium text-muted-foreground mb-2">{label}</label>
+                          <input id={`perm-${key}`} type="text" value={(formData.permissions as any)[key] || ""} placeholder={ph}
+                            onChange={(e) => setFormData({ ...formData, permissions: { ...formData.permissions, [key]: e.target.value.trim() } as any })}
+                            className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                        </div>
+                      ))}
+                      {([
+                        ["contentPlanner", "Content Planner (schedule IG/FB posts)"],
+                        ["instagramAutomation", "Instagram comment → DM automation"],
+                        ["adsManager", "AI Ads Manager"],
+                      ] as const).map(([key, label]) => (
+                        <div key={key}>
+                          <label htmlFor={`perm-${key}`} className="block text-sm font-medium text-muted-foreground mb-2">{label}</label>
+                          <select id={`perm-${key}`} value={(formData.permissions as any)[key] || ""}
+                            onChange={(e) => setFormData({ ...formData, permissions: { ...formData.permissions, [key]: e.target.value } as any })}
+                            className="w-full px-4 py-2 border border-border rounded-md bg-background focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">Default (included)</option>
+                            <option value="yes">Included</option>
+                            <option value="no">Not included</option>
+                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Popular Toggle */}
                   <div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -1304,6 +1346,11 @@ export default function Plans() {
                                 {Object.entries(plan.permissions)
                                   .filter(([_, value]) => value && String(value).trim() !== "")
                                   .map(([key, value]) => {
+                                    const onOff: Record<string, string> = { contentPlanner: "Content Planner", instagramAutomation: "Instagram comment → DM", adsManager: "AI Ads Manager" };
+                                    if (onOff[key]) {
+                                      const on = /^(yes|true|1|on|unlimited)$/i.test(String(value));
+                                      return <div key={key} className={`text-xs ${on ? "text-muted-foreground" : "text-muted-foreground/60 line-through"}`}>{on ? "✓" : "✗"} {onOff[key]}</div>;
+                                    }
                                     const labelMap: Record<string, string> = {
                                       channel: t("plans.form.permissions.channels"),
                                       contacts: t("plans.form.permissions.contacts"),
@@ -1312,6 +1359,8 @@ export default function Plans() {
                                       apiRequestsPerMonth: t("plans.form.permissions.apiRequestsPerMonth"),
                                       apiRateLimitPerMinute: t("plans.form.permissions.apiRateLimitPerMinute"),
                                       teamMembers: "Team members",
+                                      instagramAccounts: "Instagram accounts",
+                                      facebookPages: "Facebook Pages",
                                     };
                                     return (
                                       <div

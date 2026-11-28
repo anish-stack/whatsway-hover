@@ -11,6 +11,7 @@
  * ============================================================
  */
 
+import { cmsSeoMiddleware } from "./cms-seo";
 import express, { type Express } from "express";
 import fs from "fs";
 import { createServer as createViteServer, createLogger } from "vite";
@@ -112,6 +113,9 @@ h1{color:#e53e3e;margin-bottom:.5rem;}p{color:#555;margin:.5rem 0;}code{backgrou
   }
 
   app.use(express.static(distPath));
+
+  // published CMS / landing pages get their SEO tags in the HTML itself
+  app.use(cmsSeoMiddleware(distPath));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {

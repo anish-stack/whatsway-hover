@@ -13,8 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, apiRequestFormData } from "@/lib/queryClient";
+import { PlannerCalendar } from "@/components/social/PlannerCalendar";
 import {
-  Bot, Eye, EyeOff, Film, Heart, ImageIcon, Instagram, Loader2, MessageCircle, Pencil, Plus, RefreshCw, Reply, Send, Trash2, Unplug, Upload, Zap,
+  Bot, CalendarDays, Eye, EyeOff, Film, Heart, ImageIcon, Instagram, Loader2, MessageCircle, Pencil, Plus, RefreshCw, Reply, Send, Trash2, Unplug, Upload, Zap,
 } from "lucide-react";
 
 const j = async (method: string, url: string, body?: any) => (await apiRequest(method, url, body)).json();
@@ -140,13 +141,18 @@ function AccountView({ acc, onChange, onReconnect }: { acc: any; onChange: () =>
           </div>
         </CardContent>
       </Card>
-      <Tabs defaultValue="automations">
+      <Tabs defaultValue="calendar">
         <TabsList>
+          <TabsTrigger value="calendar"><CalendarDays className="mr-1.5 h-4 w-4" />Content calendar</TabsTrigger>
           <TabsTrigger value="automations"><Zap className="mr-1.5 h-4 w-4" />Comment → DM</TabsTrigger>
           <TabsTrigger value="posts"><Film className="mr-1.5 h-4 w-4" />Posts & reels</TabsTrigger>
           <TabsTrigger value="inbox"><MessageCircle className="mr-1.5 h-4 w-4" />DMs</TabsTrigger>
           <TabsTrigger value="publish"><Upload className="mr-1.5 h-4 w-4" />Publish</TabsTrigger>
         </TabsList>
+        <TabsContent value="calendar" className="mt-4">
+          <PlannerCalendar platform="instagram" account={{ platform: "instagram", id: acc.id }} accountFilter={acc.id} />
+          <p className="mt-3 text-xs text-muted-foreground">Showing posts for @{acc.username}. See every account and Facebook Pages together in <a href="/content-planner" className="text-[var(--brand)] underline">Content Planner</a>.</p>
+        </TabsContent>
         <TabsContent value="automations" className="mt-4"><Automations acc={acc} /></TabsContent>
         <TabsContent value="posts" className="mt-4"><Posts acc={acc} /></TabsContent>
         <TabsContent value="inbox" className="mt-4"><Inbox acc={acc} /></TabsContent>

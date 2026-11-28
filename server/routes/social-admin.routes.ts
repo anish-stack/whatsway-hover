@@ -23,6 +23,7 @@ export function registerSocialAdminRoutes(app: Express) {
         igRedirect: `${base}/api/instagram/oauth/callback`,
         igWebhook: `${base}/api/webhooks/instagram`,
         adsRedirect: `${base}/api/ads/oauth/callback`,
+        pagesRedirect: `${base}/api/social/facebook/oauth/callback`,
         shortLinks: `${base}/l/`,
       },
     });

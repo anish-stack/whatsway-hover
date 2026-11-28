@@ -157,7 +157,7 @@ import { Request, Response, NextFunction } from "express";
 import { diployLogger, HTTP_STATUS, DIPLOY_BRAND } from "@diploy/core";
 import { and, eq, desc, sql } from "drizzle-orm";
 import { db } from "server/db";
-import { plans, subscriptions, channels, automations, campaigns, contacts, sites, users } from "@shared/schema";
+import { plans, subscriptions, channels, automations, campaigns, contacts, sites, users, igAccounts, fbPages } from "@shared/schema";
 
 export const requireSubscription = (
     requiredPermission: "channel" | "contacts" | "automation" | "campaign"
@@ -219,7 +219,26 @@ export const requireSubscription = (
 };
 
 
-export type SubscriptionFeature = "channel" | "contacts" | "automation" | "campaign" | "teamMembers";
+export type SubscriptionFeature =
+    | "channel" | "contacts" | "automation" | "campaign" | "teamMembers"
+    | "instagramAccounts" | "facebookPages" // counted
+    | "adsManager" | "contentPlanner" | "instagramAutomation"; // on/off
+
+/** Plans saved before these limits existed get these values (env overrides). */
+export const FEATURE_DEFAULTS: Partial<Record<SubscriptionFeature, () => string>> = {
+    teamMembers: () => process.env.DEFAULT_TEAM_MEMBERS ?? "2",
+    instagramAccounts: () => process.env.DEFAULT_INSTAGRAM_ACCOUNTS ?? "1",
+    facebookPages: () => process.env.DEFAULT_FACEBOOK_PAGES ?? "1",
+    adsManager: () => process.env.DEFAULT_ADS_MANAGER ?? "yes",
+    contentPlanner: () => process.env.DEFAULT_CONTENT_PLANNER ?? "yes",
+    instagramAutomation: () => process.env.DEFAULT_INSTAGRAM_AUTOMATION ?? "yes",
+};
+export const ON_OFF_FEATURES: ReadonlySet<SubscriptionFeature> = new Set(["adsManager", "contentPlanner", "instagramAutomation"]);
+export const FEATURE_LABELS: Record<SubscriptionFeature, string> = {
+    channel: "WhatsApp numbers", contacts: "contacts", automation: "automations", campaign: "campaigns", teamMembers: "team members",
+    instagramAccounts: "Instagram accounts", facebookPages: "Facebook Pages", adsManager: "AI Ads Manager",
+    contentPlanner: "Content Planner", instagramAutomation: "Instagram comment-to-DM automation",
+};
 export interface AllowanceResult {
     allowed: boolean;
     code?: "NO_SUBSCRIPTION" | "EXPIRED" | "PLAN_MISSING" | "NOT_IN_PLAN" | "LIMIT_REACHED";
@@ -249,16 +268,22 @@ export async function checkSubscriptionAllowance(userId: string, feature: Subscr
     const planName = (plan as any).name ?? null;
 
     let permissionValue = (plan.permissions as any)?.[feature];
-    // older plans have no team limit yet → DEFAULT_TEAM_MEMBERS (default 2)
-    if (feature === "teamMembers" && (permissionValue === undefined || permissionValue === null || permissionValue === "")) {
-        permissionValue = process.env.DEFAULT_TEAM_MEMBERS ?? "2";
+    // older plans have no value for newer limits → FEATURE_DEFAULTS
+    if ((permissionValue === undefined || permissionValue === null || permissionValue === "") && FEATURE_DEFAULTS[feature]) {
+        permissionValue = FEATURE_DEFAULTS[feature]!();
+    }
+    const label = FEATURE_LABELS[feature] || feature;
+    if (ON_OFF_FEATURES.has(feature)) {
+        const on = /^(yes|true|1|on|unlimited)$/i.test(String(permissionValue ?? "").trim());
+        return on ? { allowed: true, planName, limit: "unlimited", expiresAt }
+            : { allowed: false, code: "NOT_IN_PLAN", error: `${label} is not included in your plan (${planName}). Upgrade to use it.`, planName, expiresAt };
     }
     if (permissionValue === undefined || permissionValue === null || permissionValue === "" || permissionValue === "0") {
-        return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan does not allow ${feature}.`, planName, expiresAt };
+        return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan (${planName}) does not include ${label}. Upgrade to add them.`, planName, expiresAt };
     }
     if (String(permissionValue).toLowerCase() === "unlimited") return { allowed: true, planName, limit: "unlimited", expiresAt };
     const limit = Number(permissionValue);
-    if (isNaN(limit) || limit <= 0) return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan does not allow ${feature}.`, planName, expiresAt };
+    if (isNaN(limit) || limit <= 0) return { allowed: false, code: "NOT_IN_PLAN", error: `Your plan (${planName}) does not include ${label}. Upgrade to add them.`, planName, expiresAt };
 
     let used = 0;
     if (feature === "contacts") {
@@ -277,9 +302,15 @@ export async function checkSubscriptionAllowance(userId: string, feature: Subscr
     } else if (feature === "campaign") {
         const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(campaigns).where(eq(campaigns.createdBy, userId));
         used = r?.n ?? 0;
+    } else if (feature === "instagramAccounts") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(igAccounts).where(eq(igAccounts.ownerId, userId));
+        used = r?.n ?? 0;
+    } else if (feature === "facebookPages") {
+        const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(fbPages).where(eq(fbPages.ownerId, userId));
+        used = r?.n ?? 0;
     }
     if (used >= limit) {
-        return { allowed: false, code: "LIMIT_REACHED", error: `You have reached the limit for ${feature}. Allowed: ${limit}`, planName, limit, used, expiresAt };
+        return { allowed: false, code: "LIMIT_REACHED", error: `Your plan (${planName}) allows ${limit} ${limit === 1 ? label.replace(/s$/, "").replace(/Pages$/, "Page") : label}. Remove one or upgrade to add more.`, planName, limit, used, expiresAt };
     }
     return { allowed: true, planName, limit, used, expiresAt };
 }

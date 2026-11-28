@@ -1,6 +1,21 @@
 import { ReactNode } from "react";
 import Seo from "@/components/Seo";
 import { useCmsPage, useCmsSlugs } from "@/hooks/useCms";
+import LandingRenderer from "@/components/landing/LandingRenderer";
+import { autoDescription, buildJsonLd, firstImage } from "@shared/landing";
+
+/** Drag-and-drop builder page (sections from the Landing Pages builder). */
+export function LandingView({ page }: { page: any }) {
+  const s = page.settings || {};
+  return (
+    <div className={s.hideChrome ? "" : "pt-16"}>
+      <Seo title={page.metaTitle || page.title} description={page.metaDescription || autoDescription(page.blocks || [])} keywords={page.metaKeywords}
+        image={page.ogImage || firstImage(page.blocks || [])} canonical={page.canonicalUrl || `${window.location.origin}/${page.slug}`}
+        noindex={page.noindex} schemaJson={buildJsonLd(page, window.location.origin)} />
+      <LandingRenderer blocks={page.blocks || []} settings={s} slug={page.slug} />
+    </div>
+  );
+}
 
 const CSS = `
 .cms-body{color:var(--ink-700,#334155);line-height:1.75;font-size:1rem}
@@ -18,6 +33,7 @@ const CSS = `
 `;
 
 export function CmsView({ page }: { page: any }) {
+  if (page.editor === "builder") return <LandingView page={page} />;
   const wide = page.template === "full";
   const legal = page.template === "legal";
   return (
@@ -69,7 +85,9 @@ export function CmsOrApp({ slug, Header, Footer, App }: { slug: string; Header: 
   const page = useCmsPage(slug, isCms);
   if (slugs.isLoading || (isCms && page.isLoading)) return <div className="fixed inset-0 bg-white" />;
   if (isCms && page.data?.data) {
-    return (<><Header /><CmsView page={page.data.data} /><Footer /></>);
+    const pg = page.data.data;
+    if (pg.editor === "builder" && pg.settings?.hideChrome) return <CmsView page={pg} />;
+    return (<><Header /><CmsView page={pg} /><Footer /></>);
   }
   return <App />;
 }

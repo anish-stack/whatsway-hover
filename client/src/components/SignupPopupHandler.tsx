@@ -39,8 +39,12 @@ export function SignupPopupHandler() {
     const popupShown = sessionStorage.getItem("signupPopupShown");
     if (popupShown === "true") return;
 
+    // never on builder landing pages — they have their own lead form
+    const onLanding = () => !!document.querySelector(".lp");
+
     // Show after 30 seconds
     const timer = setTimeout(() => {
+      if (onLanding()) return;
       setShowPopup(true);
       sessionStorage.setItem("signupPopupShown", "true");
     }, 30000);
@@ -48,6 +52,7 @@ export function SignupPopupHandler() {
     // Show on scroll
     const handleScroll = () => {
       const alreadyShown = sessionStorage.getItem("signupPopupShown");
+      if (onLanding()) return;
       if (
         window.scrollY > window.innerHeight * 0.5 &&
         alreadyShown !== "true"

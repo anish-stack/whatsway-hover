@@ -6,9 +6,10 @@ import sanitizeHtml from "sanitize-html";
 import { db } from "../db";
 import { cmsPages, cmsNavItems, cmsSiteItems } from "@shared/schema";
 import { requireAuth, requireSuperadmin } from "../middlewares/auth.middleware";
+import { clearCmsSeoCache } from "../cms-seo";
 
 // Slugs that belong to the app itself. A CMS page can never take these.
-const RESERVED = new Set([
+export const RESERVED = new Set([
   "api", "login", "signup", "dashboard", "settings", "account", "admin", "inbox", "contacts", "campaigns", "templates",
   "template-library", "users", "plans", "team", "analytics", "widget-chat", "widget-builder", "demo", "pay", "accept-invite",
   "verify-email", "demo-requests", "channels-management", "payment-success", "sitemap.xml", "robots.txt", "assets", "uploads",
@@ -23,7 +24,7 @@ export const NAV_LOCATIONS = [
   "footer_product", "footer_company", "footer_resources", "footer_legal", "footer_bottom",
 ] as const;
 
-const clean = (html: string) =>
+export const clean = (html: string) =>
   sanitizeHtml(html || "", {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
       "img", "h1", "h2", "figure", "figcaption", "iframe", "u", "s", "span", "hr", "table", "thead", "tbody", "tr", "th", "td", "video", "source",
@@ -161,7 +162,9 @@ export function registerCmsRoutes(app: Express) {
     try {
       const [row] = await db.select().from(cmsPages).where(and(eq(cmsPages.slug, req.params.slug.toLowerCase()), eq(cmsPages.status, "published"))).limit(1);
       if (!row) return res.status(404).json({ error: "Not found" });
-      res.json({ data: row });
+      const { createdBy: _c, updatedBy: _u, views: _v, leads: _l, ...pub } = row as any;
+      if (pub.settings) { const { notifyEmails: _n, ...st } = pub.settings; pub.settings = st; }
+      res.json({ data: pub });
     } catch (e) { zerr(res, e); }
   });
 
@@ -192,7 +195,7 @@ export function registerCmsRoutes(app: Express) {
       const rows = await db.select({
         id: cmsPages.id, title: cmsPages.title, slug: cmsPages.slug, pageType: cmsPages.pageType, status: cmsPages.status,
         noindex: cmsPages.noindex, updatedAt: cmsPages.updatedAt,
-      }).from(cmsPages).where(type === "all" ? sql`true` : eq(cmsPages.pageType, type)).orderBy(desc(cmsPages.updatedAt));
+      }).from(cmsPages).where(and(eq(cmsPages.editor, "html"), type === "all" ? sql`true` : eq(cmsPages.pageType, type))).orderBy(desc(cmsPages.updatedAt));
       res.json({ data: rows });
     } catch (e) { zerr(res, e); }
   });
@@ -228,6 +231,7 @@ export function registerCmsRoutes(app: Express) {
       const [dup] = await db.select({ id: cmsPages.id }).from(cmsPages).where(eq(cmsPages.slug, b.slug)).limit(1);
       if (dup && dup.id !== req.params.id) return res.status(409).json({ error: "Slug already in use" });
       const [row] = await db.update(cmsPages).set({ ...b, content: clean(b.content), updatedAt: new Date() } as any).where(eq(cmsPages.id, req.params.id)).returning();
+      clearCmsSeoCache();
       if (!row) return res.status(404).json({ error: "Not found" });
       res.json({ data: row });
     } catch (e) {
@@ -239,6 +243,7 @@ export function registerCmsRoutes(app: Express) {
   app.delete("/api/admin/cms/pages/:id", ...guard, async (req, res) => {
     try {
       await db.delete(cmsPages).where(eq(cmsPages.id, req.params.id));
+      clearCmsSeoCache();
       res.json({ success: true });
     } catch (e) { zerr(res, e); }
   });

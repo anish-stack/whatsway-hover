@@ -1,6 +1,7 @@
 /** AI Ads Manager routes (customer's own Meta ad account). */
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
+import { assertPlan } from "../services/plan-gate";
 import { requireAuth } from "../middlewares/auth.middleware";
 import * as ads from "../services/ads/ads.service";
 import { appOrigin } from "../services/reseller/common";
@@ -30,6 +31,7 @@ async function conn(req: Request) {
 
 export function registerAdsRoutes(app: Express) {
   app.get("/api/ads/connect", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     res.json({ url: await ads.authorizeUrl(owner(req), await redirectUri(req)) });
   }));
 
@@ -67,22 +69,26 @@ export function registerAdsRoutes(app: Express) {
   }));
 
   app.post("/api/ads/campaigns/:id/status", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     const { status } = z.object({ status: z.enum(["ACTIVE", "PAUSED"]) }).parse(req.body);
     res.json({ data: await ads.setStatus(await conn(req), req.params.id, status) });
   }));
 
   app.post("/api/ads/campaigns/:id/budget", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     const { dailyBudget } = z.object({ dailyBudget: z.coerce.number().min(1).max(10_000_000) }).parse(req.body);
     res.json({ data: await ads.setDailyBudget(await conn(req), req.params.id, dailyBudget) });
   }));
 
   app.post("/api/ads/ai/review", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     const c = await conn(req);
     const data = await ads.overview(c, String(req.body?.preset || "last_7d"));
     res.json({ review: await ads.aiReview(owner(req), data, req.body?.goal ? String(req.body.goal).slice(0, 300) : undefined) });
   }));
 
   app.post("/api/ads/ai/copy", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     const b = z.object({
       business: z.string().trim().min(2, "Describe your business").max(300),
       offer: z.string().trim().min(2, "What are you promoting?").max(300),
@@ -100,6 +106,7 @@ export function registerAdsRoutes(app: Express) {
   }));
 
   app.post("/api/ads/ctwa", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "adsManager");
     const b = z.object({
       name: z.string().trim().min(2).max(80),
       dailyBudget: z.coerce.number().min(100, "Minimum ₹100 per day").max(1_000_000),

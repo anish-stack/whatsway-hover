@@ -19,6 +19,11 @@ export interface PlanPermissions {
   apiRequestsPerMonth?: string;
   apiRateLimitPerMinute?: string;
   teamMembers?: string;
+  instagramAccounts?: string; // "1" | "unlimited" | "0"
+  facebookPages?: string;
+  contentPlanner?: string; // "yes" | "no" | "" (default included)
+  instagramAutomation?: string;
+  adsManager?: string;
 }
 export interface Feature {
   name: string;

@@ -1514,6 +1514,102 @@ const steps: MigrationStep[] = [
       CREATE UNIQUE INDEX IF NOT EXISTS away_message_log_uq ON away_message_log(channel_id, phone);
     `,
   },
+  {
+    description: "Facebook Pages + social content planner",
+    sql: `
+      CREATE TABLE IF NOT EXISTS fb_pages (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        page_id varchar(40) NOT NULL,
+        name varchar(160) NOT NULL,
+        category varchar(120),
+        picture text,
+        followers integer,
+        access_token_enc text NOT NULL,
+        fb_user_id varchar(40),
+        status varchar(16) NOT NULL DEFAULT 'active',
+        last_error text,
+        connected_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS fb_pages_owner_page_uq ON fb_pages(owner_id, page_id);
+
+      CREATE TABLE IF NOT EXISTS social_posts (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        owner_id varchar NOT NULL,
+        created_by varchar NOT NULL,
+        mode varchar(12) NOT NULL DEFAULT 'instagram',
+        post_type varchar(12) NOT NULL DEFAULT 'image',
+        media jsonb NOT NULL DEFAULT '[]'::jsonb,
+        ig_caption text,
+        ig_hashtags text,
+        fb_caption text,
+        fb_hashtags text,
+        fb_link text,
+        first_comment text,
+        notes text,
+        scheduled_at timestamptz,
+        status varchar(12) NOT NULL DEFAULT 'draft',
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS social_posts_owner_idx ON social_posts(owner_id, scheduled_at);
+
+      CREATE TABLE IF NOT EXISTS social_post_targets (
+        id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id varchar NOT NULL REFERENCES social_posts(id) ON DELETE CASCADE,
+        owner_id varchar NOT NULL,
+        platform varchar(12) NOT NULL,
+        account_id varchar NOT NULL,
+        scheduled_at timestamptz,
+        status varchar(12) NOT NULL DEFAULT 'draft',
+        stage jsonb,
+        attempts integer NOT NULL DEFAULT 0,
+        last_error text,
+        remote_id varchar(80),
+        permalink text,
+        published_at timestamptz,
+        locked_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS social_post_targets_post_idx ON social_post_targets(post_id);
+      CREATE INDEX IF NOT EXISTS social_post_targets_due_idx ON social_post_targets(status, scheduled_at);
+      CREATE INDEX IF NOT EXISTS social_post_targets_owner_idx ON social_post_targets(owner_id, scheduled_at);
+    `,
+  },
+  {
+    description: "Landing page builder columns + landing_leads",
+    sql: `
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS editor VARCHAR(12) NOT NULL DEFAULT 'html';
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS blocks JSONB NOT NULL DEFAULT '[]'::jsonb;
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS category VARCHAR(40);
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS settings JSONB NOT NULL DEFAULT '{}'::jsonb;
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS leads INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS created_by VARCHAR;
+      ALTER TABLE cms_pages ADD COLUMN IF NOT EXISTS updated_by VARCHAR;
+      CREATE INDEX IF NOT EXISTS cms_pages_editor_idx ON cms_pages (editor, status);
+      CREATE TABLE IF NOT EXISTS landing_leads (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        page_id VARCHAR REFERENCES cms_pages(id) ON DELETE SET NULL,
+        slug VARCHAR(120),
+        name VARCHAR(120) NOT NULL,
+        phone VARCHAR(24) NOT NULL,
+        email VARCHAR(160),
+        company VARCHAR(160),
+        city VARCHAR(80),
+        service VARCHAR(120),
+        message TEXT,
+        utm JSONB,
+        status VARCHAR(16) NOT NULL DEFAULT 'new',
+        ip VARCHAR(64),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS landing_leads_page_idx ON landing_leads (page_id, created_at);
+      CREATE INDEX IF NOT EXISTS landing_leads_created_idx ON landing_leads (created_at);
+    `,
+  },
 ];
 
 /**

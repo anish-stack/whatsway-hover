@@ -281,8 +281,14 @@ const Pricing = ({ hideFaq = false }: { hideFaq?: boolean } = {}) => {
                       <div className="text-sm text-[var(--ink-500)]">
                         {(plan.permissions?.automation ?? "—")}{" "}
                         {t("Landing.pricingSec.pricing.automation")}
-                      </div>
+                        {socialLines(plan.permissions).map((l) => (
+                      <div key={l} className="text-sm text-[var(--ink-500)]">{l}</div>
+                    ))}
+                  </div>
                     )}
+                    {socialLines(plan.permissions).map((l) => (
+                      <div key={l} className="text-sm text-[var(--ink-500)]">{l}</div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -492,3 +498,21 @@ const Pricing = ({ hideFaq = false }: { hideFaq?: boolean } = {}) => {
 };
 
 export default Pricing;
+
+/** "2 Instagram accounts", "1 Facebook Page", "Content Planner"… from plan limits (empty = old default). */
+function socialLines(p: any): string[] {
+  if (!p) return [];
+  const out: string[] = [];
+  const n = (v: any, one: string, many: string) => {
+    const s = String(v ?? "").trim();
+    if (!s || s === "0") return;
+    out.push(/^unlimited$/i.test(s) ? `Unlimited ${many}` : `${s} ${Number(s) === 1 ? one : many}`);
+  };
+  n(p.instagramAccounts, "Instagram account", "Instagram accounts");
+  n(p.facebookPages, "Facebook Page", "Facebook Pages");
+  const on = (v: any) => /^(yes|true|1|on|unlimited)$/i.test(String(v ?? ""));
+  if (on(p.contentPlanner)) out.push("Content Planner for Instagram & Facebook");
+  if (on(p.instagramAutomation)) out.push("Instagram comment → DM automation");
+  if (on(p.adsManager)) out.push("AI Ads Manager");
+  return out;
+}

@@ -16,6 +16,8 @@ function setMeta(attr: "name" | "property", key: string, value?: string | null) 
 /** Minimal head manager (no extra dependency). Restores previous title on unmount. */
 export default function Seo({ title, description, keywords, image, canonical, noindex, schemaJson }: Props) {
   useEffect(() => {
+    // tags the server rendered into the HTML are replaced by the ones below
+    document.head.querySelectorAll("[data-ssr-seo]").forEach((n) => n.remove());
     const prevTitle = document.title;
     if (title) document.title = title;
     setMeta("name", "description", description);

@@ -27,7 +27,7 @@ const ENABLED = () => String(process.env.MEDIA_COMPRESSION || "on").toLowerCase(
 const num = (v: string | undefined, d: number) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : d);
 
 let ffmpegBin: string | null | undefined;
-async function ffmpegPath(): Promise<string | null> {
+export async function ffmpegPath(): Promise<string | null> {
   if (ffmpegBin !== undefined) return ffmpegBin;
   if (process.env.FFMPEG_PATH) return (ffmpegBin = process.env.FFMPEG_PATH);
   try {
@@ -38,7 +38,7 @@ async function ffmpegPath(): Promise<string | null> {
   return (ffmpegBin = "ffmpeg"); // system ffmpeg if present
 }
 
-function runFfmpeg(args: string[], timeoutMs: number): Promise<void> {
+export function runFfmpeg(args: string[], timeoutMs: number): Promise<void> {
   return new Promise(async (resolve, reject) => {
     const bin = await ffmpegPath();
     if (!bin) return reject(new Error("ffmpeg not available"));

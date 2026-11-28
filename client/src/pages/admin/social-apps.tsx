@@ -72,8 +72,9 @@ export default function SocialAppsPage() {
               <div className="space-y-1.5"><Label htmlFor="fb-id">Facebook app ID</Label><Input id="fb-id" value={f.fbAppId} onChange={(e) => setF({ ...f, fbAppId: e.target.value.trim() })} placeholder="Same as WhatsApp app" /></div>
               <div className="space-y-1.5"><Label htmlFor="fb-secret">Facebook app secret</Label><Input id="fb-secret" type="password" value={f.fbAppSecret} onChange={(e) => setF({ ...f, fbAppSecret: e.target.value })} placeholder={q.data?.fbSecretSet ? "Saved — type to replace" : ""} /></div>
             </div>
-            <CopyRow label="Facebook Login → Valid OAuth redirect URI" value={u.adsRedirect || ""} />
-            <p className="text-xs text-muted-foreground">Permissions: ads_management, ads_read, business_management, pages_show_list, pages_read_engagement (Advanced access needs App Review + Business verification).</p>
+            <CopyRow label="Facebook Login → Valid OAuth redirect URI (Ads)" value={u.adsRedirect || ""} />
+            <CopyRow label="Facebook Login → Valid OAuth redirect URI (Pages / content planner)" value={u.pagesRedirect || ""} />
+            <p className="text-xs text-muted-foreground">Permissions: ads_management, ads_read, business_management, pages_show_list, pages_read_engagement, pages_manage_posts (Advanced access needs App Review + Business verification).</p>
           </CardContent>
         </Card>
         <div className="flex justify-end"><Button onClick={() => save.mutate()} disabled={save.isPending}>{save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}</Button></div>

@@ -874,6 +874,11 @@ app.use((req, res, next) => {
           if (n) console.log(`[Drips] sent ${n} message(s)`);
         } catch (e) { console.error("[Drips]", (e as Error).message); }
         try {
+          const { processDueSocial } = await import("./services/social/planner.service.ts");
+          const n = await processDueSocial();
+          if (n) console.log(`[Social] published ${n} post destination(s)`);
+        } catch (e) { console.error("[Social]", (e as Error).message); }
+        try {
           const { processAbandonedCarts } = await import("./services/growth/cart-recovery.service.ts");
           const n = await processAbandonedCarts();
           if (n) console.log(`[CartRecovery] sent ${n} reminder(s)`);

@@ -60,6 +60,8 @@ import {
   KeyRound,
   BadgeInfo,
   MessageSquareQuote,
+  CalendarDays,
+    LayoutTemplate,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChannelSwitcher } from "@/components/channel-switcher";
@@ -141,6 +143,7 @@ function getNavItems(role: string): NavItem[] {
             { section: "Main", href: "/whatsapp-profile", icon: BadgeInfo, labelKey: "WhatsApp Profile", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/canned-messages", icon: MessageSquareQuote, labelKey: "Saved Replies", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
             { section: "Main", href: "/growth", icon: Rocket, labelKey: "Growth Tools", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
+            { section: "Main", href: "/content-planner", icon: CalendarDays, labelKey: "Content Planner", color: "text-violet-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/instagram", icon: Instagram, labelKey: "Instagram", color: "text-pink-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/ads-manager", icon: TrendingUp, labelKey: "AI Ads Manager", color: "text-blue-600", allowedRoles: ["admin"] },
             { section: "Main", href: "/app-integrations", icon: Plug, labelKey: "Integrations", color: "text-[var(--brand)]", allowedRoles: ["admin"] },
@@ -186,6 +189,14 @@ function getNavItems(role: string): NavItem[] {
                 labelKey: "Saved Replies",
                 color: "text-[var(--brand)]",
                 requiredPrefix: "inbox.",
+                allowedRoles: ["team"],
+            },
+            {
+                href: "/admin/landing-pages",
+                icon: LayoutTemplate,
+                labelKey: "Landing Pages",
+                color: "text-[var(--brand)]",
+                requiredPrefix: "website.",
                 allowedRoles: ["team"],
             },
             {
@@ -447,6 +458,12 @@ const sidebarItemsCategories = [
         name: "Queues & Jobs",
         icon: Server,
         path: "/admin/queues",
+        color: "text-[var(--brand)]",
+    },
+    {
+        name: "Landing Pages",
+        icon: LayoutTemplate,
+        path: "/admin/landing-pages",
         color: "text-[var(--brand)]",
     },
     {

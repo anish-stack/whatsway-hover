@@ -5,6 +5,7 @@
 import type { Express, Request, Response } from "express";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
+import { assertPlan, remaining } from "../services/plan-gate";
 import { db } from "../db";
 import { igAccounts, igCommentEvents, igCommentRules, igMessages, igThreads } from "@shared/schema";
 import { requireAuth } from "../middlewares/auth.middleware";
@@ -65,6 +66,11 @@ export function registerInstagramRoutes(app: Express) {
 
   // ── connect ──
   app.get("/api/instagram/connect", requireAuth, wrap(async (req, res) => {
+    // at the plan limit you can still reconnect an expired account, not add a new one
+    if ((await remaining(owner(req), "instagramAccounts")) <= 0) {
+      const needsReconnect = (await ig.listAccounts(owner(req))).some((a: any) => a.status !== "active");
+      if (!needsReconnect) await assertPlan(owner(req), "instagramAccounts");
+    }
     res.json({ url: await ig.authorizeUrl(owner(req), await redirectUri(req)) });
   }));
 
@@ -162,6 +168,7 @@ export function registerInstagramRoutes(app: Express) {
   }));
 
   app.post("/api/instagram/accounts/:accountId/rules", requireAuth, wrap(async (req, res) => {
+    await assertPlan(owner(req), "instagramAutomation");
     const a = await acc(req);
     const b = ruleSchema.parse(req.body);
     if (!!b.dmButtonText !== !!b.dmButtonUrl) return res.status(400).json({ error: "Add both the button text and its link, or neither" });
