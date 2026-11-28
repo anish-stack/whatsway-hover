@@ -38,10 +38,7 @@ export default function InstagramPage() {
 
   const connect = useMutation({
     mutationFn: () => j("GET", "/api/instagram/connect"),
-    onSuccess: (r: any) => { 
-      console.log("Url",r)
-     window.open(r.url, '_blank', 'noopener,noreferrer');
-     },
+    onSuccess: (r: any) => { window.location.href = r.url; },
     onError: (e: any) => toast({ title: "Can't connect yet", description: e?.message, variant: "destructive" }),
   });
 

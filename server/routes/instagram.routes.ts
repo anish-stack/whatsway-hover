@@ -84,17 +84,78 @@ app.get("/api/instagram/connect", requireAuth, wrap(async (req, res) => {
   res.json({ url });
 }));
 
-  app.get("/api/instagram/oauth/callback", async (req, res) => {
-    const back = (q: string) => res.redirect(`/instagram?${q}`);
-    if (req.query.error) return back(`error=${encodeURIComponent(String(req.query.error_description || req.query.error))}`);
-    try {
-      const a = await ig.completeOAuth(String(req.query.code || ""), String(req.query.state || ""), await redirectUri(req));
-      ig.syncConversations(a).catch(() => {});
-      back(`connected=${encodeURIComponent(a.username)}`);
-    } catch (e: any) {
-      back(`error=${encodeURIComponent(e?.message || "Couldn't connect Instagram")}`);
-    }
+// ── Instagram OAuth Callback ──
+app.get("/api/instagram/oauth/callback", async (req, res) => {
+  const requestId = `IG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const back = (q: string) => {
+    console.log(`[${requestId}] Redirecting:`, q.split("=")[0]);
+    return res.redirect(`/instagram?${q}`);
+  };
+
+  console.log(`\n[${requestId}] ===== INSTAGRAM OAUTH CALLBACK =====`);
+  console.log(`[${requestId}] Time:`, new Date().toISOString());
+  console.log(`[${requestId}] Method:`, req.method);
+  console.log(`[${requestId}] Path:`, req.path);
+  console.log(`[${requestId}] Query params:`, {
+    hasCode: !!req.query.code,
+    hasState: !!req.query.state,
+    error: req.query.error || null,
+    errorDescription: req.query.error_description || null,
   });
+
+  if (req.query.error) {
+    console.error(`[${requestId}] Instagram authorization error`);
+    return back(
+      `error=${encodeURIComponent(
+        String(req.query.error_description || req.query.error)
+      )}`
+    );
+  }
+
+  try {
+    const code = String(req.query.code || "");
+    const state = String(req.query.state || "");
+
+    if (!code || !state) {
+      console.error(`[${requestId}] Missing authorization code or state`);
+      return back("error=Missing+authorization+code+or+state");
+    }
+
+    console.log(`[${requestId}] Step 1: Generating redirect URI`);
+
+    const redirect = await redirectUri(req);
+    console.log(`[${requestId}] Redirect URI:`, redirect);
+
+    console.log(`[${requestId}] Step 2: Calling completeOAuth`);
+
+    const a = await ig.completeOAuth(code, state, redirect);
+
+    console.log(`[${requestId}] Step 3: OAuth completed successfully`);
+    console.log(`[${requestId}] Instagram username:`, a.username);
+
+    console.log(`[${requestId}] Step 4: Starting conversation sync`);
+
+    ig.syncConversations(a).catch((err: any) => {
+      console.error(`[${requestId}] Conversation sync failed:`, err?.message || err);
+    });
+
+    console.log(`[${requestId}] Step 5: Redirecting to Instagram settings`);
+
+    return back(`connected=${encodeURIComponent(a.username)}`);
+
+  } catch (e: any) {
+    console.error(`[${requestId}] OAuth FAILED`);
+    console.error(`[${requestId}] Error message:`, e?.message);
+    console.error(`[${requestId}] Error stack:`, e?.stack);
+
+    return back(
+      `error=${encodeURIComponent(
+        e?.message || "Couldn't connect Instagram"
+      )}`
+    );
+  }
+});
 
   app.get("/api/instagram/status", requireAuth, wrap(async (_req, res) => {
     try { await ig.igApp(); res.json({ configured: true }); } catch { res.json({ configured: false }); }
